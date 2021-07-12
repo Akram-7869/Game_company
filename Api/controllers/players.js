@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Player = require('../models/Player');
+const Transaction = require('../models/Transaction');
 
 // @desc      Get all Players
 // @route     GET /api/v1/auth/Players
@@ -27,7 +28,20 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.getPlayer = asyncHandler(async (req, res, next) => {
-  const player = await Player.findById(req.params.id);
+   let player; 
+   if(req.staff){
+    console.log('fetching');
+    player= await Player.findById(req.params.id);
+  }else{
+    console.log('auth');
+    player = req.player;
+  }
+ 
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player  not found`, 404)
+    );
+  }
 
   res.status(200).json({
     success: true,
@@ -39,7 +53,7 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Players
 // @access    Private/Admin
 exports.createPlayer = asyncHandler(async (req, res, next) => {
-  const player = await Player.create(req.body);
+ // const player = await Player.create(req.body);
 
   res.status(201).json({
     success: true,
@@ -51,16 +65,30 @@ exports.createPlayer = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.updatePlayer = asyncHandler(async (req, res, next) => {
-  let {firstName, lastName, email,gender,country, aadharNumber, panNumber, dob, kycStatus}=req.body
-  let player = await Player.findById(req.params.id);
-  if (!Player) {
+  let {firstName, lastName, email,gender,country, aadharNumber, panNumber, dob, kycStatus}=req.body;
+    let fieldsToUpdate= {firstName, lastName, email,gender,country, aadharNumber, panNumber, dob};
+  let player;
+ if( !firstName ||!email ||!gender || !country ||!aadharNumber|| !panNumber ||!dob){
+ return next(
+      new ErrorResponse(`All fields are requied`, 400)
+    );
+ }
+  if(req.staff){
+    player= await Player.findById(req.params.id);
+    fieldsToUpdate['kycStatus'] = kycStatus;
+  }else if(req.player){
+    
+    player = req.player;
+  }
+ 
+  if (!player) {
     return next(
       new ErrorResponse(`Player  not found`, 404)
     );
   }
-  let fieldsToUpdate= {firstName, lastName, email,gender,country, aadharNumber, panNumber, dob, kycStatus}
+
    
-  player = await Player.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
+  player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
@@ -78,7 +106,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deletePlayer = asyncHandler(async (req, res, next) => {
   const player = await Player.findById(req.params.id);
-  await Player.findByIdAndDelete(req.params.id);
+  //await Player.findByIdAndDelete(req.params.id);
   
   res.status(200).json({
     success: true,
@@ -92,14 +120,12 @@ exports.deletePlayer = asyncHandler(async (req, res, next) => {
 // @access    Public
 exports.setPin = asyncHandler(async (req, res, next) => {
   const { pin  } = req.body;
-  console.log('hhh',req.player);
-if(!req.player){
+ 
+
+if(!pin || !req.player || req.player.role !== 'player'){
   return next(new ErrorResponse('user not found', 400));
 }
-  // Validate role
-  if (req.player.role !== 'player') {
-    return next(new ErrorResponse('user not found', 400));
-  }
+   
 
   // Check for user
    user = await Player.findByIdAndUpdate(req.player.id,{'password':pin}, {
@@ -107,10 +133,7 @@ if(!req.player){
     runValidators: true
   });
  
-  res.status(200).json({
-    success: true,
-    data: {}
-  });
+  res.status(200).json({success: true,data: {}});
  
 });
 // @desc      Login user
@@ -118,14 +141,11 @@ if(!req.player){
 // @access    Public
 exports.chkPin = asyncHandler(async (req, res, next) => {
   const { pin  } = req.body;
-  console.log('hhhkk',req.player);
-if(!req.player){
-  return next(new ErrorResponse('user not found', 400));
+ 
+if(!pin || !req.player || req.player.role !== 'player'){
+  return next(new ErrorResponse('authentication faild', 400));
 }
-  // Validate role
-  if (req.player.role !== 'player') {
-    return next(new ErrorResponse('user not found', 400));
-  }
+  
  // Check for user
  const user = await Player.findOne({_id: req.player.id }).select('+password');
  // Check if password matches
@@ -181,7 +201,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'note':note,
     'prevBalance': req.player.balance
   }
-  let tran = await Transactions.create(tranData);
+  let tran = await Transaction.create(tranData);
   let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
     new: true,
     runValidators: true
@@ -220,7 +240,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'note':note,
     'prevBalance': req.player.balance
   }
-  let tran = await Transactions.create(tranData);
+  let tran = await Transaction.create(tranData);
   let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
     new: true,
     runValidators: true

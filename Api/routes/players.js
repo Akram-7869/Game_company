@@ -12,8 +12,9 @@ const Player = require('../models/Player');
 const router = express.Router({ mergeParams: true });
 
 const { protect, authorize } = require('../middleware/auth');
-//router.use(protect);
+router.use(protect);
 //router.use(authorize('admin','Player'));
+
 router.post('/pin',protect, setPin);
 router.post('/checkpin',protect, chkPin);
 //router.post('/player/join', protect, join);
