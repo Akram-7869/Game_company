@@ -15,7 +15,7 @@ const {
 } = require('../controllers/TransactionController');
 const {
  getBanners,getBanner,updateBanner,deleteBanner, bannerList,bannerAdd,createBanners
-} = require('../controllers/bannerController');
+} = require('../controllers/BnnerController');
 const {
   getSettings,getSetting,updateSetting,deleteSetting, settingList,settingAdd,createSettings
  } = require('../controllers/SettingController');
