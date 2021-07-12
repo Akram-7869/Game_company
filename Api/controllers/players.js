@@ -7,7 +7,7 @@ const Transaction = require('../models/Transaction');
 // @route     GET /api/v1/auth/Players
 // @access    Private/Admin
 exports.getPlayers = asyncHandler(async (req, res, next) => {
-  console.log('server-rew', req.body);
+  
   Player.dataTables({
     limit: req.body.length,
     skip: req.body.start,

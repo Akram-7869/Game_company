@@ -163,12 +163,7 @@ PlayerSchema.methods.getResetPasswordToken = function() {
   return resetToken;
 };
 
-// Generate and hash password token
-PlayerSchema.methods.getPhoneCode = function() {
-  // Generate token
-  return crypto.randomBytes(4).toString('hex');
-  // Set expire
-};
+ 
 
 PlayerSchema.methods.getPhoneExpire = function() {
   this.verifyPhoneExpire = Date.now() + 10 * 60 * 1000;
