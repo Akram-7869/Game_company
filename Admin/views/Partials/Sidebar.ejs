@@ -1,0 +1,178 @@
+<!-- ========== Left Sidebar Start ========== -->
+<div class="vertical-menu">
+
+    <!-- LOGO -->
+    <div class="navbar-brand-box">
+        <a href="/" class="logo logo-dark">
+            <span class="logo-sm">
+                <img src="/public/assets/images/logo-sm.png" alt="" height="30">
+            </span>
+            <span class="logo-lg">
+                <img src="/public/assets/images/logo-dark.png" alt="" height="50">
+            </span>
+        </a>
+
+        <a href="/" class="logo logo-light">
+            <span class="logo-sm">
+                <img src="/public/assets/images/logo-sm.png" alt="" height="30">
+            </span>
+            <span class="logo-lg">
+                <img src="/public/assets/images/logo-light.png" alt="" height="50">
+            </span>
+        </a>
+    </div>
+
+    <button type="button" class="btn btn-sm px-3 font-size-16 header-item waves-effect vertical-menu-btn">
+        <i class="fa fa-fw fa-bars"></i>
+    </button>
+
+    <div data-simplebar class="sidebar-menu-scroll">
+
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+            <!-- Left Menu Start -->
+            <ul class="metismenu list-unstyled" id="side-menu">
+                <!-- <li class="menu-title"><%=translation.Menu%></li> -->
+
+                <li>
+                    <a href="/">
+                        <i class="uil-home-alt"></i><span class="badge rounded-pill bg-primary float-end">01</span>
+                        <span><%=translation.Dashboard%></span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="uil-user-circle"></i>
+                        <span>Player</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="/admin/player">Player List</a></li>
+                        <li><a href="player-banned">Player Banned</a></li>
+                        <li><a href="player-delete">Player Delete</a></li>
+                        <li><a href="player-kyc">Player KYC</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="uil-chart"></i>
+                        <span>Leader Board</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="leader-board-list">Leader Board List</a></li>
+                        
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="uil-wallet"></i>
+                        <span>Payment</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="/admin/wallet">wallet</a></li>
+                         <li><a href="/admin/transaction">history</a></li>
+                          <li><a href="/admin/payout">payout</a></li>
+                        
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="uil-megaphone"></i>
+                        <span>Ads</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="/admin/banner">Banner</a></li>
+                        <li><a href="/admin/notification">Notification</a></li>
+                        
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="bx uil-streering"></i>
+                        <span>Controls</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="/admin/bot">Bot</a></li>
+                        <li><a href="/admin/version">Version</a></li>
+                        
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="uil-comments-alt"></i>
+                        <span>Support</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="/admin/chat">chat</a></li>
+                        <li><a href="/admin/ticket">Ticket</a></li>
+                        
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="uil-users-alt"></i>
+                        <span>Staff</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="/admin/managers"></a>Managers</li>
+                        
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="uil-chart"></i>
+                        <span>Reports</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="/admin/report-player">palyer</a></li>
+                        <li><a href="/admin/report-payment">payment</a></li>
+                        
+                    </ul>
+                </li>
+                <li class="menu-title">Setting</li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="uil-cog"></i>
+                        <span>Admin Setting</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="/admin/settings">SiteName</a></li>
+                        <li><a href="admin-logo">Logo</a></li>
+                        <li><a href="admin-support-mail">Support Mail</a></li>
+                        <li><a href="admin-firebase-setting">Firebase</a></li>
+                         <li><a href="admin-2step-auth-setting">2step Authentication</a></li>
+                        
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="uil-cog"></i>
+                        <span>Pyment Gateway</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="admin-cashfree-setting">cashree</a></li>
+                         <li><a href="admin-razorpay-setting">Razor Pay</a></li>
+                          <li><a href="admin-payu-setting">Pay U money</a></li>
+                        
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="uil-cog"></i>
+                        <span>Sms Gateway</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="message-setting">Message</a></li>
+                        <li><a href="localtext-setting">Localtext</a></li>
+                        
+                    </ul>
+                </li>               
+
+            </ul>
+        </div>
+        <!-- Sidebar -->
+    </div>
+</div>
+<!-- Left Sidebar End -->
