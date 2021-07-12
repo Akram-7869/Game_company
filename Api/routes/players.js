@@ -5,7 +5,7 @@ const {
   createPlayer,
   updatePlayer,
   deletePlayer,chkPin,setPin, getMe,debiteAmount,playerInfo
-} = require('../controllers/Players');
+} = require('../controllers/players');
 
 const Player = require('../models/Player');
 

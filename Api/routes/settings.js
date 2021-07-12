@@ -7,7 +7,7 @@ const {
     updateSetting,
     deleteSetting
 
-} = require('../controllers/Settings');
+} = require('../controllers/settings');
 
 
 const router = express.Router({ mergeParams: true });
