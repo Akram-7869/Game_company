@@ -28,7 +28,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
       );
     }else{
         let fieldsToUpdate={
-          'verifyPhone': '1234',
+          'verifyPhone':vcode,
           'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
         }
         player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
