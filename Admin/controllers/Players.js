@@ -86,8 +86,21 @@ exports.updatePlayerStatus = asyncHandler(async (req, res, next) => {
 // @route     DELETE /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.deletePlayer = asyncHandler(async (req, res, next) => {
-      ;
-    
+       
+      callApi(req).delete(apiUrl+   req.params.id,req.body)
+      .then(r => {
+            // Assign value in session
+            res.locals = { title: 'Player-edit' };
+            req.flash('success', 'Deleted');
+           // res.render('Players/List',{row:r.data.data}); 
+          
+      })
+      .catch(error => {
+           
+
+           req.flash('error', 'Data not updated');
+         
+      })
       res.status(200).json({
         success: true,
         data: {}

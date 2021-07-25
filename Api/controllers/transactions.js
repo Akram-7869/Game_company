@@ -10,7 +10,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
   Transaction.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-    select:{'amount':1,'transactionType':1, 'note':1, 'createdAt':1},
+    select:{'playerId':1,'amount':1,'transactionType':1, 'note':1, 'createdAt':1},
     search: {
       value: req.body.search?  req.body.search.value:'',
       fields: ['playerId']

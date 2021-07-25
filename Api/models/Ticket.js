@@ -14,6 +14,12 @@ phone: {
 subject: {
     type: String
 },
+description: {
+    type: String
+},
+history: {
+    type: String
+},
 status: {
     type: String
 },

@@ -106,7 +106,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deletePlayer = asyncHandler(async (req, res, next) => {
   const player = await Player.findById(req.params.id);
-  //await Player.findByIdAndDelete(req.params.id);
+  await Player.findByIdAndDelete(req.params.id);
   
   res.status(200).json({
     success: true,

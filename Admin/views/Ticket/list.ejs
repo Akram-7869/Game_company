@@ -46,8 +46,11 @@
                     <thead>
                     <tr>
                         <th>Srno</th>
-                        <th>complexity</th>
+                        <th>name</th>
+                        <th>phone</th>
+                        <th>subject</th>
                         <th>Status</th>
+                        <th>Dated</th>
                        
                         <th>Action</th>  
                     </tr>
@@ -133,8 +136,11 @@ function handleDel (id){
                 "columns": [    
                 {data: null, "render": function(data, type, full, meta) {return i++;}}, 
                      
-                        {data:'status'},
-                        {data:'complexity'},
+                        {data:'name'},
+                        {data:'email'},
+                        {data:'phone'},
+                        {data:'subject'},
+                        {data:'updatedAt'},
 
 
                         {data: null, "render": function(data, type, full, meta) {
