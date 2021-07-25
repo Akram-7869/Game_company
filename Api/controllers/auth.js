@@ -146,6 +146,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     .json({
       success: true,
       token,
+      playerId:user._id,
       firstName: user.firstName,
       lastName: user.lastName
     });
