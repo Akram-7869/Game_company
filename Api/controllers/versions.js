@@ -14,6 +14,7 @@ exports.getVersions = asyncHandler(async (req, res, next) => {
     search: {
       value: req.body.search?  req.body.search.value:'',
       fields: ['playerId']
+      
     },
     sort: {
       _id: 1
