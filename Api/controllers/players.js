@@ -264,4 +264,32 @@ exports.playerInfo = asyncHandler(async (req, res, next) => {
   });
 });
 
- 
+ // @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.updateStatus = asyncHandler(async (req, res, next) => {
+  let fieldsToUpdate={};
+  player= await Player.findById(req.params.id);
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player  not found`, 404)
+    );
+  }
+ if(!req.staff){
+    return next(
+      new ErrorResponse(`Not Autherized`, 400)
+    );
+  }
+
+   
+    fieldsToUpdate['status'] = req.body.status;
+     player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});

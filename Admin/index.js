@@ -5,22 +5,33 @@ var path = require('path');
 var http = require('http').Server(app);
 var validator = require('express-validator');
 
+const dotenv = require('dotenv');
+// Load env vars
+dotenv.config({ path: './config/config.env' });
 // import controller
 var AuthController = require('./controllers/AuthController');
 
 // import Router file
 var adminRoutes = require('./routers/admin');
 var session = require('express-session');
+const fileUpload = require('express-fileupload');
 var bodyParser = require('body-parser');
 
 var flash = require('connect-flash');
 var i18n = require("i18n-express");
-app.use(bodyParser.json());
-var urlencodeParser = bodyParser.urlencoded({ extended: true });
-app.use(bodyParser.urlencoded({ extended: true })); 
+
+
+// enable files upload
+app.use(fileUpload({
+  createParentPath: true
+}));
+
+//////app.use(bodyParser.json());
+//var urlencodeParser = bodyParser.urlencoded({ extended: true });
+//app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(session({
   key: 'user_sid',
-  secret: 'somerandonstuffs',
+  secret: 'som4eran4do6n9stuff0s',
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -28,7 +39,7 @@ app.use(session({
   }
 }));
 
-app.use(session({ resave: false, saveUninitialized: true, secret: 'nodedemo' }));
+ 
 app.use(flash());
 app.use(i18n({
   translationsPath: path.join(__dirname, 'i18n'), // <--- use here. Specify translations files path.
@@ -36,6 +47,9 @@ app.use(i18n({
   textsVarName: 'translation'
 }));
 
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use('/public', express.static('public'));
 
 app.get('/layouts/', function (req, res) {
@@ -59,7 +73,8 @@ app.use('/admin',adminRoutes );
 app.get('/', function (req, res) {
   res.redirect('/login');
 });
-
+ 
+ 
 http.listen(8000, function () {
   console.log('listening on *:8000');
 });

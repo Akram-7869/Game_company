@@ -6,13 +6,13 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0"><%- title %>  Edit</h4>
+            <h4 class="mb-0"><%- title %>  Add</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                     <li class="breadcrumb-item active"><a href="/admin/bot"><%- title %>  List</a></li>
-                     <li class="breadcrumb-item active">Edit</li>
+                     <li class="breadcrumb-item active">Add</li>
                 </ol>
             </div>
 
@@ -33,7 +33,7 @@
                 <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
                     <div class="mb-3">
                         <label class="form-label">Bot Complexity</label>
-                        <input type="text" name="complexity" value="<%=row.complexity?row.complexity:'' %>" class="form-control" required placeholder="Version Controle"/>
+                        <input type="text" name="complexity" value="<%=row.complexity?row.complexity:'' %>" class="form-control" required placeholder="Bot Controle"/>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Bot Status</label>

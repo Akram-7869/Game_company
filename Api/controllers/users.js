@@ -6,7 +6,20 @@ const User = require('../models/User');
 // @route     GET /api/v1/auth/users
 // @access    Private/Admin
 exports.getUsers = asyncHandler(async (req, res, next) => {
-  res.status(200).json(res.advancedResults);
+   User.dataTables({
+    limit: req.body.length,
+    skip: req.body.start,
+    select:{'firstName':1,'phone':1,'email':1, 'status':1, 'createdAt':1},
+    search: {
+      value: req.body.search?  req.body.search.value:'',
+      fields: ['email']
+    },
+    sort: {
+      _id: 1
+    }
+  }).then(function (table) {
+    res.json({data: table.data, recordsTotal:table.total,recordsFiltered:table.total, draw:req.body.draw}); // table.total, table.data
+  })
 });
 
 // @desc      Get single user

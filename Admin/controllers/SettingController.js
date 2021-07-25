@@ -1,5 +1,5 @@
 const asyncHandler = require('../middleware/async');
-var axios = require("axios");
+const {callApi} = require('../helper/common');
 var apiUrl = 'http://localhost:3000/api/v1/settings/';
 
 exports.settingList = asyncHandler(async (req, res, next) => {
@@ -10,7 +10,7 @@ exports.settingList = asyncHandler(async (req, res, next) => {
  
 exports.getSetting = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Datatables' };
-      axios.get(apiUrl + req.params.id)
+      callApi(req).get(apiUrl + req.params.id)
             .then(r => {
                  console.log('dddddd',r.data.data);
                   res.locals = { title: 'Player-edit' };
@@ -25,7 +25,7 @@ exports.getSetting = asyncHandler(async (req, res, next) => {
 exports.updateSetting = asyncHandler(async (req, res, next) => {
       console.log('kamleshshsh',req.body,'query',req.query)
       res.locals = { title: 'Datatables' };
-      axios.post(apiUrl+ req.params.id,req.body)
+      callApi(req).post(apiUrl+ req.params.id,req.body)
             .then(r => {
                   console.log('response',r);
                   // Assign value in session
@@ -59,7 +59,7 @@ exports.deleteSetting = asyncHandler(async (req, res, next) => {
  
 exports.getSettings = asyncHandler(async (req, res, next) => {
       console.log('call server',req.body, apiUrl);
-      axios.post(apiUrl, { ...req.body  } )
+      callApi(req).post(apiUrl, { ...req.body  } )
           .then(r => {
                  console.log('list', r.data)
                 res.status(200).json(r.data);
@@ -75,7 +75,7 @@ exports.getSettings = asyncHandler(async (req, res, next) => {
 
  
 exports.settingAdd = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Player-edit' };
+      res.locals = { title: 'Setting-add' };
      
       res.render('Settings/edit',{ 'message': req.flash('message'), 'error': req.flash('error'),row:{}});
 });
@@ -83,7 +83,7 @@ exports.settingAdd = asyncHandler(async (req, res, next) => {
  
 exports.createSettings = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Player-edit' };
-      axios.post(apiUrl,req.body)
+      callApi(req).post(apiUrl,req.body)
       .then(r => {
             // Assign value in session
             res.locals = { title: 'Player-edit' };

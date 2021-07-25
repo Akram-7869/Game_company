@@ -1,21 +1,21 @@
 const asyncHandler = require('../middleware/async');
 const {callApi} = require('../helper/common');
-var apiUrl = 'http://localhost:3000/api/v1/transactions/';
+var apiUrl = 'http://localhost:3000/api/v1/versions/';
 
  
-exports.transcationList = asyncHandler(async (req, res, next) => {
-    res.locals = { title: 'Datatables' };
-    res.render('Transaction/list');
+exports.listVersion = asyncHandler(async (req, res, next) => {
+    res.locals = { title: 'Verson Controle' };
+    res.render('Version/list');
 });
  
  
-exports.getTransaction = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Datatables' };
+exports.getVersion = asyncHandler(async (req, res, next) => {
+      res.locals = { title:  'Verson Controle'  };
        callApi(req).get(apiUrl + req.params.id)
             .then(r => {
                  console.log('dddddd',r.data.data);
-                  res.locals = { title: 'Player-edit' };
-                  res.render('Transaction/edit',{row:r.data.data}); 
+                  res.locals = { title: 'Version-edit' };
+                  res.render('Version/edit',{row:r.data.data}); 
             })
             .catch(error => {
                   console.error(error.error);
@@ -23,15 +23,15 @@ exports.getTransaction = asyncHandler(async (req, res, next) => {
   });
  
  
-exports.updatePlayer = asyncHandler(async (req, res, next) => {
+exports.updateVersion = asyncHandler(async (req, res, next) => {
       console.log('kamleshshsh',req.body,'query',req.query)
-      res.locals = { title: 'Datatables' };
+      res.locals = { title:  'Verson Controle'  };
        callApi(req).post(apiUrl+ req.params.id,req.body)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Player-edit' };
+                  res.locals = { title: 'Version-edit' };
                   req.flash('error', 'Data save');
-                  res.render('Transaction/edit',{row:r.data.data}); 
+                  res.render('Version/edit',{row:r.data.data}); 
                   //  console.log(`statusCode: ${res.statusCode}`)
             })
             .catch(error => {
@@ -43,7 +43,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
   });
 
  
-exports.deletePlayer = asyncHandler(async (req, res, next) => {
+exports.deleteVersion = asyncHandler(async (req, res, next) => {
       console.log('del',req.params.id);
     
       res.status(200).json({
@@ -55,7 +55,7 @@ exports.deletePlayer = asyncHandler(async (req, res, next) => {
 
 
  
-exports.getTranscations = asyncHandler(async (req, res, next) => {
+exports.getVersions = asyncHandler(async (req, res, next) => {
       console.log('qwwwwwe',req.body);
        callApi(req).post(apiUrl, { ...req.body  } )
           .then(r => {
@@ -77,21 +77,21 @@ exports.getTranscations = asyncHandler(async (req, res, next) => {
     });
 
  
-exports.getAddForm = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Player-edit' };
+exports.addVersion = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Version' };
      
-      res.render('Transaction/edit',{row:{}});
+      res.render('Version/add',{row:{}});
 });
   
  
-exports.createPlayers = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Player-edit' };
-       callApi(req).post(apiUrl,req.body)
+exports.createVersions = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Version-add' };
+       callApi(req).post(apiUrl+'add',req.body)
       .then(r => {
             // Assign value in session
-            res.locals = { title: 'Player-edit' };
+            res.locals = { title: 'Version-edit' };
             req.flash('success', 'Data save');
-            res.render('Transaction/edit',{row:r.data.data}); 
+            res.render('Version/edit',{row:r.data.data}); 
             //  console.log(`statusCode: ${res.statusCode}`)
       })
       .catch(error => {
@@ -100,16 +100,16 @@ exports.createPlayers = asyncHandler(async (req, res, next) => {
            req.flash('error', 'Data not updated');
           //  res.redirect('/login');
       })
-      res.render('Transaction/edit',{row:{}});
+      res.render('Version/edit',{row:{}});
 });
       
-exports.showPlayerView = asyncHandler(async (req, res, next) => {
+exports.showVersion = asyncHandler(async (req, res, next) => {
        callApi(req).get(apiUrl + req.params.id)
             .then(r => {
                   // Assign value in session
                  console.log('dddddd',r.data.data);
-                  res.locals = { title: 'Player-edit' };
-                  res.render('Transaction/view',{row:r.data.data}); 
+                  res.locals = { title: 'Version-edit' };
+                  res.render('Version/view',{row:r.data.data}); 
                   //  console.log(`statusCode: ${res.statusCode}`)
   
             })

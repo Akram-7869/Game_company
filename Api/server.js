@@ -24,8 +24,13 @@ connectDB();
 const auth = require('./routes/auth');
 const players = require('./routes/players');
 const settings = require('./routes/settings');
- 
-
+const transactions = require('./routes/transactions');
+const payments = require('./routes/payments');
+const managers = require('./routes/users');
+const bots = require('./routes/bots');
+const versions = require('./routes/versions'); 
+//const files = require('./routes/files'); 
+const banners = require('./routes/banners'); 
 const app = express();
 
 // Body parser
@@ -71,6 +76,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/players', players);
 app.use('/api/v1/settings', settings);
+app.use('/api/v1/transactions', transactions);
+app.use('/api/v1/managers', managers);
+app.use('/api/v1/versions', versions);
+app.use('/api/v1/bots', bots);
+//app.use('/api/v1/files', files);
+
+app.use('/api/v1/banners', banners);
+
+//app.use('/api/v1/payments', payments);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;

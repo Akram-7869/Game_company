@@ -16,7 +16,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 
   let player = await Player.findOne({$or:[{ 'phone': phone },{ 'deviceToken': deviceToken }]}).select('+deviceToken');
  let vcode = Math.floor(1000 + Math.random() * 9000);
- console.log('ddd',vcode); return;
+  
   if (player) {
     if(player.deviceToken !== deviceToken  ){
         return next(

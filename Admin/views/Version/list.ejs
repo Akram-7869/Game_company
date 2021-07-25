@@ -41,14 +41,13 @@
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
-                <a class="btn btn-success waves-effect waves-light" href="/admin/banner/add">Add </a>
+                <a class="btn btn-success waves-effect waves-light" href="/admin/version/add">Add </a>
                 <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead>
                     <tr>
                         <th>Srno</th>
-                        <th>complexity</th>
-                        <th>Status</th>
-                       
+                        <th>VersionControle</th>
+                        <th>Applink</th>
                         <th>Action</th>  
                     </tr>
                     </thead>
@@ -104,7 +103,7 @@
 function handleDel (id){
    return $.ajax({
                     type: 'DELETE',
-                    url: '/admin/bot/'+id,
+                    url: '/admin/version/'+id,
                     success: (results)=> {
                         alert('Record Delete');
                           location.reload();
@@ -129,18 +128,16 @@ function handleDel (id){
     "processing": true,    
                 "serverSide": true,    
                 "ajax": {    
-                    url:"/admin/bot/data", type: "post" },    
+                    url:"/admin/version/data", type: "post" },    
                 "columns": [    
                 {data: null, "render": function(data, type, full, meta) {return i++;}}, 
                      
-                        {data:'status'},
-                        {data:'complexity'},
-
-
+                        {data:'versionControle'},
+                        {data:'appLink'},
                         {data: null, "render": function(data, type, full, meta) {
-        return '<a class="btn btn-success btn-sm" href="/admin/bot/' 
+        return '<a class="btn btn-success btn-sm" href="/admin/settings/' 
                 + full._id + '">EDIT</a><button class="btn btn-success btn-sm" onclick="delRec(\'' 
-                + full._id + '\')">Del</button><a class="btn btn-success btn-sm" href="/admin/bot/view/' 
+                + full._id + '\')">Del</button><a class="btn btn-success btn-sm" href="/admin/settings/view/' 
                 + full._id +'">View</a>';
       }},   
                 ]    

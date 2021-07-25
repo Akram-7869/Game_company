@@ -4,7 +4,7 @@ const {
   getPlayer,
   createPlayer,
   updatePlayer,
-  deletePlayer,chkPin,setPin, getMe,debiteAmount,playerInfo
+  deletePlayer,chkPin,setPin, getMe,debiteAmount,playerInfo,updateStatus
 } = require('../controllers/players');
 
 const Player = require('../models/Player');
@@ -14,6 +14,7 @@ const router = express.Router({ mergeParams: true });
 const { protect, authorize } = require('../middleware/auth');
 router.use(protect);
 //router.use(authorize('admin','Player'));
+router.post('/status/:id',protect, updateStatus);
 
 router.post('/pin',protect, setPin);
 router.post('/checkpin',protect, chkPin);

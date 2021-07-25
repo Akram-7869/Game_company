@@ -1,23 +1,12 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var urlencodeParser = bodyParser.urlencoded({ extended: false });
+const asyncHandler = require('../middleware/async');
 
 var validator = require('express-validator');
 
 var axios = require("axios");
-//var MockAdapter = require("axios-mock-adapter");
-
-// This sets the mock adapter on the default instance
-//var mock = new MockAdapter(axios);
-
-let users = [
-	{ id: 1, username: 'admin', password: '123456', email: 'admin@themesbrand.com' }
-];
-
-// // Mock GET request to /users when param `searchText` is 'John'
-// mock.onGet("/users", { params: { searchText: "John" } }).reply(200, {
-// 	users: users,
-// });
+ 
 
 module.exports = function (app) {
 
@@ -84,24 +73,18 @@ module.exports = function (app) {
 	});
 
 	app.post('/post-login', urlencodeParser, function (req, res) {
-		const validUser = users.filter(usr => usr.email === req.body.email && usr.password === req.body.password);
-		axios
+ 		axios
   .post('http://localhost:3000/api/v1/auth/login', {
     email: req.body.email,
 		password:req.body.password,
   })
   .then(r => {
 				// Assign value in session
-				sess = req.session;
-				sess.user = validUser;
-				console.log(r.data)
+				req.session.user = r.data;
 				res.redirect('/admin/dashboard');
-  //  console.log(`statusCode: ${res.statusCode}`)
-  
+   
   })
   .catch(error => {
-    console.error(error)
-
 		req.flash('error', 'Incorrect email or password!');
 		res.redirect('/login');
   })
@@ -129,7 +112,11 @@ module.exports = function (app) {
 		// Assign  null value in session
 		sess = req.session;
 		sess.user = null;
-
+		res.cookie('token', 'none', {
+			expires: new Date(Date.now() + 10 * 1000),
+			httpOnly: true
+		});
+	
 		res.redirect('/login');
 	});
 

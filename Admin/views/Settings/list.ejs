@@ -128,7 +128,7 @@ function handleDel (id){
     "processing": true,    
                 "serverSide": true,    
                 "ajax": {    
-                    url:"/admin/settings/data", type: "post" },    
+                    url:"/admin/setting/data", type: "post" },    
                 "columns": [    
                 {data: null, "render": function(data, type, full, meta) {return i++;}}, 
                      
@@ -137,9 +137,9 @@ function handleDel (id){
                      
 
                         {data: null, "render": function(data, type, full, meta) {
-        return '<a class="btn btn-success btn-sm" href="/admin/settings/' 
+        return '<a class="btn btn-success btn-sm" href="/admin/setting/' 
                 + full._id + '">EDIT</a><button class="btn btn-success btn-sm" onclick="delRec(\'' 
-                + full._id + '\')">Del</button><a class="btn btn-success btn-sm" href="/admin/settings/view/' 
+                + full._id + '\')">Del</button><a class="btn btn-success btn-sm" href="/admin/setting/view/' 
                 + full._id +'">View</a>';
       }},   
                 ]    

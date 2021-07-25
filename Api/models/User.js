@@ -26,9 +26,14 @@ const UserSchema = new mongoose.Schema({
       'Please add a valid email'
     ]
   },
+  status:{
+     type: String,
+    enum: [ 'notverifed','active','inactive','deleted'],
+    default: 'notverifed'
+  },
   role: {
     type: String,
-    enum: [ 'manager','admin'],
+    enum: [ 'manager','admin','superadmin'],
     default: 'manager'
   },
   password: {

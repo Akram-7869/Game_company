@@ -9,6 +9,7 @@ var axios = require("axios");
 // @access    Private/Admin
 exports.dashBoardView = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Datatables' };
+    console.log(req.session);
     res.render('Dashboard/index')
     // axios.get('http://localhost:3000/api/v1/players')
     //       .then(r => {
