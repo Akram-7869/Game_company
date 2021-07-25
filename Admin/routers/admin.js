@@ -1,6 +1,5 @@
 const express = require('express');
-const multer = require("multer");
-
+ 
 const  palyerCtrl = require('../controllers/Players');
 
 const {dashBoardView} = require('../controllers/Dashboard');
@@ -9,21 +8,21 @@ const bannerControler = require('../controllers/BannerController');
 const settingCtrl = require('../controllers/SettingController');
 const managerCtrl = require('../controllers/ManagerController');
 const botCtrl = require('../controllers/BotController');
+const ticketCtrl = require('../controllers/TicketController');
 const versionCtrl = require('../controllers/VersionController');
 
 const { protect } = require('../middleware/auth');
 const router = express.Router({ mergeParams: true });
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/files/')
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now())
-  }
-})
+ 
 
 //var upload = multer({ storage: storage })
 router.use(protect);
+
+router.route('/ticket').get(ticketCtrl.listTicket); router.route('/ticket/data').post(ticketCtrl.getTickets);
+//router.route('/banner/view/:id').get(  showBannerView);
+router.route('/ticket/add').get(ticketCtrl.addTicket).post(ticketCtrl.createTickets);
+router.route('/ticket/:id').get(ticketCtrl.getTicket).post(ticketCtrl.updateTicket).delete(ticketCtrl.deleteTicket);
+
 
  router.route('/bot').get(botCtrl.listBot); router.route('/bot/data').post(botCtrl.getBots);
  //router.route('/banner/view/:id').get(  showBannerView);

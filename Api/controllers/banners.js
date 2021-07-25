@@ -6,7 +6,7 @@ const Banner = require('../models/Banner');
 // @route     GET /api/v1/auth/Banners
 // @access    Private/Admin
 exports.getBanners = asyncHandler(async (req, res, next) => {
-  console.log('server-rew', req.body);
+  ;
   Banner.dataTables({
     limit: req.body.length,
     skip: req.body.start,

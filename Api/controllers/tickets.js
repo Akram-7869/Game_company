@@ -1,13 +1,13 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const Bot = require('../models/Bot');
+const Ticket = require('../models/Ticket');
 
-// @desc      Get all Bots
-// @route     GET /api/v1/auth/Bots
+// @desc      Get all Tickets
+// @route     GET /api/v1/auth/Tickets
 // @access    Private/Admin
-exports.getBots = asyncHandler(async (req, res, next) => {
+exports.getTickets = asyncHandler(async (req, res, next) => {
   ;
-  Bot.dataTables({
+  Ticket.dataTables({
     limit: req.body.length,
     skip: req.body.start,
     select:{ 'complexity':1, 'status':1, 'createdAt':1},
@@ -24,11 +24,11 @@ exports.getBots = asyncHandler(async (req, res, next) => {
   //res.status(200).json(res.advancedResults);
 });
 
-// @desc      Get single Bot
-// @route     GET /api/v1/auth/Bots/:id
+// @desc      Get single Ticket
+// @route     GET /api/v1/auth/Tickets/:id
 // @access    Private/Admin
-exports.getBot = asyncHandler(async (req, res, next) => {
-  const row = await Bot.findById(req.params.id);
+exports.getTicket = asyncHandler(async (req, res, next) => {
+  const row = await Ticket.findById(req.params.id);
 
   res.status(200).json({
     success: true,
@@ -36,11 +36,11 @@ exports.getBot = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc      Create Bot
-// @route     POST /api/v1/auth/Bots
+// @desc      Create Ticket
+// @route     POST /api/v1/auth/Tickets
 // @access    Private/Admin
-exports.createBot = asyncHandler(async (req, res, next) => {
-  const row = await Bot.create(req.body);
+exports.createTicket = asyncHandler(async (req, res, next) => {
+  const row = await Ticket.create(req.body);
 
   res.status(201).json({
     success: true,
@@ -48,38 +48,38 @@ exports.createBot = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc      Update Bot
-// @route     PUT /api/v1/auth/Bots/:id
+// @desc      Update Ticket
+// @route     PUT /api/v1/auth/Tickets/:id
 // @access    Private/Admin
-exports.updateBot = asyncHandler(async (req, res, next) => {
+exports.updateTicket = asyncHandler(async (req, res, next) => {
   let {status, complexity}=req.body
-  let row = await Bot.findById(req.params.id);
+  let row = await Ticket.findById(req.params.id);
   if (!row) {
     return next(
-      new ErrorResponse(`Bot  not found`, 404)
+      new ErrorResponse(`Ticket  not found`, 404)
     );
   }
   let fieldsToUpdate= {status, complexity}
    
-  row = await Bot.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
+  row = await Ticket.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
 
-   //Bot.isNew = false;
- // await Bot.save();
+   //Ticket.isNew = false;
+ // await Ticket.save();
   res.status(200).json({
     success: true,
     data: row
   });
 });
 
-// @desc      Delete Bot
-// @route     DELETE /api/v1/auth/Bots/:id
+// @desc      Delete Ticket
+// @route     DELETE /api/v1/auth/Tickets/:id
 // @access    Private/Admin
-exports.deleteBot = asyncHandler(async (req, res, next) => {
-  const row = await Bot.findById(req.params.id);
- // await Bot.findByIdAndDelete(req.params.id);
+exports.deleteTicket = asyncHandler(async (req, res, next) => {
+  const row = await Ticket.findById(req.params.id);
+ // await Ticket.findByIdAndDelete(req.params.id);
   
   res.status(200).json({
     success: true,

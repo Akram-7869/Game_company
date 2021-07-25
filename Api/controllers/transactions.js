@@ -6,7 +6,7 @@ const Transaction = require('../models/Transaction');
 // @route     GET /api/v1/auth/Transactions
 // @access    Private/Admin
 exports.getTransactions = asyncHandler(async (req, res, next) => {
-  console.log('server-rew', req.body);
+  ;
   Transaction.dataTables({
     limit: req.body.length,
     skip: req.body.start,

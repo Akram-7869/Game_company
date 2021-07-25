@@ -9,22 +9,17 @@ var axios = require("axios");
 // @access    Private/Admin
 exports.dashBoardView = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Datatables' };
-    console.log(req.session);
     res.render('Dashboard/index')
     // axios.get('http://localhost:3000/api/v1/players')
     //       .then(r => {
     //             // Assign value in session
-    //             console.log('list', r.data)
     //             res.render('Players/list', {list:r.data})
-                
-    //             //  console.log(`statusCode: ${res.statusCode}`)
-
     //       })
     //       .catch(error => {
-    //             console.error(error.error)
+    //             
 
     //          //   req.flash('error', 'Incorrect email or password!');
-    //           //  res.redirect('/login');
+    //          
     //       })
 });
  

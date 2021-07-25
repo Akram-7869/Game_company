@@ -31,6 +31,7 @@ const bots = require('./routes/bots');
 const versions = require('./routes/versions'); 
 //const files = require('./routes/files'); 
 const banners = require('./routes/banners'); 
+const tickets = require('./routes/tickets');
 const app = express();
 
 // Body parser
@@ -80,6 +81,7 @@ app.use('/api/v1/transactions', transactions);
 app.use('/api/v1/managers', managers);
 app.use('/api/v1/versions', versions);
 app.use('/api/v1/bots', bots);
+app.use('/api/v1/tickets', tickets);
 //app.use('/api/v1/files', files);
 
 app.use('/api/v1/banners', banners);

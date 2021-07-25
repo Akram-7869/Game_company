@@ -6,7 +6,7 @@ const Setting = require('../models/Setting');
 // @route     GET /api/v1/auth/Settings
 // @access    Private/Admin
 exports.getSettings = asyncHandler(async (req, res, next) => {
-  console.log('server-rew', req.body);
+  ;
   Setting.dataTables({
     limit: req.body.length,
     skip: req.body.start,

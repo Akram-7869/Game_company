@@ -6,7 +6,7 @@ const Version = require('../models/Version');
 // @route     GET /api/v1/auth/Versions
 // @access    Private/Admin
 exports.getVersions = asyncHandler(async (req, res, next) => {
-  console.log('server-rew', req.body);
+  ;
   Version.dataTables({
     limit: req.body.length,
     skip: req.body.start,
