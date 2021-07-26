@@ -28,7 +28,7 @@ exports.getSettings = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Settings/:id
 // @access    Private/Admin
 exports.getSetting = asyncHandler(async (req, res, next) => {
-  const setting = await Setting.findById(req.params.id);
+  const setting = await Setting.findOne({name:req.params.id});
 
   res.status(200).json({
     success: true,
@@ -52,8 +52,10 @@ exports.createSetting = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Settings/:id
 // @access    Private/Admin
 exports.updateSetting = asyncHandler(async (req, res, next) => {
-  let {one, many}=req.body
-  let setting = await Setting.findById(req.params.id);
+
+  let {one, many}=req.body;
+    console.log('server-post',one);
+  let setting = await Setting.findOne({name:req.params.id});
   if (!setting) {
     return next(
       new ErrorResponse(`Setting  not found`, 404)
@@ -61,7 +63,7 @@ exports.updateSetting = asyncHandler(async (req, res, next) => {
   }
   let fieldsToUpdate= {one, many}
    
-  setting = await Setting.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
+  setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });

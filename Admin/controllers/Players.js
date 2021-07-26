@@ -5,6 +5,65 @@
  const {callApi} = require('../helper/common');
  
 var apiUrl = 'http://localhost:3000/api/v1/players/';
+
+
+exports.getPlayerReport = asyncHandler(async (req, res, next) => {
+      // console.log('session',req.session)
+     res.locals = { title: 'Player' };
+     res.render('Reports/player')
+ });
+ exports.getPaymentReport = asyncHandler(async (req, res, next) => {
+      // console.log('session',req.session)
+     res.locals = { title: 'PaymentList' };
+     res.render('Reports/payment')
+ });
+
+
+exports.getChatList = asyncHandler(async (req, res, next) => {
+      // console.log('session',req.session)
+     res.locals = { title: 'Chat' };
+     res.render('Ticket/chat')
+ });
+
+exports.getPlayerNotification = asyncHandler(async (req, res, next) => {
+      // console.log('session',req.session)
+     res.locals = { title: 'Player Notification' };
+     res.render('Players/notifcation')
+ });
+exports.getPlayerPayout = asyncHandler(async (req, res, next) => {
+      // console.log('session',req.session)
+     res.locals = { title: 'Player Payout' };
+     res.render('Payments/payout')
+ });
+
+exports.getPlayerWallet = asyncHandler(async (req, res, next) => {
+      // console.log('session',req.session)
+     res.locals = { title: 'Player Wallet' };
+     res.render('Payments/wallet')
+ });
+exports.getPlayerBanned = asyncHandler(async (req, res, next) => {
+      // console.log('session',req.session)
+     res.locals = { title: 'Player Banned' };
+     res.render('Players/banned')
+ });
+
+ exports.getPlayerKyc = asyncHandler(async (req, res, next) => {
+      // console.log('session',req.session)
+     res.locals = { title: 'Player Kyc' };
+     res.render('Players/kyc')
+ });
+ exports.getPlayerHistory = asyncHandler(async (req, res, next) => {
+      // console.log('session',req.session)
+     res.locals = { title: 'Player History' };
+     res.render('Players/history')
+ });
+ exports.getLeaderBoard = asyncHandler(async (req, res, next) => {
+      // console.log('session',req.session)
+     res.locals = { title: 'Leader Board' };
+     res.render('Players/leaderboard')
+ });
+
+
 // @desc      Get all Players
 // @route     GET /api/v1/Players
 // @access    Private/Admin
@@ -117,6 +176,10 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
       // const config = {
       //       headers: { Authorization: `Bearer ${req.session.user.token}` }
       //   };
+let filter = req.params.filter;
+
+ 
+
         callApi(req).post(apiUrl, { ...req.body  } )
           .then(r => {
                 // Assign value in session

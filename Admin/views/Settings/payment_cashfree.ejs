@@ -1,0 +1,97 @@
+<%- contentFor('HeaderCss') %>
+<link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+
+<%- contentFor('breadcrumb') %>
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-flex align-items-center justify-content-between">
+            <h4 class="mb-0"><%- title %></h4>
+
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="/admin"><%- title %></a></li>
+                     <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<%- contentFor('body') %>
+
+ 
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+               <!--  <h4 class="card-title">Validation type</h4>
+                <p class="card-title-desc"> </p> -->
+                <% if(error.length> 0) { %>
+                    <div class="alert alert-danger text-center mb-4 flash" role="alert">
+                        <%= error %>
+                    </div>
+                <% } %>
+                <% if(message.length> 0) { %>
+                    <div class="alert alert-success text-center mb-4 flash" role="alert">
+                        <%= message %>
+                    </div>
+                <% } %>
+                <form class="custom-validation"  action="" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
+                    <div class="mb-3">
+                        <label class="form-label">App Id</label>
+                        <input type="text" class="form-control" required name="one[appId]" value="<%= row ? row.one['appId']:''%>" placeholder="Type something"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Secreate</label>
+                        <input type="text" class="form-control" required name="one[secreate]" value="<%= row ? row.one['secreate']:''%>" placeholder="Type something"/>
+                    </div>
+                    <div>
+                        <div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                Submit
+                            </button>
+                            <button type="reset" class="btn btn-secondary waves-effect">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div> <!-- end col -->
+
+   
+</div> <!-- end row -->
+
+<%- contentFor('FooterJs') %>
+
+<!-- parsleyjs -->
+<script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
+
+<script src="/public/assets/js/pages/form-validation.init.js"></script>
+<!-- Sweet Alerts js -->
+<script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+<script>
+function handleSubmit(params) {
+    if(params.checkValidity()){
+        //Swal.showLoading();
+        Swal.fire({
+  title: '',
+  html: 'Please wait...',
+  allowEscapeKey: false,
+  allowOutsideClick: false,
+  didOpen: () => {
+    Swal.showLoading()
+  }
+});
+    }
+    
+}
+</script>
+<%- contentFor('BottomJs') %>
