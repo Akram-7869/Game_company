@@ -57,7 +57,7 @@ exports.updateVersion = asyncHandler(async (req, res, next) => {
   let row = await Version.findById(req.params.id);
   if (!row) {
     return next(
-      new ErrorResponse(`Version  not found`, 404)
+      new ErrorResponse(`Version  not found`, 200)
     );
   }
   let fieldsToUpdate= {appLink, versionControle}

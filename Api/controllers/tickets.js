@@ -56,7 +56,7 @@ exports.updateTicket = asyncHandler(async (req, res, next) => {
   let row = await Ticket.findById(req.params.id);
   if (!row) {
     return next(
-      new ErrorResponse(`Ticket  not found`, 404)
+      new ErrorResponse(`Ticket  not found`, 200)
     );
   }
   let fieldsToUpdate= {status, complexity}
