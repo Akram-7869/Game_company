@@ -53,7 +53,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.params.id);
   if (!user) {
     return next(
-      new ErrorResponse(`User  not found`, 200)
+      new ErrorResponse(`User  not found`, 404)
     );
   }
    // Make sure user is provider owner

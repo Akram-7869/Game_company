@@ -39,7 +39,7 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
  
   if (!player) {
     return next(
-      new ErrorResponse(`Player  not found`, 200)
+      new ErrorResponse(`Player  not found`, 404)
     );
   }
 
@@ -70,7 +70,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
   let player;
  if( !firstName ||!email ||!gender || !country ||!aadharNumber|| !panNumber ||!dob){
  return next(
-      new ErrorResponse(`All fields are requied`, 200)
+      new ErrorResponse(`All fields are requied`, 400)
     );
  }
   if(req.staff){
@@ -83,7 +83,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
  
   if (!player) {
     return next(
-      new ErrorResponse(`Player  not found`, 200)
+      new ErrorResponse(`Player  not found`, 404)
     );
   }
 
@@ -123,7 +123,7 @@ exports.setPin = asyncHandler(async (req, res, next) => {
  
 
 if(!pin || !req.player || req.player.role !== 'player'){
-  return next(new ErrorResponse('user not found', 200));
+  return next(new ErrorResponse('user not found', 400));
 }
    
 
@@ -143,7 +143,7 @@ exports.chkPin = asyncHandler(async (req, res, next) => {
   const { pin  } = req.body;
  
 if(!pin || !req.player || req.player.role !== 'player'){
-  return next(new ErrorResponse('authentication faild', 200));
+  return next(new ErrorResponse('authentication faild', 400));
 }
   
  // Check for user
@@ -152,7 +152,7 @@ if(!pin || !req.player || req.player.role !== 'player'){
  const isMatch =  user.password=== req.body.pin;
   // Check for user
    if(!isMatch){
-    return next(new ErrorResponse('authentication faild', 200));
+    return next(new ErrorResponse('authentication faild', 400));
    }
  
   res.status(200).json({
@@ -182,12 +182,12 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   let {amount, note} = req.body;
     if(amount <0 ){
     return next(
-      new ErrorResponse(`Invalid amount`, 200)
+      new ErrorResponse(`Invalid amount`, 400)
     );
   }
    if (!req.player) {
     return next(
-      new ErrorResponse(`Invalid Code`, 200)
+      new ErrorResponse(`Invalid Code`, 400)
     );
   }
   let fieldsToUpdate = {
@@ -221,12 +221,12 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   let {amount, note} = req.body;
     if(amount <0 ){
     return next(
-      new ErrorResponse(`Invalid amount`, 200)
+      new ErrorResponse(`Invalid amount`, 400)
     );
   }
    if (!req.player) {
     return next(
-      new ErrorResponse(`Invalid Code`, 200)
+      new ErrorResponse(`Invalid Code`, 400)
     );
   }
   let fieldsToUpdate = {
@@ -272,12 +272,12 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
   player= await Player.findById(req.params.id);
   if (!player) {
     return next(
-      new ErrorResponse(`Player  not found`, 200)
+      new ErrorResponse(`Player  not found`, 404)
     );
   }
  if(!req.staff){
     return next(
-      new ErrorResponse(`Not Autherized`, 200)
+      new ErrorResponse(`Not Autherized`, 400)
     );
   }
 

@@ -20,11 +20,11 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
   if (player) {
     if(player.deviceToken !== deviceToken  ){
         return next(
-          new ErrorResponse(` device already registered `, 200)
+          new ErrorResponse(` device number `, 400)
         );
     }else if( player.phone !== phone ){
       return next(
-        new ErrorResponse(`use same phone number `, 200)
+        new ErrorResponse(`phone number `, 400)
       );
     }else{
         let fieldsToUpdate={
@@ -71,7 +71,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   if(!req.body.deviceToken || !req.body.deviceType || !req.body.code|| !req.body.phone){
         return next(
-        new ErrorResponse(`Please provide all required data`, 200)
+        new ErrorResponse(`Please provide all required data`, 400)
       );
   }
   //resetPasswordExpire: { $gt: Date.now() }
@@ -84,7 +84,7 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   const addamount = 10;
   if (!user) {
     return next(
-      new ErrorResponse(`Invalid Code`, 200)
+      new ErrorResponse(`Invalid Code`, 400)
     );
   }
 
@@ -118,7 +118,7 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
     sendTokenResponse(user, 200, res);
 
  }else{
-   return next(new ErrorResponse(`User is inactive`, 200));
+   return next(new ErrorResponse(`User is inactive`, 400));
  }
 
 });
@@ -161,21 +161,21 @@ exports.login = asyncHandler(async (req, res, next) => {
 console.log('login',email, password)
   // Validate emil & password
   if (!email || !password) {
-    return next(new ErrorResponse('Please provide an email and password', 200));
+    return next(new ErrorResponse('Please provide an email and password', 400));
   }
 
   // Check for user
   const user = await User.findOne({ email }).select('+password');
 
   if (!user) {
-    return next(new ErrorResponse('Invalid credentials', 200));
+    return next(new ErrorResponse('Invalid credentials', 401));
   }
 
   // Check if password matches
   const isMatch = await user.matchPassword(password);
 
   if (!isMatch) {
-    return next(new ErrorResponse('Invalid credentials', 200));
+    return next(new ErrorResponse('Invalid credentials', 401));
   }
 
   sendTokenResponse(user, 200, res);

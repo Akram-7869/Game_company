@@ -56,7 +56,7 @@ exports.updateBot = asyncHandler(async (req, res, next) => {
   let row = await Bot.findById(req.params.id);
   if (!row) {
     return next(
-      new ErrorResponse(`Bot  not found`, 200)
+      new ErrorResponse(`Bot  not found`, 404)
     );
   }
   let fieldsToUpdate= {status, complexity}

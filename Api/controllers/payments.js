@@ -56,7 +56,7 @@ exports.updateSetting = asyncHandler(async (req, res, next) => {
   let row = await Setting.findById(req.params.id);
   if (!row) {
     return next(
-      new ErrorResponse(`Setting  not found`, 200)
+      new ErrorResponse(`Setting  not found`, 404)
     );
   }
   let fieldsToUpdate= {one, many}
