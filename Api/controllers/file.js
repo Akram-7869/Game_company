@@ -68,7 +68,7 @@ exports.deleteFile = asyncHandler(async (req, res, next) => {
 exports.uploadFile = asyncHandler(async (req, res, next) => {
 console.log(req.body);
     // if (!req.file) {
-    //     return next(new ErrorResponse(`Please upload a file`, 400));
+    //     return next(new ErrorResponse(`Please upload a file`));
     // }
 
     const file = req.body.file;
@@ -82,15 +82,14 @@ console.log(req.body);
     // console.log(req.files, req.body);
     // Make sure the image is a photo
     if (!split[0].includes('image')) {
-        return next(new ErrorResponse(`Please upload an image file`, 400));
+        return next(new ErrorResponse(`Please upload an image file`));
     }
    // ${process.env.MAX_FILE_UPLOAD}
     // Check filesize
     if (size > process.env.MAX_FILE_UPLOAD) {
         return next(
             new ErrorResponse(
-                `Please upload an image less than 256k`,
-                400
+                `Please upload an image less than 256k`
             )
         );
     }

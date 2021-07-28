@@ -58,7 +58,7 @@ exports.updateBanner = asyncHandler(async (req, res, next) => {
   let row = await Banner.findById(req.params.id);
   if (!row) {
     return next(
-      new ErrorResponse(`Banner  not found`, 404)
+      new ErrorResponse(`Banner  not found`)
     );
   }
   let fieldsToUpdate= {one, many}
@@ -92,7 +92,7 @@ exports.deleteBanner = asyncHandler(async (req, res, next) => {
 exports.uploadFile = asyncHandler(async (req, res, next) => {
 console.log(req.body, req.files);
     // if (!req.file) {
-    //     return next(new ErrorResponse(`Please upload a file`, 400));
+    //     return next(new ErrorResponse(`Please upload a file`));
     // }
 
     const file = req.files.file;
@@ -106,15 +106,14 @@ console.log(req.body, req.files);
     // console.log(req.files, req.body);
     // Make sure the image is a photo
     if (!split[0].includes('image')) {
-        return next(new ErrorResponse(`Please upload an image file`, 400));
+        return next(new ErrorResponse(`Please upload an image file`));
     }
    // ${process.env.MAX_FILE_UPLOAD}
     // Check filesize
     if (size > process.env.MAX_FILE_UPLOAD) {
         return next(
             new ErrorResponse(
-                `Please upload an image less than 256k`,
-                400
+                `Please upload an image less than 256k`
             )
         );
     }

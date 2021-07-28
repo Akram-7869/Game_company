@@ -56,7 +56,7 @@ exports.updateTransaction = asyncHandler(async (req, res, next) => {
   let transaction = await Transaction.findById(req.params.id);
   if (!transaction) {
     return next(
-      new ErrorResponse(`Transaction  not found`, 404)
+      new ErrorResponse(`Transaction  not found`)
     );
   }
   let fieldsToUpdate= {one, many}

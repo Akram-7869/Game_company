@@ -53,16 +53,14 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.params.id);
   if (!user) {
     return next(
-      new ErrorResponse(`User  not found`, 404)
+      new ErrorResponse(`User  not found`)
     );
   }
    // Make sure user is provider owner
    if (user._id.toString() !== req.user.id && req.user.role !== 'admin') {
     return next(
       new ErrorResponse(
-        `User ${req.user.id} is not authorized to update provider ${provider._id}`,
-        401
-      )
+        `User ${req.user.id} is not authorized to update provider ${provider._id}`)
     );
   }
   if (req.body.password) {
@@ -91,9 +89,7 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
    if (user._id.toString() !== req.user.id && req.user.role !== 'admin') {
     return next(
       new ErrorResponse(
-        `User ${req.user.id} is not authorized to update provider ${provider._id}`,
-        401
-      )
+        `User ${req.user.id} is not authorized to update provider ${provider._id}`)
     );
   }
   await User.findByIdAndDelete(req.params.id);
