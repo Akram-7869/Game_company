@@ -13,7 +13,7 @@ exports.getBots = asyncHandler(async (req, res, next) => {
     select:{ 'complexity':1, 'status':1, 'createdAt':1},
     search: {
       value: req.body.search?  req.body.search.value:'',
-      fields: ['complexity']
+      fields: ['complexity','status']
     },
     sort: {
       _id: 1

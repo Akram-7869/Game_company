@@ -30,16 +30,12 @@ router.route('/setting/payu-setting').get(settingCtrl.getPayuMoney).post(setting
 router.route('/setting/message-setting').get(settingCtrl.getMessageSetting).post(settingCtrl.updateMessageSetting);
 router.route('/setting/localtext-setting').get(settingCtrl.getLocalText).post(settingCtrl.updateLocalText);
 
-router.route('/page/about').get(settingCtrl.getPageAbout).post(settingCtrl.updatePageAbout);
-router.route('/page/terms').get(settingCtrl.getPageTerm).post(settingCtrl.updatePageTerm);
-router.route('/page/policy').get(settingCtrl.getPagePolicy).post(settingCtrl.updatePagePolicy);
-// router.route('/').get(settingCtrl.getFireBase).post(settingCtrl.updateFireBase);
-// router.route('/').get(settingCtrl.getFireBase).post(settingCtrl.updateFireBase);
-// router.route('/').get(settingCtrl.getFireBase).post(settingCtrl.updateFireBase);
-// router.route('/').get(settingCtrl.getFireBase).post(settingCtrl.updateFireBase);
-// router.route('/').get(settingCtrl.getFireBase).post(settingCtrl.updateFireBase);
-
-
+ 
+router.route('/page').get(settingCtrl.pageList); router.route('/page/data').post(settingCtrl.getPageList);
+ router.route('/page/add').get(settingCtrl.pageAdd);
+ //.post(settingCtrl.createPage);
+router.route('/page/:id').get(settingCtrl.getPage);
+//.post(settingCtrl.updatePage).delete(settingCtrl.deletePage);
 
 router.route('/ticket').get(ticketCtrl.listTicket); router.route('/ticket/data').post(ticketCtrl.getTickets);
 //router.route('/banner/view/:id').get(  showBannerView);
@@ -76,7 +72,7 @@ router.route('/banner/add').get(bannerControler.bannerAdd)
       .post(bannerControler.createBanners);
 router.route('/banner/data').post(bannerControler.getBanners);
 router.route('/banner').get(bannerControler.bannerList);
-router.route('/banner/:id').get(bannerControler.getBanner).post(bannerControler.updateBanner).delete(bannerControler.deleteBanner);
+router.route('/banner/:id').get(bannerControler.editBanner).post(bannerControler.updateBanner).delete(bannerControler.deleteBanner);
 
 
 //router.route('/transaction/view/:id').get(transactionView);
@@ -91,8 +87,6 @@ router.route('/report/payment').get(palyerCtrl.getPaymentReport);
 router.route('/leaderboard').get(palyerCtrl.getLeaderBoard);
 router.route('/playerhistory').get(palyerCtrl.getPlayerHistory);
 
-
-
 router.route('/dashboard').get(dashBoardView);
 
 router.route('/player/upi/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);
@@ -101,6 +95,8 @@ router.route('/player/bank/:id').get(palyerCtrl.getProfile).post(palyerCtrl.upda
 router.route('/player/profile/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);
 router.route('/player/status/:id').post(palyerCtrl.updatePlayerStatus);
 router.route('/player/view/:id').get(palyerCtrl.showPlayerView);
+router.route('/player/credit/:id').post(palyerCtrl.creditPlayer);
+
 
 
 router.route('/player/add').get(palyerCtrl.getAddForm).post(palyerCtrl.createPlayers);

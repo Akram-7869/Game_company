@@ -5,7 +5,8 @@ const {
     getTransaction,
     getTransactions,
     updateTransaction,
-    deleteTransaction
+    deleteTransaction,
+    getPlayerTransaction
 
 } = require('../controllers/transactions');
 
@@ -14,7 +15,7 @@ const router = express.Router({ mergeParams: true });
 const { protect} = require('../middleware/auth');
  
 router.use(protect);
-
+router.route('/player').get(getPlayerTransaction);
 router.route('/add').post(createTransaction);
 router.route('/').post(getTransactions);
 

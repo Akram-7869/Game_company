@@ -6,7 +6,6 @@
  
 var apiUrl = 'http://localhost:3000/api/v1/players/';
 
-
 exports.getPlayerReport = asyncHandler(async (req, res, next) => {
       // console.log('session',req.session)
      res.locals = { title: 'Player' };
@@ -127,6 +126,28 @@ exports.updatePlayerStatus = asyncHandler(async (req, res, next) => {
      
       res.locals = { title: 'Datatables' };
       callApi(req).post(apiUrl+ 'status/'+ req.params.id,req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'Player-edit' };
+                  req.flash('success', 'Data save');
+                  res.render('Players/edit',{row:r.data.data}); 
+                
+            })
+            .catch(error => {
+                 
+  
+                 req.flash('error', 'Data not updated');
+               
+            })
+  });
+
+// @desc      Get  Player
+// @route     GET /api/v1/Players
+// @access    Private/Admin
+exports.creditPlayer = asyncHandler(async (req, res, next) => {
+     console.log(req.body);
+      res.locals = { title: 'Datatables' };
+      callApi(req).post(apiUrl+ 'credit/'+ req.params.id,req.body)
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Player-edit' };

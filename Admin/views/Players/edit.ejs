@@ -174,7 +174,27 @@
     </div>
     <div class="tab-pane" id="settings1" role="tabpanel">
         <p class="mb-0">
-            
+            <form class="custom-validation" action="/admin/player/credit/<%=row._id %>" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
+               
+                 
+                <div class="mb-3">
+                    <label class="form-label">Amount</label>
+                    <input type="text" name="amount" value="" class="form-control" required placeholder="Amount Add"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Note</label>
+                    <textarea    name="note" value="" class="form-control" required placeholder="Note ..."></textarea>
+                </div>
+                 
+                <div>
+                    <div>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                            Submit 
+                        </button>
+                      
+                    </div>
+                </div>
+            </form>
         </p>
     </div>
 </div>

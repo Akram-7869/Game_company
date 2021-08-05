@@ -104,7 +104,8 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
     amount: addamount, 
     transactionType: 'credit',
     note: 'player register',
-    prevBalance: user.balance
+    prevBalance: user.balance,
+    status:'complete'
   }
   let tran = await Transactions.create(tranData);
   user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
@@ -122,7 +123,29 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
  }
 
 });
+exports.chkPin = asyncHandler(async (req, res, next) => {
+  const { pin  } = req.body;
+ 
+if(!pin || !req.player || req.player.role !== 'player'){
+  return next(new ErrorResponse('authentication faild'));
+}
+  
+ // Check for user
+ const user = await Player.findOne({_id: req.player.id }).select('+password');
+ // Check if password matches
+ const isMatch =  user.password=== req.body.pin;
+  // Check for user
+   if(!isMatch){
+    return next(new ErrorResponse('authentication faild'));
+   }
+   sendTokenResponse(user, 200, res);
 
+  // res.status(200).json({
+  //   success: true,
+  //   data: req.player
+  // });
+ 
+});
 
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {

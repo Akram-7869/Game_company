@@ -5,8 +5,37 @@ const Transaction = require('../models/Transaction');
 // @desc      Get all Transactions
 // @route     GET /api/v1/auth/Transactions
 // @access    Private/Admin
+exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
+  
+   if(!req.player){
+       return next(
+      new ErrorResponse(`Transaction  not found`)
+    );
+   }
+  // console.log(req.player._id)
+  
+  Transaction.dataTables({
+    limit: 1000,
+    skip: 0,
+    select:{'amount':1,'transactionType':1, 'note':1, 'createdAt':1,logType:1,paymentStatus:'1'},
+    search: {
+      value: req.player._id,
+      fields: ['playerId']
+    },
+    sort: {
+      updatedAt: 1
+    }
+  }).then(function (table) {
+    res.json({data: table.data, recordsTotal:table.total,recordsFiltered:table.total, draw:req.body.draw}); // table.total, table.data
+  })
+  //res.status(200).json(res.advancedResults);
+});
+
+// @desc      Get all Transactions
+// @route     GET /api/v1/auth/Transactions
+// @access    Private/Admin
 exports.getTransactions = asyncHandler(async (req, res, next) => {
-  ;
+  
   Transaction.dataTables({
     limit: req.body.length,
     skip: req.body.start,

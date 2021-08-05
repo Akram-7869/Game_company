@@ -37,6 +37,9 @@ const app = express();
 // Body parser
 app.use(express.json());
 
+app.use(express.urlencoded({
+  extended: true
+}))
 // Cookie parser
 app.use(cookieParser());
 
@@ -82,6 +85,8 @@ app.use('/api/v1/managers', managers);
 app.use('/api/v1/versions', versions);
 app.use('/api/v1/bots', bots);
 app.use('/api/v1/tickets', tickets);
+app.use('/api/v1/payments', payments);
+
 //app.use('/api/v1/files', files);
 
 app.use('/api/v1/banners', banners);

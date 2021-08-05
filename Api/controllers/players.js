@@ -30,10 +30,8 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
 exports.getPlayer = asyncHandler(async (req, res, next) => {
    let player; 
    if(req.staff){
-    console.log('fetching');
     player= await Player.findById(req.params.id);
   }else{
-    console.log('auth');
     player = req.player;
   }
  
@@ -140,27 +138,56 @@ if(!pin || !req.player || req.player.role !== 'player'){
 // @route     POST /api/v1/auth/login
 // @access    Public
 exports.chkPin = asyncHandler(async (req, res, next) => {
-  const { pin  } = req.body;
+  const { pin, playerId  } = req.body;
  
-if(!pin || !req.player || req.player.role !== 'player'){
+if(!pin || !playerId ){
   return next(new ErrorResponse('authentication faild'));
 }
   
  // Check for user
- const user = await Player.findOne({_id: req.player.id }).select('+password');
+ const user = await Player.findOne({_id: playerId }).select('+password');
  // Check if password matches
  const isMatch =  user.password=== req.body.pin;
   // Check for user
    if(!isMatch){
     return next(new ErrorResponse('authentication faild'));
    }
- 
-  res.status(200).json({
-    success: true,
-    data: req.player
-  });
+   sendTokenResponse(user, 200, res);
+
+  // res.status(200).json({
+  //   success: true,
+  //   data: req.player
+  // });
  
 });
+// Get token from model, create cookie and send response
+const sendTokenResponse = (user, statusCode, res) => {
+  // Create token
+  const token = user.getSignedJwtToken();
+
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    options.secure = true;
+  }
+
+  res
+    .status(statusCode)
+    //.cookie('token', token, options)
+    .json({
+      success: true,
+      token,
+      playerId:user._id,
+      firstName: user.firstName,
+      lastName: user.lastName
+    });
+};
+
 
 // @desc      Log user out / clear cookie
 // @route     GET /api/v1/auth/logout
@@ -191,7 +218,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     );
   }
   let fieldsToUpdate = {
-    $inc: { balance: -amount },
+    $inc: { balance: -amount } 
   }
 
   let tranData = {
@@ -201,11 +228,14 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'note':note,
     'prevBalance': req.player.balance
   }
-  let tran = await Transaction.create(tranData);
+   let tran = await Transaction.create(tranData);
   let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
+ 
+   await Transaction.findByIdAndUpdate(tran._id,{status:'complete'});
+   
 
   res.status(200).json({
     success: true,
@@ -218,34 +248,40 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.creditAmount = asyncHandler(async (req, res, next) => {
-  let {amount, note} = req.body;
+    let player = await Player.findById(req.params.id);
+    
+   let {amount, note} = req.body;
     if(amount <0 ){
     return next(
       new ErrorResponse(`Invalid amount`)
     );
   }
-   if (!req.player) {
+   if (!player) {
     return next(
-      new ErrorResponse(`Invalid Code`)
+      new ErrorResponse(`Player Not found`)
     );
   }
   let fieldsToUpdate = {
-    $inc: { balance: amount },
+    $inc: { balance: parseInt(amount) }
   }
-
+console.log(amount, note);
   let tranData = {
-    'playerId': req.player._id,
-    'amount': amount, 
+    'playerId': player._id,
+    'amount': parseInt(amount), 
     'transactionType': "credit",
     'note':note,
-    'prevBalance': req.player.balance
+    'prevBalance': player.balance,
+
+
   }
   let tran = await Transaction.create(tranData);
-  let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
+    player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
 
+     await Transaction.findByIdAndUpdate(tran._id,{status:'complete'});
+   
   res.status(200).json({
     success: true,
     data:player
@@ -293,3 +329,4 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+

@@ -2,11 +2,18 @@ const mongoose = require('mongoose');
 var dataTables = require('mongoose-datatables')
 
 const BannerSchema = new mongoose.Schema({
-    category: {
+    location: {
         type: String
     },
-    image: {
-        type: Array,
+    url: {
+        type: String
+    },
+    imageId: {
+         type: mongoose.Schema.ObjectId,
+    },
+    status:{
+        type: String,
+        enum: [ 'inactive','active'],
     },
     
     createdBy: {

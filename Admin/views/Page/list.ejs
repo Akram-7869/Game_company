@@ -41,17 +41,27 @@
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
-                <a type="button" href="/admin/banner/add" class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i> Add New Banner</a>
-
+                <div>
+                    
+                    <!-- <div class="float-end">
+                        <form class="d-inline-flex mb-3">
+                            <label class="form-check-label my-2 me-2" for="order-selectinput">Orders</label>
+                            <select class="form-select" id="order-selectinput">
+                                <option selected>All</option>
+                                <option value="1">Active</option>
+                                <option value="2">Unpaid</option>
+                            </select>
+                        </form>
+                        
+                    </div> -->
+                    <a type="button" href="/admin/page/add" class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i> Add New Page</a>
+                </div>
+                 
                 <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead>
                     <tr>
                         <th>Srno</th>
-                        <th>location</th>
-
-                        <th>Status</th>
-                        <th>Image</th>
-                       
+                        <th>Page</th>
                         <th>Action</th>  
                     </tr>
                     </thead>
@@ -97,7 +107,7 @@
         let r = confirm('Want to delete?');
         debugger
        if( r){
-        handleDel(id);
+        handleDel(i);
        }
  
      
@@ -107,7 +117,7 @@
 function handleDel (id){
    return $.ajax({
                     type: 'DELETE',
-                    url: '/admin/banner/'+id,
+                    url: '/admin/page/'+id,
                     success: (results)=> {
                         alert('Record Delete');
                           location.reload();
@@ -132,23 +142,16 @@ function handleDel (id){
     "processing": true,    
                 "serverSide": true,    
                 "ajax": {    
-                    url:"/admin/banner/data", type: "post" },    
+                    url:"/admin/page/data", type: "post" },    
                 "columns": [    
                 {data: null, "render": function(data, type, full, meta) {return i++;}}, 
                      
-                        {data:'status'},
-                        {data:'location'},
-                        {
-                        "render": function (data, type, JsonResultRow, meta) {
-                            return '<img width="50" src="http://localhost:3000/api/v1/banners/image/'+JsonResultRow.imageId+'">';
-                        }
-                    },
-
+                        {data:'name'},
+                      
                         {data: null, "render": function(data, type, full, meta) {
-        return '<a class="px-2 text-primary" href="/admin/banner/' 
-                + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\'' 
+        return '<a class="px-3 text-primary" href="/admin/page/' 
+                + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a class="px-3 text-danger" onclick="delRec(\'' 
                 + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
-               
       }},   
                 ]    
 } );

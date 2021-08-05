@@ -142,11 +142,12 @@ function handleDel (id){
                         {data:'createdAt'},
 
                         {data: null, "render": function(data, type, full, meta) {
-        return '<a class="btn btn-success btn-sm" href="/admin/settings/' 
-                + full._id + '">EDIT</a><button class="btn btn-success btn-sm" onclick="delRec(\'' 
+        return '<a class="btn btn-sm btn-info edit " href="/admin/settings/' 
+                + full._id + '">EDIT</a><button class="btn btn-sm btn-danger delete" onclick="delRec(\'' 
                 + full._id + '\')">Del</button><a class="btn btn-success btn-sm" href="/admin/settings/view/' 
                 + full._id +'">View</a>';
       }},   
                 ]    
 } );
  </script>
+

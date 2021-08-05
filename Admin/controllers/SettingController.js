@@ -6,6 +6,45 @@ var apiUrl = 'http://localhost:3000/api/v1/settings/';
 //     res.locals = { title: 'Datatables' };
 //     res.render('Settings/list',{apiUrl})
 // });
+exports.pageList = asyncHandler(async (req, res, next) => {
+    res.locals = { title: 'Page' };
+    res.render('Page/list',{apiUrl})
+});
+exports.pageAdd = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Page' };
+     
+      res.render('Page/add',{ 'message': req.flash('message'), 'error': req.flash('error'),row:{one:{title:'',content:''}}});
+});
+exports.getPage = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Page' };
+      callApi(req).get(apiUrl + req.params.id)
+      .then(r => {
+           
+            res.locals = { title: 'Player' };
+            res.render('Page/edit',{ 'message': req.flash('message'), 'error': req.flash('error'),row:{one:{title:'',content:''}}});
+      })
+      .catch(error => {
+            
+      })
+
+
+});
+  
+exports.getPageList = asyncHandler(async (req, res, next) => {
+      callApi(req).post(apiUrl, { ...req.body  } )
+      .then(r => {
+             
+            res.status(200).json(r.data);
+      })
+      .catch(error => {
+            
+
+         //   req.flash('error', 'Incorrect email or password!');
+         
+      })
+
+});
+
 exports.getPageAbout = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Page Aboutus' };
       callApi(req).get(apiUrl + 'admin')

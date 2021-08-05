@@ -10,24 +10,15 @@ const FilesSchema = new mongoose.Schema({
   },
   createdByName: {
     type: String
-},
-  quizId: {
-    type: mongoose.Schema.ObjectId
   },
-  groupId: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Group',
-  },
+  tag:{
+     type: String
+   },
+   
   createdAt: {
     type: Date,
     default: Date.now
   }
 },{timestamps: true});
 
-
-
-
-
-exports.Files= mongoose.model('Files', FilesSchema);
-exports.FilesBackup= mongoose.model('FilesBackup', FilesSchema);
-exports.FilesTempBackup= mongoose.model('FilesTempBackup', FilesSchema);
+module.exports = mongoose.model('Files', FilesSchema);

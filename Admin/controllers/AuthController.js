@@ -73,20 +73,23 @@ module.exports = function (app) {
 	});
 
 	app.post('/post-login', urlencodeParser, function (req, res) {
- 		axios
-  .post('http://localhost:3000/api/v1/auth/login', {
+ 		axios.post('http://localhost:3000/api/v1/auth/login', {
     email: req.body.email,
 		password:req.body.password,
   })
   .then(r => {
 				// Assign value in session
+				if(!r.data.success){
+					req.flash('error', 'Incorrect email or password!');
+					res.redirect('/login');
+					return;
+				}
 				req.session.user = r.data;
 				res.redirect('/admin/dashboard');
    
   })
   .catch(error => {
-		req.flash('error', 'Incorrect email or password!');
-		res.redirect('/login');
+		
   })
 		
 	 
@@ -110,8 +113,7 @@ module.exports = function (app) {
 	app.get('/logout', function (req, res) {
 
 		// Assign  null value in session
-		sess = req.session;
-		sess.user = null;
+ 		req.session.user = undefined;
 		res.cookie('token', 'none', {
 			expires: new Date(Date.now() + 10 * 1000),
 			httpOnly: true

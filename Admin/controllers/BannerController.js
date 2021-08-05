@@ -1,6 +1,7 @@
 const asyncHandler = require('../middleware/async');
 var axios = require("axios");
-var apiUrl = 'http://localhost:3000/api/v1/banner/';
+var apiUrl = 'http://localhost:3000/api/v1/banners/';
+const {callApi} = require('../helper/common');
 
 
 exports.bannerList = asyncHandler(async (req, res, next) => {
@@ -29,6 +30,7 @@ exports.updateBanner = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Banner' };
                   req.flash('error', 'Data save');
+                  console.log(r.data);
                   res.render('Ads/edit',{row:r.data.data}); 
             })
             .catch(error => {
@@ -37,10 +39,32 @@ exports.updateBanner = asyncHandler(async (req, res, next) => {
                
             })
   });
-
+  exports.editBanner = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Banner' };
+      axios.get(apiUrl+ req.params.id,req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'Banner' };
+                  req.flash('error', 'Data save');
+                  console.log(r.data);
+                  res.render('Ads/edit',{row:r.data.data}); 
+            })
+            .catch(error => {
+  
+                 req.flash('error', 'Data not updated');
+               
+            })
+  });
  
 exports.deleteBanner = asyncHandler(async (req, res, next) => {
-    
+      callApi(req).delete(apiUrl+   req.params.id,req.body)
+      .then(r => {
+            // Assign value in session
+            res.locals = { title: 'Player-edit' };
+            req.flash('success', 'Deleted');
+           // res.render('Players/List',{row:r.data.data}); 
+          
+      }).catch(error => {req.flash('error', 'Data not updated');})
       res.status(200).json({
         success: true,
         data: {}
@@ -77,12 +101,9 @@ exports.bannerAdd = asyncHandler(async (req, res, next) => {
  
 exports.createBanners = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Banner' };
-     console.log('creating-image', req.files,req.body);
-     axios.post(apiUrl+'uplodfile',{ file:req.files},{'maxContentLength': Infinity,
-     'maxBodyLength': Infinity}).then(r=>{
-           console.log('rrrr',r)
-     });
-      axios.post(apiUrl,{body:req.body, file:req.files})
+     console.log('creating-image', req.files);
+      
+axios.post(apiUrl,{body:req.body, file:req.files})
       .then(r => {
             // Assign value in session
             res.locals = { title: 'Banner' };

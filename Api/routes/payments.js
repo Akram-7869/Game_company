@@ -8,7 +8,7 @@ const {
     deleteSetting
 
 } = require('../controllers/settings');
-
+const paymentCashfreeCtrl = require('../controllers/paymentsCashfree');
 
 const router = express.Router({ mergeParams: true });
 
@@ -19,6 +19,8 @@ router.use(protect);
 
 router.route('/add').post(createSetting);
 router.route('/').post(getSettings);
+router.route('/cashfree/token').post(paymentCashfreeCtrl.getToken);
+router.route('/cashfree/notify').post(paymentCashfreeCtrl.handleNotify);
 
 router
     .route('/:id')

@@ -5,15 +5,16 @@ const {
     getBanner,
     getBanners,
     updateBanner,
-    deleteBanner,uploadFile
+    deleteBanner,uploadFile,getFile
 
 } = require('../controllers/banners');
 
 
 const router = express.Router({ mergeParams: true });
-const { protect} = require('../middleware/auth');
+//const { protect} = require('../middleware/auth');
  
 //router.use(protect);
+router.route('/image/:id').get(getFile);
 router.route('/uploadfile').post(uploadFile);
 router.route('/add').post(createBanner);
 router.route('/').post(getBanners);
