@@ -3,6 +3,4 @@ exports.callApi =(req)=>{
   axios.defaults.headers.common = {'Authorization': `Bearer ${req.session.user.token}`}
   return axios;
 }
-exports.handleError =(r , m='message')=>{
-   
-}
+exports.api_url =process.env.API_URL;

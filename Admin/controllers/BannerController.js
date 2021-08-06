@@ -1,9 +1,10 @@
 const asyncHandler = require('../middleware/async');
 var axios = require("axios");
-var apiUrl = 'http://localhost:3000/api/v1/banners/';
-const {callApi} = require('../helper/common');
+const {callApi, api_url} = require('../helper/common');
+var apiUrl = api_url+'/banners/';
 
 
+console
 exports.bannerList = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Banner' };
     res.render('Ads/list')
@@ -20,7 +21,7 @@ exports.getBanner = asyncHandler(async (req, res, next) => {
             .catch(error => {
                   
             })
-  });
+  }); 
  
  
 exports.updateBanner = asyncHandler(async (req, res, next) => {
@@ -75,6 +76,7 @@ exports.deleteBanner = asyncHandler(async (req, res, next) => {
 
  
 exports.getBanners = asyncHandler(async (req, res, next) => {
+
       axios.post(apiUrl, { ...req.body  } )
           .then(r => {
                 // Assign value in session

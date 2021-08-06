@@ -309,14 +309,6 @@ exports.updateSite = asyncHandler(async (req, res, next) => {
     });
 //Site
 
-
-
-
-
-
-
- 
-
  
 exports.getSitelogo = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Datatables' };

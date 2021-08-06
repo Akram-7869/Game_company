@@ -48,3 +48,6 @@ Thumbs.db
 *.mov
 *.wmv
 doc/
+Admin/config/config.env
+Admin/package-lock.json
+ 
