@@ -64,14 +64,14 @@
                         </form>
                         
                     </div> -->
-                    <a type="button" href="/admin/payment/add" class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i> Add New Page</a>
+                    <a type="button" href="/admin/smsgateway/add" class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i> Add New Page</a>
                 </div>
                  
                 <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead>
                     <tr>
                         <th>Srno</th>
-                        <th>Payment Gateway</th>
+                        <th>SMS Gateway</th>
                         <th>Action</th>  
                     </tr>
                     </thead>
@@ -123,7 +123,7 @@
 function handleDel (id){
    return $.ajax({
                     type: 'DELETE',
-                    url: '/admin/payment/'+id,
+                    url: '/admin/smsgateway/'+id,
                     success: (results)=> {
                         alert('Record Delete');
                           location.reload();
@@ -147,14 +147,14 @@ function handleDel (id){
     "processing": true,    
                 "serverSide": true,    
                 "ajax": {    
-                    url:"/admin/payment/data", type: "post" },    
+                    url:"/admin/smsgateway/data", type: "post" },    
                 "columns": [    
                 {data: null, "render": function(data, type, full, meta) {return i++;}}, 
                      
                         {data:'name'},
                       
                         {data: null, "render": function(data, type, full, meta) {
-        return '<a class="px-3 text-primary" href="/admin/payment/' 
+        return '<a class="px-3 text-primary" href="/admin/smsgateway/' 
                 + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a class="px-3 text-danger" onclick="delRec(\'' 
                 + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
       }},   

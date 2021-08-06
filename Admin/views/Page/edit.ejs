@@ -31,16 +31,7 @@
             <div class="card-body">
                <!--  <h4 class="card-title">Validation type</h4>
                 <p class="card-title-desc"> </p> -->
-                <% if(error.length> 0) { %>
-                    <div class="alert alert-danger text-center mb-4 flash" role="alert">
-                        <%= error %>
-                    </div>
-                <% } %>
-                <% if(message.length> 0) { %>
-                    <div class="alert alert-success text-center mb-4 flash" role="alert">
-                        <%= message %>
-                    </div>
-                <% } %>
+              
                 <form class="custom-validation"  action="" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
                     <div class="mb-3">
                         <label class="form-label">Title</label>

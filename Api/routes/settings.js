@@ -5,7 +5,8 @@ const {
     getSetting,
     getSettings,
     updateSetting,
-    deleteSetting
+    deleteSetting,
+    getSettingByName
 
 } = require('../controllers/settings');
 
@@ -18,7 +19,8 @@ const Setting = require('../models/Setting');
 router.use(protect);
 
 router.route('/add').post(createSetting);
-router.route('/').post(getSettings);
+router.route('/filter/:type/:name').get(getSettingByName);
+router.route('/filter/:type').post(getSettings);
 
 router
     .route('/:id')

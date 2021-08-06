@@ -19,23 +19,26 @@ const router = express.Router({ mergeParams: true });
 router.use(protect);
 
 //setting
-router.route('/setting/sitename').get(settingCtrl.getSitename).post(settingCtrl.updateSitename);
-router.route('/setting/logo').get(settingCtrl.getSitelogo).post(settingCtrl.updateSitelogo);
-router.route('/setting/support-mail').get(settingCtrl.getSiteSupportEmail).post(settingCtrl.updateSiteSupportEmail);
-router.route('/setting/firebase-setting').get(settingCtrl.getFireBase).post(settingCtrl.updateFireBase);
-router.route('/setting/2step-auth-setting').get(settingCtrl.get2stepAuth).post(settingCtrl.update2stepAuth);
-router.route('/setting/cashfree-setting').get(settingCtrl.getCashfree).post(settingCtrl.updateCashFree);
-router.route('/setting/razorpay-setting').get(settingCtrl.getRazorPay).post(settingCtrl.updateRazorPay);
-router.route('/setting/payu-setting').get(settingCtrl.getPayuMoney).post(settingCtrl.updatePayuMoney);
-router.route('/setting/message-setting').get(settingCtrl.getMessageSetting).post(settingCtrl.updateMessageSetting);
-router.route('/setting/localtext-setting').get(settingCtrl.getLocalText).post(settingCtrl.updateLocalText);
-
+ router.route('/setting/logo').get(settingCtrl.getSitelogo).post(settingCtrl.updateSitelogo);
  
+router.route('/site').get(settingCtrl.siteList); router.route('/site/data').post(settingCtrl.getSiteList);
+router.route('/site/add').get(settingCtrl.addSite).post(settingCtrl.createSite);
+ router.route('/site/:id').get(settingCtrl.getSite).post(settingCtrl.updateSite).delete(settingCtrl.deleteSite);
+
+
+
+router.route('/smsgateway').get(settingCtrl.smsgatewayList); router.route('/smsgateway/data').post(settingCtrl.getSmsGatewayList);
+router.route('/smsgateway/add').get(settingCtrl.addSmsGateway).post(settingCtrl.createSmsGateway);
+router.route('/smsgateway/:id').get(settingCtrl.getSmsGateway).post(settingCtrl.updateSmsGateway).delete(settingCtrl.deleteSmsGateway);
+
+
+router.route('/payment').get(settingCtrl.paymentList); router.route('/payment/data').post(settingCtrl.getPaymentList);
+router.route('/payment/add').get(settingCtrl.addPayment).post(settingCtrl.createPayment);
+router.route('/payment/:id').get(settingCtrl.getPayment).post(settingCtrl.updatePayment).delete(settingCtrl.deletePayment);
+
 router.route('/page').get(settingCtrl.pageList); router.route('/page/data').post(settingCtrl.getPageList);
- router.route('/page/add').get(settingCtrl.pageAdd);
- //.post(settingCtrl.createPage);
-router.route('/page/:id').get(settingCtrl.getPage);
-//.post(settingCtrl.updatePage).delete(settingCtrl.deletePage);
+ router.route('/page/add').get(settingCtrl.pageAdd).post(settingCtrl.createPage);
+router.route('/page/:id').get(settingCtrl.getPage).post(settingCtrl.updatePage).delete(settingCtrl.deletePage);
 
 router.route('/ticket').get(ticketCtrl.listTicket); router.route('/ticket/data').post(ticketCtrl.getTickets);
 //router.route('/banner/view/:id').get(  showBannerView);

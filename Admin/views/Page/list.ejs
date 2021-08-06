@@ -41,6 +41,16 @@
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
+                <% if( error.length> 0) { %>
+                    <div class="alert alert-danger text-center mb-4 flash" role="alert">
+                        <%= error %>
+                    </div>
+                <% } %>
+                <% if( message.length> 0) { %>
+                    <div class="alert alert-success text-center mb-4 flash" role="alert">
+                        <%= message %>
+                    </div>
+                <% } %>
                 <div>
                     
                     <!-- <div class="float-end">
@@ -69,6 +79,15 @@
              
                            
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            
+                            <th>page</th>
+                            <th>Office</th>
+                            <th>Age</th>
+                             
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -103,14 +122,12 @@
 <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
 <%- contentFor('BottomJs') %>
 <script>
-    function delRec(id){
+       function delRec(id){
         let r = confirm('Want to delete?');
         debugger
-       if( r){
-        handleDel(i);
+       if( id){
+        handleDel(id);
        }
- 
-     
     }
 
 
@@ -137,8 +154,7 @@ function handleDel (id){
         alert(id);
      }
      var i = 1;
-     $('#listsetting').DataTable( {
-    
+     $('#listsetting').DataTable( {  
     "processing": true,    
                 "serverSide": true,    
                 "ajax": {    
@@ -155,4 +171,11 @@ function handleDel (id){
       }},   
                 ]    
 } );
+
+ // Setup - add a text input to each footer cell
+
+ 
+    
+      
+ 
  </script>

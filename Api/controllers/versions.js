@@ -80,7 +80,7 @@ exports.updateVersion = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deleteVersion = asyncHandler(async (req, res, next) => {
   const row = await Version.findById(req.params.id);
- // await Version.findByIdAndDelete(req.params.id);
+ await Version.findByIdAndDelete(req.params.id);
   
   res.status(200).json({
     success: true,

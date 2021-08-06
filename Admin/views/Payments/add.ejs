@@ -1,4 +1,5 @@
 <%- contentFor('HeaderCss') %>
+<link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
 <%- contentFor('breadcrumb') %>
 
@@ -6,13 +7,13 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0">Player Edit</h4>
-
+            <h4 class="mb-0"><%- title %> Add</h4>
+            
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                    <li class="breadcrumb-item active">Player List</li>
-                     <li class="breadcrumb-item active">Edit</li>
+                    <li class="breadcrumb-item active"><a href="/admin/payment"><%- title %></a></li>
+                     <li class="breadcrumb-item active">Add</li>
                 </ol>
             </div>
 
@@ -30,69 +31,29 @@
             <div class="card-body">
                <!--  <h4 class="card-title">Validation type</h4>
                 <p class="card-title-desc"> </p> -->
-
-                <form class="custom-validation" action="#">
+                <% if(error.length> 0) { %>
+                    <div class="alert alert-danger text-center mb-4 flash" role="alert">
+                        <%= error %>
+                    </div>
+                <% } %>
+                <% if(message.length> 0) { %>
+                    <div class="alert alert-success text-center mb-4 flash" role="alert">
+                        <%= message %>
+                    </div>
+                <% } %>
+                <form class="custom-validation"  action="" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
                     <div class="mb-3">
-                        <label class="form-label">Required</label>
-                        <input type="text" class="form-control" required placeholder="Type something"/>
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" required name="name" value="<%= row.name !== undefined ? row.name:''%>" placeholder="Name "/>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Equal To</label>
-                        <div>
-                            <input type="password" id="pass2" class="form-control" required
-                                    placeholder="Password"/>
-                        </div>
-                        <div class="mt-2">
-                            <input type="password" class="form-control" required
-                                    data-parsley-equalto="#pass2"
-                                    placeholder="Re-Type Password"/>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">E-Mail</label>
-                        <div>
-                            <input type="email" class="form-control" required
-                                    parsley-type="email" placeholder="Enter a valid e-mail"/>
-                        </div>
+                        <label class="form-label">App ID</label>
+                        <input type="text" class="form-control" required name="one[APP_ID]" value="<%= row.one !== undefined ? row.one['APP_ID']:''%>" placeholder="Title"/>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">URL</label>
-                        <div>
-                            <input parsley-type="url" type="url" class="form-control"
-                                    required placeholder="URL"/>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Digits</label>
-                        <div>
-                            <input data-parsley-type="digits" type="text"
-                                    class="form-control" required
-                                    placeholder="Enter only digits"/>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Number</label>
-                        <div>
-                            <input data-parsley-type="number" type="text"
-                                    class="form-control" required
-                                    placeholder="Enter only numbers"/>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Alphanumeric</label>
-                        <div>
-                            <input data-parsley-type="alphanum" type="text"
-                                    class="form-control" required
-                                    placeholder="Enter alphanumeric value"/>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Textarea</label>
-                        <div>
-                            <textarea required class="form-control" rows="5"></textarea>
-                        </div>
+                        <label class="form-label">Secreate</label>
+                        <input type="text" class="form-control" required name="one[SECRET_KEY]" value="<%= row ? row.one['SECRET_KEY']:''%>" placeholder="Content"/>
                     </div>
                     <div>
                         <div>
@@ -119,5 +80,23 @@
 <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
 
 <script src="/public/assets/js/pages/form-validation.init.js"></script>
-
+<!-- Sweet Alerts js -->
+<script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+<script>
+function handleSubmit(params) {
+    if(params.checkValidity()){
+        //Swal.showLoading();
+        Swal.fire({
+  title: '',
+  html: 'Please wait...',
+  allowEscapeKey: false,
+  allowOutsideClick: false,
+  didOpen: () => {
+    Swal.showLoading()
+  }
+});
+    }
+    
+}
+</script>
 <%- contentFor('BottomJs') %>

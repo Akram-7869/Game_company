@@ -44,7 +44,15 @@ exports.updateVersion = asyncHandler(async (req, res, next) => {
 
  
 exports.deleteVersion = asyncHandler(async (req, res, next) => {
-      ;
+      console.log('vv');
+      callApi(req).delete(apiUrl+   req.params.id,req.body)
+      .then(r => {
+            // Assign value in session
+            res.locals = { title: 'Version' };
+            req.flash('success', 'Deleted');
+           // res.render('Players/List',{row:r.data.data}); 
+          
+      }).catch(error => {req.flash('error', 'Data not updated');})
     
       res.status(200).json({
         success: true,

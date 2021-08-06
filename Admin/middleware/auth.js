@@ -4,7 +4,7 @@ const asyncHandler = require('./async');
 //const Player = require('../models/Player');
  // Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
-  console.log('auth',req.session);
+ // console.log('auth',req.session);
   if (!req.session.user) {
       res.redirect('/login');
    }else{

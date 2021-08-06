@@ -2,24 +2,28 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Setting = require('../models/Setting');
 
+
+
+
 // @desc      Get all Settings
 // @route     GET /api/v1/auth/Settings
 // @access    Private/Admin
 exports.getSettings = asyncHandler(async (req, res, next) => {
-  ;
+
   Setting.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-    select:{'type':1,'name':1},
+    select: { 'type': 1, 'name': 1 },
+    find: { type: req.params.type },
     search: {
-      value: req.body.search?  req.body.search.value:'',
-      fields: ['type']
+      value: req.body.search ? req.body.search.value : '',
+      fields: ['name']
     },
     sort: {
       type: 1
     }
   }).then(function (table) {
-    res.json({data: table.data, recordsTotal:table.total,recordsFiltered:table.total, draw:req.body.draw}); // table.total, table.data
+    res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })
   //res.status(200).json(res.advancedResults);
 });
@@ -28,7 +32,21 @@ exports.getSettings = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Settings/:id
 // @access    Private/Admin
 exports.getSetting = asyncHandler(async (req, res, next) => {
-  const setting = await Setting.findOne({name:req.params.id});
+  const setting = await Setting.findOne({ _id: req.params.id });
+
+  res.status(200).json({
+    success: true,
+    data: setting
+  });
+});
+// @desc      Get single Setting
+// @route     GET /api/v1/auth/Settings/:id
+// @access    Private/Admin
+exports.getSettingByName = asyncHandler(async (req, res, next) => {
+  const setting = await Setting.findOne({
+    type: req.params.type,
+    name: req.params.name
+  });
 
   res.status(200).json({
     success: true,
@@ -53,23 +71,23 @@ exports.createSetting = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.updateSetting = asyncHandler(async (req, res, next) => {
 
-  let {one, many}=req.body;
-    console.log('server-post',one);
-  let setting = await Setting.findOne({name:req.params.id});
+  let { one, many } = req.body;
+  console.log('server-post', one);
+  let setting = await Setting.findOne({ _id: req.params.id });
   if (!setting) {
     return next(
       new ErrorResponse(`Setting  not found`)
     );
   }
-  let fieldsToUpdate= {one, many}
-   
+  let fieldsToUpdate = { one, many }
+
   setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
 
-   //Setting.isNew = false;
- // await Setting.save();
+  //Setting.isNew = false;
+  // await Setting.save();
   res.status(200).json({
     success: true,
     data: setting
@@ -82,7 +100,7 @@ exports.updateSetting = asyncHandler(async (req, res, next) => {
 exports.deleteSetting = asyncHandler(async (req, res, next) => {
   const setting = await Setting.findById(req.params.id);
   await Setting.findByIdAndDelete(req.params.id);
-  
+
   res.status(200).json({
     success: true,
     data: {}

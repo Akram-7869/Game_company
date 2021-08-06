@@ -12,7 +12,7 @@
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                    <li class="breadcrumb-item active"><a href="/admin/page"><%- title %></a></li>
+                    <li class="breadcrumb-item active"><a href="/admin/smsgateway"><%- title %></a></li>
                      <li class="breadcrumb-item active">Edit</li>
                 </ol>
             </div>
@@ -31,26 +31,20 @@
             <div class="card-body">
                <!--  <h4 class="card-title">Validation type</h4>
                 <p class="card-title-desc"> </p> -->
-                <% if(error.length> 0) { %>
-                    <div class="alert alert-danger text-center mb-4 flash" role="alert">
-                        <%= error %>
-                    </div>
-                <% } %>
-                <% if(message.length> 0) { %>
-                    <div class="alert alert-success text-center mb-4 flash" role="alert">
-                        <%= message %>
-                    </div>
-                <% } %>
+                 
                 <form class="custom-validation"  action="" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
+                    
+
                     <div class="mb-3">
-                        <label class="form-label">Title</label>
-                        <input type="text" class="form-control" required name="one[title]" value="<%= row ? row.one['title']:''%>" placeholder="Title"/>
+                        <label class="form-label">Template Id</label>
+                        <input type="text" class="form-control" required name="one[TEMPLATE_ID]" value="<%= row ? row.one['TEMPLATE_ID']:''%>" placeholder="template id"/>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Content</label>
-                        <input type="text" class="form-control" required name="one[content]" value="<%= row ? row.one['content']:''%>" placeholder="Content"/>
+                        <label class="form-label">Auth key</label>
+                        <input type="text" class="form-control" required name="one[AUTHKEY]" value="<%= row ? row.one['AUTHKEY']:''%>" placeholder="authkey"/>
                     </div>
-                    <div>
+                    
+                     
                         <div>
                             <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
                                 Submit
@@ -59,7 +53,7 @@
                                 Cancel
                             </button>
                         </div>
-                    </div>
+                    
                 </form>
 
             </div>

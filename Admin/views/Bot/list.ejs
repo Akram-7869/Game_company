@@ -94,11 +94,9 @@
     function delRec(id){
         let r = confirm('Want to delete?');
         debugger
-       if( r){
-        handleDel(i);
+       if( id){
+        handleDel(id);
        }
- 
-     
     }
 
 
@@ -114,12 +112,7 @@ function handleDel (id){
                         alert('Error While Deleting');
                     }
                 });
-//         $.ajax({
-//     url: '/admin/player/'+id,
-//     type: 'DELETE',
-//     success: ()=>{alert('done');location.reload()},
-//     error: ()=>alert('failed')
-// });
+ 
      }
      function view(id){
         alert(id);

@@ -79,7 +79,7 @@ exports.updateBot = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deleteBot = asyncHandler(async (req, res, next) => {
   const row = await Bot.findById(req.params.id);
- // await Bot.findByIdAndDelete(req.params.id);
+ await Bot.findByIdAndDelete(req.params.id);
   
   res.status(200).json({
     success: true,
