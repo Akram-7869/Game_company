@@ -8,12 +8,19 @@ const BannerSchema = new mongoose.Schema({
     url: {
         type: String
     },
+    message: {
+        type: String
+    },
     imageId: {
          type: mongoose.Schema.ObjectId,
     },
     status:{
         type: String,
         enum: [ 'inactive','active'],
+    },
+    isNotification:{
+        type: Boolean,
+       default:false
     },
     
     createdBy: {

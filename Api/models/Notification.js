@@ -4,19 +4,14 @@ const NoticationSchema = new mongoose.Schema({
     playerId: {
         type: String,
          required:true
-    },
-    text: {
-      type: String,
-       required:true
-    },
-    imageId: {
+    },  
+    bannerId: {
       type: mongoose.Schema.ObjectId,
     },
     read:{
       type:Boolean,
       default:false
-    }
-
+    } 
 }, {
     timestamps: true,
 });
