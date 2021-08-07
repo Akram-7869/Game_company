@@ -135,10 +135,9 @@ function handleDel (id){
                         {data:'versionControle'},
                         {data:'appLink'},
                         {data: null, "render": function(data, type, full, meta) {
-        return '<a class="px-2 text-primary" href="/admin/settings/' 
+        return '<a class="px-2 text-primary" href="/admin/version/' 
                 + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\'' 
-                + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a><a class="px-2 text-success" href="/admin/settings/view/' 
-                + full._id +'"><i class="uil uil-eye font-size-18"></i></a>';
+                + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i>';
       }},   
                 ]    
 } );

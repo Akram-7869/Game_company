@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+    <title> <%=title%> |Enixo Games </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="public/assets/images/favicon.ico">
+
+    <%- include ('../Partials/HeaderStyle')  %>
+
+</head>
+
+<body class="authentication-bg">
+
+ 
+    
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12 col-lg-12 col-xl-12">
+                    <div>
+                        <a href="/" class="mb-5 d-block auth-logo">
+                            <img src="/public/assets/images/logo-dark.png" alt="" height="60" class="logo logo-dark">
+                         </a>
+                         <div class="row">
+                          <div class="col-12">
+                              <div class="page-title-box d-flex align-items-center justify-content-between">
+                                  <h4 class="mb-0"><%=title%></h4>
+                      
+                                  <div class="page-title-right">
+                                      <ol class="breadcrumb m-0">
+                                          <li class="breadcrumb-item"><a href="/">HOME</a></li>
+                                          <li class="breadcrumb-item active"><%=title%></li>
+                                      </ol>
+                                  </div>
+                      
+                              </div>
+                          </div>
+                      </div>
+                         <div class="row">
+                          <div class="col-12">
+                              <div class="card">
+                                  <div class="card-body">
+                                    <%=content%>
+                                  </div>
+                              </div>
+                          </div> <!-- end col -->
+                      </div>
+                        <div class="mt-5 text-center">
+                            <p>©
+                                <script>document.write(new Date().getFullYear())</script> Crafted with <i
+                                    class="mdi mdi-heart text-danger"></i> by DigiQAL Technologies
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+        </div>
+        <!-- end container -->
+ 
+
+    <%- include ('../Partials/VendorScript')  %>
+
+    <script src="public/assets/js/app.js"></script>
+
+</body>
+</html>

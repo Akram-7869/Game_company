@@ -1,6 +1,6 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const {Files} = require('../models/Files');
+const File = require('../models/File');
 
 // @desc      Get all users
 // @route     GET /api/v1/auth/users
@@ -14,7 +14,7 @@ exports.getFiles = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.getFile = asyncHandler(async (req, res, next) => {
     console.log('req.params.id',req.params.id);
-    const user = await Files.findById(req.params.id);
+    const user = await File.findById(req.params.id);
     // if (err) return next(err);
   //  res.contentType(user.contentType);
     res.contentType('image/png');
@@ -30,7 +30,7 @@ exports.getFile = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/users
 // @access    Private/Admin
 exports.createFile = asyncHandler(async (req, res, next) => {
-    const user = await Files.create(req.body);
+    const user = await File.create(req.body);
 
     res.status(201).json({
         success: true,
@@ -42,7 +42,7 @@ exports.createFile = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/users/:id
 // @access    Private/Admin
 exports.updateFile = asyncHandler(async (req, res, next) => {
-    const user = await Files.findByIdAndUpdate(req.params.id, req.body, {
+    const user = await File.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true
     });
@@ -57,7 +57,7 @@ exports.updateFile = asyncHandler(async (req, res, next) => {
 // @route     DELETE /api/v1/auth/users/:id
 // @access    Private/Admin
 exports.deleteFile = asyncHandler(async (req, res, next) => {
-    await Files.findByIdAndDelete(req.params.id);
+    await File.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
         success: true,
@@ -100,7 +100,7 @@ console.log(req.body);
       //  size: req.files.file.size,
     }
     
-    const newfile = await Files.create(dataSave);
+    const newfile = await File.create(dataSave);
     res.status(200).json({
         success: true,
         data: { _id: newfile._id }

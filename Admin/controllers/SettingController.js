@@ -1,6 +1,6 @@
 const asyncHandler = require('../middleware/async');
-const {callApi} = require('../helper/common');
-var apiUrl = 'http://localhost:3000/api/v1/settings/';
+const {callApi, api_url} = require('../helper/common');
+var apiUrl = api_url+'/settings/';
 
  
 exports.pageList = asyncHandler(async (req, res, next) => {
@@ -269,7 +269,7 @@ exports.createSite = asyncHandler(async (req, res, next) => {
 
 
 exports.getSite = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Site' };
+      res.locals = { title: 'Site', apiUrl };
       callApi(req).get(apiUrl + req.params.id)
       .then(r => {
            console.log('response',r.data.data);

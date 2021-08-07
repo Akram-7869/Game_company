@@ -10,7 +10,7 @@ exports.getBanners = asyncHandler(async (req, res, next) => {
   Banner.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-   // select:{'amount':1,'rowType':1, 'note':1, 'createdAt':1},
+//   select:{'bannerUrl':1, 'createdAt':1},
     search: {
       value: req.body.search?  req.body.search.value:'',
       fields: ['status', 'location']

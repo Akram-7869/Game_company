@@ -126,7 +126,7 @@ function handleDel (id){
      function view(id){
         alert(id);
      }
-     var i = 1;
+     var i = 0;
      $('#listsetting').DataTable( {
     
     "processing": true,    
@@ -134,13 +134,15 @@ function handleDel (id){
                 "ajax": {    
                     url:"/admin/banner/data", type: "post" },    
                 "columns": [    
-                {data: null, "render": function(data, type, full, meta) {return i++;}}, 
+                {data: null, "render": function(data, type, full, meta) {return i=i+1;}}, 
                      
                         {data:'status'},
                         {data:'location'},
-                        {
+                        {data: null,
                         "render": function (data, type, JsonResultRow, meta) {
-                            return '<img width="50" src="http://localhost:3000/api/v1/banners/image/'+JsonResultRow.imageId+'">';
+                             
+                            let imgUrl = "<%= apiUrl +'/image/'%>" + JsonResultRow.imageId
+                            return '<img width="50" src="'+imgUrl+'">';
                         }
                     },
 

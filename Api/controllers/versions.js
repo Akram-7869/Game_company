@@ -13,7 +13,7 @@ exports.getVersions = asyncHandler(async (req, res, next) => {
     select:{'versionControle':1,'appLink':1, 'createdAt':1},
     search: {
       value: req.body.search?  req.body.search.value:'',
-      fields: ['playerId']
+      fields: ['_id']
       
     },
     sort: {

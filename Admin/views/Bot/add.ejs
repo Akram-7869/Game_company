@@ -33,7 +33,12 @@
                 <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
                     <div class="mb-3">
                         <label class="form-label">Bot Complexity</label>
-                        <input type="text" name="complexity" value="<%=row.complexity?row.complexity:'' %>" class="form-control" required placeholder="Bot Controle"/>
+                        <select class="form-select" name="complexity" required>
+                           <option value="EASY" <%=row.complexity === 'EASY'?'selected':'' %>>EASY</option>
+                           <option value="MEDIUM"  <%=row.complexity === 'MEDIUM'?'selected':'' %>>MEDIUM</option>
+                           <option value="HARD"  <%=row.complexity === 'HARD'?'selected':'' %>>HARD</option>
+                        </select>
+                    
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Bot Status</label>

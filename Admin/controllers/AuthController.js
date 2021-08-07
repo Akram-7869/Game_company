@@ -71,6 +71,45 @@ module.exports = function (app) {
 	app.get('/login', function (req, res) {
 		res.render('Auth/auth-login', { 'message': req.flash('message'), 'error': req.flash('error') });
 	});
+	app.get('/page/:name', function (req, res) {
+		axios.get('http://localhost:3000/api/v1/settings/filter/page/terms', {
+    email: req.body.email,
+		password:req.body.password,
+  })
+  .then(r => {
+				console.log( r.data.data.one);
+				res.render('Page/dynamic', r.data.data.one);
+   
+  }).catch(error => {})
+//	res.render('Page/dynamic', {title:'',content:''});
+	});
+
+	app.post('/post-login', urlencodeParser, function (req, res) {
+ 		axios.post('http://localhost:3000/api/v1/auth/login', {
+    email: req.body.email,
+		password:req.body.password,
+  })
+  .then(r => {
+				// Assign value in session
+				if(!r.data.success){
+					req.flash('error', 'Incorrect email or password!');
+					res.redirect('/login');
+					return;
+				}
+				req.session.user = r.data;
+				res.redirect('/admin/dashboard');
+   
+  })
+  .catch(error => {
+		
+  })
+		
+	 
+	});
+
+		app.get('/login', function (req, res) {
+		res.render('Auth/auth-login', { 'message': req.flash('message'), 'error': req.flash('error') });
+	});
 
 	app.post('/post-login', urlencodeParser, function (req, res) {
  		axios.post('http://localhost:3000/api/v1/auth/login', {

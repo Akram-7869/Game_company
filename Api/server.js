@@ -29,10 +29,12 @@ const payments = require('./routes/payments');
 const managers = require('./routes/users');
 const bots = require('./routes/bots');
 const versions = require('./routes/versions'); 
-//const files = require('./routes/files'); 
+const files = require('./routes/files'); 
 const banners = require('./routes/banners'); 
 const tickets = require('./routes/tickets');
+const notifications = require('./routes/notifications');
 const app = express();
+
 
 // Body parser
 app.use(express.json());
@@ -86,6 +88,8 @@ app.use('/api/v1/versions', versions);
 app.use('/api/v1/bots', bots);
 app.use('/api/v1/tickets', tickets);
 app.use('/api/v1/payments', payments);
+app.use('/api/v1/files', files);
+app.use('/api/v1/notifications', notifications);
 
 //app.use('/api/v1/files', files);
 

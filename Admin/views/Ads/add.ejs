@@ -88,8 +88,9 @@
 <!-- Sweet alert init js
 <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
 <script>
+    let url = '<%= apiUrl + "add" %>'
     Dropzone.options.myDropzone= {
-    url: 'http://localhost:3000/api/v1/banners/add',
+    url: url,
     autoProcessQueue: false,
     uploadMultiple: false,
     parallelUploads: 1,

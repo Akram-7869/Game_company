@@ -6,7 +6,9 @@ const {
     getSettings,
     updateSetting,
     deleteSetting,
-    getSettingByName
+    getSettingByName,
+    uploadeImage,
+    getFile
 
 } = require('../controllers/settings');
 
@@ -16,16 +18,19 @@ const router = express.Router({ mergeParams: true });
 const { advancedResults, ownResults, defaultResults } = require('../middleware/advancedResults');
 const { protect, authorize, init } = require('../middleware/auth');
 const Setting = require('../models/Setting');
-router.use(protect);
+//router.use(protect);
+router.route('/upload/:id').post(uploadeImage);
+router.route('/image/:id').get(getFile);
 
-router.route('/add').post(createSetting);
+
+router.route('/add').post(protect,createSetting);
 router.route('/filter/:type/:name').get(getSettingByName);
-router.route('/filter/:type').post(getSettings);
+router.route('/filter/:type').post(protect,getSettings);
 
 router
     .route('/:id')
-    .get(getSetting)
-    .post( updateSetting)
-    .delete( deleteSetting);
+    .get(protect,getSetting)
+    .post(protect, updateSetting)
+    .delete(protect, deleteSetting);
 
 module.exports = router;

@@ -1,18 +1,18 @@
 const asyncHandler = require('../middleware/async');
-var axios = require("axios");
+let axios = require("axios");
 const {callApi, api_url} = require('../helper/common');
-var apiUrl = api_url+'/banners/';
+let apiUrl = api_url+'/banners/';
 
 
-console
+ 
 exports.bannerList = asyncHandler(async (req, res, next) => {
-    res.locals = { title: 'Banner' };
+      res.locals = { title: 'Banner',apiUrl };
     res.render('Ads/list')
 });
  
  
 exports.getBanner = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Banner' };
+      res.locals = { title: 'Banner',apiUrl };
       axios.get(apiUrl + req.params.id)
             .then(r => {
                   res.locals = { title: 'Banner' };
@@ -41,11 +41,11 @@ exports.updateBanner = asyncHandler(async (req, res, next) => {
             })
   });
   exports.editBanner = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Banner' };
+      res.locals = { title: 'Banner',apiUrl };
       axios.get(apiUrl+ req.params.id,req.body)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Banner' };
+               
                   req.flash('error', 'Data save');
                   console.log(r.data);
                   res.render('Ads/edit',{row:r.data.data}); 
@@ -95,7 +95,7 @@ exports.getBanners = asyncHandler(async (req, res, next) => {
 
  
 exports.bannerAdd = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Banner' };
+      res.locals = { title: 'Banner', 'apiUrl':apiUrl };
      
       res.render('Ads/add',{row:{}});
 });
@@ -110,7 +110,7 @@ axios.post(apiUrl,{body:req.body, file:req.files})
             // Assign value in session
             res.locals = { title: 'Banner' };
             req.flash('success', 'Data save');
-            res.render('Ads/edit',{row:r.data.data}); 
+            res.render('Ads/edit',{row:r.data.data},apiUrl); 
           
       })
       .catch(error => {

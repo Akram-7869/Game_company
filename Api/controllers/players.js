@@ -300,6 +300,29 @@ exports.playerInfo = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.getOnlinePlayers = asyncHandler(async (req, res, next) => {
+ // const user = await User.findById(req.user.id);
+
+  res.status(200).json({
+    success: true,
+    data: {count:5}
+  });
+});
+
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.getNotication  = asyncHandler(async (req, res, next) => {
+  // const user = await User.findById(req.user.id);
+ 
+   res.status(200).json({
+     success: true,
+     data: []
+   });
+ });
  // @desc      Get current logged in user
 // @route     POST /api/v1/auth/me
 // @access    Private
@@ -329,4 +352,19 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.getPage  = asyncHandler(async (req, res, next) => {
+  // const user = await User.findById(req.user.id);
+ 
+   res.status(200).json({
+     success: true,
+     data: {
+       'terms':process.env.API_URI + '/page/term',
+       'policy':process.env.API_URI + '/page/policy'
+     }
+   });
+ });
 
