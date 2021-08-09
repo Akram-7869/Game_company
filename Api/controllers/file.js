@@ -66,42 +66,30 @@ exports.deleteFile = asyncHandler(async (req, res, next) => {
 });
 
 exports.uploadFile = asyncHandler(async (req, res, next) => {
-console.log(req.body);
-    // if (!req.file) {
-    //     return next(new ErrorResponse(`Please upload a file`));
-    // }
-
-    const file = req.body.file;
-    const split = file.split(',');
-    const base64string = split[1];
-    const buffer = new Buffer.from(base64string, 'base64');
-    let n = base64string.length;
-    let y = 2;
-    let size = (n * (3/4)) - y
-    console.log('size',size);
-    // console.log(req.files, req.body);
-    // Make sure the image is a photo
-    if (!split[0].includes('image')) {
-        return next(new ErrorResponse(`Please upload an image file`));
+console.log(req.files);
+    if (!req.files) {
+        return next(new ErrorResponse(`Please upload a file`));
     }
+
+    let dataSave = {
+        // createdBy: req.user.id,
+         data: req.files.file.data,
+         contentType: req.files.file.mimetype,
+         size: req.files.file.size,
+     }
    // ${process.env.MAX_FILE_UPLOAD}
     // Check filesize
-    if (size > process.env.MAX_FILE_UPLOAD) {
+    if (dataSave.size > process.env.MAX_FILE_UPLOAD) {
         return next(
             new ErrorResponse(
                 `Please upload an image less than 256k`
             )
         );
     }
-    let dataSave = {
-        createdBy: req.user.id,
-        data: buffer,
-     // contentType: req.files.file.mimetype,
-      //  size: req.files.file.size,
-    }
+   
+      const newfile = await File.create(dataSave);
     
-    const newfile = await File.create(dataSave);
-    res.status(200).json({
+     res.status(200).json({
         success: true,
         data: { _id: newfile._id }
     });

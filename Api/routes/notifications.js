@@ -15,9 +15,11 @@ const {
 const router = express.Router({ mergeParams: true });
 const { protect} = require('../middleware/auth');
  
-router.use(protect);
+//router.use(protect);
 router.route('/player').get(getPlayerNotifications).post(readNotification);
 router.route('/add').post(createNotification);
+router.route('/filter/:type').post(getNotifications);
+
 router.route('/').post(getNotifications);
 
 router

@@ -1,10 +1,10 @@
 const express = require('express');
 const {
 
-    // createFile,
-     getFile,
+   // createFile,
+     getFile,uploadFile,
     //getFiles,
-    // updateFile,
+    //updateFile,
     // deleteFile
 
 } = require('../controllers/file');
@@ -15,7 +15,7 @@ const { protect} = require('../middleware/auth');
  
 //router.use(protect);
 
-//router.route('/add').post(createFile);
+router.route('/upload').post(uploadFile);
 //router.route('/').post(getFiles);
 
 router.route('/:id').get(getFile);

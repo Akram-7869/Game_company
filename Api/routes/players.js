@@ -19,6 +19,7 @@ router.post('/status/:id',protect, updateStatus);
 
 router.get('/page',protect, getPage);
 
+router.route('/profile').get(protect,getPlayer).post(protect,updatePlayer);
 router.get('/notification',protect, getNotication);
 router.post('/pin',protect, setPin);
 router.post('/checkpin', chkPin);
@@ -28,6 +29,7 @@ router.post('/credit/:id', protect, creditAmount);
 router.get('/info', protect, playerInfo);
 router.get('/online', protect, getOnlinePlayers);
 router.route('/').post(protect, getPlayers);
+
 //router.route('/add').post(createPlayer);
 router
   .route('/:id')

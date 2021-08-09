@@ -36,7 +36,5 @@ const BannerSchema = new mongoose.Schema({
 });
 
 BannerSchema.plugin(dataTables);
-let url=process.env.API_URL;
-console.log('ggg',url);
 BannerSchema.virtual('bannerUrl').get(function() { return process.env.API_URI + '/files/'+this.imageId; })
 module.exports = mongoose.model('Banners', BannerSchema);

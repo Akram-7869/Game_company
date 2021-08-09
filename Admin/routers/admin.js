@@ -10,6 +10,7 @@ const managerCtrl = require('../controllers/ManagerController');
 const botCtrl = require('../controllers/BotController');
 const ticketCtrl = require('../controllers/TicketController');
 const versionCtrl = require('../controllers/VersionController');
+const notificationCtrl = require('../controllers/NotificationController');
 
 const { protect } = require('../middleware/auth');
 const router = express.Router({ mergeParams: true });
@@ -41,7 +42,6 @@ router.route('/page').get(settingCtrl.pageList); router.route('/page/data').post
 router.route('/page/:id').get(settingCtrl.getPage).post(settingCtrl.updatePage).delete(settingCtrl.deletePage);
 
 router.route('/ticket').get(ticketCtrl.listTicket); router.route('/ticket/data').post(ticketCtrl.getTickets);
-//router.route('/banner/view/:id').get(  showBannerView);
 router.route('/ticket/add').get(ticketCtrl.addTicket).post(ticketCtrl.createTickets);
 router.route('/ticket/:id').get(ticketCtrl.getTicket).post(ticketCtrl.updateTicket).delete(ticketCtrl.deleteTicket);
 
@@ -64,13 +64,15 @@ router.route('/manager').get(managerCtrl.listManager); router.route('/manager/da
  router.route('/manager/add').get(managerCtrl.addManager).post(managerCtrl.createManagers);
  router.route('/manager/:id').get(managerCtrl.getManager).post(managerCtrl.updateManager).delete(managerCtrl.deleteManager);
 
-// router.route('/setting').get(settingCtrl.settingList); router.route('/setting/data').post(settingCtrl.getSettings);
-// //router.route('/banner/view/:id').get(  showBannerView);
-// router.route('/setting/add').get(settingCtrl.settingAdd).post(settingCtrl.createSettings);
-// router.route('/setting/:id').get(settingCtrl.getSetting).post(settingCtrl.updateSetting).delete(settingCtrl.deleteSetting);
+ 
+router.route('/notification').get(notificationCtrl.notificationList); router.route('/notification/data').post(notificationCtrl.getNotifications);
+router.route('/notification/add').get(notificationCtrl.notificationAdd).post(notificationCtrl.createNotifications);
+router.route('/notification/:id').get(notificationCtrl.getNotification).post(notificationCtrl.updateNotification).delete(notificationCtrl.deleteNotification);
 
 
-//router.route('/banner/view/:id').get(  showBannerView);
+//router.route('/notification').get(palyerCtrl.getPlayerNotification);
+
+ 
 router.route('/banner/add').get(bannerControler.bannerAdd)
       .post(bannerControler.createBanners);
 router.route('/banner/data').post(bannerControler.getBanners);
@@ -83,7 +85,7 @@ router.route('/transaction/data').post(transactionCotroller.getTranscations);
 router.route('/transaction').get(transactionCotroller.transcationList);
 router.route('/wallet').get(palyerCtrl.getPlayerWallet);
 router.route('/payout').get(palyerCtrl.getPlayerPayout);
-router.route('/notification').get(palyerCtrl.getPlayerNotification);
+
 router.route('/chat').get(palyerCtrl.getChatList);
 router.route('/report/player').get(palyerCtrl.getPlayerReport);
 router.route('/report/payment').get(palyerCtrl.getPaymentReport);

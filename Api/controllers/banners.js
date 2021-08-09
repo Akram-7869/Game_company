@@ -55,7 +55,7 @@ exports.createBanner = asyncHandler(async (req, res, next) => {
       status :'active',
       imageId :newfile._id
      }
-  console.log(banner);
+  
  const row = await Banner.create(banner);
 
   res.status(201).json({
