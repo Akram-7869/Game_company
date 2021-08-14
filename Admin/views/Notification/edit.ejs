@@ -50,9 +50,10 @@
                                 <div class="mb-3">
                                     <h5 class="font-size-14 mb-4">Send to</h5>
                                     <select id="sendTo" class="form-select" name="sendTo" required>
-                                        <option value="player" <%=row.status==='player' ?'selected':'' %>>Slected player
+                                        <option value="">Slect player ...</option>
+                                        <option value="player" <%=row.sendTo==='player' ?'selected':'' %>>Slected player
                                         </option>
-                                        <option value="all" <%=row.status==='all' ?'selected':'' %>>All players</option>
+                                        <option value="all" <%=row.sendTo==='all' ?'selected':'' %>>All players</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
@@ -140,6 +141,7 @@
                                 formData.append("url", $("#url").val());
                                 formData.append("message", $("#message").val());
                                 formData.append("status", $("#statustxt").val());
+                                formData.append("sendTo", $("#sendTo").val());
 
                             });
                         }

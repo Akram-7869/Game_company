@@ -135,9 +135,9 @@ function handleDel (id){
                     url:"/admin/notification/data", type: "post" },    
                 "columns": [    
                 {data: null, "render": function(data, type, full, meta) {return i=i+1;}}, 
-                     
+                      {data:'sendTo'},
                         {data:'status'},
-                        {data:'location'},
+                       
                         {data: null,
                         "render": function (data, type, JsonResultRow, meta) {
                              
@@ -149,7 +149,8 @@ function handleDel (id){
                         {data: null, "render": function(data, type, full, meta) {
         return '<a class="px-2 text-primary" href="/admin/notification/' 
                 + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\'' 
-                + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
+                + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a><a class="px-2 text-success" href="/admin/notification/player/' 
+                + full._id +'"><i class="uil uil-user-plus font-size-18"></i></a>';
                
       }},   
                 ]    

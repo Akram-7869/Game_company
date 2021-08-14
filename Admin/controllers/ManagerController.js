@@ -14,7 +14,7 @@ exports.getManager = asyncHandler(async (req, res, next) => {
        callApi(req).get(apiUrl + req.params.id)
             .then(r => {
                  
-                  res.locals = { title: 'Manager-edit' };
+                  res.locals = { title: 'Manager' };
                   res.render('Manager/edit',{row:r.data.data}); 
             })
             .catch(error => {
@@ -26,12 +26,12 @@ exports.getManager = asyncHandler(async (req, res, next) => {
 exports.updateManager = asyncHandler(async (req, res, next) => {
      
       res.locals = { title: 'Datatables' };
-       callApi(req).post(apiUrl+ req.params.id,req.body)
+       callApi(req).put(apiUrl+ req.params.id,req.body)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Manager-edit' };
-                  req.flash('error', 'Data save');
-                  res.render('Manager/edit',{row:r.data.data}); 
+                  res.locals = { title: 'Manager' };
+                  req.flash('message', 'Data save');
+                  res.redirect('/admin/manager'); 
                 
             })
             .catch(error => {
@@ -44,8 +44,20 @@ exports.updateManager = asyncHandler(async (req, res, next) => {
 
  
 exports.deleteManager = asyncHandler(async (req, res, next) => {
-      ;
-    
+      callApi(req).delete(apiUrl+ req.params.id)
+      .then(r => {
+            // Assign value in session
+            res.locals = { title: 'Manager' };
+            req.flash('message', 'Data save');
+            res.redirect('/admin/manager'); 
+          
+      })
+      .catch(error => {
+           
+
+           req.flash('error', 'Data not updated');
+         
+      })
       res.status(200).json({
         success: true,
         data: {}
@@ -74,19 +86,19 @@ exports.getManagers = asyncHandler(async (req, res, next) => {
 
  
 exports.addManager = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Manager-edit' };
-      res.render('Manager/edit',{row:{}});
+      res.locals = { title: 'Manager' };
+      res.render('Manager/add',{row:{}});
 });
   
  
 exports.createManagers = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Manager-edit' };
-       callApi(req).post(apiUrl,req.body)
+      res.locals = { title: 'Manager' };
+       callApi(req).post(apiUrl+'add',req.body)
       .then(r => {
             // Assign value in session
             res.locals = { title: 'Manager-edit' };
             req.flash('success', 'Data save');
-            res.render('Manager/edit',{row:r.data.data}); 
+            res.redirect('/admin/manager' ); 
           
       })
       .catch(error => {
@@ -103,7 +115,7 @@ exports.showManager = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                  
-                  res.locals = { title: 'Manager-edit' };
+                  res.locals = { title: 'Manager' };
                   res.render('Manager/view',{row:r.data.data}); 
                 
   

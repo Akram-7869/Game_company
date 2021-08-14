@@ -1,18 +1,18 @@
 <%- contentFor('HeaderCss') %>
-<link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+
 <%- contentFor('breadcrumb') %>
 
 <!-- start page title -->
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0">Player Edit</h4>
+            <h4 class="mb-0">Manager</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                    <li class="breadcrumb-item active"><a href="/admin/player">Player List</a></li>
-                     <li class="breadcrumb-item active">Edit</li>
+                    <li class="breadcrumb-item active"><%- title %> List</li>
+                     <li class="breadcrumb-item active">Add</li>
                 </ol>
             </div>
 
@@ -30,155 +30,52 @@
             <div class="card-body">
                <!--  <h4 class="card-title">Validation type</h4>
                 <p class="card-title-desc"> </p> -->
-  <!-- Nav tabs -->
-  <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-    <li class="nav-item">
-        <a class="nav-link active" data-bs-toggle="tab" href="#home1" role="tab">
-            <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
-            <span class="d-none d-sm-block">Home</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#profile1" role="tab">
-            <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-            <span class="d-none d-sm-block">Profile</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#messages1" role="tab">
-            <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
-            <span class="d-none d-sm-block">Change Status</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#settings1" role="tab">
-            <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
-            <span class="d-none d-sm-block">Transactions</span>
-        </a>
-    </li>
-</ul>
 
-<!-- Tab panes -->
-<div class="tab-content p-3 text-muted">
-    <div class="tab-pane active" id="home1" role="tabpanel">
-        <p class="mb-0">
-            <!-- <form class="custom-validation" action="" onsubmit="false" method="POST" name="player"  enctype="application/x-www-form-urlencoded"> -->
-                <div class="mb-3">
-                    <label class="form-label">Phone</label>
-                    <input readonly type="text" name="" value="<%=row.phone?row.phone:'' %>" class="form-control" required placeholder="Type something"/>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Wallet Balance</label>
-                    <input readonly type="text" name="" value="<%=row.balance?row.balance:'' %>" class="form-control" required placeholder="Type something"/>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Kyc Status</label>
-                    <input readonly  type="text" name="" value="<%=row.kycStatus?row.kycStatus:'' %>" class="form-control" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Status</label>
-                    <input readonly  type="text" name="" value="<%=row.status?row.status:'' %>" class="form-control" required />
-                </div>
- 
-            <!-- </form> -->
-        </p>
-    </div>
-    <div class="tab-pane" id="profile1" role="tabpanel">
-        <p class="mb-0">
-            <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
-                <div class="mb-3">
-                    <label class="form-label">Name</label>
-                    <input type="text" name="firstName" value="<%=row.firstName?row.firstName:'' %>" class="form-control" required placeholder="Type something"/>
-                </div>
+                <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
+                    <div class="mb-3">
+                        <label class="form-label">FirstName</label>
+                        <input type="text" name="firstName" value="<%=row.firstName?row.firstName:'' %>" class="form-control" required placeholder="First name"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">LastName</label>
+                        <input type="text" name="lastName" value="<%=row.lastName?row.lastName:'' %>" class="form-control" required placeholder="Last name"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" value="<%=row.phone?row.phone:'' %>" class="form-control" required placeholder="Phone"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="text" name="email" value="<%=row.email?row.email:'' %>" class="form-control" required placeholder="Email"/>
+                    </div>
+                    <!-- <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" value="" class="form-control"  placeholder="Password min 6 letter"/>
+                    </div> -->
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <div class="col-md-10">
+                            <select class="form-select" name="status" required>
+                                <option value="">Change Status</option>
+                                <option value="notverifed" <%=row.status === 'notverifed'?'selected':'' %>>notverifed</option>
 
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" name="email" value="<%=row.email?row.email:'' %>" class="form-control" required  parsley-type="email" placeholder="Enter a valid e-mail"/>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Date Of Birth</label>
-                   
-                    <input class="form-control" name="dob" type="date" value="<%=row.dob?row.dob:'' %>" id="example-date-input" required placeholder="Type something">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Country</label>
-                    <input type="text" name="country" value="<%=row.country?row.country:'' %>" class="form-control" required placeholder="Type something"/>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Pan Card</label>
-                    <input type="text" name="panNumber" value="<%=row.panNumber?row.panNumber:'' %>" class="form-control" required  data-parsley-type="alphanum" placeholder="Enter only digits"/>
+                                 <option value="active" <%=row.status === 'active'?'selected':'' %>>active</option>
+                                <option value="inactive"  <%=row.status === 'inactive'?'selected':'' %>>inactive</option>
+                            </select>
+                        </div>
+                    </div>
                      
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Adhar Card</label>
-                    <input  type="text" name="aadharNumber" value="<%=row.aadharNumber?row.aadharNumber:'' %>" class="form-control" required data-parsley-type="digits" placeholder="Enter only digits"/>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Gender</label>
-                    <div  >
-                        <select class="form-select" name="kycStatus" required>
-                            <option value=""></option>
-                            <option value="male" <%=row.kycStatus === 'Male'?'selected':'' %>>male</option>
-                            <option value="female"  <%=row.kycStatus === 'Female'?'selected':'' %>>female</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Kyc Status</label>
-                    <div class="col-md-10">
-                        <select class="form-select" name="kycStatus" required>
-                            <option value="notverifed" <%=row.kycStatus === 'notverifed'?'selected':'' %>>notverifed</option>
-                            <option value="verified"  <%=row.kycStatus === 'verified'?'selected':'' %>>verified</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
                     <div>
-                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                            Submit
-                        </button>
-                        <button type="reset" class="btn btn-secondary waves-effect">
-                            Cancel
-                        </button>
+                        <div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                Submit
+                            </button>
+                            <button type="reset" class="btn btn-secondary waves-effect">
+                                Cancel
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </form>
-        </p>
-    </div>
-    <div class="tab-pane" id="messages1" role="tabpanel">
-        <p class="mb-0">
-            <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
-               
-                 
-                <div class="mb-3">
-                    <label class="form-label">Status</label>
-                    <div class="col-md-10">
-                        <select class="form-select" name="status" required>
-                            <option value="inactive" <%=row.status === 'inactive'?'selected':'' %>>inactive</option>
-                            <option value="active"  <%=row.status === 'active'?'selected':'' %>>active</option>
-                            <option value="banned"  <%=row.status === 'banned'?'selected':'' %>>banned</option>
-                            <option value="deleted"  <%=row.status === 'deleted'?'selected':'' %>>deleted</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                            Change Status
-                        </button>
-                      
-                    </div>
-                </div>
-            </form>
-        </p>
-    </div>
-    <div class="tab-pane" id="settings1" role="tabpanel">
-        <p class="mb-0">
-            
-        </p>
-    </div>
-</div>
-                
+                </form>
 
             </div>
         </div>
@@ -193,25 +90,5 @@
 <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
 
 <script src="/public/assets/js/pages/form-validation.init.js"></script>
-<!-- Sweet Alerts js -->
-<script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
-<!-- Sweet alert init js
-<script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
-<script>
-function handleSubmit(params) {
-    if(params.checkValidity()){
-        //Swal.showLoading();
-        Swal.fire({
-  title: '',
-  html: 'Please wait...',
-  allowEscapeKey: false,
-  allowOutsideClick: false,
-  didOpen: () => {
-    Swal.showLoading()
-  }
-});
-    }
-    
-}
-</script>
+
 <%- contentFor('BottomJs') %>

@@ -2,32 +2,36 @@ const mongoose = require('mongoose');
 var dataTables = require('mongoose-datatables')
 
 const TicketSchema = new mongoose.Schema({
-  name: {
-    type: String
-},
-email: {
-    type: String
-},
-phone: {
-    type: String
-},
-subject: {
-    type: String
-},
-description: {
-    type: String
-},
-history: {
-    type: String
-},
-status: {
-    type: String
-},
+    playerId: {
+        type: mongoose.Schema.ObjectId,
+        ref:'Players'
+    },
+    name: {
+        type: String
+    },
+    email: {
+        type: String
+    },
+    phone: {
+        type: String
+    },
+    subject: {
+        type: String
+    },
+    description: {
+        type: String
+    },
+    history: [{ reply: '', from: '', dated: { type: Date, default: mongoose.now } }],
+    status: {
+        type: String,
+        default: 'open',
+        enum: ['close', 'open', 'pending']
+    },
 
-createdBy: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-}
+    createdBy: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+    }
 
 }, {
     timestamps: true,

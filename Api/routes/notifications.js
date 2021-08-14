@@ -7,7 +7,8 @@ const {
     updateNotification,
     deleteNotification,
     getPlayerNotifications,
-    readNotification
+    readNotification,
+    getPlayerList,addPlayerList,removePlayerList
 
 } = require('../controllers/notifications');
 
@@ -16,7 +17,13 @@ const router = express.Router({ mergeParams: true });
 const { protect} = require('../middleware/auth');
  
 //router.use(protect);
-router.route('/player').get(getPlayerNotifications).post(readNotification);
+router.route('/player/:nid/:id').post(addPlayerList).delete(removePlayerList);
+router.route('/player/:id').get(getPlayerList);
+
+//player api
+router.route('/player').get(protect,getPlayerNotifications).post(protect,readNotification);
+
+
 router.route('/add').post(createNotification);
 router.route('/filter/:type').post(getNotifications);
 

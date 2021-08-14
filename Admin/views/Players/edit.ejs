@@ -220,16 +220,17 @@
 <script>
 function handleSubmit(params) {
     if(params.checkValidity()){
-        //Swal.showLoading();
-        Swal.fire({
-  title: '',
-  html: 'Please wait...',
-  allowEscapeKey: false,
-  allowOutsideClick: false,
-  didOpen: () => {
-    Swal.showLoading()
-  }
-});
+        debugger;
+        Swal.showLoading();
+//         Swal.fire({
+//   title: '',
+//   html: 'Please wait...',
+//   allowEscapeKey: false,
+//   allowOutsideClick: false,
+//   didOpen: () => {
+//     Swal.showLoading()
+//   }
+// });
     }
     
 }

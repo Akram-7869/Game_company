@@ -32,6 +32,7 @@ const PlayerSchema = new mongoose.Schema({
       minLength: 8,
       trim:true,
         required: true,
+        
   },
   email: {
     type: String,
@@ -110,8 +111,8 @@ const PlayerSchema = new mongoose.Schema({
   },
   kycStatus:{
     type: String,
-    enum:['verified','notverifed'],
-    default:'notverifed'
+    enum:['verified','notverified'],
+    default:'notverified'
   },
   wallet:{
 

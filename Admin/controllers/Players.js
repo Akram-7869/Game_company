@@ -197,11 +197,12 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
       // const config = {
       //       headers: { Authorization: `Bearer ${req.session.user.token}` }
       //   };
-let filter = req.params.filter;
+      console.log('url',req.url);
+ 
 
  
 
-        callApi(req).post(apiUrl, { ...req.body  } )
+        callApi(req).post(apiUrl, { ...req.body  },{ params:  req.query} )
           .then(r => {
                 // Assign value in session
                  

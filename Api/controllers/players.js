@@ -2,6 +2,8 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Player = require('../models/Player');
 const Transaction = require('../models/Transaction');
+const Ticket = require('../models/Ticket');
+const { request } = require('express');
 
 // @desc      Get all Players
 // @route     GET /api/v1/auth/Players
@@ -11,9 +13,10 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
   Player.dataTables({
     limit: req.body.length,
     skip: req.body.start,
+    find:req.query,
     search: {
       value: req.body.search.value,
-      fields: ['phone']
+      fields: ['phone','email','firstName','lastName']
     },
     sort: {
       username: 1
@@ -29,6 +32,7 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.getPlayer = asyncHandler(async (req, res, next) => {
    let player; 
+   //set
    if(req.staff){
     player= await Player.findById(req.params.id);
   }else{
@@ -193,13 +197,81 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.join = asyncHandler(async (req, res, next) => {
-  
+ //dahboard online +  
+// player game add
+// player stat
 
   res.status(200).json({
     success: true,
     data: {}
   });
 });
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.won = asyncHandler(async (req, res, next) => {
+  //dahboard online +  
+ // player game update
+ // play stat
+ 
+   res.status(200).json({
+     success: true,
+     data: {}
+   });
+ });
+ 
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.ticketAdd = asyncHandler(async (req, res, next) => {
+  req.body['playerId'] = req.player._id
+  const row = await Ticket.create(req.body);
+ 
+   res.status(200).json({
+     success: true,
+     data: row
+   });
+ });
+
+
+ exports.ticketList = asyncHandler(async (req, res, next) => {
+
+  let row = await Ticket.find({'playerId':req.player.id}).populate('playerId');
+  res.status(200).json({
+    success: true,
+    data: row
+  });
+ });
+
+ exports.ticketReply = asyncHandler(async (req, res, next) => {
+  //req.body['playerId'] = req.player._id
+  if(!req.player){
+    return next(
+      new ErrorResponse(`Please Login`)
+    );
+  }
+  let row = await Ticket.findById(req.body.id).populate('playerId');
+  if (!row) {
+    return next(
+      new ErrorResponse(`Ticket  not found`)
+    );
+  }
+  let reply = {'reply':req.body.history,from:req.player.firstName}
+  let fieldsToUpdate= {status:req.body.status, $addToSet: { 'history':reply } };
+   
+  row = await Ticket.findByIdAndUpdate(req.body.id,  fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+
+  
+   res.status(200).json({
+     success: true,
+     data: row
+   });
+ });
+
+
 
 
 // @desc      Log user out / clear cookie
@@ -311,6 +383,17 @@ exports.getOnlinePlayers = asyncHandler(async (req, res, next) => {
     data: {count:5}
   });
 });
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.editOnlinePlayers = asyncHandler(async (req, res, next) => {
+  // const user = await User.findById(req.user.id);
+ 
+   res.status(200).json({
+     success: true,
+     data: {count:5}
+   });
+ });
 
 // @desc      Get current logged in user
 // @route     POST /api/v1/auth/me

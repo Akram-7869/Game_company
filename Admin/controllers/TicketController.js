@@ -29,31 +29,20 @@ exports.updateTicket = asyncHandler(async (req, res, next) => {
       callApi(req).post(apiUrl + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Ticket' };
-                  req.flash('error', 'Data save');
-                  res.render('Ticket/edit', { row: r.data.data });
-
+                  req.flash('message', 'Data save');
+                  res.redirect('/admin/ticket');
             })
             .catch(error => {
-
-
                   req.flash('error', 'Data not updated');
-
             })
 });
 
-
 exports.deleteTicket = asyncHandler(async (req, res, next) => {
-      ;
-
       res.status(200).json({
             success: true,
             data: {}
       });
 });
-
-
-
 
 exports.getTickets = asyncHandler(async (req, res, next) => {
 

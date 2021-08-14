@@ -13,15 +13,52 @@ exports.notificationList = asyncHandler(async (req, res, next) => {
  
 exports.getNotification = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Notification',apiUrl, apiFile };
+     
       axios.get(apiUrl + req.params.id)
             .then(r => {
-                 
                   res.render('Notification/edit',{row:r.data.data}); 
             })
             .catch(error => {
                   
             })
   }); 
+
+  exports.getPlayerList = asyncHandler(async (req, res, next) => {
+    res.locals = { title: 'Selection Player for Notification',apiUrl, apiFile, nid:req.params.id };
+          res.render('Notification/playerlist'); 
+});
+exports.addPlayerList = asyncHandler(async (req, res, next) => {
+  //res.locals = { title: 'Selection Player for Notification',apiUrl, apiFile };
+
+  axios.post(apiUrl+'player/'+ req.params.nid+'/'+req.params.id,req.body)
+  .then(r => {
+        // Assign value in session
+        res.locals = { title: 'Notification' };
+        req.flash('error', 'Data save');
+       
+        res.render('Notification/edit',{row:r.data.data}); 
+  })
+  .catch(error => {req.flash('error', 'Data not updated');});
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});  
+exports.removePlayerList = asyncHandler(async (req, res, next) => {
+ // res.locals = { title: 'Selection Player for Notification',apiUrl, apiFile };
+  callApi(req).delete(apiUrl +'player/'+ req.params.nid+'/'+id,req.body)
+  .then(r => {
+        // Assign value in session
+        res.locals = { title: 'Player-edit' };
+        req.flash('success', 'Deleted');
+       // res.render('Players/List',{row:r.data.data}); 
+      
+  }).catch(error => {req.flash('error', 'Data not updated');})
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});  
  
  
 exports.updateNotification = asyncHandler(async (req, res, next) => {
@@ -61,8 +98,8 @@ exports.deleteNotification = asyncHandler(async (req, res, next) => {
       callApi(req).delete(apiUrl+   req.params.id,req.body)
       .then(r => {
             // Assign value in session
-            res.locals = { title: 'Player-edit' };
-            req.flash('success', 'Deleted');
+             
+            //req.flash('success', 'Deleted');
            // res.render('Players/List',{row:r.data.data}); 
           
       }).catch(error => {req.flash('error', 'Data not updated');})

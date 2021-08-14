@@ -115,4 +115,3 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
-

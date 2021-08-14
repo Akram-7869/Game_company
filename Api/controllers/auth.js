@@ -4,8 +4,8 @@ const asyncHandler = require('../middleware/async');
 const sendEmail = require('../utils/sendEmail');
 const Player = require('../models/Player');
 const User = require('../models/User');
-//const Lookup = require('../models/Lookup');
-const Transactions = require('../models/Transaction');
+ const Transactions = require('../models/Transaction');
+ const Setting = require('../models/Setting');
 const axios = require('axios')
 
 // @desc      Register user
@@ -14,9 +14,10 @@ const axios = require('axios')
 exports.playerRegister = asyncHandler(async (req, res, next) => {
   const { phone , deviceToken, countryCode} = req.body;
 
-  let player = await Player.findOne({$or:[{ 'phone': phone },{ 'deviceToken': deviceToken }]}).select('+deviceToken');
+ let player = await Player.findOne({$or:[{ 'phone': phone },{ 'deviceToken': deviceToken }]}).select('+deviceToken');
  let vcode = Math.floor(1000 + Math.random() * 9000);
-  
+ const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
+ 
   if (player) {
     if(player.deviceToken !== deviceToken  ){
         return next(
@@ -54,8 +55,8 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
  
 
   }
-
-   await smsOtp(phone, vcode);
+console.log('before',sms);
+  await smsOtp(phone, vcode,sms);
 
   res.status(200).json({
     success: true,
@@ -214,15 +215,16 @@ exports.logout = asyncHandler(async (req, res, next) => {
   });
 });
 
-let smsOtp= async(phone,otp)=>{
+let smsOtp= async(phone,otp,sms)=>{
+ 
 var params = {
-  "template_id":"5f322d94d6fc051d202b4522",
+  "template_id":sms.one.TEMPLATE_ID, 
   "mobile":phone,
-  "authkey":"338555AN0yGYvFhp5f342bcc",
+  "authkey":sms.one.AUTHKEY,  
   "otp":otp
 };
-
-return axios.get('https://api.msg91.com/api/v5/otp', { params}).catch(error => {console.error(error)});
+console.log(params);
+//return axios.get('https://api.msg91.com/api/v5/otp', { params}).catch(error => {console.error(error)});
 
 }
 

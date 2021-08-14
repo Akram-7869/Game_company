@@ -19,10 +19,7 @@ const NoticationSchema = new mongoose.Schema({
     type: String,
     enum: [ 'all','player'],
   },
-  read:{
-      type: Boolean,
-     default:false
-  },
+ 
   createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',

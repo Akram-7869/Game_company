@@ -68,7 +68,7 @@ exports.createBanner = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Banners/:id
 // @access    Private/Admin
 exports.updateBanner = asyncHandler(async (req, res, next) => {
-  console.log('sdsdsssdsdsdsd',req.body,req.files, req.query);
+  //console.log('sdsdsssdsdsdsd',req.body,req.files, req.query);
     let row = await Banner.findById(req.params.id);
    
   if (!row) {

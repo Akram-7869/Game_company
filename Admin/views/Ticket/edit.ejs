@@ -1,95 +1,163 @@
 <%- contentFor('HeaderCss') %>
-<link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
-<%- contentFor('breadcrumb') %>
+    <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+    <%- contentFor('breadcrumb') %>
 
-<!-- start page title -->
-<div class="row">
-    <div class="col-12">
-        <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0"><%- title %>  Edit</h4>
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">
+                        <%- title %> Edit
+                    </h4>
 
-            <div class="page-title-right">
-                <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                    <li class="breadcrumb-item active"><a href="/admin/bot"><%- title %>  List</a></li>
-                     <li class="breadcrumb-item active">Edit</li>
-                </ol>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item active"><a href="/admin/bot">
+                                    <%- title %> List
+                                </a></li>
+                            <li class="breadcrumb-item active">Edit</li>
+                        </ol>
+                    </div>
+
+                </div>
             </div>
-
         </div>
-    </div>
-</div>
-<!-- end page title -->
+        <!-- end page title -->
 
-<%- contentFor('body') %>
+        <%- contentFor('body') %>
 
- 
-<div class="row">
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-               <!--  <h4 class="card-title">Validation type</h4>
+
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <!--  <h4 class="card-title">Validation type</h4>
                 <p class="card-title-desc"> </p> -->
-                <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
-                    <div class="mb-3">
-                        <label class="form-label">Bot Complexity</label>
-                        <input type="text" name="complexity" value="<%=row.complexity?row.complexity:'' %>" class="form-control" required placeholder="Version Controle"/>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Bot Status</label>
-                        <div class="col-md-10">
-                            <select class="form-select" name="status" required>
-                                 <option value="false" <%=row.status === false?'selected':'' %>>OFF</option>
-                                <option value="true"  <%=row.status === true?'selected':'' %>>ON</option>
-                            </select>
+                            <div class="px-lg-2">
+                                <div class="mb-3">
+                                    <label class="form-label">Subject</label>
+                                    <p class="form-control">
+                                        <%=row.subject%>
+                                    </p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <p class="form-control">
+                                        <%=row.description%>
+                                    </p>
+                                </div>
+                                <div class="chat-conversation p-3">
+                                    <ul class="list-unstyled mb-0" data-simplebar style="max-height: 455px;">
+
+                                        <% for (let item of row.history){ %>
+                                            <li>
+                                                <div class="conversation-list">
+                                                    <div class="ctext-wrap">
+                                                        <div class="ctext-wrap-content">
+                                                            <h5 class="font-size-14 conversation-name"><a href="#"
+                                                                    class="text-dark">
+                                                                    <%=item.from%>
+                                                                </a> <span
+                                                                    class="d-inline-block font-size-12 text-muted ms-2">
+                                                                    <%=item.dated%>
+                                                                </span></h5>
+                                                            <p class="mb-0">
+                                                                <%=item.reply%>
+                                                            </p>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                            </li>
+
+                                            <%}%>
+
+
+                                                <!-- <li class="right">
+                                <div class="conversation-list">
+                                    <div class="ctext-wrap">
+                                        <div class="ctext-wrap-content">
+                                            <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">Marcus</a> <span class="d-inline-block font-size-12 text-muted ms-2">10:02</span></h5>
+                                            <p class="mb-0">
+                                                Good morning everyone !
+                                            </p>
+                                        </div>
+                                        <div class="dropdown align-self-start">
+                                            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="uil uil-ellipsis-v"></i>
+                                            </a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="#">Copy</a>
+                                                <a class="dropdown-item" href="#">Save</a>
+                                                <a class="dropdown-item" href="#">Forward</a>
+                                                <a class="dropdown-item" href="#">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </li>
+     -->
+
+                                    </ul>
+                                </div>
+
+                                <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST"
+                                name="player" enctype="application/x-www-form-urlencoded">
+
+                                <div class="mb-3">
+                                    <label class="form-label">Reply</label>
+                                    <textarea name="history" class="form-control" required
+                                        placeholder="Replay ..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <div class="col-md-10">
+                                        <select class="form-select" name="status" required>
+                                            <option value="open" <%=row.status==="open" ?'selected':'' %>>open</option>
+                                            <option value="pending" <%=row.status==="pendin" ?'selected':'' %>>pending
+                                            </option>
+                                            <option value="close" <%=row.status==="close" ?'selected':'' %>>close
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div>
+                                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </form>
+
                         </div>
                     </div>
-                     
-                     
-                    <div>
-                        <div>
-                            <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                                Submit
-                            </button>
-                            <button type="reset" class="btn btn-secondary waves-effect">
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                </div> <!-- end col -->
 
-            </div>
-        </div>
-    </div> <!-- end col -->
 
-   
-</div> <!-- end row -->
+            </div> <!-- end row -->
 
-<%- contentFor('FooterJs') %>
+            <%- contentFor('FooterJs') %>
 
-<!-- parsleyjs -->
-<script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
+                <!-- parsleyjs -->
+                <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
 
-<script src="/public/assets/js/pages/form-validation.init.js"></script>
-<!-- Sweet Alerts js -->
-<script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
-<!-- Sweet alert init js
+                <script src="/public/assets/js/pages/form-validation.init.js"></script>
+                <!-- Sweet Alerts js -->
+                <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <!-- Sweet alert init js
 <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
-<script>
-function handleSubmit(params) {
-    if(params.checkValidity()){
-        //Swal.showLoading();
-        Swal.fire({
-  title: '',
-  html: 'Please wait...',
-  allowEscapeKey: false,
-  allowOutsideClick: false,
-  didOpen: () => {
-    Swal.showLoading()
-  }
-});
-    }
-    
-}
-</script>
-<%- contentFor('BottomJs') %>
+                <script>
+                    function handleSubmit(params) {
+                        if (params.checkValidity()) {
+                            Swal.showLoading();
+                        }
+                        return false;
+                    }
+                </script>
+                <%- contentFor('BottomJs') %>

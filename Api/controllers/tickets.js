@@ -6,18 +6,18 @@ const Ticket = require('../models/Ticket');
 // @route     GET /api/v1/auth/Tickets
 // @access    Private/Admin
 exports.getTickets = asyncHandler(async (req, res, next) => {
-  ;
-  Ticket.dataTables({
+   Ticket.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-    select:{ 'complexity':1, 'status':1, 'createdAt':1},
+    select:{ 'PlayerId':1, 'complexity':1, 'status':1, 'createdAt':1},
     search: {
       value: req.body.search?  req.body.search.value:'',
       fields: ['complexity']
     },
     sort: {
       _id: 1
-    }
+    },
+    populate:'PlayerId'
   }).then(function (table) {
     res.json({data: table.data, recordsTotal:table.total,recordsFiltered:table.total, draw:req.body.draw}); // table.total, table.data
   })
@@ -40,6 +40,7 @@ exports.getTicket = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Tickets
 // @access    Private/Admin
 exports.createTicket = asyncHandler(async (req, res, next) => {
+
   const row = await Ticket.create(req.body);
 
   res.status(201).json({
@@ -52,16 +53,21 @@ exports.createTicket = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Tickets/:id
 // @access    Private/Admin
 exports.updateTicket = asyncHandler(async (req, res, next) => {
-  let {status, complexity}=req.body
-  let row = await Ticket.findById(req.params.id);
+  if(!req.staff){
+    return next(
+      new ErrorResponse(`Please Login`)
+    );
+  }
+  let row = await Ticket.findById(req.params.id).populate('playerId');
   if (!row) {
     return next(
       new ErrorResponse(`Ticket  not found`)
     );
   }
-  let fieldsToUpdate= {status, complexity}
+  let reply = {'reply':req.body.history,from:req.staff.firstName}
+  let fieldsToUpdate= {status:req.body.status, $addToSet: { 'history':reply } };
    
-  row = await Ticket.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
+  row = await Ticket.findByIdAndUpdate(req.params.id,  fieldsToUpdate, {
     new: true,
     runValidators: true
   });
@@ -80,7 +86,6 @@ exports.updateTicket = asyncHandler(async (req, res, next) => {
 exports.deleteTicket = asyncHandler(async (req, res, next) => {
   const row = await Ticket.findById(req.params.id);
  // await Ticket.findByIdAndDelete(req.params.id);
-  
   res.status(200).json({
     success: true,
     data: {}

@@ -3,8 +3,10 @@ const {
   getPlayers,
   getPlayer,
   createPlayer,
-  updatePlayer,deletePlayer,chkPin,setPin, getMe,debiteAmount,playerInfo,updateStatus,creditAmount,join,
-  getOnlinePlayers,getNotication,getPage
+  updatePlayer,deletePlayer,chkPin,setPin, getMe,debiteAmount,playerInfo,updateStatus,creditAmount,
+  join,won,
+  ticketAdd,ticketList,ticketReply,
+  getOnlinePlayers,getNotication,getPage, editOnlinePlayers
   
 } = require('../controllers/players');
 
@@ -24,10 +26,14 @@ router.get('/notification',protect, getNotication);
 router.post('/pin',protect, setPin);
 router.post('/checkpin', chkPin);
 router.post('/game/join', protect, join);
+router.post('/game/won', protect, won);
+router.post('/ticket/add', protect, ticketAdd);
+router.post('/ticket/reply', protect, ticketReply);
+router.get('/ticket/', protect, ticketList);
 router.post('/debit', protect, debiteAmount);
 router.post('/credit/:id', protect, creditAmount);
 router.get('/info', protect, playerInfo);
-router.get('/online', protect, getOnlinePlayers);
+router.route('/online').get( protect, getOnlinePlayers).post(editOnlinePlayers);
 router.route('/').post(protect, getPlayers);
 
 //router.route('/add').post(createPlayer);
