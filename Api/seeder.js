@@ -9,6 +9,8 @@ dotenv.config({ path: './config/config.env' });
 // Load models
 const Dashboard = require('./models/Dashboard');
 const User = require('./models/User');
+const Player = require('./models/Player');
+
 // Connect to DB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -29,23 +31,23 @@ mongoose.connect(process.env.MONGO_URI, {
 // const users = JSON.parse(
 //   // fs.readFileSync(`${__dirname}/_data/users.json`, 'utf-8')
 // );
-
+let dash = {
+  "type": "dashboard",
+  "livePlayers": 0,
+  "grossIncome": 0,
+  "totalIncome": 0,
+  "active": true,
+  "chartData": [],
+  "chartType": "daily_game",
+  "totalPayoutRequest": 0,
+  "totalPlayers": 0,
+  "totalSupportTicket": 0
+}
 
 // Import into DB
 const importData = async () => {
   try {
-    let dash = {
-      "type": "dashboard",
-      "livePlayers": 0,
-      "grossIncome": 0,
-      "totalIncome": 0,
-      "active": true,
-      "chartData": [],
-      "chartType": "daily_game",
-      "totalPayoutRequest": 0,
-      "totalPlayers": 0,
-      "totalSupportTicket": 0
-    }
+
     await Dashboard.create(dash);
 
 
@@ -68,9 +70,23 @@ const deleteData = async () => {
     console.error(err);
   }
 };
+// Delete data
+const calCount = async () => {
+  try {
+    let count = await Player.estimatedDocumentCount();
+    dash['totalPlayers'] = count;
+    await Dashboard.updateOne({ type: 'dashboard' }, dash);
+    console.log('Count Update...'.green.inverse);
+    process.exit();
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 if (process.argv[2] === '-i') {
   importData();
 } else if (process.argv[2] === '-d') {
   deleteData();
+} else if (process.argv[2] === '-c') {
+  calCount();
 }
