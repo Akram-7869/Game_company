@@ -17,12 +17,12 @@ const SupportSchema = new mongoose.Schema({
     status: {
         type: String
     },
-    
+
     createdBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
     }
-    
+
 
 }, {
     timestamps: true,

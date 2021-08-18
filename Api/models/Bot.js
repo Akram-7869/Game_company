@@ -5,7 +5,7 @@ const BotSchema = new mongoose.Schema({
     complexity: {
         type: String
     },
-    
+
     createdBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',

@@ -49,13 +49,13 @@
                                         <span class="d-none d-sm-block">Site Logo</span>
                                     </a>
                                 </li>
-                                <!-- <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#supportemail" role="tab">
+                                <!--   <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#fees" role="tab">
                                         <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                         <span class="d-none d-sm-block">Support Email</span>
                                     </a>
                                 </li>
-                                <li class="nav-item">
+                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="tab" href="#firebase" role="tab">
                                         <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
                                         <span class="d-none d-sm-block">Firebase</span>
@@ -70,15 +70,15 @@
                             </ul>
 
                             <!-- Tab panes -->
-                        
-                                <div class="tab-content p-3 text-muted">
-                                   
-                                    <div class="tab-pane active" id="sitename" role="tabpanel">
-                                        <p class="mb-0">
 
-                                            <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST"
-                                            name="player" enctype="application/x-www-form-urlencoded">
-            
+                            <div class="tab-content p-3 text-muted">
+
+                                <div class="tab-pane active" id="sitename" role="tabpanel">
+                                    <p class="mb-0">
+
+                                    <form class="custom-validation" action="" onsubmit="handleSubmit(this)"
+                                        method="POST" name="player" enctype="application/x-www-form-urlencoded">
+
 
 
                                         <div class="mb-3">
@@ -117,36 +117,63 @@
                                                 </button>
                                             </div>
                                         </div>
- </form>
-                                        </p>
-                                   
-                                    </div>
-                                    <div class="tab-pane" id="logo" role="tabpanel">
-                                        <form id="banner" action="upload.php" enctype="multipart/form-data" method="POST">
+                                    </form>
+                                    </p>
+
+                                </div>
+                                <div class="tab-pane" id="logo" role="tabpanel">
+                                    <form id="banner" action="upload.php" enctype="multipart/form-data" method="POST">
                                         <p class="mb-0">
                                         <div class="mb-3">
                                             <label class="form-label">Site Logo</label>
                                             <input type="hidden" id="siteLogo" class="form-control" name="col"
-                                                value="siteLogo"
-                                                 />
+                                                value="siteLogo" />
                                         </div>
                                         <img width=100 src="<%=apiUrl +'image/'+row.siteLogo%>">
                                         <div class="dropzone" id="myDropzone"></div>
-                                            
-                                                <button  id="submit-all" type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                                                    Submit
-                                                </button>
-                                                <button type="reset" class="btn btn-secondary waves-effect">
-                                                    Cancel
-                                                </button>
-                                        
-                                        
+
+                                        <button id="submit-all" type="submit"
+                                            class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+                                        <button type="reset" class="btn btn-secondary waves-effect">
+                                            Cancel
+                                        </button>
+
+
 
 
                                         </p>
-                                        </form>
-                                    </div>
-                                    <!-- <div class="tab-pane" id="supportemail" role="tabpanel">
+                                    </form>
+                                </div>
+                                <div class="tab-pane" id="fees" role="tabpanel">
+                                    <form id="banner" onsubmit="handleSubmit(this)" enctype="multipart/form-data"
+                                        method="POST">
+                                        <p class="mb-0">
+                                        <div class="mb-3">
+                                            <label class="form-label">Commission</label>
+                                            <input type="text" class="form-control" required name="one[COMMISSION]"
+                                                value="<%= row ? row.one['COMMISSION']:''%>"
+                                                placeholder="Type something" />
+                                        </div>
+
+
+
+                                        <button id="submit-all" type="submit"
+                                            class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+                                        <button type="reset" class="btn btn-secondary waves-effect">
+                                            Cancel
+                                        </button>
+
+
+
+
+                                        </p>
+                                    </form>
+                                </div>
+                                <!-- <div class="tab-pane" id="supportemail" role="tabpanel">
                                         <p class="mb-0">
                                         <div class="mb-3">
                                             <label class="form-label">Support Email</label>
@@ -212,8 +239,8 @@
 
                                         </p>
                                     </div> -->
-                                </div>
-                            
+                            </div>
+
                         </div>
                     </div>
                 </div> <!-- end col -->
@@ -222,7 +249,7 @@
             </div> <!-- end row -->
 
             <%- contentFor('FooterJs') %>
-            <script src="/public/assets/libs/dropzone/min/dropzone.min.js"></script>
+                <script src="/public/assets/libs/dropzone/min/dropzone.min.js"></script>
                 <!-- parsleyjs -->
                 <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
 
@@ -230,51 +257,52 @@
                 <!-- Sweet Alerts js -->
                 <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
                 <script>
-                     let url = '<%= apiUrl +"upload/" +row._id %>'
-    Dropzone.options.myDropzone= {
-    url:url ,
-    autoProcessQueue: false,
-    uploadMultiple: false,
-    parallelUploads: 1,
-    maxFiles: 50,
-    maxFilesize: 5,
-    acceptedFiles: 'image/*',
-    addRemoveLinks: true,
-    success: function(file, response){
-        location.reload();
+                    let url = '<%= apiUrl +"upload/" +row._id %>'
+                    Dropzone.options.myDropzone = {
+                        url: url,
+                        autoProcessQueue: false,
+                        uploadMultiple: false,
+                        parallelUploads: 1,
+                        maxFiles: 50,
+                        maxFilesize: 5,
+                        acceptedFiles: 'image/*',
+                        addRemoveLinks: true,
+                        success: function (file, response) {
+                            location.reload();
 
-    },
-    init: function() {
-        dzClosure = this; // Makes sure that 'this' is understood inside the functions below.
+                        },
+                        init: function () {
+                            dzClosure = this; // Makes sure that 'this' is understood inside the functions below.
 
-        // for Dropzone to process the queue (instead of default form behavior):
-        document.getElementById("submit-all").addEventListener("click", function(e) {
-            // Make sure that the form isn't actually being sent.
-            e.preventDefault();
-            e.stopPropagation();
-            Swal.showLoading();
-            if (dzClosure.getQueuedFiles().length > 0) {                        
-                dzClosure.processQueue();  
-            } else {                       
-              alert(JSON.stringify($("#banner").serialize()))
-              
-                $.post(url, $("#banner").serialize()).then(r=>{
-                    location.reload(); 
-                });  
-            }
-            
-        });
+                            // for Dropzone to process the queue (instead of default form behavior):
+                            document.getElementById("submit-all").addEventListener("click", function (e) {
+                                // Make sure that the form isn't actually being sent.
+                                e.preventDefault();
+                                e.stopPropagation();
+                                Swal.showLoading();
+                                if (dzClosure.getQueuedFiles().length > 0) {
+                                    dzClosure.processQueue();
+                                } else {
+                                    alert(JSON.stringify($("#banner").serialize()))
 
-        //send all the form data along with the files:
-        this.on("sending", function(data, xhr, formData) {
-            alert('ddd');
-            formData.append("col", $("#siteLogo").val());
-            
-            
-        });
-    }
-}
-                    function handleSubmit(params) {alert('sdsdsd');
+                                    $.post(url, $("#banner").serialize()).then(r => {
+                                        location.reload();
+                                    });
+                                }
+
+                            });
+
+                            //send all the form data along with the files:
+                            this.on("sending", function (data, xhr, formData) {
+                                alert('ddd');
+                                formData.append("col", $("#siteLogo").val());
+
+
+                            });
+                        }
+                    }
+                    function handleSubmit(params) {
+                        alert('sdsdsd');
                         if (params.checkValidity()) {
                             //Swal.showLoading();
                             Swal.fire({

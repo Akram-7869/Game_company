@@ -1,29 +1,29 @@
 const mongoose = require('mongoose');
 var dataTables = require('mongoose-datatables')
-const NoticationSchema = new mongoose.Schema({ 
-  
-  url: {
-      type: String
-  },
-  message: {
-      type: String
-  },
-  imageId: {
-       type: mongoose.Schema.ObjectId,
-  },
-  status:{
-      type: String,
-      enum: [ 'inactive','active','nouser'],
-  },
-  sendTo:{
-    type: String,
-    enum: [ 'all','player'],
-  },
- 
-  createdBy: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-  } 
+const NoticationSchema = new mongoose.Schema({
+
+    url: {
+        type: String
+    },
+    message: {
+        type: String
+    },
+    imageId: {
+        type: mongoose.Schema.ObjectId,
+    },
+    status: {
+        type: String,
+        enum: ['inactive', 'active', 'nouser'],
+    },
+    sendTo: {
+        type: String,
+        enum: ['all', 'player'],
+    },
+
+    createdBy: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+    }
 }, {
     timestamps: true,
 });

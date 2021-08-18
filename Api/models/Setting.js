@@ -4,24 +4,24 @@ var dataTables = require('mongoose-datatables')
 const SettingSchema = new mongoose.Schema({
     name: {
         type: String,
-        required:true
+        required: true
     },
     many: {
         type: Array,
     },
-    siteLogo:{
+    siteLogo: {
         type: mongoose.Schema.ObjectId,
         ref: 'File',
     },
-    favicon:{
+    favicon: {
         type: mongoose.Schema.ObjectId,
         ref: 'File',
     },
     one: {},
-    type:{
+    type: {
         type: String,
-        required:true
-      
+        required: true
+
     },
     createdBy: {
         type: mongoose.Schema.ObjectId,

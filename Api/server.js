@@ -28,11 +28,15 @@ const transactions = require('./routes/transactions');
 const payments = require('./routes/payments');
 const managers = require('./routes/users');
 const bots = require('./routes/bots');
-const versions = require('./routes/versions'); 
-const files = require('./routes/files'); 
-const banners = require('./routes/banners'); 
+const versions = require('./routes/versions');
+const files = require('./routes/files');
+const banners = require('./routes/banners');
 const tickets = require('./routes/tickets');
 const notifications = require('./routes/notifications');
+const game = require('./routes/game');
+const dashboards = require('./routes/dashboard');
+
+
 const app = express();
 
 
@@ -90,11 +94,9 @@ app.use('/api/v1/tickets', tickets);
 app.use('/api/v1/payments', payments);
 app.use('/api/v1/files', files);
 app.use('/api/v1/notifications', notifications);
-
-//app.use('/api/v1/files', files);
-
 app.use('/api/v1/banners', banners);
-
+app.use('/api/v1/games', game);
+app.use('/api/v1/dashboards', dashboards);
 //app.use('/api/v1/payments', payments);
 app.use(errorHandler);
 

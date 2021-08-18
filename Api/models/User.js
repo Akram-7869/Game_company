@@ -7,15 +7,15 @@ var dataTables = require('mongoose-datatables')
 const UserSchema = new mongoose.Schema({
   firstName: {
     type: String,
-    
+
   },
   lastName: {
     type: String,
-    
+
   },
   phone: {
     type: String,
-    
+
   },
   email: {
     type: String,
@@ -26,14 +26,14 @@ const UserSchema = new mongoose.Schema({
       'Please add a valid email'
     ]
   },
-  status:{
-     type: String,
-    enum: [ 'notverifed','active','inactive','deleted'],
+  status: {
+    type: String,
+    enum: ['notverifed', 'active', 'inactive', 'deleted'],
     default: 'notverifed'
   },
   role: {
     type: String,
-    enum: [ 'manager','admin','superadmin'],
+    enum: ['manager', 'admin', 'superadmin'],
     default: 'manager'
   },
   password: {
@@ -51,7 +51,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Encrypt password using bcrypt
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
   }
@@ -61,19 +61,19 @@ UserSchema.pre('save', async function(next) {
 });
 
 // Sign JWT and return
-UserSchema.methods.getSignedJwtToken = function() {
-  return jwt.sign({ id: this._id, role:this.role  }, process.env.JWT_SECRET, {
+UserSchema.methods.getSignedJwtToken = function () {
+  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
   });
 };
 
 // Match user entered password to hashed password in database
-UserSchema.methods.matchPassword = async function(enteredPassword) {
+UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
 // Generate and hash password token
-UserSchema.methods.getResetPasswordToken = function() {
+UserSchema.methods.getResetPasswordToken = function () {
   // Generate token
   const resetToken = crypto.randomBytes(20).toString('hex');
 
@@ -89,7 +89,7 @@ UserSchema.methods.getResetPasswordToken = function() {
   return resetToken;
 };
 
- 
+
 UserSchema.plugin(dataTables);
 
 module.exports = mongoose.model('User', UserSchema);

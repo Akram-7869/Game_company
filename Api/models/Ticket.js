@@ -4,7 +4,7 @@ var dataTables = require('mongoose-datatables')
 const TicketSchema = new mongoose.Schema({
     playerId: {
         type: mongoose.Schema.ObjectId,
-        ref:'Players'
+        ref: 'Players'
     },
     name: {
         type: String

@@ -12,17 +12,17 @@ const {
 
 
 const router = express.Router({ mergeParams: true });
-const { protect} = require('../middleware/auth');
- 
+const { protect } = require('../middleware/auth');
+
 router.use(protect);
 router.route('/player').get(getPlayerTransaction);
-router.route('/add').post(createTransaction);
+router.route('/add/player/:id').post(createTransaction);
 router.route('/').post(getTransactions);
 
 router
     .route('/:id')
     .get(getTransaction)
-    .post( updateTransaction)
-    .delete( deleteTransaction);
+    .post(updateTransaction)
+    .delete(deleteTransaction);
 
 module.exports = router;

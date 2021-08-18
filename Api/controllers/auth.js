@@ -1,62 +1,58 @@
- const crypto = require('crypto');
+const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const sendEmail = require('../utils/sendEmail');
 const Player = require('../models/Player');
 const User = require('../models/User');
- const Transactions = require('../models/Transaction');
- const Setting = require('../models/Setting');
+const Transactions = require('../models/Transaction');
+const Setting = require('../models/Setting');
 const axios = require('axios')
 
 // @desc      Register user
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegister = asyncHandler(async (req, res, next) => {
-  const { phone , deviceToken, countryCode} = req.body;
+  const { phone, deviceToken, countryCode } = req.body;
 
- let player = await Player.findOne({$or:[{ 'phone': phone },{ 'deviceToken': deviceToken }]}).select('+deviceToken');
- let vcode = Math.floor(1000 + Math.random() * 9000);
- const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
- 
+  let player = await Player.findOne({ $or: [{ 'phone': phone }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  let vcode = Math.floor(1000 + Math.random() * 9000);
+  const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
+
   if (player) {
-    if(player.deviceToken !== deviceToken  ){
-        return next(
-          new ErrorResponse(` device number `)
-        );
-    }else if( player.phone !== phone ){
+    if (player.deviceToken !== deviceToken) {
+      return next(
+        new ErrorResponse(` device number `)
+      );
+    } else if (player.phone !== phone) {
       return next(
         new ErrorResponse(`phone number `)
       );
-    }else{
-        let fieldsToUpdate={
-          'verifyPhone':vcode,
-          'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
-        }
-        player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
-          new: true,
-          runValidators: true
-        });
+    } else {
+      let fieldsToUpdate = {
+        'verifyPhone': vcode,
+        'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
       }
-    
-    
-  }else{
-     // create new player
-  let data = {
-    'phone': phone,
-    'verifyPhone': vcode,
-    'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
-    'deviceToken': deviceToken,
-    'status':'notverifed',
-    'countryCode': countryCode
-  };
-  //console.log('usususus',data);
-  // Create user
-  player = await Player.create(data);
- 
+      player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+        new: true,
+        runValidators: true
+      });
+    }
 
+
+  } else {
+    // create new player
+    let data = {
+      'phone': phone,
+      'verifyPhone': vcode,
+      'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
+      'deviceToken': deviceToken,
+      'status': 'notverifed',
+      'countryCode': countryCode
+    };
+    // Create user
+    player = await Player.create(data);
   }
-console.log('before',sms);
-  await smsOtp(phone, vcode,sms);
+  await smsOtp(phone, vcode, sms);
 
   res.status(200).json({
     success: true,
@@ -70,17 +66,17 @@ console.log('before',sms);
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
-  if(!req.body.deviceToken || !req.body.deviceType || !req.body.code|| !req.body.phone){
-        return next(
-        new ErrorResponse(`Please provide all required data`)
-      );
+  if (!req.body.deviceToken || !req.body.deviceType || !req.body.code || !req.body.phone) {
+    return next(
+      new ErrorResponse(`Please provide all required data`)
+    );
   }
   //resetPasswordExpire: { $gt: Date.now() }
   console.log('verifyPhone-input', req.body)
   // await verifyOtp(req.body.phone, req.body.code).then(r=>{
   //   r.data.type
   // })
-  let user = await Player.findOne({ phone: req.body.phone, verifyPhone: req.body.code  });
+  let user = await Player.findOne({ phone: req.body.phone, verifyPhone: req.body.code });
   console.log('verifyPhone', user)
   const addamount = 10;
   if (!user) {
@@ -89,63 +85,64 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
     );
   }
 
- if(user.status === 'notverifed'){
-   //all ok new user 
-  let fieldsToUpdate = {
-    deviceType: req.body.deviceType,
-    deviceToken: req.body.deviceToken,
-    verifyPhone:undefined,
-    verifyPhoneExpire: undefined,
-    status: 'active',
-    $inc: { balance: addamount },
-  }
+  if (user.status === 'notverifed') {
+    //all ok new user 
+    let fieldsToUpdate = {
+      deviceType: req.body.deviceType,
+      deviceToken: req.body.deviceToken,
+      verifyPhone: undefined,
+      verifyPhoneExpire: undefined,
+      status: 'active',
+      $inc: { balance: addamount },
+    }
 
-  let tranData = {
-    playerId: user._id,
-    amount: addamount, 
-    transactionType: 'credit',
-    note: 'player register',
-    prevBalance: user.balance,
-    status:'complete'
-  }
-  let tran = await Transactions.create(tranData);
-  user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
-    new: true,
-    runValidators: true
-  });
+    let tranData = {
+      playerId: user._id,
+      amount: addamount,
+      transactionType: 'credit',
+      note: 'player register',
+      prevBalance: user.balance,
+      status: 'complete'
+    }
+    let tran = await Transactions.create(tranData);
+    user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+    let dash = await Dashboard.findByIdAndUpdate({ type: 'dashboard' }, { $inc: { totalPlayers: 1 } });
     sendTokenResponse(user, 200, res);
 
- }else if(user.status === 'active'){
-  // console.log('coustomer',s);
+  } else if (user.status === 'active') {
+    // console.log('coustomer',s);
     sendTokenResponse(user, 200, res);
 
- }else{
-   return next(new ErrorResponse(`User is inactive`));
- }
+  } else {
+    return next(new ErrorResponse(`User is inactive`));
+  }
 
 });
 exports.chkPin = asyncHandler(async (req, res, next) => {
-  const { pin  } = req.body;
- 
-if(!pin || !req.player || req.player.role !== 'player'){
-  return next(new ErrorResponse('authentication faild'));
-}
-  
- // Check for user
- const user = await Player.findOne({_id: req.player.id }).select('+password');
- // Check if password matches
- const isMatch =  user.password=== req.body.pin;
-  // Check for user
-   if(!isMatch){
+  const { pin } = req.body;
+
+  if (!pin || !req.player || req.player.role !== 'player') {
     return next(new ErrorResponse('authentication faild'));
-   }
-   sendTokenResponse(user, 200, res);
+  }
+
+  // Check for user
+  const user = await Player.findOne({ _id: req.player.id }).select('+password');
+  // Check if password matches
+  const isMatch = user.password === req.body.pin;
+  // Check for user
+  if (!isMatch) {
+    return next(new ErrorResponse('authentication faild'));
+  }
+  sendTokenResponse(user, 200, res);
 
   // res.status(200).json({
   //   success: true,
   //   data: req.player
   // });
- 
+
 });
 
 // Get token from model, create cookie and send response
@@ -170,7 +167,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     .json({
       success: true,
       token,
-      playerId:user._id,
+      playerId: user._id,
       firstName: user.firstName,
       lastName: user.lastName
     });
@@ -208,54 +205,54 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.logout = asyncHandler(async (req, res, next) => {
- 
+
   res.status(200).json({
     success: true,
     data: {}
   });
 });
 
-let smsOtp= async(phone,otp,sms)=>{
- 
-var params = {
-  "template_id":sms.one.TEMPLATE_ID, 
-  "mobile":phone,
-  "authkey":sms.one.AUTHKEY,  
-  "otp":otp
-};
-console.log(params);
-//return axios.get('https://api.msg91.com/api/v5/otp', { params}).catch(error => {console.error(error)});
+let smsOtp = async (phone, otp, sms) => {
 
-}
-
-let verifyOtp=async(phone, otp)=>{
- var params = {
-  "template_id":"5f322d94d6fc051d202b4522",
-  "mobile":phone,
-  "authkey":"338555AN0yGYvFhp5f342bcc",
-  "otp":otp
-};
-
-
-return axios.get('https://api.msg91.com/api/v5/otp/verify', { params }).catch(error => {console.error(error)})
-
-}
-
-let resendOpt=async()=>{
   var params = {
-  //"template_id":"5f322d94d6fc051d202b4522",
-  "mobile":"919665300923",
-  "authkey":"338555AN0yGYvFhp5f342bcc",
-//  "otp":otp,
-  "retrytype":"text"
-};
+    "template_id": sms.one.TEMPLATE_ID,
+    "mobile": phone,
+    "authkey": sms.one.AUTHKEY,
+    "otp": otp
+  };
 
-axios.get('https://api.msg91.com/api/v5/otp/retry', {params})
-  .then(res => {
-    console.log(res)
-  })
-  .catch(error => {
-    console.error(error)
-  })
- 
+  return axios.get('https://api.msg91.com/api/v5/otp', { params }).catch(error => { console.error(error) });
+
+}
+
+let verifyOtp = async (phone, otp) => {
+  var params = {
+    "template_id": "5f322d94d6fc051d202b4522",
+    "mobile": phone,
+    "authkey": "338555AN0yGYvFhp5f342bcc",
+    "otp": otp
+  };
+
+
+  return axios.get('https://api.msg91.com/api/v5/otp/verify', { params }).catch(error => { console.error(error) })
+
+}
+
+let resendOpt = async () => {
+  var params = {
+    //"template_id":"5f322d94d6fc051d202b4522",
+    "mobile": "919665300923",
+    "authkey": "338555AN0yGYvFhp5f342bcc",
+    //  "otp":otp,
+    "retrytype": "text"
+  };
+
+  axios.get('https://api.msg91.com/api/v5/otp/retry', { params })
+    .then(res => {
+      console.log(res)
+    })
+    .catch(error => {
+      console.error(error)
+    })
+
 }

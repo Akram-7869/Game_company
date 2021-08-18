@@ -1,152 +1,157 @@
 <%- contentFor('HeaderCss') %>
 
-<!-- DataTables -->
-<link href="/public/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="/public/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <!-- DataTables -->
+    <link href="/public/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/public/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
 
-<!-- Responsive datatable examples -->
-<link href="/public/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+    <!-- Responsive datatable examples -->
+    <link href="/public/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
-<%- contentFor('breadcrumb') %>
+    <%- contentFor('breadcrumb') %>
 
-<!-- start page title -->
-<div class="row">
-    <div class="col-12">
-        <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0">Manager List</h4>
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">Manager List</h4>
 
-            <div class="page-title-right">
-                <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                    <li class="breadcrumb-item active">Manager List</li>
-                </ol>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item active">Manager List</li>
+                        </ol>
+                    </div>
+
+                </div>
             </div>
-
         </div>
-    </div>
-</div>
-<!-- end page title -->
+        <!-- end page title -->
 
-<%- contentFor('body') %>
- 
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
+        <%- contentFor('body') %>
 
-               <!--  <h4 class="card-title">Buttons example</h4>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <!--  <h4 class="card-title">Buttons example</h4>
                 <p class="card-title-desc">The Buttons extension for DataTables
                     provides a common set of options, API methods and styling to display
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
-                <a type="button" href="/admin/manager/add" class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i> Add New</a>
-                <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                    <thead>
-                    <tr>
-                        <th>Srno</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Status</th>
-                        <th>Dated</th>
-                        <th>Action</th>  
-                    </tr>
-                    </thead>
-                    <tbody>
-             
-                           
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div> <!-- end col -->
-</div> <!-- end row -->
+                            <a type="button" href="/admin/manager/add"
+                                class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i>
+                                Add New</a>
+                            <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap"
+                                style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Srno</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Status</th>
+                                        <th>Dated</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> <!-- end col -->
+            </div> <!-- end row -->
 
 
 
 
-<%- contentFor('FooterJs') %>
+            <%- contentFor('FooterJs') %>
 
-<!-- Required datatable js -->
-<script src="/public/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="/public/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<!-- Buttons examples -->
-<script src="/public/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="/public/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-<script src="/public/assets/libs/jszip/jszip.min.js"></script>
-<script src="/public/assets/libs/pdfmake/build/pdfmake.min.js"></script>
-<script src="/public/assets/libs/pdfmake/build/vfs_fonts.js"></script>
-<script src="/public/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-<script src="/public/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-<script src="/public/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+                <!-- Required datatable js -->
+                <script src="/public/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+                <script src="/public/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+                <!-- Buttons examples -->
+                <script src="/public/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+                <script src="/public/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+                <script src="/public/assets/libs/jszip/jszip.min.js"></script>
+                <script src="/public/assets/libs/pdfmake/build/pdfmake.min.js"></script>
+                <script src="/public/assets/libs/pdfmake/build/vfs_fonts.js"></script>
+                <script src="/public/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+                <script src="/public/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+                <script src="/public/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 
-<!-- Responsive examples -->
-<script src="/public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="/public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+                <!-- Responsive examples -->
+                <script src="/public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+                <script
+                    src="/public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
-<!-- Datatable init js
+                <!-- Datatable init js
 <script src="/public/assets/js/pages/datatables.init.js"></script> -->
-<!-- Sweet Alerts js -->
-<script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
-<%- contentFor('BottomJs') %>
-<script>
-      function delRec(id){
-        let r = confirm('Want to delete?');
-       if( id){
-        handleDel(id);
-       }
-    }
+                <!-- Sweet Alerts js -->
+                <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <%- contentFor('BottomJs') %>
+                    <script>
+                        function delRec(id) {
+                            let r = confirm('Want to delete?');
+                            if (id) {
+                                handleDel(id);
+                            }
+                        }
+                        function handleDel(id) {
+                            return $.ajax({
+                                type: 'DELETE',
+                                url: '/admin/manager/' + id,
+                                success: (results) => {
+                                    alert('Record Delete');
+                                    location.reload();
+                                },
+                                error: (err) => {
+                                    alert('Error While Deleting');
+                                }
+                            });
+                            //         $.ajax({
+                            //     url: '/admin/player/'+id,
+                            //     type: 'DELETE',
+                            //     success: ()=>{alert('done');location.reload()},
+                            //     error: ()=>alert('failed')
+                            // });
+                        }
+                        function view(id) {
+                            alert(id);
+                        }
+                        var i = 1;
+                        $('#listsetting').DataTable({
 
+                            "processing": true,
+                            "serverSide": true,
+                            "ajax": {
+                                url: "/admin/manager/data", type: "post"
+                            },
+                            "columns": [
+                                { data: null, "render": function (data, type, full, meta) { return i++; } },
 
+                                { data: 'firstName' },
+                                { data: 'email' },
+                                { data: 'phone' },
+                                { data: 'status' },
+                                { data: 'createdAt' },
 
+                                {
+                                    data: null, "render": function (data, type, full, meta) {
 
-function handleDel (id){
-   return $.ajax({
-                    type: 'DELETE',
-                    url: '/admin/manager/'+id,
-                    success: (results)=> {
-                        alert('Record Delete');
-                          location.reload();
-                    },
-                    error: (err)=>{
-                        alert('Error While Deleting');
-                    }
-                });
-//         $.ajax({
-//     url: '/admin/player/'+id,
-//     type: 'DELETE',
-//     success: ()=>{alert('done');location.reload()},
-//     error: ()=>alert('failed')
-// });
-     }
-     function view(id){
-        alert(id);
-     }
-     var i = 1;
-     $('#listsetting').DataTable( {
-    
-    "processing": true,    
-                "serverSide": true,    
-                "ajax": {    
-                    url:"/admin/manager/data", type: "post" },    
-                "columns": [    
-                {data: null, "render": function(data, type, full, meta) {return i++;}}, 
-                     
-                        {data:'firstName'},
-                        {data:'email'},
-                        {data:'phone'},
-                        {data:'status'},
-                        {data:'createdAt'},
-
-                        {data: null, "render": function(data, type, full, meta) {
-                             
-        return '<a class="btn btn-success btn-sm" href="/admin/manager/' 
-                + full._id + '">EDIT</a><button class="btn btn-success btn-sm" onclick="delRec(\'' 
-                + full._id + '\')">Del</button><a class="btn btn-success btn-sm" href="/admin/manager/view/' 
-                + full._id +'">View</a>';
-      }},   
-                ]    
-} );
- </script>
+                                        return '<a class="px-3 text-primary" href="/admin/managera/'
+                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a> <a class="px-3 text-danger" onclick="delRec(\''
+                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
+                                    }
+                                },
+                            ]
+                        });
+                    </script>

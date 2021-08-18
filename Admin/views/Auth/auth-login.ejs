@@ -11,7 +11,7 @@
     <!-- App favicon -->
     <link rel="shortcut icon" href="/public/assets/images/favicon.ico">
 
-    <%- include ('../Partials/HeaderStyle')  %>
+    <%- include ('../Partials/HeaderStyle') %>
 
 </head>
 
@@ -45,40 +45,44 @@
                                     <div class="alert alert-danger text-center mb-4 flash" role="alert">
                                         <%= error %>
                                     </div>
-                                <% } %>
-                                <% if(message.length> 0) { %>
-                                    <div class="alert alert-success text-center mb-4 flash" role="alert">
-                                        <%= message %>
-                                    </div>
-                                <% } %>
-                                <form method="post" action="/post-login">
+                                    <% } %>
+                                        <% if(message.length> 0) { %>
+                                            <div class="alert alert-success text-center mb-4 flash" role="alert">
+                                                <%= message %>
+                                            </div>
+                                            <% } %>
+                                                <form method="post" action="/post-login">
 
-                                    <div class="mb-3">
-                                        <label class="form-label" for="username">Email</label>
-                                        <input type="text" class="form-control" id="username" name="email"
-                                            placeholder="Enter email" value="">
-                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="username">Email</label>
+                                                        <input type="text" class="form-control" id="username"
+                                                            name="email" placeholder="Enter email" value="">
+                                                    </div>
 
-                                    <div class="mb-3">
-                                        <div class="float-end">
-                                            <a href="/forgot-password" class="text-muted">Forgot password?</a>
-                                        </div>
-                                        <label class="form-label" for="userpassword">Password</label>
-                                        <input type="password" class="form-control" id="userpassword" name="password"
-                                            placeholder="Enter password" value="">
-                                    </div>
+                                                    <div class="mb-3">
+                                                        <div class="float-end">
+                                                            <a href="/forgot-password" class="text-muted">Forgot
+                                                                password?</a>
+                                                        </div>
+                                                        <label class="form-label" for="userpassword">Password</label>
+                                                        <input type="password" class="form-control" id="userpassword"
+                                                            name="password" placeholder="Enter password" value="">
+                                                    </div>
 
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="auth-remember-check">
-                                        <label class="form-check-label" for="auth-remember-check">Remember me</label>
-                                    </div>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input"
+                                                            id="auth-remember-check">
+                                                        <label class="form-check-label"
+                                                            for="auth-remember-check">Remember me</label>
+                                                    </div>
 
-                                    <div class="mt-3 text-end">
-                                        <button class="btn btn-primary w-sm waves-effect waves-light" type="submit">Log
-                                            In</button>
-                                    </div>
+                                                    <div class="mt-3 text-end">
+                                                        <button class="btn btn-primary w-sm waves-effect waves-light"
+                                                            type="submit">Log
+                                                            In</button>
+                                                    </div>
 
-                                    <!-- <div class="mt-4 text-center">
+                                                    <!-- <div class="mt-4 text-center">
                                         <div class="signin-other-title">
                                             <h5 class="font-size-14 mb-3 title">Sign in with</h5>
                                         </div>
@@ -105,12 +109,12 @@
                                         </ul>
                                     </div> -->
 
-                                    <div class="mt-4 text-center">
+                                                    <!-- <div class="mt-4 text-center">
                                         <p class="mb-0">Don't have an account ? <a href="register"
                                                 class="fw-medium text-primary"> Signup now </a> </p>
-                                    </div>
+                                    </div> -->
 
-                                </form>
+                                                </form>
                             </div>
                         </div>
                     </div>
@@ -128,9 +132,9 @@
         <!-- end container -->
     </div>
 
-    <%- include ('../Partials/VendorScript')  %>
+    <%- include ('../Partials/VendorScript') %>
 
-    <script src="/public/assets/js/app.js"></script>
+        <script src="/public/assets/js/app.js"></script>
 
 </body>
 

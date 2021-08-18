@@ -1,23 +1,24 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Transaction = require('../models/Transaction');
+const Player = require('../models/Player');
 
 // @desc      Get all Transactions
 // @route     GET /api/v1/auth/Transactions
 // @access    Private/Admin
 exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
-  
-   if(!req.player){
-       return next(
+
+  if (!req.player) {
+    return next(
       new ErrorResponse(`Transaction  not found`)
     );
-   }
+  }
   // console.log(req.player._id)
-  
+
   Transaction.dataTables({
     limit: 1000,
     skip: 0,
-    select:{'amount':1,'transactionType':1, 'note':1, 'createdAt':1,logType:1,paymentStatus:'1'},
+    select: { 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, logType: 1, paymentStatus: '1' },
     search: {
       value: req.player._id,
       fields: ['playerId']
@@ -26,7 +27,7 @@ exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
       updatedAt: 1
     }
   }).then(function (table) {
-    res.json({data: table.data, recordsTotal:table.total,recordsFiltered:table.total, draw:req.body.draw}); // table.total, table.data
+    res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })
   //res.status(200).json(res.advancedResults);
 });
@@ -35,20 +36,20 @@ exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Transactions
 // @access    Private/Admin
 exports.getTransactions = asyncHandler(async (req, res, next) => {
-  
+
   Transaction.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-    select:{'playerId':1,'amount':1,'transactionType':1, 'note':1, 'createdAt':1},
+    select: { 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1 },
     search: {
-      value: req.body.search?  req.body.search.value:'',
+      value: req.body.search ? req.body.search.value : '',
       fields: ['playerId']
     },
     sort: {
       _id: 1
     }
   }).then(function (table) {
-    res.json({data: table.data, recordsTotal:table.total,recordsFiltered:table.total, draw:req.body.draw}); // table.total, table.data
+    res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })
   //res.status(200).json(res.advancedResults);
 });
@@ -69,11 +70,50 @@ exports.getTransaction = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Transactions
 // @access    Private/Admin
 exports.createTransaction = asyncHandler(async (req, res, next) => {
-  const transaction = await Transaction.create(req.body);
+  console.log('req.body'.red, req.body);
+  let { amount, note, gameId, transactionType } = req.body;
+  let player = await Player.findById(req.params.id);
+  let fieldsToUpdate;
+  if (amount < 0) {
+    return next(
+      new ErrorResponse(`Invalid amount`)
+    );
+  }
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player Not found`)
+    );
+  }
+  amount = parseInt(amount).toFixed(3);
+  if (transactionType === 'credit') {
+    fieldsToUpdate = {
+      $inc: { balance: amount }
+    }
+  } else if (transactionType === 'debit') {
+    fieldsToUpdate = {
+      $inc: { balance: -amount }
+    }
+  }
 
+  let commision = 0;
+  let tranData = {
+    'playerId': player._id,
+    'amount': amount,
+    'transactionType': transactionType,
+    'note': note,
+    'prevBalance': player.balance,
+    status: 'complete',
+
+  }
+
+  const transaction = await Transaction.create(tranData);
+  player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
   res.status(201).json({
     success: true,
-    data: transaction
+    data: player
   });
 });
 
@@ -81,22 +121,22 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Transactions/:id
 // @access    Private/Admin
 exports.updateTransaction = asyncHandler(async (req, res, next) => {
-  let {one, many}=req.body
+  let { one, many } = req.body
   let transaction = await Transaction.findById(req.params.id);
   if (!transaction) {
     return next(
       new ErrorResponse(`Transaction  not found`)
     );
   }
-  let fieldsToUpdate= {one, many}
-   
+  let fieldsToUpdate = { one, many }
+
   transaction = await Transaction.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
 
-   //Transaction.isNew = false;
- // await Transaction.save();
+  //Transaction.isNew = false;
+  // await Transaction.save();
   res.status(200).json({
     success: true,
     data: transaction
@@ -108,8 +148,8 @@ exports.updateTransaction = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deleteTransaction = asyncHandler(async (req, res, next) => {
   const transaction = await Transaction.findById(req.params.id);
- // await Transaction.findByIdAndDelete(req.params.id);
-  
+  // await Transaction.findByIdAndDelete(req.params.id);
+
   res.status(200).json({
     success: true,
     data: {}

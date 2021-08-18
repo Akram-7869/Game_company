@@ -1,69 +1,83 @@
 const mongoose = require('mongoose');
-var dataTables = require('mongoose-datatables')
-const TransactionsSchema = new mongoose.Schema({ 
+var dataTables = require('mongoose-datatables');
+const Player = require('../models/Player');
+
+const TransactionsSchema = new mongoose.Schema({
     playerId: {
+        type: mongoose.Schema.ObjectId,
+        required: true
+    },
+    gameId: {
         type: String,
-         required:true
     },
     amount: {
         type: Number,
-         required:true
+        required: true
     },
-    currency:{
-        type:String,
-        default:'INR'
+    currency: {
+        type: String,
+        default: 'INR'
     },
-    paymentGateway:{
-        type:String
+    paymentGateway: {
+        type: String
     },
     createdBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-      
+
     },
-    transactionType:{
-         type: String,
-          enum: ['credit','debit'],
-          required:true,
+    transactionType: {
+        type: String,
+        enum: ['credit', 'debit'],
+        required: true,
     },
     createdByName: {
         type: String
     },
     note: {
         type: String,
-        required:true
+        required: true
     },
-    prevBalance:{
+    prevBalance: {
         type: Number,
-        required:true
+        required: true
     },
-    paymentId:{
-        type: String, 
-    },
-    gateWayResponse:{
-        type:Map 
-    },
-    paymentStatus:{
+    paymentId: {
         type: String,
-        enum: ['PROCESSING','FAILED','SUCCESS','DECLINED'],   
-        default:'PROCESSING'
     },
-    logType:{
+    gateWayResponse: {
+        type: Map
+    },
+    paymentStatus: {
         type: String,
-          enum: ['withdraw','payment', 'game'],
-          required:true,
-          default:'game'
+        enum: ['PROCESSING', 'FAILED', 'SUCCESS', 'DECLINED'],
+        default: 'PROCESSING'
     },
-    status:{
-        type:String,
-        enum:['log','complete'],
-        default:'log'
+    adminCommision: {
+        type: Number,
+    },
+    gateWayCommision: {
+        type: Number,
+    },
+    logType: {
+        type: String,
+        enum: ['withdraw', 'payment', 'game', 'join', 'won', 'fees', 'bounus', 'adjustment'],
+        required: true,
+        default: 'game'
+    },
+    status: {
+        type: String,
+        enum: ['log', 'complete'],
+        default: 'log'
     }
 
 }, {
     timestamps: true,
 });
 
- 
-TransactionsSchema.plugin(dataTables)
+
+
+
+
+TransactionsSchema.plugin(dataTables);
 module.exports = mongoose.model('Transactions', TransactionsSchema);

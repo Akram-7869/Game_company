@@ -3,7 +3,7 @@ var dataTables = require('mongoose-datatables')
 const PlayerGameSchema = new mongoose.Schema({
   playerId: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Player'
+    ref: 'Players'
   },
   gameId: {
     type: String
@@ -16,8 +16,8 @@ const PlayerGameSchema = new mongoose.Schema({
   },
   gameStatus: {
     type: String,
-    default: 'playing',
-    enum: ['playing','won','lost']
+    default: 'lost',
+    enum: ['won', 'lost']
   },
   amountPaid: {
     type: Number,
@@ -27,7 +27,12 @@ const PlayerGameSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  online: {
+  rank: {
+    type: Number,
+    default: 0,
+  },
+
+  gameOnline: {
     type: Boolean,
     default: true
   }

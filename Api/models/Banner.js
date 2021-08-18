@@ -12,22 +12,22 @@ const BannerSchema = new mongoose.Schema({
         type: String
     },
     imageId: {
-         type: mongoose.Schema.ObjectId,
+        type: mongoose.Schema.ObjectId,
     },
-    status:{
+    status: {
         type: String,
-        enum: [ 'inactive','active'],
+        enum: ['inactive', 'active'],
     },
-    isNotification:{
+    isNotification: {
         type: Boolean,
-       default:false
+        default: false
     },
-    
+
     createdBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
     },
-   
+
 
 }, {
     timestamps: true,
@@ -36,5 +36,5 @@ const BannerSchema = new mongoose.Schema({
 });
 
 BannerSchema.plugin(dataTables);
-BannerSchema.virtual('bannerUrl').get(function() { return process.env.API_URI + '/files/'+this.imageId; })
+BannerSchema.virtual('bannerUrl').get(function () { return process.env.API_URI + '/files/' + this.imageId; })
 module.exports = mongoose.model('Banners', BannerSchema);

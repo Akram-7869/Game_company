@@ -1,23 +1,23 @@
 const mongoose = require('mongoose');
 var dataTables = require('mongoose-datatables')
-const PlayerNoticationSchema = new mongoose.Schema({ 
-  playerId:{
+const PlayerNoticationSchema = new mongoose.Schema({
+  playerId: {
     type: mongoose.Schema.ObjectId,
     ref: 'Player',
 
   },
-  notificationId:{
+  notificationId: {
     type: mongoose.Schema.ObjectId,
     ref: 'Notification',
 
   },
-     
- read:{type: Boolean,default:false},
-  
-  
- 
+
+  read: { type: Boolean, default: false },
+
+
+
 }, {
-    timestamps: true,
+  timestamps: true,
 });
 
 PlayerNoticationSchema.plugin(dataTables)

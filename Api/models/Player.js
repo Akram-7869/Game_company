@@ -12,27 +12,27 @@ const PlayerSchema = new mongoose.Schema({
   lastName: {
     type: String,
   },
-  gender:{
-     type: String,
-     enum:['male','female','other']
-   },
-   profilePic:{
-     type: String,
-   },
-  countryCode:{
-    type:String,
-     required: true,
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'other']
   },
-  country:{
-    type:String,
-      
+  profilePic: {
+    type: String,
+  },
+  countryCode: {
+    type: String,
+    required: true,
+  },
+  country: {
+    type: String,
+
   },
   phone: {
     type: String,
-      minLength: 8,
-      trim:true,
-        required: true,
-        
+    minLength: 8,
+    trim: true,
+    required: true,
+
   },
   email: {
     type: String,
@@ -40,31 +40,31 @@ const PlayerSchema = new mongoose.Schema({
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Please add a valid email'
     ],
-    
+
   },
   role: {
     type: String,
     enum: ['player'],
     default: 'player'
   },
-  deviceType:{
-    type: String  
-  }, 
-  deviceToken:{
+  deviceType: {
+    type: String
+  },
+  deviceToken: {
     type: String,
-    select: false 
-  },  
-  gamecode:{
-    type: String 
-  }, 
+    select: false
+  },
+  gamecode: {
+    type: String
+  },
   password: {
     type: String,
     minlength: 4,
     select: false
   },
-  status:{
+  status: {
     type: String,
-    enum: ['notverifed','active','inactive','deleted','banned'],
+    enum: ['notverifed', 'active', 'inactive', 'deleted', 'banned'],
   },
   resetPasswordToken: {
     type: String,
@@ -85,48 +85,48 @@ const PlayerSchema = new mongoose.Schema({
     minlength: 6,
     select: false
   },
-  balance:{
-        type: Number,
-        default:0
-    },
+  balance: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now
   },
-  
-  aadharNumber:{
+
+  aadharNumber: {
     type: String
   },
-  panNumber:{
+  panNumber: {
     type: String
   },
-  dob:{
+  dob: {
     type: String
   },
-  lat:{
+  lat: {
     type: String
   },
-  long:{
+  long: {
     type: String
   },
-  kycStatus:{
+  kycStatus: {
     type: String,
-    enum:['verified','notverified'],
-    default:'notverified'
+    enum: ['verified', 'notverified'],
+    default: 'notverified'
   },
-  wallet:{
+  wallet: {
 
   },
-  bank:{
+  bank: {
 
   },
-  upi:{
+  upi: {
 
   }
 });
 
 // Encrypt password using bcrypt
-PlayerSchema.pre('save', async function(next) {
+PlayerSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
   }
@@ -136,19 +136,19 @@ PlayerSchema.pre('save', async function(next) {
 });
 
 // Sign JWT and return
-PlayerSchema.methods.getSignedJwtToken = function() {
-  return jwt.sign({ id: this._id, role:this.role  }, process.env.JWT_SECRET, {
+PlayerSchema.methods.getSignedJwtToken = function () {
+  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
   });
 };
 
 // Match user entered password to hashed password in database
-PlayerSchema.methods.matchPassword = async function(enteredPassword) {
+PlayerSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
 // Generate and hash password token
-PlayerSchema.methods.getResetPasswordToken = function() {
+PlayerSchema.methods.getResetPasswordToken = function () {
   // Generate token
   const resetToken = crypto.randomBytes(20).toString('hex');
 
@@ -164,13 +164,13 @@ PlayerSchema.methods.getResetPasswordToken = function() {
   return resetToken;
 };
 
- 
 
-PlayerSchema.methods.getPhoneExpire = function() {
+
+PlayerSchema.methods.getPhoneExpire = function () {
   this.verifyPhoneExpire = Date.now() + 10 * 60 * 1000;
   return verifyPhone;
 };
 
- 
+
 PlayerSchema.plugin(dataTables)
 module.exports = mongoose.model('Players', PlayerSchema);

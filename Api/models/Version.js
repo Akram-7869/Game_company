@@ -6,9 +6,9 @@ const VersionSchema = new mongoose.Schema({
         type: String
     },
     appLink: {
-       type: String
+        type: String
     },
-    
+
     createdBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
