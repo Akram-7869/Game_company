@@ -95,10 +95,14 @@ const PlayerSchema = new mongoose.Schema({
   },
 
   aadharNumber: {
-    type: String
+    type: String,
+    select: false
+
   },
   panNumber: {
-    type: String
+    type: String,
+    select: false
+
   },
   dob: {
     type: String
@@ -115,12 +119,15 @@ const PlayerSchema = new mongoose.Schema({
     default: 'notverified'
   },
   wallet: {
+    select: false
 
   },
   bank: {
+    select: false
 
   },
   upi: {
+    select: false
 
   }
 });
@@ -164,13 +171,10 @@ PlayerSchema.methods.getResetPasswordToken = function () {
   return resetToken;
 };
 
-
-
 PlayerSchema.methods.getPhoneExpire = function () {
   this.verifyPhoneExpire = Date.now() + 10 * 60 * 1000;
   return verifyPhone;
 };
-
 
 PlayerSchema.plugin(dataTables)
 module.exports = mongoose.model('Players', PlayerSchema);

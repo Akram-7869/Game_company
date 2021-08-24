@@ -49,13 +49,13 @@
                                         <span class="d-none d-sm-block">Site Logo</span>
                                     </a>
                                 </li>
-                                <!--   <li class="nav-item">
+                                <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="tab" href="#fees" role="tab">
                                         <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
-                                        <span class="d-none d-sm-block">Support Email</span>
+                                        <span class="d-none d-sm-block">Commision</span>
                                     </a>
                                 </li>
-                                 <li class="nav-item">
+                                <!--   <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="tab" href="#firebase" role="tab">
                                         <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
                                         <span class="d-none d-sm-block">Firebase</span>
@@ -147,14 +147,13 @@
                                     </form>
                                 </div>
                                 <div class="tab-pane" id="fees" role="tabpanel">
-                                    <form id="banner" onsubmit="handleSubmit(this)" enctype="multipart/form-data"
-                                        method="POST">
+                                    <form id="banner" action="/admin/site/commision/<%=row._id%>"
+                                        onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
                                         <p class="mb-0">
                                         <div class="mb-3">
                                             <label class="form-label">Commission</label>
-                                            <input type="text" class="form-control" required name="one[COMMISSION]"
-                                                value="<%= row ? row.one['COMMISSION']:''%>"
-                                                placeholder="Type something" />
+                                            <input type="text" class="form-control" required name="commission"
+                                                value="<%= row ? row['commission']:''%>" placeholder="Type something" />
                                         </div>
 
 

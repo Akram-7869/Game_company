@@ -53,6 +53,18 @@ const DashboardSchema = new mongoose.Schema({
   timestamps: true,
 });
 
+DashboardSchema.statics.join = async function () {
+  return await this.findOneAndUpdate({ type: 'dashboard' }, { $set: { $inc: { livePlayers: 1 } }, $setOnInsert: { livePlayers: 1 } }, {
+    new: true, upsert: true,
+    runValidators: true
+  });
+};
+DashboardSchema.statics.won = async function () {
+  return await this.findOneAndUpdate({ type: 'dashboard', totalPlayers: { $gt: 0 } }, { $set: { $inc: { livePlayers: -1 } }, $setOnInsert: { livePlayers: 1 } }, {
+    new: true, upsert: true,
+    runValidators: true
+  });
+};
 DashboardSchema.plugin(dataTables);
 
 module.exports = mongoose.model('Dashboards', DashboardSchema);

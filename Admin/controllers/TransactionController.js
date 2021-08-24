@@ -57,7 +57,7 @@ exports.deletePlayer = asyncHandler(async (req, res, next) => {
 
 exports.getTranscations = asyncHandler(async (req, res, next) => {
 
-      callApi(req).post(apiUrl, { ...req.body })
+      callApi(req).post(apiUrl, { ...req.body }, { params: req.query })
             .then(r => {
                   // Assign value in session
 

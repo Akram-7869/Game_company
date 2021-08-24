@@ -6,7 +6,8 @@ const {
   updatePlayer, deletePlayer, chkPin, setPin, getMe, debiteAmount, playerInfo, updateStatus, creditAmount,
   join, won,
   ticketAdd, ticketList, ticketReply,
-  getOnlinePlayers, getNotication, getPage, editOnlinePlayers
+  getOnlinePlayers, getNotication, getPage, editOnlinePlayers,
+  withDrawRequest
 
 } = require('../controllers/players');
 
@@ -30,6 +31,7 @@ router.post('/game/won', protect, won);
 router.post('/ticket/add', protect, ticketAdd);
 router.post('/ticket/reply', protect, ticketReply);
 router.get('/ticket/', protect, ticketList);
+router.post('/withdraw/request', protect, withDrawRequest);
 router.post('/debit', protect, debiteAmount);
 router.post('/credit/', protect, creditAmount);
 router.get('/info', protect, playerInfo);

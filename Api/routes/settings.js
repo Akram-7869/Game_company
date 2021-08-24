@@ -8,7 +8,8 @@ const {
     deleteSetting,
     getSettingByName,
     uploadeImage,
-    getFile
+    getFile,
+    setCommission
 
 } = require('../controllers/settings');
 
@@ -23,13 +24,14 @@ router.route('/upload/:id').post(uploadeImage);
 router.route('/image/:id').get(getFile);
 
 
-router.route('/add').post(protect,createSetting);
+router.route('/add').post(protect, createSetting);
 router.route('/filter/:type/:name').get(getSettingByName);
-router.route('/filter/:type').post(protect,getSettings);
+router.route('/filter/:type').post(protect, getSettings);
+router.route('/commission/:id').post(protect, setCommission);
 
 router
     .route('/:id')
-    .get(protect,getSetting)
+    .get(protect, getSetting)
     .post(protect, updateSetting)
     .delete(protect, deleteSetting);
 

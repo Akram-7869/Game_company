@@ -6,6 +6,7 @@ const { callApi } = require('../helper/common');
 
 var apiUrl = 'http://localhost:3000/api/v1/players/';
 var apiUrlGame = 'http://localhost:3000/api/v1/games/';
+var apiUrlTransaction = 'http://localhost:3000/api/v1/transactions/';
 
 exports.getPlayerReport = asyncHandler(async (req, res, next) => {
 
@@ -34,6 +35,29 @@ exports.getPlayerPayout = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'Player Payout' };
       res.render('Payments/payout')
+});
+exports.getPlayerPayoutEdit = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Player Payout' };
+      callApi(req).get(apiUrlTransaction + 'payout/' + req.params.id)
+            .then(r => {
+                  console.log(r.data.data);
+                  res.render('Payments/payoutedit', { row: r.data.data });
+            })
+            .catch(error => {//   req.flash('error', 'Incorrect email or password!');})
+            });
+});
+exports.postPlayerPayoutEdit = asyncHandler(async (req, res, next) => {
+
+      callApi(req).post(apiUrl + 'payout/' + req.params.id, req.body)
+            .then(r => {
+                  res.locals = { title: 'Player-edit' };
+                  req.flash('error', 'Data save');
+                  res.render('Players/payout', { row: r.data.data });
+
+            })
+            .catch(error => {
+                  req.flash('error', 'Data not updated');
+            })
 });
 
 exports.getPlayerWallet = asyncHandler(async (req, res, next) => {

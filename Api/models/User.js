@@ -90,6 +90,8 @@ UserSchema.methods.getResetPasswordToken = function () {
 };
 
 
+
+
 UserSchema.plugin(dataTables);
 
 module.exports = mongoose.model('User', UserSchema);

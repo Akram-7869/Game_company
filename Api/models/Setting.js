@@ -18,6 +18,12 @@ const SettingSchema = new mongoose.Schema({
         ref: 'File',
     },
     one: {},
+    commission: {
+        type: Number,
+        default: 20,
+
+
+    },
     type: {
         type: String,
         required: true

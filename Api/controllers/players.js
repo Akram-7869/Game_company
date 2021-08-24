@@ -5,6 +5,57 @@ const Transaction = require('../models/Transaction');
 const Ticket = require('../models/Ticket');
 const Dashboard = require('../models/Dashboard');
 const { request } = require('express');
+const Setting = require('../models/Setting');
+
+exports.withDrawRequest = asyncHandler(async (req, res, next) => {
+  let { amount, note, gameId } = req.body;
+  if (!amount || amount < 0) {
+    return next(
+      new ErrorResponse(`Invalid amount`)
+    );
+  }
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Invalid Code`)
+    );
+  }
+  // if (!gameId) {
+  //   return next(
+  //     new ErrorResponse(`Game id requied`)
+  //   );
+  // }
+
+
+  let tranData = {
+    'playerId': req.player._id,
+    'amount': amount,
+    'transactionType': "debit",
+    'note': note,
+    'prevBalance': req.player.balance,
+    'status': 'log',
+    'logType': 'withdraw',
+
+  }
+
+  //tranData['gameId'] = gameId;
+
+  let tran = await Transaction.create(tranData);
+  let player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount } }, {
+    new: true,
+    runValidators: true
+  });
+
+  // tran = await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
+  let dashUpdate = {};
+  let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, { $set: { $inc: { totalPayoutRequest: 1 } } }, {
+    new: true, upsert: true,
+    runValidators: true
+  });
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});
 
 // @desc      Get all Players
 // @route     GET /api/v1/auth/Players
@@ -151,6 +202,10 @@ exports.chkPin = asyncHandler(async (req, res, next) => {
 
   // Check for user
   const user = await Player.findOne({ _id: playerId }).select('+password');
+
+  if (!user) {
+    return next(new ErrorResponse('user not found'));
+  }
   // Check if password matches
   const isMatch = user.password === req.body.pin;
   // Check for user
@@ -298,6 +353,7 @@ exports.ticketReply = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.debiteAmount = asyncHandler(async (req, res, next) => {
   let { amount, note, gameId } = req.body;
+
   if (!amount || amount < 0) {
     return next(
       new ErrorResponse(`Invalid amount`)
@@ -313,8 +369,10 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Game id requied`)
     );
   }
-  let fieldsToUpdate = {
-    $inc: { balance: -amount }
+  if (req.player.balance < amount) {
+    return next(
+      new ErrorResponse(`Insufficent balance`)
+    );
   }
 
   let tranData = {
@@ -323,26 +381,17 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'transactionType': "debit",
     'note': note,
     'prevBalance': req.player.balance,
-    status: 'complete'
+    status: 'complete', paymentStatus: 'SUCCESS'
   }
 
   tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
-  let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
-    new: true,
-    runValidators: true
-  });
+  player = await tran.debitPlayer(amount);
 
-  // tran = await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
   let dashUpdate = {};
   if (req.body.logType === 'join') {
-    dashUpdate['$inc'] = { livePlayers: 1 }
-    console.log('dash'.red, dashUpdate)
-    let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, { $set: { $inc: { livePlayers: 1 } }, $setOnInsert: { livePlayers: 1 } }, {
-      new: true, upsert: true,
-      runValidators: true
-    });
+    Dashboard.join();
   }
 
 
@@ -371,9 +420,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     );
   }
   amount = parseInt(amount).toFixed(3);
-  let fieldsToUpdate = {
-    $inc: { balance: amount }
-  }
+
   let commision = 0;
   let tranData = {
     'playerId': player._id,
@@ -389,15 +436,14 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   }
   console.log('tranData', tranData);
   let tran = await Transaction.create(tranData);
-  player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
-    new: true,
-    runValidators: true
-  });
-
+  player = await tran.creditPlayer(amount);
+  console.log('crdit', player.balance);
   // await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
   let dashUpdate = {};
   if (req.body.logType = "won") {
-    commision = process.env.COMISSION * amount;
+    const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
+    console.log(row.commission);
+    commision = (row.commission / 100) * amount;
     let tranData = {
       'playerId': player._id,
       'amount': commision,
@@ -408,10 +454,10 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
 
     }
     let tran1 = await Transaction.create(tranData);
-    player = await Player.findByIdAndUpdate(player.id, { $inc: { balance: -commision } }, { new: true, runValidators: true });
-    //  await Transaction.findByIdAndUpdate(tran1._id, { status: 'complete' });
-
+    player = await tran1.debitPlayer(commision);
   }
+  console.log('debit', player.balance);
+
   await updateDashboradStat(amount, commision)
   res.status(200).json({
     success: true,
@@ -425,13 +471,11 @@ const updateDashboradStat = async (amount, commision) => {
     dash['livePlayers'] -= 1;
   }
   if (commision > 0) {
-    dash['totalIncome'] += parseInt(commision);
+    dash['totalIncome'] = dash['totalIncome'] + parseInt(commision);
   }
-  dash['grossIncome'] += parseInt(amount);
+  dash['grossIncome'] = dash['grossIncome'] + parseInt(amount);
 
   dash.save();
-
-
 }
 // @desc      Get current logged in user
 // @route     POST /api/v1/auth/me

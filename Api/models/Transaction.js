@@ -5,7 +5,8 @@ const Player = require('../models/Player');
 const TransactionsSchema = new mongoose.Schema({
     playerId: {
         type: mongoose.Schema.ObjectId,
-        required: true
+        required: true,
+        ref: 'Players'
     },
     gameId: {
         type: String,
@@ -48,6 +49,16 @@ const TransactionsSchema = new mongoose.Schema({
     gateWayResponse: {
         type: Map
     },
+    withdrawTo: {
+        type: String,
+        enum: ['BANK', 'WALLET', 'UPI', 'LOCALWALLET'],
+        default: 'PROCESSING'
+    },
+    withdrawDetail: {
+        type: String,
+        enum: ['PROCESSING', 'FAILED', 'SUCCESS', 'DECLINED'],
+        default: 'PROCESSING'
+    },
     paymentStatus: {
         type: String,
         enum: ['PROCESSING', 'FAILED', 'SUCCESS', 'DECLINED'],
@@ -76,8 +87,21 @@ const TransactionsSchema = new mongoose.Schema({
 });
 
 
+// Generate and hash password token
+TransactionsSchema.methods.debitPlayer = async function (amount) {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: -amount } }, {
+        new: true,
+        runValidators: true
+    });
+};
 
+// Generate and hash password token
+TransactionsSchema.methods.creditPlayer = async function (amount) {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount } }, {
+        new: true,
+        runValidators: true
+    });
 
-
+};
 TransactionsSchema.plugin(dataTables);
 module.exports = mongoose.model('Transactions', TransactionsSchema);

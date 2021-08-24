@@ -21,7 +21,7 @@ exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
     select: { 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, logType: 1, paymentStatus: '1' },
     search: {
       value: req.player._id,
-      fields: ['playerId']
+      fields: ['playerId', 'status']
     },
     sort: {
       updatedAt: 1
@@ -37,18 +37,40 @@ exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.getTransactions = asyncHandler(async (req, res, next) => {
 
-  Transaction.dataTables({
+  let filter = {
     limit: req.body.length,
     skip: req.body.start,
-    select: { 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1 },
+    select: { 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
     search: {
       value: req.body.search ? req.body.search.value : '',
-      fields: ['playerId']
+      fields: ['status']
     },
+    find: {},
+    populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } },
     sort: {
       _id: 1
     }
-  }).then(function (table) {
+  };
+  //plaerId filter
+  if (req.body.playerId) {
+    filter['find']['playerId'] = req.body.playerId;
+  }
+  if (req.query.logType) {
+    filter['find']['logType'] = req.query.logType;
+  }
+
+  if (req.body.s_date && req.body.e_date) {
+    filter['find']['createdAt'] = {
+      $gte: req.body.s_date,
+      $lt: req.body.e_date
+    }
+
+  }
+  console.log(filter);
+
+
+
+  Transaction.dataTables(filter).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })
   //res.status(200).json(res.advancedResults);
@@ -60,6 +82,38 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
 exports.getTransaction = asyncHandler(async (req, res, next) => {
   const transaction = await Transaction.findById(req.params.id);
 
+  res.status(200).json({
+    success: true,
+    data: transaction
+  });
+});
+// @desc      Get single Transaction
+// @route     GET /api/v1/auth/Transactions/:id
+// @access    Private/Admin
+exports.getPayoutDetail = asyncHandler(async (req, res, next) => {
+  const transaction = await Transaction.findById(req.params.id).populate({ path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } });
+  res.status(200).json({
+    success: true,
+    data: transaction
+  });
+});
+exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
+
+  let transaction = await Transaction.findById(req.params.id);
+  if (!transaction) {
+    return next(
+      new ErrorResponse(`Transaction  not found`)
+    );
+  }
+  let fieldsToUpdate = { paymentStatus: req.body.paymentStatus, status: 'complete', note: req.body.note }
+
+  transaction = await Transaction.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+
+  //Transaction.isNew = false;
+  // await Transaction.save();
   res.status(200).json({
     success: true,
     data: transaction

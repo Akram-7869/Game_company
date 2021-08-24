@@ -25,6 +25,7 @@ router.route('/setting/logo').get(settingCtrl.getSitelogo).post(settingCtrl.upda
 router.route('/site').get(settingCtrl.siteList); router.route('/site/data').post(settingCtrl.getSiteList);
 router.route('/site/add').get(settingCtrl.addSite).post(settingCtrl.createSite);
 router.route('/site/:id').get(settingCtrl.getSite).post(settingCtrl.updateSite).delete(settingCtrl.deleteSite);
+router.route('/site/:field/:id').post(settingCtrl.updateSiteField);
 
 
 
@@ -86,6 +87,7 @@ router.route('/wallet/player/:id').post(transactionCotroller.createTransaction);
 router.route('/transaction/data').post(transactionCotroller.getTranscations);
 router.route('/transaction').get(transactionCotroller.transcationList);
 router.route('/wallet').get(palyerCtrl.getPlayerWallet);
+router.route('/payout/edit/:id').get(palyerCtrl.getPlayerPayoutEdit).get(palyerCtrl.postPlayerPayoutEdit);
 router.route('/payout').get(palyerCtrl.getPlayerPayout);
 
 router.route('/chat').get(palyerCtrl.getChatList);
