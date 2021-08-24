@@ -87,7 +87,7 @@ router.route('/wallet/player/:id').post(transactionCotroller.createTransaction);
 router.route('/transaction/data').post(transactionCotroller.getTranscations);
 router.route('/transaction').get(transactionCotroller.transcationList);
 router.route('/wallet').get(palyerCtrl.getPlayerWallet);
-router.route('/payout/edit/:id').get(palyerCtrl.getPlayerPayoutEdit).get(palyerCtrl.postPlayerPayoutEdit);
+router.route('/payout/edit/:id').get(palyerCtrl.getPlayerPayoutEdit).post(palyerCtrl.postPlayerPayoutEdit);
 router.route('/payout').get(palyerCtrl.getPlayerPayout);
 
 router.route('/chat').get(palyerCtrl.getChatList);

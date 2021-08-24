@@ -48,12 +48,11 @@ exports.getPlayerPayoutEdit = asyncHandler(async (req, res, next) => {
 });
 exports.postPlayerPayoutEdit = asyncHandler(async (req, res, next) => {
 
-      callApi(req).post(apiUrl + 'payout/' + req.params.id, req.body)
+      callApi(req).post(apiUrlTransaction + 'payout/' + req.params.id, req.body)
             .then(r => {
                   res.locals = { title: 'Player-edit' };
                   req.flash('error', 'Data save');
-                  res.render('Players/payout', { row: r.data.data });
-
+                  res.redirect('admin/payout');
             })
             .catch(error => {
                   req.flash('error', 'Data not updated');
