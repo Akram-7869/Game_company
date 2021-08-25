@@ -103,10 +103,10 @@ exports.getKey = asyncHandler(async (req, res, next) => {
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
-  let ok = Payouts.verifySignature(body, signature, row.one.SECRET_KEY);
+  let ok = Payouts.verifySignature(req.body, req.body.signature, row.one.SECRET_KEY);
   if (req.body.txStatus !== 'SUCCESS') {
     return next(
-      new ErrorResponse(`Payent not success full`)
+      new ErrorResponse(`Payment not success full`)
     );
   }
   if (!ok) {
