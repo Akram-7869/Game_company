@@ -76,7 +76,7 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
   }
 
 
-  let tran = await Transaction.find({ _id: req.body.orderId, status: 'log' });
+  let tran = await Transaction.find({ _id: orderId, status: 'log' });
   if (!tran) {
     return next(
       new ErrorResponse(`Transaction not found`)
