@@ -75,14 +75,15 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
     );
   }
 
-  let fieldsToUpdate = {
-    $inc: { balance: parseInt(req.body.orderAmount) }
-  }
+
   let tran = await Transaction.find({ _id: req.body.orderId, status: 'log' });
   if (!tran) {
     return next(
       new ErrorResponse(`Transaction not found`)
     );
+  }
+  let fieldsToUpdate = {
+    $inc: { balance: parseInt(tran.amount) }
   }
 
   let player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
