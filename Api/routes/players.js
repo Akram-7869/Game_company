@@ -7,7 +7,7 @@ const {
   join, won,
   ticketAdd, ticketList, ticketReply,
   getOnlinePlayers, getNotication, getPage, editOnlinePlayers,
-  withDrawRequest
+  withDrawRequest, addMoney
 
 } = require('../controllers/players');
 
@@ -34,6 +34,7 @@ router.get('/ticket/', protect, ticketList);
 router.post('/withdraw/request', protect, withDrawRequest);
 router.post('/debit', protect, debiteAmount);
 router.post('/credit/', protect, creditAmount);
+router.post('/addMoney/', protect, addMoney);
 router.get('/info', protect, playerInfo);
 router.route('/online').get(protect, getOnlinePlayers).post(editOnlinePlayers);
 router.route('/').post(protect, getPlayers);

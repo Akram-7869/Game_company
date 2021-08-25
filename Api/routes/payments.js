@@ -20,12 +20,13 @@ router.use(protect);
 router.route('/add').post(createSetting);
 router.route('/').post(getSettings);
 router.route('/cashfree/token').post(paymentCashfreeCtrl.getToken);
+router.route('/cashfree/key').post(paymentCashfreeCtrl.getKey);
 router.route('/cashfree/notify').post(paymentCashfreeCtrl.handleNotify);
 
 router
     .route('/:id')
     .get(getSetting)
-    .post( updateSetting)
-    .delete( deleteSetting);
+    .post(updateSetting)
+    .delete(deleteSetting);
 
 module.exports = router;

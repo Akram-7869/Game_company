@@ -51,7 +51,6 @@ const TransactionsSchema = new mongoose.Schema({
     },
     withdrawTo: {
         type: String,
-        enum: ['BANK', 'WALLET', 'UPI', 'LOCALWALLET'],
 
     },
     withdrawDetail: {

@@ -51,11 +51,11 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     'playerId': req.player._id,
     'amount': amount,
     'transactionType': "credit",
-    'note': req.body.note ,
+    'note': req.body.note,
     'paymentGateway': 'Cash Free',
     'logType': 'payment',
-    'prevBalance':0,
-    'logType':'payment'
+    'prevBalance': 0,
+    'logType': 'payment'
   }
   let tran = await Transaction.create(tranData);
   if (!tran._id) {
@@ -65,9 +65,20 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   }
 
   let config = await paymentConfig(amount, tran._id);
+
   axios(config)
     .then(function (response) {
+      response.data['orderId'] = tran._id;
+      response.data['appId'] = config.headers['x-client-id'];
+      response.data['notifyUrl'] = process.env.API_URI + '/payments/cashfree/notify';
+      response.data['source'] = 'app-sdk';
+      response.data['orderCurrency'] = 'INR';
+      response.data['customerEmail'] = req.player.email;
+      response.data['customerPhone'] = req.player.phone;
+      response.data['customerName'] = req.player.firstName;
+      response.data['orderAmount'] = amount;
 
+      console.log(response.data);
       res.status(200).json({
         success: true,
         data: response.data
@@ -78,6 +89,16 @@ exports.getToken = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`Try again`)
       );
     });
+});
+
+exports.getKey = asyncHandler(async (req, res, next) => {
+  const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
+  tran = new Transaction();
+  row.one['orderId'] = tran._id;
+  res.status(200).json({
+    success: true,
+    data: row.one
+  });
 });
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {

@@ -57,6 +57,46 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.addMoney = asyncHandler(async (req, res, next) => {
+  let { amount, note, orderId } = req.body;
+  if (!amount || amount < 0) {
+    return next(
+      new ErrorResponse(`Invalid amount`)
+    );
+  }
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Invalid Code`)
+    );
+  }
+  if (!orderId) {
+    return next(
+      new ErrorResponse(`Game id requied`)
+    );
+  }
+
+  let fieldsToUpdate = {
+    $inc: { balance: parseInt(req.body.orderAmount) }
+  }
+  let tran = await Transaction.find({ _id: req.body.orderId, status: 'log' });
+  if (!tran) {
+    return next(
+      new ErrorResponse(`Transaction not found`)
+    );
+  }
+
+  let player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+  await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
+
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});
+
 // @desc      Get all Players
 // @route     GET /api/v1/auth/Players
 // @access    Private/Admin
