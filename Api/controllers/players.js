@@ -97,7 +97,7 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
   }
 
 
-  let tran = await Transaction.find({ _id: orderId, status: 'log' });
+  let tran = await Transaction.findOne({ _id: orderId, status: 'log' });
   if (!tran) {
     return next(
       new ErrorResponse(`Transaction not found`)
@@ -110,13 +110,13 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
       $inc: { balance: parseInt(row.data.details.orderAmount) }
     }
 
-    player = await Player.findOneAndUpdate(tran.playerId, fieldsToUpdate, {
+    player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
       new: true,
       runValidators: true
     });
-    await Transaction.findOneAndUpdate(tran._id, { status: 'complete' });
+    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
   } else {
-    await Transaction.findOneAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
+    await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
   }
   res.status(200).json({
     success: true,
