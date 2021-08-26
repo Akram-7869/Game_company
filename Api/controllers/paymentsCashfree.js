@@ -1,8 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Setting = require('../models/Setting');
-const { PaymentGateway } = require('cashfree-sdk');
-const { Payouts } = require('cashfree-sdk');
+
 const Transaction = require('../models/Transaction');
 
 let axios = require('axios');
@@ -102,8 +101,10 @@ exports.getKey = asyncHandler(async (req, res, next) => {
 });
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {
+  console.log('notify', req.body);
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
-  let ok = Payouts.verifySignature(req.body, req.body.signature, row.one.SECRET_KEY);
+  let ok = verifySignature(req.body, req.body.signature, row.one.SECRET_KEY);
+  console.log('ok', ok);
   if (req.body.txStatus !== 'SUCCESS') {
     return next(
       new ErrorResponse(`Payment not success full`)
@@ -136,3 +137,21 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+
+const verifySignature = (body, signature, clientSecret) => {
+
+  if (!(body && signature && clientSecret)) {
+    throw Error(
+      'Invalid Parameters: Please give request body,' +
+      'signature sent in X-Cf-Signature header and ' +
+      'clientSecret from dashboard as parameters',
+    );
+  }
+
+  const expectedSignature = crypto
+    .createHmac('sha256', clientSecret)
+    .update(body.toString())
+    .digest('hex');
+
+  return expectedSignature === signature;
+};
