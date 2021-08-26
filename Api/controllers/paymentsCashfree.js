@@ -18,7 +18,7 @@ const paymentConfig = async (amount, trxId) => {
   });
   let config = {
     method: 'post',
-    url: 'https://test.cashfree.com/api/v2/cftoken/order',
+    url: 'https://api.cashfree.com/api/v2/cftoken/order',
     headers: {
       'Content-Type': 'application/json',
       'x-client-id': row.one.APP_ID,
