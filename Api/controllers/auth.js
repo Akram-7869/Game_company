@@ -6,6 +6,7 @@ const Player = require('../models/Player');
 const User = require('../models/User');
 const Transactions = require('../models/Transaction');
 const Setting = require('../models/Setting');
+const Dashboard = require('../models/Dashboard');
 const axios = require('axios')
 
 // @desc      Register user

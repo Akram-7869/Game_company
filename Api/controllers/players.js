@@ -6,7 +6,28 @@ const Ticket = require('../models/Ticket');
 const Dashboard = require('../models/Dashboard');
 const { request } = require('express');
 const Setting = require('../models/Setting');
+let axios = require('axios');
+const FormData = require('form-data');
 
+const checkOrderStatus = async (trxId) => {
+  const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
+  let data = new FormData();
+  data.append('appId', row.one.APP_ID);
+  data.append('secretKey', row.one.SECRET_KEY);
+  data.append('orderId', trxId);
+
+  let config = {
+    method: 'post',
+    url: 'https://api.cashfree.com/api/v1/order/info',
+    headers: {
+      ...data.getHeaders()
+    },
+    data: data
+  };
+
+  return await axios(config);
+
+}
 exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   let { amount, note, gameId } = req.body;
   if (!amount || amount < 0) {
@@ -46,7 +67,6 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   });
 
   // tran = await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
-  let dashUpdate = {};
   let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, { $set: { $inc: { totalPayoutRequest: 1 } } }, {
     new: true, upsert: true,
     runValidators: true
@@ -59,11 +79,12 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
 
 exports.addMoney = asyncHandler(async (req, res, next) => {
   let { amount, note, orderId } = req.body;
-  if (!amount || amount < 0) {
-    return next(
-      new ErrorResponse(`Invalid amount`)
-    );
-  }
+  let player = req.player;
+  // if (!amount || amount < 0) {
+  //   return next(
+  //     new ErrorResponse(`Invalid amount`)
+  //   );
+  // }
   if (!req.player) {
     return next(
       new ErrorResponse(`Invalid Code`)
@@ -82,16 +103,21 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Transaction not found`)
     );
   }
-  let fieldsToUpdate = {
-    $inc: { balance: parseInt(tran.amount) }
+  const row = await checkOrderStatus(orderId);
+  console.log('row', row.data);
+  if (row.data.details.orderStatus === 'PAID') {
+    let fieldsToUpdate = {
+      $inc: { balance: parseInt(row.data.details.orderAmount) }
+    }
+
+    player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
+  } else {
+    await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
   }
-
-  let player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
-    new: true,
-    runValidators: true
-  });
-  await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
-
   res.status(200).json({
     success: true,
     data: player

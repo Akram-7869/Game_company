@@ -60,7 +60,7 @@ const TransactionsSchema = new mongoose.Schema({
     },
     paymentStatus: {
         type: String,
-        enum: ['PROCESSING', 'FAILED', 'SUCCESS', 'DECLINED'],
+
         default: 'PROCESSING'
     },
     adminCommision: {
