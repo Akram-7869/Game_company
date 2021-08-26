@@ -104,7 +104,7 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
     );
   }
   const row = await checkOrderStatus(orderId);
-  console.log('row', row.data);
+  console.log('row', row.data, tran);
   if (row.data.details.orderStatus === 'PAID') {
     let fieldsToUpdate = {
       $inc: { balance: parseInt(row.data.details.orderAmount) }
