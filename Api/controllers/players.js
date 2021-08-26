@@ -110,13 +110,13 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
       $inc: { balance: parseInt(row.data.details.orderAmount) }
     }
 
-    player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
+    player = await Player.findOneAndUpdate(tran.playerId, fieldsToUpdate, {
       new: true,
       runValidators: true
     });
-    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
+    await Transaction.findOneAndUpdate(tran._id, { status: 'complete' });
   } else {
-    await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
+    await Transaction.findOneAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
   }
   res.status(200).json({
     success: true,
