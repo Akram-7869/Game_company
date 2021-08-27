@@ -15,18 +15,18 @@ const router = express.Router({ mergeParams: true });
 const { advancedResults, ownResults, defaultResults } = require('../middleware/advancedResults');
 const { protect, authorize, init } = require('../middleware/auth');
 const Setting = require('../models/Setting');
-router.use(protect);
+//router.use(protect);
 
-router.route('/add').post(createSetting);
-router.route('/').post(getSettings);
-router.route('/cashfree/token').post(paymentCashfreeCtrl.getToken);
-router.route('/cashfree/key').post(paymentCashfreeCtrl.getKey);
+router.route('/add').post(protect, createSetting);
+router.route('/').post(protect, getSettings);
+router.route('/cashfree/token').post(protect, paymentCashfreeCtrl.getToken);
+router.route('/cashfree/key').post(protect, paymentCashfreeCtrl.getKey);
 router.route('/cashfree/notify').post(paymentCashfreeCtrl.handleNotify);
 
 router
     .route('/:id')
-    .get(getSetting)
-    .post(updateSetting)
-    .delete(deleteSetting);
+    .get(protect, getSetting)
+    .post(protect, updateSetting)
+    .delete(protect, deleteSetting);
 
 module.exports = router;

@@ -54,6 +54,7 @@
                                         <th>Type</th>
                                         <th>Amount</th>
                                         <th>note</th>
+                                        <th>status</th>
                                         <th>Dated</th>
                                         <th>Action</th>
                                     </tr>
@@ -140,13 +141,12 @@
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
-
-                                { data: 'playerId' },
+                                { data: 'playerId._id' },
                                 { data: 'transactionType' },
                                 { data: 'amount' },
                                 { data: 'note' },
+                                { data: 'paymentStatus' },
                                 { data: 'createdAt' },
-
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-3 text-primary" href="#"><i class="uil uil-pen font-size-18"></i></a> ';
