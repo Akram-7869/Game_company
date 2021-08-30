@@ -28,8 +28,8 @@ const UserSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['notverifed', 'active', 'inactive', 'deleted'],
-    default: 'notverifed'
+    enum: ['notverified', 'active', 'inactive', 'deleted'],
+    default: 'notverified'
   },
   role: {
     type: String,

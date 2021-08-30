@@ -47,7 +47,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
       'verifyPhone': vcode,
       'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
       'deviceToken': deviceToken,
-      'status': 'notverifed',
+      'status': 'notverified',
       'countryCode': countryCode
     };
     // Create user
@@ -86,7 +86,7 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (user.status === 'notverifed') {
+  if (user.status === 'notverified') {
     //all ok new user 
     let fieldsToUpdate = {
       deviceType: req.body.deviceType,

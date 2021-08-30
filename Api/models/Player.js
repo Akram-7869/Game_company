@@ -64,7 +64,7 @@ const PlayerSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['notverifed', 'active', 'inactive', 'deleted', 'banned'],
+    enum: ['notverified', 'active', 'inactive', 'deleted', 'banned'],
   },
   resetPasswordToken: {
     type: String,
