@@ -103,7 +103,7 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
       transactionType: 'credit',
       note: 'player register',
       prevBalance: user.balance,
-      status: 'complete'
+      status: 'complete', paymetStatus: 'SUCCESS'
     }
     let tran = await Transactions.create(tranData);
     user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {

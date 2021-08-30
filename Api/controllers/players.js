@@ -114,7 +114,7 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
       new: true,
       runValidators: true
     });
-    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
+    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', paymetStatus: 'SUCCESS' });
   } else {
     await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
   }
@@ -496,7 +496,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': player.balance,
     'adminCommision': commision,
-    status: 'complete',
+    status: 'complete', paymetStatus: 'SUCCESS'
   }
   if (gameId) {
     tranData['gameId'] = gameId;
@@ -517,7 +517,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       'transactionType': "debit",
       'note': 'Service Charge',
       'prevBalance': player.balance,
-      status: 'complete',
+      status: 'complete', paymetStatus: 'SUCCESS'
 
     }
     let tran1 = await Transaction.create(tranData);

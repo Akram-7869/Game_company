@@ -119,7 +119,7 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Transaction  not found`)
     );
   }
-  let fieldsToUpdate = { paymentStatus: req.body.paymentStatus, status: 'complete', note: req.body.note }
+  let fieldsToUpdate = { paymentStatus: req.body.paymentStatus, status: 'complete', paymetStatus: 'SUCCESS', note: req.body.note }
 
   transaction = await Transaction.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
     new: true,
