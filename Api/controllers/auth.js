@@ -20,13 +20,13 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
   const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
 
   if (player) {
-    if (player.deviceToken !== deviceToken) {
+    if (player.phone !== phone) {
       return next(
-        new ErrorResponse(` device number `)
+        new ErrorResponse(`phone  number changed use the number registered first time`)
       );
-    } else if (player.phone !== phone) {
+    } else if (player.deviceToken !== deviceToken) {
       return next(
-        new ErrorResponse(`phone number `)
+        new ErrorResponse(`Device changed use the device registered first time`)
       );
     } else {
       let fieldsToUpdate = {
@@ -110,7 +110,7 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
       new: true,
       runValidators: true
     });
-    let dash = await Dashboard.findByIdAndUpdate({ type: 'dashboard' }, { $inc: { totalPlayers: 1 } });
+    let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, { $inc: { totalPlayers: 1 } });
     sendTokenResponse(user, 200, res);
 
   } else if (user.status === 'active') {

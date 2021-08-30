@@ -42,8 +42,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     skip: req.body.start,
     select: { 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
     search: {
-      value: req.body.search ? req.body.search.value : '',
-      fields: ['status']
+
     },
     find: {},
     populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } },
@@ -51,12 +50,28 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
       _id: 1
     }
   };
+  let key = req.body.search ? req.body.search.value : '';
+  if (req.body.status != 'All') {
+    filter['find']['status'] = req.body.status;
+  }
+
+  if (key) {
+    if (isNaN(key)) {
+      filter['find']['playerId'] = key;
+    } else {
+      let player = await Player.findOne({ phone: { '$regex': key, '$options': 'i' } });
+      filter['find']['playerId'] = player._id;
+    }
+  }
   //plaerId filter
   if (req.body.playerId) {
     filter['find']['playerId'] = req.body.playerId;
   }
-  if (req.query.logType) {
-    filter['find']['logType'] = req.query.logType;
+  if (req.body.logType) {
+    filter['find']['logType'] = req.body.logType;
+  }
+  if (req.body._id) {
+    filter['find']['_id'] = req.body._id;
   }
 
   if (req.body.s_date && req.body.e_date) {
@@ -66,7 +81,6 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     }
 
   }
-  console.log(filter);
 
 
 
