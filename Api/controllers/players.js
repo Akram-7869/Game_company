@@ -225,7 +225,7 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
     player = await Player.findById(req.params.id);
   } else {
     //player = req.player;
-    player = await Player.findById(req.player._id).select('+panNumber +aadharNumber');
+    player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet');
   }
 
   if (!player) {
