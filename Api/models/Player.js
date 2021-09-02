@@ -119,17 +119,15 @@ const PlayerSchema = new mongoose.Schema({
     default: 'notverified'
   },
   wallet: {
-    select: false
+    select: false,
+    type: Map,
 
   },
   bank: {
-    select: false
-
+    select: false,
+    type: Map,
   },
-  upi: {
-    select: false
 
-  }
 });
 
 // Encrypt password using bcrypt
@@ -175,6 +173,8 @@ PlayerSchema.methods.getPhoneExpire = function () {
   this.verifyPhoneExpire = Date.now() + 10 * 60 * 1000;
   return verifyPhone;
 };
+PlayerSchema.methods.deletAllData = function (pid) {
 
+};
 PlayerSchema.plugin(dataTables)
 module.exports = mongoose.model('Players', PlayerSchema);

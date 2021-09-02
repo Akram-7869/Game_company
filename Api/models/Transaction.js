@@ -75,6 +75,7 @@ const TransactionsSchema = new mongoose.Schema({
         required: true,
         default: 'game'
     },
+    withdraw: { type: Map },
     status: {
         type: String,
         enum: ['log', 'complete'],

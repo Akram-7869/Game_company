@@ -60,18 +60,10 @@ exports.getTranscations = asyncHandler(async (req, res, next) => {
       callApi(req).post(apiUrl, { ...req.body }, { params: req.query })
             .then(r => {
                   // Assign value in session
-
-
                   res.status(200).json(r.data);
-
-
-
             })
             .catch(error => {
-
-
                   //   req.flash('error', 'Incorrect email or password!');
-
             })
 
 });
@@ -83,24 +75,16 @@ exports.getAddForm = asyncHandler(async (req, res, next) => {
       res.render('Transaction/edit', { row: {} });
 });
 
-
 exports.createTransaction = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Player-edit' };
       callApi(req).post(apiUrl + 'add/player/' + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Player-edit' };
-                  req.flash('success', 'Data save');
-                  res.redirect('admin/player', { row: r.data.data });
-
+                  res.redirect('/admin/player');
             })
             .catch(error => {
-
-
                   req.flash('error', 'Data not updated');
-
             })
-      res.render('Transaction/edit', { row: {} });
 });
 
 exports.showPlayerView = asyncHandler(async (req, res, next) => {

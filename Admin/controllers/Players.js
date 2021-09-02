@@ -16,7 +16,7 @@ exports.getPlayerReport = asyncHandler(async (req, res, next) => {
 exports.getPaymentReport = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'PaymentList' };
-      res.render('Reports/payment')
+      res.render('Reports/payment', { playerId: '' })
 });
 
 
@@ -47,12 +47,9 @@ exports.getPlayerPayoutEdit = asyncHandler(async (req, res, next) => {
             });
 });
 exports.postPlayerPayoutEdit = asyncHandler(async (req, res, next) => {
-
       callApi(req).post(apiUrlTransaction + 'payout/' + req.params.id, req.body)
             .then(r => {
-                  res.locals = { title: 'Player-edit' };
-                  req.flash('error', 'Data save');
-                  res.redirect('admin/payout');
+                  res.redirect('/admin/payout');
             })
             .catch(error => {
                   req.flash('error', 'Data not updated');
@@ -128,8 +125,8 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Player-edit' };
-                  req.flash('error', 'Data save');
-                  res.render('Players/edit', { row: r.data.data });
+                  req.flash('message', 'Data save');
+                  res.redirect('player');
 
             })
             .catch(error => {

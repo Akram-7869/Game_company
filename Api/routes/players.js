@@ -7,7 +7,7 @@ const {
   join, won,
   ticketAdd, ticketList, ticketReply,
   getOnlinePlayers, getNotication, getPage, editOnlinePlayers,
-  withDrawRequest, addMoney
+  withDrawRequest, addMoney, addWallet, addBank
 
 } = require('../controllers/players');
 
@@ -39,7 +39,8 @@ router.get('/info', protect, playerInfo);
 router.route('/online').get(protect, getOnlinePlayers).post(editOnlinePlayers);
 router.route('/').post(protect, getPlayers);
 
-//router.route('/add').post(createPlayer);
+router.route('/bank').post(protect, addBank);
+router.route('/wallet').post(protect, addWallet);
 router
   .route('/:id')
   .get(protect, getPlayer)

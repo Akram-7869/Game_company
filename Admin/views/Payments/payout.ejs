@@ -48,8 +48,7 @@
                                             <label class="form-check-label my-2 me-2"
                                                 for="order-selectinput">Status</label>
                                             <select class="form-select" id="status-filter">
-                                                <option selected>All</option>
-                                                <option value="PROCESSING">Processing</option>
+                                                <option value="PROCESSING" selected>Processing</option>
                                                 <option value="SUCCESS">Approve</option>
                                                 <option value="DECLINED">Declined</option>
                                             </select>
@@ -175,7 +174,7 @@
                                     d['s_date'] = $('#s_date').val();
                                     d['e_date'] = $('#e_date').val();
                                     // d['id'] =status-filter;
-                                    d['status'] = $('#status-filter').val();
+                                    d['paymentStatus'] = $('#status-filter').val();
                                     return d;
                                 }
                             },

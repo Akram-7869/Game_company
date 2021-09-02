@@ -29,7 +29,8 @@ const checkOrderStatus = async (trxId) => {
 
 }
 exports.withDrawRequest = asyncHandler(async (req, res, next) => {
-  let { amount, note, gameId } = req.body;
+  let { amount, note, gameId, to } = req.body;
+
   if (!amount || amount < 0) {
     return next(
       new ErrorResponse(`Invalid amount`)
@@ -40,12 +41,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Invalid Code`)
     );
   }
-  // if (!gameId) {
-  //   return next(
-  //     new ErrorResponse(`Game id requied`)
-  //   );
-  // }
-
+  let player = await Player.findById(req.player.id).select('+bank +wallet');
 
   let tranData = {
     'playerId': req.player._id,
@@ -55,13 +51,18 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     'prevBalance': req.player.balance,
     'status': 'log',
     'logType': 'withdraw',
+    'withdrawTo': req.body.to
 
   }
-
+  if (req.body.to === 'bank') {
+    tranData['withdraw'] = player.bank;
+  } else if (req.body.to === 'wallet') {
+    tranData['withdraw'] = player.wallet;
+  }
   //tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
-  let player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount } }, {
+  player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount } }, {
     new: true,
     runValidators: true
   });
@@ -71,6 +72,74 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     new: true, upsert: true,
     runValidators: true
   });
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});
+exports.addBank = asyncHandler(async (req, res, next) => {
+  let { bankName, bankAccount, bankIfc, bankAddress, bankAccountHolder } = req.body;
+  let fieldsToUpdate = { bankName, bankAccount, bankIfc, bankAddress, bankAccountHolder };
+  let player;
+  if (!bankName || !bankAccount || !bankIfc || !bankAddress || !bankAccountHolder) {
+    return next(
+      new ErrorResponse(`All fields are requied`)
+    );
+  }
+  if (req.staff) {
+    player = await Player.findById(req.params.id);
+    // fieldsToUpdate['kycStatus'] = kycStatus;
+  } else if (req.player) {
+
+    player = req.player;
+  }
+  console.log('req.player'.red, req.player);
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+
+
+  player = await Player.findByIdAndUpdate(player.id, { bank: fieldsToUpdate }, {
+    new: true,
+    runValidators: true
+  });
+
+  //Player.isNew = false;
+  // await Player.save();
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});
+exports.addWallet = asyncHandler(async (req, res, next) => {
+  let { walletAddress, walletName } = req.body;
+  let fieldsToUpdate = { walletName, walletAddress };
+  let player;
+  if (!walletName || !walletAddress) {
+    return next(
+      new ErrorResponse(`All fields are requied`)
+    );
+  }
+  if (req.staff) {
+    player = await Player.findById(req.params.id);
+    //fieldsToUpdate['kycStatus'] = kycStatus;
+  } else if (req.player) {
+    player = req.player;
+  }
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  player = await Player.findByIdAndUpdate(player.id, { wallet: fieldsToUpdate }, {
+    new: true,
+    runValidators: true
+  });
+
+  //Player.isNew = false;
+  // await Player.save();
   res.status(200).json({
     success: true,
     data: player
@@ -114,7 +183,7 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
       new: true,
       runValidators: true
     });
-    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', paymetStatus: 'SUCCESS' });
+    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', paymentStatus: 'SUCCESS' });
   } else {
     await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
   }
@@ -155,7 +224,8 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
   if (req.staff) {
     player = await Player.findById(req.params.id);
   } else {
-    player = req.player;
+    //player = req.player;
+    player = await Player.findById(req.player._id).select('+panNumber +aadharNumber');
   }
 
   if (!player) {
@@ -496,7 +566,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': player.balance,
     'adminCommision': commision,
-    status: 'complete', paymetStatus: 'SUCCESS'
+    status: 'complete', paymentStatus: 'SUCCESS'
   }
   if (gameId) {
     tranData['gameId'] = gameId;
@@ -504,7 +574,6 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   console.log('tranData', tranData);
   let tran = await Transaction.create(tranData);
   player = await tran.creditPlayer(amount);
-  console.log('crdit', player.balance);
   // await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
   let dashUpdate = {};
   if (req.body.logType = "won") {
@@ -517,7 +586,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       'transactionType': "debit",
       'note': 'Service Charge',
       'prevBalance': player.balance,
-      status: 'complete', paymetStatus: 'SUCCESS'
+      status: 'complete', paymentStatus: 'SUCCESS'
 
     }
     let tran1 = await Transaction.create(tranData);

@@ -219,9 +219,19 @@
                                                 class="form-control" required placeholder="Amount Requested" />
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Note</label>
+                                            <label class="form-label">Withdraw:</label>
+                                            <% for (const key in row.withdraw) { %>
+                                                <ul>
+                                                    <li>
+                                                        <%=`${key}: ${row.withdraw[key]}`%>
+                                                    </li>
+                                                </ul>
+                                                <% }%>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Note </label>
                                             <textarea name="note" value="" class="form-control" required
-                                                placeholder="Note ..."></textarea>
+                                                placeholder="Refrence id  ..."></textarea>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Transaction Status</label>
@@ -287,17 +297,7 @@
                 <script>
                     function handleSubmit(params) {
                         if (params.checkValidity()) {
-                            debugger;
                             Swal.showLoading();
-                            //         Swal.fire({
-                            //   title: '',
-                            //   html: 'Please wait...',
-                            //   allowEscapeKey: false,
-                            //   allowOutsideClick: false,
-                            //   didOpen: () => {
-                            //     Swal.showLoading()
-                            //   }
-                            // });
                         }
 
                     }

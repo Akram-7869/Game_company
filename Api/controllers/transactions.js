@@ -47,12 +47,15 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     find: {},
     populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } },
     sort: {
-      _id: 1
+      _id: -1
     }
   };
   let key = req.body.search ? req.body.search.value : '';
-  if (req.body.status != 'All') {
+  if (req.body.status && req.body.status != 'All') {
     filter['find']['status'] = req.body.status;
+  }
+  if (req.body.paymentStatus) {
+    filter['find']['paymentStatus'] = req.body.paymentStatus;
   }
 
   if (key) {
@@ -67,8 +70,8 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
   if (req.body.playerId) {
     filter['find']['playerId'] = req.body.playerId;
   }
-  if (req.body.logType) {
-    filter['find']['logType'] = req.body.logType;
+  if (req.query.logType) {
+    filter['find']['logType'] = req.query.logType;
   }
   if (req.body._id) {
     filter['find']['_id'] = req.body._id;
@@ -119,7 +122,7 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Transaction  not found`)
     );
   }
-  let fieldsToUpdate = { paymentStatus: req.body.paymentStatus, status: 'complete', paymetStatus: 'SUCCESS', note: req.body.note }
+  let fieldsToUpdate = { paymentStatus: req.body.paymentStatus, status: 'complete', paymentStatus: req.body.paymentStatus, note: req.body.note }
 
   transaction = await Transaction.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
     new: true,
@@ -170,7 +173,7 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
     'transactionType': transactionType,
     'note': note,
     'prevBalance': player.balance,
-    status: 'complete',
+    status: 'complete', paymentStatus: 'SUCCESS'
 
   }
 
@@ -216,7 +219,7 @@ exports.updateTransaction = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deleteTransaction = asyncHandler(async (req, res, next) => {
   const transaction = await Transaction.findById(req.params.id);
-  // await Transaction.findByIdAndDelete(req.params.id);
+  await Transaction.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
     success: true,
