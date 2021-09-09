@@ -23,7 +23,7 @@ router.post('/status/:id', protect, updateStatus);
 router.get('/page', protect, getPage);
 
 router.route('/profile').get(protect, getPlayer).post(protect, updatePlayer);
-router.route('/profile/image').post(protect, updatePlayerImage);
+router.route('/profile-image/get').post(protect, updatePlayerImage);
 router.get('/notification', protect, getNotication);
 router.post('/pin', protect, setPin);
 router.post('/checkpin', chkPin);

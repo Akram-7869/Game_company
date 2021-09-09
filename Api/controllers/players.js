@@ -241,6 +241,8 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
     );
   }
 
+  player['profileUrl'] = 'dfdfdfdf';
+  console.log('workin on it', player)
   res.status(200).json({
     success: true,
     data: player
@@ -738,9 +740,6 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
     );
   }
 
-
-
-
   if (player.profilePic) {
     newFile = await File.findByIdAndUpdate(player.profilePic, dataSave, {
       new: true,
@@ -757,7 +756,7 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: { _id: player.profilePic, profileUrl: process.env.API_URI + '/files/' + player.profilePic }
+    data: { _id: player.profilePic, profileUrl: buildProfileUrl(player) }
   });
 
   // 'terms': process.env.API_URI + '/page/term',
@@ -765,3 +764,15 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
 
 
 });
+
+let buildProfileUrl = (player) => {
+  if (player.profilePic) {
+    console.log('image'.green);
+    return process.env.API_URI + '/files/' + player.profilePic
+  } else {
+    console.log('image'.red);
+
+    return '';
+  }
+
+}
