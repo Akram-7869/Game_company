@@ -719,10 +719,8 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
   let player = req.player;
   let newfile;
   let fieldsToUpdate;
-  console.log(req.files, req.player);
-  if (!req.files) {
-    return next(new ErrorResponse(`Please upload a file`));
-  }
+  console.log(req, req.player);
+
 
   let dataSave = {
     // createdBy: req.user.id,
