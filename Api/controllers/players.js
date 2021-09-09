@@ -719,7 +719,7 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
   let player = req.player;
   let newfile;
   let fieldsToUpdate;
-  console.log(req, req.player);
+  console.log(req.file, req.files, req.player);
 
 
   let dataSave = {
