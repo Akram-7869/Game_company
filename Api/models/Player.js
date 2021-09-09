@@ -17,7 +17,7 @@ const PlayerSchema = new mongoose.Schema({
     enum: ['male', 'female', 'other']
   },
   profilePic: {
-    type: String,
+    type: mongoose.Schema.ObjectId,
   },
   countryCode: {
     type: String,
@@ -127,6 +127,14 @@ const PlayerSchema = new mongoose.Schema({
     select: false,
     type: Map,
   },
+  wonCount: {
+    type: String,
+
+  },
+  loseCount: {
+    type: String,
+
+  }
 
 });
 

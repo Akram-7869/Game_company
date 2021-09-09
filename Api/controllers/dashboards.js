@@ -1,7 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Dashboard = require('../models/Dashboard');
-
+const Transaction = require('../models/Transaction');
 // @desc      Get all Dashboards
 // @route     GET /api/v1/auth/Dashboards
 // @access    Private/Admin
@@ -35,14 +35,67 @@ exports.getDashboard = asyncHandler(async (req, res, next) => {
   });
 });
 // @desc      Get single Dashboard
+// @route     GET /api/v1/auth/Dashboards/:id
+// @access    Private/Admin
+const getGraphData = async (req) => {
+
+  const row = await Transaction.aggregate([
+    {
+      $match: {
+        'createdAt': {
+          $gte: new Date(req.body.s_date),
+          $lt: new Date(req.body.e_date)
+        },
+        logType: req.body.logType
+      }
+    },
+    {
+      $group:
+      {
+        _id: { day: { $dayOfMonth: "$createdAt" }, year: { $year: "$createdAt" }, "month": { "$month": "$createdAt" }, "week": { "$week": "$createdAt" } },
+        totalAmount: { $sum: "$amount" },
+
+      }
+    },
+    {
+      "$addFields": {
+        "_id": {
+          "$concat": [
+            { "$toString": "$_id.month" },
+            "/",
+            { "$toString": "$_id.day" },
+            "/",
+            { "$toString": "$_id.year" },
+          ]
+        },
+        "month": {
+          "$toString": "$_id.month"
+        },
+        "year": {
+          "$toString": "$_id.year"
+        },
+        "day": {
+          "$toString": "$_id.day"
+        },
+        "week": {
+          "$toString": "$_id.week"
+        }
+      }
+    }
+  ]);
+  return row;
+};
+// @desc      Get single Dashboard
 // @route     GET /api/v1/auth/Dashboards/filter/:id
 // @access    Private/Admin
 exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findOne({ 'type': req.params.type });
 
+  const graph = await getGraphData(req);
+  console.log('graph', row, graph)
   res.status(200).json({
     success: true,
-    data: row
+    data: { row, graph }
   });
 });
 

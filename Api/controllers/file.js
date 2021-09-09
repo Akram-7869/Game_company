@@ -13,13 +13,13 @@ exports.getFiles = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/users/:id
 // @access    Private/Admin
 exports.getFile = asyncHandler(async (req, res, next) => {
-    console.log('req.params.id',req.params.id);
+    console.log('req.params.id', req.params.id);
     const user = await File.findById(req.params.id);
     // if (err) return next(err);
-  //  res.contentType(user.contentType);
+    //  res.contentType(user.contentType);
     res.contentType('image/png');
     res.send(user.data);
-   // res.json(user.data.toString('base64'));
+    // res.json(user.data.toString('base64'));
     // res.status(200).json({
     //     success: true,
     //     data: user
@@ -66,18 +66,18 @@ exports.deleteFile = asyncHandler(async (req, res, next) => {
 });
 
 exports.uploadFile = asyncHandler(async (req, res, next) => {
-console.log(req.files);
+    console.log(req.files);
     if (!req.files) {
         return next(new ErrorResponse(`Please upload a file`));
     }
 
     let dataSave = {
         // createdBy: req.user.id,
-         data: req.files.file.data,
-         contentType: req.files.file.mimetype,
-         size: req.files.file.size,
-     }
-   // ${process.env.MAX_FILE_UPLOAD}
+        data: req.files.data,
+        contentType: req.files.mimetype,
+        size: req.files.size,
+    }
+    // ${process.env.MAX_FILE_UPLOAD}
     // Check filesize
     if (dataSave.size > process.env.MAX_FILE_UPLOAD) {
         return next(
@@ -86,10 +86,10 @@ console.log(req.files);
             )
         );
     }
-   
-      const newfile = await File.create(dataSave);
-    
-     res.status(200).json({
+
+    const newfile = await File.create(dataSave);
+
+    res.status(200).json({
         success: true,
         data: { _id: newfile._id }
     });

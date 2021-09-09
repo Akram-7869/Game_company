@@ -6,7 +6,8 @@ const { protect } = require('../middleware/auth');
 
 router.use(protect);
 
-router.route('/filter/:type').get(dash.getFilterDashboard);
+router.route('/filter/:type').post(dash.getFilterDashboard);
+// router.route('/graph').post(dash.getGraphData);
 router.route('/add').post(dash.createDashboard);
 router.route('/').post(dash.getDashboards);
 

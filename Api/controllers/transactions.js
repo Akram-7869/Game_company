@@ -36,7 +36,7 @@ exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Transactions
 // @access    Private/Admin
 exports.getTransactions = asyncHandler(async (req, res, next) => {
-
+  let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.body.draw }
   let filter = {
     limit: req.body.length,
     skip: req.body.start,
@@ -60,9 +60,17 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
 
   if (key) {
     if (isNaN(key)) {
+      console.log('key.length', key.length);
+      if (key.length != 24) {
+        return res.json(empty);
+      }
       filter['find']['playerId'] = key;
     } else {
+
       let player = await Player.findOne({ phone: { '$regex': key, '$options': 'i' } });
+      if (!player) {
+        return res.json(empty);
+      }
       filter['find']['playerId'] = player._id;
     }
   }

@@ -3,6 +3,7 @@ const asyncHandler = require('../middleware/async');
 const Player = require('../models/Player');
 const Transaction = require('../models/Transaction');
 const Ticket = require('../models/Ticket');
+const File = require('../models/File');
 const Dashboard = require('../models/Dashboard');
 const { request } = require('express');
 const Setting = require('../models/Setting');
@@ -197,7 +198,13 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Players
 // @access    Private/Admin
 exports.getPlayers = asyncHandler(async (req, res, next) => {
+  if (req.body.s_date && req.body.e_date) {
+    req.query['createdAt'] = {
+      $gte: req.body.s_date,
+      $lt: req.body.e_date
+    }
 
+  }
   Player.dataTables({
     limit: req.body.length,
     skip: req.body.start,
@@ -704,3 +711,57 @@ exports.getPage = asyncHandler(async (req, res, next) => {
   });
 });
 
+
+exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
+  // const user = await User.findById(req.user.id);
+  let player = req.player;
+  let newfile;
+  let fieldsToUpdate;
+  console.log(req.files, req.player);
+  if (!req.files) {
+    return next(new ErrorResponse(`Please upload a file`));
+  }
+
+  let dataSave = {
+    // createdBy: req.user.id,
+    data: req.files.file.data,
+    contentType: req.files.file.mimetype,
+    size: req.files.file.size,
+  }
+  // ${process.env.MAX_FILE_UPLOAD}
+  // Check filesize
+  if (dataSave.size > process.env.MAX_FILE_UPLOAD) {
+    return next(
+      new ErrorResponse(
+        `Please upload an image less than 256k`
+      )
+    );
+  }
+
+
+
+
+  if (player.profilePic) {
+    newFile = await File.findByIdAndUpdate(player.profilePic, dataSave, {
+      new: true,
+      runValidators: true
+    });
+  } else {
+    newfile = await File.create(dataSave);
+    fieldsToUpdate = { 'profilePic': newfile._id };
+    player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    data: { _id: player.profilePic, profileUrl: process.env.API_URI + '/files/' + player.profilePic }
+  });
+
+  // 'terms': process.env.API_URI + '/page/term',
+  // 'policy': process.env.API_URI + '/page/policy'
+
+
+});

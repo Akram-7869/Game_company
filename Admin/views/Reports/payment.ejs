@@ -37,7 +37,39 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <!-- <div>
+                                        <form class="d-inline-flex mb-3">
+                                            <label class="form-check-label my-2 me-2"
+                                                for="order-selectinput">Status</label>
+                                            <select class="form-select" id="status-filter">
+                                                <option value="PROCESSING" selected>Processing</option>
+                                                <option value="SUCCESS">Approve</option>
+                                                <option value="DECLINED">Declined</option>
+                                            </select>
+                                        </form>
+                                    </div> -->
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="float-end">
+                                        <div class=" mb-3">
+                                            <div class="input-daterange input-group" id="datepicker6"
+                                                data-date-format="yyyy-mm-dd" data-date-autoclose="true"
+                                                data-provide="datepicker" data-date-container='#datepicker6'>
+                                                <input type="text" id="s_date" class="form-control text-start"
+                                                    placeholder="From" name="From" />
+                                                <input type="text" id="e_date" class="form-control text-start"
+                                                    placeholder="To" name="To" data-date-format="yyyy-mm-dd" />
 
+                                                <!-- <button type="button" id="filter" class="btn btn-primary"><i
+                                                        class="mdi mdi-filter-variant"></i></button> -->
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- <button class="btn btn-success waves-effect waves-light" type="submit">Button</button> -->
                             <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap"
@@ -87,6 +119,7 @@
                 <script src="/public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
                 <script
                     src="/public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+                <script src="/public/assets/libs/moment/moment.js"></script>
 
                 <!-- Datatable init js
 <script src="/public/assets/js/pages/datatables.init.js"></script> -->
@@ -132,6 +165,7 @@
 
                             lengthChange: false,
                             buttons: ['excel', 'pdf'],
+                            "pageLength": 0,
                             "language": {
                                 "search": "Player:",
                                 searchPlaceholder: "Player Id / phone"
@@ -152,13 +186,8 @@
                                             $searchButton.click();
                                         })
                                 $('.dataTables_filter').append($searchButton, $clearButton);
-
                                 table.buttons().container()
                                     .appendTo('#listsetting_wrapper .col-md-6:eq(0)');
-
-
-
-
                             },
 
                             "processing": true,
@@ -181,7 +210,11 @@
                                 { data: 'amount' },
                                 { data: 'note' },
                                 { data: 'paymentStatus' },
-                                { data: 'createdAt' },
+                                {
+                                    data: 'createdAt', data: 'createdAt', render: function (data) {
+                                        return moment(data).format('DD-MM-YYYY');
+                                    }
+                                },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-3 text-primary" href="#"><i class="uil uil-pen font-size-18"></i></a> ';
