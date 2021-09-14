@@ -167,46 +167,61 @@
                 <div class="col-xl-8">
                     <div class="card">
                         <div class="card-body">
-                            <div class="float-end">
-                                <div class="dropdown">
-                                    <a class="dropdown-toggle text-reset" href="#" id="dropdownMenuButton5"
-                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="fw-semibold">Sort By:</span> <span class="text-muted">Yearly<i
-                                                class="mdi mdi-chevron-down ms-1"></i></span>
-                                    </a>
+                            <form id="chart">
 
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton5">
-                                        <a class="dropdown-item" href="#">Monthly</a>
-                                        <a class="dropdown-item" href="#">Yearly</a>
-                                        <a class="dropdown-item" href="#">Weekly</a>
+
+                                <div class="row ">
+                                    <div class="col-5">
+                                        <h4 class="card-title mb-4">Game Analytics</h4>
                                     </div>
-                                </div>
-                            </div>
-                            <h4 class="card-title mb-4">Game Analytics</h4>
+                                    <div class=" col-5 no-gutters">
+                                        <div class="input-daterange input-group" id="datepicker6"
+                                            data-date-format="yyyy-mm-dd" data-date-autoclose="true"
+                                            data-provide="datepicker" data-date-container='#datepicker6'>
+                                            <input type="text" id="s_date" class="form-control text-start"
+                                                placeholder="From" name="s_date" />
+                                            <input type="text" id="e_date" class="form-control text-start"
+                                                placeholder="To" name="e_date" data-date-format="yyyy-mm-dd" />
+                                        </div>
+                                    </div>
+                                    <div class="col no-gutters">
+                                        <select id="" class="form-select" name="logType" onchange="getChart()" required>
+                                            <option value="game">GamePlay</option>
+                                            <option value="fees">Income</option>
+                                        </select>
+                                    </div>
 
-                            <div class="mt-1">
-                                <ul class="list-inline main-chart mb-0">
-                                    <li class="list-inline-item chart-border-left me-0 border-0">
-                                        <h3 class="text-primary">$<span data-plugin="counterup">2,371</span><span
-                                                class="text-muted d-inline-block font-size-15 ms-3">Income</span></h3>
-                                    </li>
-                                    <!-- <li class="list-inline-item chart-border-left me-0">
+
+
+                                </div>
+                            </form>
+                        </div>
+
+
+
+                        <div class="mt-1">
+                            <ul class="list-inline main-chart mb-0">
+                                <li class="list-inline-item chart-border-left me-0 border-0">
+                                    <h3 class="text-primary">$<span data-plugin="counterup">2,371</span><span
+                                            class="text-muted d-inline-block font-size-15 ms-3"></span></h3>
+                                </li>
+                                <!-- <li class="list-inline-item chart-border-left me-0">
                             <h3><span data-plugin="counterup">258</span><span class="text-muted d-inline-block font-size-15 ms-3">Player</span>
                             </h3>
                         </li>
                         <li class="list-inline-item chart-border-left me-0">
                             <h3><span data-plugin="counterup">3.6</span>%<span class="text-muted d-inline-block font-size-15 ms-3"></span></h3>
                         </li> -->
-                                </ul>
-                            </div>
+                            </ul>
+                        </div>
 
-                            <div class="mt-3">
-                                <div id="sales-analytics-chart" class="apex-charts" dir="ltr"></div>
-                            </div>
+                        <div class="mt-3">
+                            <div id="sales-analytics-chart" class="apex-charts" dir="ltr"></div>
                         </div>
                     </div>
                 </div>
-                <!-- 
+            </div>
+            <!-- 
     <div class="col-xl-4">
         <div class="card bg-primary">
             <div class="card-body">
@@ -323,7 +338,7 @@
     </div>  
 </div> end row -->
 
-                <!-- <div class="row">
+            <!-- <div class="row">
     <div class="col-xl-4">
         <div class="card">
             <div class="card-body">
@@ -555,9 +570,9 @@
         </div>
     </div>
 </div> -->
-                <!-- end row -->
+            <!-- end row -->
 
-                <!-- <div class="row">
+            <!-- <div class="row">
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
@@ -760,101 +775,116 @@
         </div>
     </div>
 </div> -->
-                <!-- end row -->
+            <!-- end row -->
 
-                <%- contentFor('FooterJs') %>
-                    <!-- apexcharts -->
-                    <script src="/public/assets/libs/apexcharts/apexcharts.min.js"></script>
+            <%- contentFor('FooterJs') %>
+                <!-- apexcharts -->
+                <script src="/public/assets/libs/apexcharts/apexcharts.min.js"></script>
+                <script src="/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
-                    <script src="/public/assets/js/pages/dashboard.init.js"></script>
+                <script src="/public/assets/js/pages/dashboard.init.js"></script>
 
-                    <%- contentFor('BottomJs') %>
-                        <script>
-                            //
-                            // Sales Analytics Chart
-                            var data = '<%=sumDb%>'.split(',');
-                            var lable = '<%=lableDb%>'.split(',');
-
-                            var options = {
-                                chart: {
-                                    height: 339,
-                                    type: 'line',
-                                    stacked: false,
-                                    toolbar: {
-                                        show: false
-                                    }
-                                },
-                                stroke: {
-                                    width: [0, 2, 4],
-                                    curve: 'smooth'
-                                },
-                                plotOptions: {
-                                    bar: {
-                                        columnWidth: '30%'
-                                    }
-                                },
-                                colors: ['#5b73e8', '#dfe2e6', '#f1b44c'],
-                                series: [{
-                                    name: 'daily',
-                                    type: 'column',
-                                    data: data,
-                                },
-                                    //  {
-                                    //     name: 'monthly',
-                                    //     type: 'area',
-                                    //     data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43]
-                                    // }, {
-                                    //     name: 'Tablets',
-                                    //     type: 'line',
-                                    //     data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39]
-                                    // }
-                                ],
-                                fill: {
-                                    opacity: [0.85, 0.25, 1],
-                                    gradient: {
-                                        inverseColors: false,
-                                        shade: 'light',
-                                        type: "vertical",
-                                        opacityFrom: 0.85,
-                                        opacityTo: 0.55,
-                                        stops: [0, 100, 100, 100]
-                                    }
-                                },
-                                labels: lable,
-                                markers: {
-                                    size: 0
-                                },
-
-                                xaxis: {
-                                    type: 'datetime'
-                                },
-                                yaxis: {
-                                    title: {
-                                        text: 'Amount',
-                                    },
-                                },
-                                tooltip: {
-                                    shared: true,
-                                    intersect: false,
-                                    y: {
-                                        formatter: function (y) {
-                                            if (typeof y !== "undefined") {
-                                                return y.toFixed(0) + " Amount";
-                                            }
-                                            return y;
-
-                                        }
-                                    }
-                                },
-                                grid: {
-                                    borderColor: '#f1f1f1'
+                <%- contentFor('BottomJs') %>
+                    <script>
+                        // Sales Analytics Chart
+                        var data = '<%=sumDb%>'.split(',');
+                        var lable = '<%=lableDb%>'.split(',');
+                        var options = {
+                            chart: {
+                                height: 339,
+                                type: 'line',
+                                stacked: false,
+                                toolbar: {
+                                    show: false
                                 }
+                            },
+                            stroke: {
+                                width: [0, 2, 4],
+                                curve: 'smooth'
+                            },
+                            plotOptions: {
+                                bar: {
+                                    columnWidth: '30%'
+                                }
+                            },
+                            colors: ['#5b73e8', '#dfe2e6', '#f1b44c'],
+                            series: [{
+                                name: 'daily',
+                                type: 'column',
+                                data: data,
+                            },
+                                //  {
+                                //     name: 'monthly',
+                                //     type: 'area',
+                                //     data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43]
+                                // }, {
+                                //     name: 'Tablets',
+                                //     type: 'line',
+                                //     data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39]
+                                // }
+                            ],
+                            fill: {
+                                opacity: [0.85, 0.25, 1],
+                                gradient: {
+                                    inverseColors: false,
+                                    shade: 'light',
+                                    type: "vertical",
+                                    opacityFrom: 0.85,
+                                    opacityTo: 0.55,
+                                    stops: [0, 100, 100, 100]
+                                }
+                            },
+                            labels: lable,
+                            markers: {
+                                size: 0
+                            },
+
+                            xaxis: {
+                                type: 'datetime'
+                            },
+                            yaxis: {
+                                title: {
+                                    text: 'Amount',
+                                },
+                            },
+                            tooltip: {
+                                shared: true,
+                                intersect: false,
+                                y: {
+                                    formatter: function (y) {
+                                        if (typeof y !== "undefined") {
+                                            return y.toFixed(0) + " Amount";
+                                        }
+                                        return y;
+
+                                    }
+                                }
+                            },
+                            grid: {
+                                borderColor: '#f1f1f1'
                             }
+                        }
 
-                            var chart = new ApexCharts(
-                                document.querySelector("#sales-analytics-chart"),
-                                options
-                            );
+                        var chart = new ApexCharts(
+                            document.querySelector("#sales-analytics-chart"),
+                            options
+                        );
+                        chart.render();
+                        function LineChart(data, lable) {
+                            chart.updateOptions({ labels: lable });
+                            chart.updateSeries([{
+                                name: 'daily',
+                                data: data
+                            }])
+                        }
 
-                            chart.render();
-                        </script>
+                        function getChart() {
+                            $.post('chart/data', $("#chart").serialize()).then(r => {
+
+                                LineChart(r.sumDb, r.lableDb);
+                            });
+
+                        }
+                        debugger
+                        getChart();
+                    </script>

@@ -45,8 +45,8 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Content</label>
-                                    <textarea name="one[content]" value="" class="form-control" required
-                                        placeholder=""><%= row ? row.one['content']:''%></textarea>
+                                    <textarea name="one[content]" value="" class="form-control " id="classic-editor"
+                                        required placeholder=""><%= row ? row.one['content']:''%></textarea>
 
                                 </div>
                                 <div>
@@ -76,6 +76,10 @@
                 <script src="/public/assets/js/pages/form-validation.init.js"></script>
                 <!-- Sweet Alerts js -->
                 <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <!-- ckeditor -->
+                <script src="/public/assets/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+
+
                 <script>
                     function handleSubmit(params) {
                         if (params.checkValidity()) {
@@ -92,5 +96,11 @@
                         }
 
                     }
+                    ClassicEditor
+                        .create(document.querySelector('#classic-editor'))
+                        .catch(error => {
+                            console.error(error);
+                        });
+
                 </script>
                 <%- contentFor('BottomJs') %>

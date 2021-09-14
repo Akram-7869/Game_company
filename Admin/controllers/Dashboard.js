@@ -26,3 +26,35 @@ exports.dashBoardView = asyncHandler(async (req, res, next) => {
         })
         .catch(error => { req.flash('error', 'Incorrect email or password!'); })
 });
+
+
+// @desc      Get all Players
+// @route     GET /api/v1/Players
+// @access    Private/Admin
+exports.getChartData = asyncHandler(async (req, res, next) => {
+    var start = new Date();
+    var now = new Date();
+    start.setDate(now.getDate() - 30);
+
+    req.body.Form || start.toISOString().split('T')[0];
+    if (!req.body.s_date) {
+        req.body.s_date = start.toISOString().split('T')[0];
+    }
+    if (!req.body.e_date) {
+        req.body.e_date = now.toISOString().split('T')[0];
+    }
+
+    let filter = { s_date: req.body.s_date, e_date: req.body.e_date, logType: req.body.logType };
+    console.log(filter, req.body);
+    callApi(req).post(apiUrl + 'chart/data', filter)
+        .then(r => {
+            let lableDb = r.data.data.graph.map(d => {
+                return d._id
+            });
+            let sumDb = r.data.data.graph.map(d => {
+                return d.totalAmount
+            });
+            res.status(200).json({ lableDb, sumDb });
+        })
+        .catch(error => { req.flash('error', 'Incorrect email or password!'); })
+});

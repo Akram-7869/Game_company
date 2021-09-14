@@ -38,6 +38,57 @@ exports.getDashboard = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Dashboards/:id
 // @access    Private/Admin
 const getGraphData = async (req) => {
+  if (req.period === 'year') {
+    return getGraphMonth(req)
+  }
+  const row = await Transaction.aggregate([
+    {
+      $match: {
+        'createdAt': {
+          $gte: new Date(req.body.s_date),
+          $lt: new Date(req.body.e_date)
+        },
+        logType: req.body.logType
+      }
+    },
+    {
+      $group:
+      {
+        _id: { day: { $dayOfMonth: "$createdAt" }, year: { $year: "$createdAt" }, "month": { "$month": "$createdAt" } },
+        totalAmount: { $sum: "$amount" },
+
+      }
+    },
+    {
+      "$addFields": {
+        "_id": {
+          "$concat": [
+            { "$toString": "$_id.month" },
+            "/",
+            { "$toString": "$_id.day" },
+            "/",
+            { "$toString": "$_id.year" },
+          ]
+        },
+        "month": {
+          "$toString": "$_id.month"
+        },
+        "year": {
+          "$toString": "$_id.year"
+        },
+        "day": {
+          "$toString": "$_id.day"
+        },
+        "week": {
+          "$toString": "$_id.week"
+        }
+      }
+    }
+  ]);
+  return row;
+};
+
+const getGraphMonth = async (req) => {
 
   const row = await Transaction.aggregate([
     {
@@ -52,7 +103,7 @@ const getGraphData = async (req) => {
     {
       $group:
       {
-        _id: { day: { $dayOfMonth: "$createdAt" }, year: { $year: "$createdAt" }, "month": { "$month": "$createdAt" }, "week": { "$week": "$createdAt" } },
+        _id: { day: { $dayOfMonth: "$createdAt" }, year: { $year: "$createdAt" }, "month": { "$month": "$createdAt" } },
         totalAmount: { $sum: "$amount" },
 
       }
@@ -96,6 +147,19 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: { row, graph }
+  });
+});
+
+// @desc      Get single Dashboard
+// @route     GET /api/v1/auth/Dashboards/filter/:id
+// @access    Private/Admin
+exports.getGraphData = asyncHandler(async (req, res, next) => {
+
+  const graph = await getGraphData(req);
+  console.log('graph', graph, req.body)
+  res.status(200).json({
+    success: true,
+    data: { graph }
   });
 });
 

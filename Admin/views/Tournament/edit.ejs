@@ -1,0 +1,114 @@
+<%- contentFor('HeaderCss') %>
+
+    <%- contentFor('breadcrumb') %>
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">Tournament Controle </h4>
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item active">
+                                <%- title %> List
+                            </li>
+                            <li class="breadcrumb-item active">Add</li>
+                        </ol>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <%- contentFor('body') %>
+
+
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <!--  <h4 class="card-title">Validation type</h4>
+                <p class="card-title-desc"> </p> -->
+
+                            <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST"
+                                name="player" enctype="application/x-www-form-urlencoded">
+                                <div class="mb-3">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" name="name" value="<%=row.name?row.name:'' %>"
+                                        class="form-control" required placeholder="Tournament name" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Bet Amount</label>
+                                    <input type="text" name="betAmount" value="<%=row.betAmount?row.betAmount:'' %>"
+                                        class="form-control" required placeholder="Bet amount" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Players</label>
+                                    <select class="form-select" name="players" required>
+                                        <option value="">Slect Palyers..</option>
+                                        <option value="2" <%=row.players===2 ?'selected':'' %>>2 players</option>
+                                        <option value="4" <%=row.players===4 ?'selected':'' %>>4 players</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Time</label>
+                                    <input type="text" name="time" value="<%=row.time?row.time:'' %>"
+                                        class="form-control" required placeholder="App Link" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Bot</label>
+                                    <select class="form-select" name="bot" required>
+                                        <option value="false" <%=row.bot===false?'selected':'' %>>OFF</option>
+                                        <option value="true" <%=row.bot===true?'selected':'' %>>ON</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" name="status" required>
+                                        <option value="false" <%=row.status===false?'selected':'' %>>OFF</option>
+                                        <option value="true" <%=row.status===true?'selected':'' %>>ON</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <div>
+                                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+                                        <button type="reset" class="btn btn-secondary waves-effect">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div> <!-- end col -->
+
+
+            </div> <!-- end row -->
+
+            <%- contentFor('FooterJs') %>
+
+                <!-- parsleyjs -->
+                <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
+
+                <script src="/public/assets/js/pages/form-validation.init.js"></script>
+                <!-- Sweet Alerts js -->
+                <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <!-- Sweet alert init js
+  <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
+                <script>
+                    function handleSubmit(params) {
+                        if (params.checkValidity()) {
+                            Swal.showLoading();
+                        }
+                        return false;
+                    }
+                </script>
+                <%- contentFor('BottomJs') %>

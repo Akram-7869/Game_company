@@ -2,7 +2,7 @@ const express = require('express');
 
 const palyerCtrl = require('../controllers/Players');
 
-const { dashBoardView } = require('../controllers/Dashboard');
+const dashCtl = require('../controllers/Dashboard');
 const transactionCotroller = require('../controllers/TransactionController');
 const bannerControler = require('../controllers/BannerController');
 const settingCtrl = require('../controllers/SettingController');
@@ -10,6 +10,7 @@ const managerCtrl = require('../controllers/ManagerController');
 const botCtrl = require('../controllers/BotController');
 const ticketCtrl = require('../controllers/TicketController');
 const versionCtrl = require('../controllers/VersionController');
+const tournamentCtrl = require('../controllers/TurnamentController');
 const notificationCtrl = require('../controllers/NotificationController');
 
 const { protect } = require('../middleware/auth');
@@ -57,6 +58,10 @@ router.route('/version').get(versionCtrl.listVersion); router.route('/version/da
 router.route('/version/add').get(versionCtrl.addVersion).post(versionCtrl.createVersions);
 router.route('/version/:id').get(versionCtrl.getVersion).post(versionCtrl.updateVersion).delete(versionCtrl.deleteVersion);
 
+router.route('/tournament').get(tournamentCtrl.listTournament); router.route('/tournament/data').post(tournamentCtrl.getTournaments);
+router.route('/tournament/add').get(tournamentCtrl.addTournament).post(tournamentCtrl.createTournaments);
+router.route('/tournament/:id').get(tournamentCtrl.getTournament).post(tournamentCtrl.updateTournament).delete(tournamentCtrl.deleteTournament);
+
 
 
 
@@ -98,7 +103,8 @@ router.route('/leaderboard').get(palyerCtrl.getLeaderBoard);
 router.route('/game/data').post(palyerCtrl.getLeaderBoardList);
 router.route('/playerhistory/:id').get(palyerCtrl.getPlayerHistory);
 
-router.route('/dashboard').get(dashBoardView);
+router.route('/dashboard').get(dashCtl.dashBoardView);
+router.route('/chart/data').post(dashCtl.getChartData);
 
 router.route('/player/upi/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);
 router.route('/player/wallet/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);

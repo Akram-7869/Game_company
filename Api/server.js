@@ -35,6 +35,7 @@ const tickets = require('./routes/tickets');
 const notifications = require('./routes/notifications');
 const game = require('./routes/game');
 const dashboards = require('./routes/dashboard');
+const tournaments = require('./routes/tournament');
 
 
 const app = express();
@@ -97,7 +98,7 @@ app.use('/api/v1/notifications', notifications);
 app.use('/api/v1/banners', banners);
 app.use('/api/v1/games', game);
 app.use('/api/v1/dashboards', dashboards);
-//app.use('/api/v1/payments', payments);
+app.use('/api/v1/tournaments', tournaments);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;

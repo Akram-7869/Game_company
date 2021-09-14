@@ -17,12 +17,16 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0">Player List</h4>
+                    <h4 class="mb-0">
+                        <%- title %>
+                    </h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                            <li class="breadcrumb-item active">Player List</li>
+                            <li class="breadcrumb-item active">
+                                <%- title %> List
+                            </li>
                         </ol>
                     </div>
 
@@ -44,20 +48,21 @@
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
+                            <a type="button" href="/admin/tournament/add"
+                                class="btn btn-success waves-effect waves-light mb-3"><i
+                                    class="mdi mdi-plus me-1"></i>Add New</a>
 
-                            <table id="list" class="table table-striped table-bordered dt-responsive nowrap"
+                            <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap"
                                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th>Sr.No</th>
-                                        <th>PlayerId</th>
-                                        <th>Player Name</th>
-                                        <th>Email</th>
-                                        <th>Mobile</th>
-                                        <th>balance</th>
-                                        <th>Joing Date</th>
+                                        <th>Srno</th>
+                                        <th>Name</th>
+                                        <th>Bet Amount</th>
+                                        <th>Players</th>
+                                        <th>Time</th>
                                         <th>Status</th>
-                                        <th>Action</th>
+                                        <th>action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -100,20 +105,19 @@
                 <%- contentFor('BottomJs') %>
                     <script>
                         function delRec(id) {
-                            let r = confirm('Want to delet?');
+                            let r = confirm('Want to delete?');
                             debugger
-                            if (r) {
+                            if (id) {
                                 handleDel(id);
                             }
-
-
                         }
+
 
 
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '/admin/player/' + id,
+                                url: '/admin/tournament/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -122,11 +126,6 @@
                                     alert('Error While Deleting');
                                 }
                             });
-
-
-
-
-
                             //         $.ajax({
                             //     url: '/admin/player/'+id,
                             //     type: 'DELETE',
@@ -138,27 +137,26 @@
                             alert(id);
                         }
                         var i = 1;
-                        $('#list').DataTable({
+                        $('#listsetting').DataTable({
 
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: '/admin/player/data', type: "post"
+                                url: "/admin/tournament/data", type: "post"
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
-                                { data: '_id' },
-                                { data: 'firstName', "defaultContent": "" },
-                                { data: 'email', "defaultContent": "" },
-                                { data: 'phone' },
-                                { data: 'balance' },
-                                { data: 'createdAt' },
-                                { data: 'status' },
 
+                                { data: 'name' },
+                                { data: 'betAmount' },
+                                { data: 'players' },
+                                { data: 'time' },
+                                { data: 'active' },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-3 text-primary" href="/admin/player/'
-                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a> ';
+                                        return '<a class="px-2 text-primary" href="/admin/tournament/'
+                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\''
+                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i>';
                                     }
                                 },
                             ]
