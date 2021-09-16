@@ -49,5 +49,6 @@ Thumbs.db
 *.wmv
 doc/
 Admin/config/config.env
+Api/config/config.env
 Admin/package-lock.json
- 
+Api/package-lock.json

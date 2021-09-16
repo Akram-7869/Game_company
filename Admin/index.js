@@ -75,7 +75,8 @@ app.get('/', function (req, res) {
   res.redirect(process.env.ADMIN_URL + '/login');
 });
 
+const PORT = process.env.PORT;
 
-http.listen(8000, function () {
-  console.log('listening on *:8000');
+http.listen(PORT, function () {
+  console.log('listening on ' + PORT);
 });
