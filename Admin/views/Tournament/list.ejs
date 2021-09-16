@@ -48,7 +48,7 @@
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
-                            <a type="button" href="/admin/tournament/add"
+                            <a type="button" href="<%=process.env.ADMIN_URL%>/admin/tournament/add"
                                 class="btn btn-success waves-effect waves-light mb-3"><i
                                     class="mdi mdi-plus me-1"></i>Add New</a>
 
@@ -117,7 +117,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '/admin/tournament/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/tournament/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -127,7 +127,7 @@
                                 }
                             });
                             //         $.ajax({
-                            //     url: '/admin/player/'+id,
+                            //     url: '<%=process.env.ADMIN_URL%>/admin/player/'+id,
                             //     type: 'DELETE',
                             //     success: ()=>{alert('done');location.reload()},
                             //     error: ()=>alert('failed')
@@ -154,7 +154,7 @@
                                 { data: 'active' },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-2 text-primary" href="/admin/tournament/'
+                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/tournament/'
                                             + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\''
                                             + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i>';
                                     }

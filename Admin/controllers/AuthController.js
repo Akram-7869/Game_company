@@ -13,7 +13,7 @@ module.exports = function (app) {
 
 	// Inner Auth
 	app.get('/auth-login', function (req, res) {
-		res.locals = { title: 'Login' };
+		res.locals = { title: 'Login', adminUrl: process.env.ADMIN_URL };
 		res.render('AuthInner/auth-login');
 	});
 	app.get('/auth-register', function (req, res) {
@@ -70,6 +70,7 @@ module.exports = function (app) {
 
 
 	app.get('/login', function (req, res) {
+		res.locals = { title: 'Login', adminUrl: process.env.ADMIN_URL };
 		res.render('Auth/auth-login', { 'message': req.flash('message'), 'error': req.flash('error') });
 	});
 	app.get('/page/:name', function (req, res) {

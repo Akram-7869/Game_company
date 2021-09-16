@@ -1,139 +1,149 @@
 <%- contentFor('HeaderCss') %>
-<link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
-<link href="/public/assets/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
+    <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+    <link href="/public/assets/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
 
-<%- contentFor('breadcrumb') %>
+    <%- contentFor('breadcrumb') %>
 
-<!-- start page title -->
-<div class="row">
-    <div class="col-12">
-        <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0"><%- title %>  Add</h4>
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">
+                        <%- title %> Add
+                    </h4>
 
-            <div class="page-title-right">
-                <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                    <li class="breadcrumb-item active"><a href="/admin/notification"><%- title %>  List</a></li>
-                     <li class="breadcrumb-item active">Add</li>
-                </ol>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item active"><a href="<%=process.env.ADMIN_URL%>/admin/notification">
+                                    <%- title %> List
+                                </a></li>
+                            <li class="breadcrumb-item active">Add</li>
+                        </ol>
+                    </div>
+
+                </div>
             </div>
-
         </div>
-    </div>
-</div>
-<!-- end page title -->
+        <!-- end page title -->
 
-<%- contentFor('body') %>
+        <%- contentFor('body') %>
 
- 
-<div class="row">
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <!--  
+
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <!--  
                     <div class="mb-3">
                         <label class="form-label">Bot Complexity</label>
                         <input type="text" name="complexity" value="<%=row.complexity?row.complexity:'' %>" class="form-control" required placeholder="Bot Controle"/>
-                    </div>-->   
-                <form id="banner" action="" enctype="multipart/form-data" method="POST">
-                    <input type="hidden" name="imageId" value="" id="imageId">
-                    <div class="mb-3">
-                        <label class="form-label">Url</label>
-                        <input type="text" id="url"  name="url" value="<%=row.url?row.url:'' %>" class="form-control" required placeholder="Url"/>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Message</label>
-                        <textarea  id="message"   name="message" value="" class="form-control" required placeholder="Note ..."></textarea>
-                    </div>
-                    <div class="mb-3">
-                            <h5 class="font-size-14 mb-4">Send to</h5>
-                            <select id="sendTo" class="form-select" name="sendTo" required>
-                                <option value="player" <%=row.status === 'player'?'selected':'' %>>Slected player</option>
-                               <option value="all"  <%=row.status === 'all'?'selected':'' %>>All players</option>
-                           </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <div class="col-md-10">
-                            <select id="statustxt" class="form-select" name="status" required>
-                                 <option value="active" <%=row.status === 'active'?'selected':'' %>>active</option>
-                                <option value="inactive"  <%=row.status === 'inactive'?'selected':'' %>>inactive</option>
-                            </select>
+                    </div>-->
+                            <form id="banner" action="" enctype="multipart/form-data" method="POST">
+                                <input type="hidden" name="imageId" value="" id="imageId">
+                                <div class="mb-3">
+                                    <label class="form-label">Url</label>
+                                    <input type="text" id="url" name="url" value="<%=row.url?row.url:'' %>"
+                                        class="form-control" required placeholder="Url" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Message</label>
+                                    <textarea id="message" name="message" value="" class="form-control" required
+                                        placeholder="Note ..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <h5 class="font-size-14 mb-4">Send to</h5>
+                                    <select id="sendTo" class="form-select" name="sendTo" required>
+                                        <option value="player" <%=row.status==='player' ?'selected':'' %>>Slected player
+                                        </option>
+                                        <option value="all" <%=row.status==='all' ?'selected':'' %>>All players</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <div class="col-md-10">
+                                        <select id="statustxt" class="form-select" name="status" required>
+                                            <option value="active" <%=row.status==='active' ?'selected':'' %>>active
+                                            </option>
+                                            <option value="inactive" <%=row.status==='inactive' ?'selected':'' %>
+                                                >inactive</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <label>Image</label>
+                                <div class="dropzone" id="myDropzone"></div>
+                                <div>
+                                    <button id="submit-all" type="submit"
+                                        class="btn btn-primary waves-effect waves-light me-1">
+                                        Submit
+                                    </button>
+
+                                </div>
+
+                            </form>
+
                         </div>
                     </div>
-                    <label>Image</label>
-                    <div class="dropzone" id="myDropzone"></div>
-                    <div>
-                        <button  id="submit-all" type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                            Submit
-                        </button>
-                         
-                    </div>
-                 
-                    </form>
-              
-            </div>
-        </div>
-    </div> <!-- end col -->
+                </div> <!-- end col -->
 
-   
-</div> <!-- end row -->
 
-<%- contentFor('FooterJs') %>
-<script src="/public/assets/libs/dropzone/min/dropzone.min.js"></script>
+            </div> <!-- end row -->
 
-<!-- parsleyjs -->
-<script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
+            <%- contentFor('FooterJs') %>
+                <script src="/public/assets/libs/dropzone/min/dropzone.min.js"></script>
 
-<script src="/public/assets/js/pages/form-validation.init.js"></script>
-<!-- Sweet Alerts js -->
-<script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
-<!-- Sweet alert init js
+                <!-- parsleyjs -->
+                <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
+
+                <script src="/public/assets/js/pages/form-validation.init.js"></script>
+                <!-- Sweet Alerts js -->
+                <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <!-- Sweet alert init js
 <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
-<script>
-   let url = '<%= apiUrl + "add" %>'
-    Dropzone.options.myDropzone= {
-    url: url,
-    autoProcessQueue: false,
-    uploadMultiple: false,
-    parallelUploads: 1,
-    maxFiles: 50,
-    maxFilesize: 5,
-    acceptedFiles: 'image/*',
-    addRemoveLinks: true,
-    success: function(file, response){
-        location.href='/admin/notification/'
-    },
-    init: function() {
-        dzClosure = this; // Makes sure that 'this' is understood inside the functions below.
+                <script>
+                    let url = '<%= apiUrl + "add" %>'
+                    Dropzone.options.myDropzone = {
+                        url: url,
+                        autoProcessQueue: false,
+                        uploadMultiple: false,
+                        parallelUploads: 1,
+                        maxFiles: 50,
+                        maxFilesize: 5,
+                        acceptedFiles: 'image/*',
+                        addRemoveLinks: true,
+                        success: function (file, response) {
+                            location.href = '/admin/notification/'
+                        },
+                        init: function () {
+                            dzClosure = this; // Makes sure that 'this' is understood inside the functions below.
 
-        // for Dropzone to process the queue (instead of default form behavior):
-        document.getElementById("submit-all").addEventListener("click", function(e) {
-            // Make sure that the form isn't actually being sent.
-            e.preventDefault();
-            e.stopPropagation();
-            Swal.showLoading();
-            if (dzClosure.getQueuedFiles().length > 0) {                        
-                dzClosure.processQueue();  
-            } else {                       
-                 $.post(url, $("#banner").serialize()).then(r=>{
-                    location.href='/admin/notification/'
- 
-                });  
-            }
-             
-        });
+                            // for Dropzone to process the queue (instead of default form behavior):
+                            document.getElementById("submit-all").addEventListener("click", function (e) {
+                                // Make sure that the form isn't actually being sent.
+                                e.preventDefault();
+                                e.stopPropagation();
+                                Swal.showLoading();
+                                if (dzClosure.getQueuedFiles().length > 0) {
+                                    dzClosure.processQueue();
+                                } else {
+                                    $.post(url, $("#banner").serialize()).then(r => {
+                                        location.href = '/admin/notification/'
 
-        //send all the form data along with the files:
-        dzClosure.on("sending", function(data, xhr, formData) {
-           formData.append("url", $("#url").val());
-           formData.append("message", $("#message").val());
-           formData.append("status", $("#statustxt").val());
-        
-        });
-        
-    }
-}
- 
-</script>
-<%- contentFor('BottomJs') %>
+                                    });
+                                }
+
+                            });
+
+                            //send all the form data along with the files:
+                            dzClosure.on("sending", function (data, xhr, formData) {
+                                formData.append("url", $("#url").val());
+                                formData.append("message", $("#message").val());
+                                formData.append("status", $("#statustxt").val());
+
+                            });
+
+                        }
+                    }
+
+                </script>
+                <%- contentFor('BottomJs') %>

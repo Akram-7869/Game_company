@@ -48,7 +48,7 @@
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
-                            <a type="button" href="/admin/notification/add"
+                            <a type="button" href="<%=process.env.ADMIN_URL%>/admin/notification/add"
                                 class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i>
                                 Add New Banner</a>
 
@@ -118,7 +118,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '/admin/notification/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/notification/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -128,7 +128,7 @@
                                 }
                             });
                             //         $.ajax({
-                            //     url: '/admin/player/'+id,
+                            //     url: '<%=process.env.ADMIN_URL%>/admin/player/'+id,
                             //     type: 'DELETE',
                             //     success: ()=>{alert('done');location.reload()},
                             //     error: ()=>alert('failed')
@@ -143,7 +143,7 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "/admin/notification/data", type: "post"
+                                url: "<%=process.env.ADMIN_URL%>/admin/notification/data", type: "post"
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return i = i + 1; } },
@@ -161,9 +161,9 @@
 
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-2 text-primary" href="/admin/notification/'
+                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/notification/'
                                             + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\''
-                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a><a class="px-2 text-success" href="/admin/notification/player/'
+                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a><a class="px-2 text-success" href="<%=process.env.ADMIN_URL%>/admin/notification/player/'
                                             + full._id + '"><i class="uil uil-user-plus font-size-18"></i></a>';
 
                                     }

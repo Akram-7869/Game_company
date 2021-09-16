@@ -3,14 +3,10 @@ let axios = require("axios");
 const { callApi, api_url } = require('../helper/common');
 let apiUrl = api_url + '/banners/';
 
-
-
 exports.bannerList = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Banner', apiUrl };
       res.render('Ads/list')
 });
-
-
 exports.getBanner = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Banner', apiUrl };
       axios.get(apiUrl + req.params.id)

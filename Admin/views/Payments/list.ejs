@@ -71,7 +71,7 @@
                         </form>
                         
                     </div> -->
-                                                <a type="button" href="/admin/payment/add"
+                                                <a type="button" href="<%=process.env.ADMIN_URL%>/admin/payment/add"
                                                     class="btn btn-success waves-effect waves-light mb-3"><i
                                                         class="mdi mdi-plus me-1"></i> Add New Page</a>
                                             </div>
@@ -135,7 +135,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '/admin/payment/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/payment/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -145,7 +145,7 @@
                                 }
                             });
                             //         $.ajax({
-                            //     url: '/admin/player/'+id,
+                            //     url: '<%=process.env.ADMIN_URL%>/admin/player/'+id,
                             //     type: 'DELETE',
                             //     success: ()=>{alert('done');location.reload()},
                             //     error: ()=>alert('failed')
@@ -159,7 +159,7 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "/admin/payment/data", type: "post"
+                                url: "<%=process.env.ADMIN_URL%>/admin/payment/data", type: "post"
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
@@ -168,7 +168,7 @@
 
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-3 text-primary" href="/admin/payment/'
+                                        return '<a class="px-3 text-primary" href="<%=process.env.ADMIN_URL%>/admin/payment/'
                                             + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a class="px-3 text-danger" onclick="delRec(\''
                                             + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
                                     }

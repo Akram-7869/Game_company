@@ -112,7 +112,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '/admin/player/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/player/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -127,7 +127,7 @@
 
 
                             //         $.ajax({
-                            //     url: '/admin/player/'+id,
+                            //     url: '<%=process.env.ADMIN_URL%>/admin/player/'+id,
                             //     type: 'DELETE',
                             //     success: ()=>{alert('done');location.reload()},
                             //     error: ()=>alert('failed')
@@ -142,7 +142,7 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: '/admin/player/data?status=banned', type: "post"
+                                url: '<%=process.env.ADMIN_URL%>/admin/player/data?status=banned', type: "post"
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
@@ -155,7 +155,7 @@
 
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-3 text-primary" href="/admin/player/'
+                                        return '<a class="px-3 text-primary" href="<%=process.env.ADMIN_URL%>/admin/player/'
                                             + full._id + '"><i class="uil uil-pen font-size-18"></i></a> ';
                                     }
                                 },

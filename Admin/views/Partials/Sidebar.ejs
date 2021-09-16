@@ -3,7 +3,7 @@
 
     <!-- LOGO -->
     <div class="navbar-brand-box">
-        <a href="/admin/dashboard" class="logo logo-dark">
+        <a href="<%=process.env.ADMIN_URL%>/admin/dashboard" class="logo logo-dark">
             <span class="logo-sm">
                 <img src="/public/assets/images/logo-sm.png" alt="" height="30">
             </span>
@@ -12,7 +12,7 @@
             </span>
         </a>
 
-        <a href="/admin/dashboard" class="logo logo-light">
+        <a href="<%=process.env.ADMIN_URL%>/admin/dashboard" class="logo logo-light">
             <span class="logo-sm">
                 <img src="/public/assets/images/logo-sm.png" alt="" height="30">
             </span>
@@ -35,7 +35,7 @@
                 <!-- <li class="menu-title"><%=translation.Menu%></li> -->
 
                 <li>
-                    <a href="/admin/dashboard">
+                    <a href="<%=process.env.ADMIN_URL%>/admin/dashboard">
                         <i class="uil-home-alt"></i><span class="badge rounded-pill bg-primary float-end">01</span>
                         <span>
                             <%=translation.Dashboard%>
@@ -49,9 +49,9 @@
                         <span>Player</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/player">Player List</a></li>
-                        <li><a href="/admin/player/banned">Player Banned</a></li>
-                        <li><a href="/admin/player/kyc">Player KYC</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/player">Player List</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/player/banned">Player Banned</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/player/kyc">Player KYC</a></li>
                     </ul>
                 </li>
 
@@ -61,8 +61,8 @@
                         <span>Leader Board</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/leaderboard">Leader Board List</a></li>
-                        <!-- <li><a href="/admin/playerhistory">Player History</a></li> -->
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/leaderboard">Leader Board List</a></li>
+                        <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/playerhistory">Player History</a></li> -->
 
                     </ul>
                 </li>
@@ -73,9 +73,9 @@
                         <span>Payment</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/wallet">wallet</a></li>
-                        <li><a href="/admin/transaction">history</a></li>
-                        <li><a href="/admin/payout">payout</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/wallet">wallet</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/transaction">history</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/payout">payout</a></li>
 
                     </ul>
                 </li>
@@ -85,8 +85,8 @@
                         <span>Ads</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/banner">Banner</a></li>
-                        <li><a href="/admin/notification">Notification</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/banner">Banner</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/notification">Notification</a></li>
 
                     </ul>
                 </li>
@@ -96,8 +96,8 @@
                         <span>Controls</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/bot">Bot</a></li>
-                        <li><a href="/admin/version">Version</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/bot">Bot</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/version">Version</a></li>
 
                     </ul>
                 </li>
@@ -107,8 +107,8 @@
                         <span>Support</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/chat">chat</a></li>
-                        <li><a href="/admin/ticket">Ticket</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/chat">chat</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/ticket">Ticket</a></li>
 
                     </ul>
                 </li>
@@ -118,7 +118,7 @@
                         <span>Staff</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/manager">Managers</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/manager">Managers</a></li>
 
                     </ul>
                 </li>
@@ -128,8 +128,8 @@
                         <span>Reports</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/report/player">palyer</a></li>
-                        <li><a href="/admin/report/payment">payment</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/report/player">palyer</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/report/payment">payment</a></li>
 
                     </ul>
                 </li>
@@ -140,11 +140,11 @@
                         <span>Admin Setting</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/site">Setting</a></li>
-                        <!-- <li><a href="/admin/setting/logo">Logo</a></li>
-                        <li><a href="/admin/setting/support-mail">Support Mail</a></li>
-                        <li><a href="/admin/setting/firebase-setting">Firebase</a></li>
-                         <li><a href="/admin/setting/2step-auth-setting">2step Authentication</a></li> -->
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/site">Setting</a></li>
+                        <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/logo">Logo</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/support-mail">Support Mail</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/firebase-setting">Firebase</a></li>
+                         <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/2step-auth-setting">2step Authentication</a></li> -->
 
                     </ul>
                 </li>
@@ -154,9 +154,9 @@
                         <span>Pyment Gateway</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/payment">setting</a></li>
-                        <!-- <li><a href="/admin/setting/razorpay-setting">Razor Pay</a></li>
-                          <li><a href="/admin/setting/payu-setting">Pay U money</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/payment">setting</a></li>
+                        <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/razorpay-setting">Razor Pay</a></li>
+                          <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/payu-setting">Pay U money</a></li>
                          -->
                     </ul>
                 </li>
@@ -166,8 +166,8 @@
                         <span>Sms Gateway</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/smsgateway">setting</a></li>
-                        <!-- <li><a href="/admin/setting/localtext-setting">Localtext</a></li> -->
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/smsgateway">setting</a></li>
+                        <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/localtext-setting">Localtext</a></li> -->
 
                     </ul>
                 </li>
@@ -178,9 +178,9 @@
                         <span>Pages</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="/admin/page">Page List</a></li>
-                        <!-- <li><a href="/admin/page/terms">Terms</a></li>
-                        <li><a href="/admin/page/policy">Policy</a></li> -->
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/page">Page List</a></li>
+                        <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/page/terms">Terms</a></li>
+                        <li><a href="<%=process.env.ADMIN_URL%>/admin/page/policy">Policy</a></li> -->
 
                     </ul>
                 </li>

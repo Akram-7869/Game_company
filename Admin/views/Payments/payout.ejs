@@ -134,7 +134,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '/admin/transaction/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/transaction/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -169,7 +169,7 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "/admin/transaction/data?logType=withdraw", type: "post",
+                                url: "<%=process.env.ADMIN_URL%>/admin/transaction/data?logType=withdraw", type: "post",
                                 data: function (d) {
                                     d['s_date'] = $('#s_date').val();
                                     d['e_date'] = $('#e_date').val();
@@ -191,7 +191,7 @@
                                 { data: 'paymentStatus' },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-2 text-primary" href="/admin/payout/edit/'
+                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/payout/edit/'
                                             + full._id + '"><i class="uil uil-history font-size-18"></i></a> ';
                                     }
                                 },

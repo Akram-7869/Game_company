@@ -48,7 +48,7 @@
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
-                            <a type="button" href="/admin/bot/add"
+                            <a type="button" href="<%=process.env.ADMIN_URL%>/admin/bot/add"
                                 class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i>
                                 Add New</a>
 
@@ -114,7 +114,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '/admin/bot/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/bot/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -134,7 +134,7 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "/admin/bot/data", type: "post"
+                                url: "<%=process.env.ADMIN_URL%>/admin/bot/data", type: "post"
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
@@ -145,7 +145,7 @@
 
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-2 text-primary" href="/admin/bot/'
+                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/bot/'
                                             + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a class="px-2 text-danger" onclick="delRec(\''
                                             + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
                                     }

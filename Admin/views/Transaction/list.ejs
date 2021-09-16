@@ -173,7 +173,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '/admin/transaction/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/transaction/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -234,7 +234,7 @@
                                 { data: 'createdAt' },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-2 text-primary" href="/admin/banner/'
+                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/banner/'
                                             + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\''
                                             + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
 

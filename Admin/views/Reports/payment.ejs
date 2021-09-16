@@ -141,7 +141,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '/admin/settings/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/settings/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -151,7 +151,7 @@
                                 }
                             });
                             //         $.ajax({
-                            //     url: '/admin/player/'+id,
+                            //     url: '<%=process.env.ADMIN_URL%>/admin/player/'+id,
                             //     type: 'DELETE',
                             //     success: ()=>{alert('done');location.reload()},
                             //     error: ()=>alert('failed')
