@@ -1,6 +1,6 @@
 const asyncHandler = require('../middleware/async');
-const { callApi } = require('../helper/common');
-var apiUrl = 'http://localhost:3000/api/v1/Tournaments/';
+const { callApi, api_url, redirect } = require('../helper/common');
+var apiUrl = api_url + '/Tournaments/';
 
 
 exports.listTournament = asyncHandler(async (req, res, next) => {
@@ -30,7 +30,7 @@ exports.updateTournament = asyncHandler(async (req, res, next) => {
             // Assign value in session
             res.locals = { title: 'Tournament-edit' };
             req.flash('error', 'Data save');
-            res.render('Tournament/edit', { row: r.data.data });
+            res.redirect(process.env.ADMIN_URL + '/admin/tournament');
 
         })
         .catch(error => {
@@ -96,8 +96,8 @@ exports.createTournaments = asyncHandler(async (req, res, next) => {
         .then(r => {
             // Assign value in session
             res.locals = { title: 'Tournament-edit' };
-            req.flash('success', 'Data save');
-            res.render('Tournament/edit', { row: r.data.data });
+            req.flash('message', 'Data save');
+            res.redirect(process.env.ADMIN_URL + '/admin/tournament');
 
         })
         .catch(error => {

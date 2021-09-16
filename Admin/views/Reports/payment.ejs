@@ -83,7 +83,7 @@
                                         <th>note</th>
                                         <th>payment status</th>
                                         <th>Dated</th>
-                                        <th>Action</th>
+                                        <!-- <th>Action</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -129,7 +129,7 @@
                     <script>
                         function delRec(id) {
                             let r = confirm('Want to delet?');
-                            debugger
+
                             if (r) {
                                 handleDel(i);
                             }
@@ -215,11 +215,11 @@
                                         return moment(data).format('DD-MM-YYYY');
                                     }
                                 },
-                                {
-                                    data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-3 text-primary" href="#"><i class="uil uil-pen font-size-18"></i></a> ';
-                                    }
-                                },
+                                // {
+                                //     data: null, "render": function (data, type, full, meta) {
+                                //         return '<a class="px-3 text-primary" href="#"><i class="uil uil-pen font-size-18"></i></a> ';
+                                //     }
+                                // },
                             ]
                         });
 

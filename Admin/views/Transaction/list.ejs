@@ -160,10 +160,10 @@
                 <%- contentFor('BottomJs') %>
                     <script>
                         function delRec(id) {
-                            let r = confirm('Want to delet?');
-                            debugger
+                            let r = confirm('Want to delete?');
+
                             if (r) {
-                                handleDel(i);
+                                handleDel(id);
                             }
 
 
@@ -173,7 +173,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '/admin/settings/' + id,
+                                url: '/admin/transaction/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -182,12 +182,7 @@
                                     alert('Error While Deleting');
                                 }
                             });
-                            //         $.ajax({
-                            //     url: '/admin/player/'+id,
-                            //     type: 'DELETE',
-                            //     success: ()=>{alert('done');location.reload()},
-                            //     error: ()=>alert('failed')
-                            // });
+
                         }
                         function view(id) {
                             alert(id);
@@ -239,7 +234,10 @@
                                 { data: 'createdAt' },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-3 text-primary" href="#"><i class="uil uil-pen font-size-18"></i></a> ';
+                                        return '<a class="px-2 text-primary" href="/admin/banner/'
+                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\''
+                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
+
                                     }
                                 },
                             ]

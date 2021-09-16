@@ -8,6 +8,7 @@ var validator = require('express-validator');
 const dotenv = require('dotenv');
 // Load env vars
 dotenv.config({ path: './config/config.env' });
+
 // import controller
 var AuthController = require('./controllers/AuthController');
 
@@ -39,7 +40,7 @@ app.use(session({
   }
 }));
 
- 
+
 app.use(flash());
 app.use(i18n({
   translationsPath: path.join(__dirname, 'i18n'), // <--- use here. Specify translations files path.
@@ -49,7 +50,7 @@ app.use(i18n({
 
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static('public'));
 
 app.get('/layouts/', function (req, res) {
@@ -67,14 +68,14 @@ app.use(expressLayouts);
 
 // Define All Route 
 //pageRouter(app);
-app.use('/admin',adminRoutes );
+app.use('/admin', adminRoutes);
 
- 
+
 app.get('/', function (req, res) {
-  res.redirect('/login');
+  res.redirect(process.env.ADMIN_URL + '/login');
 });
- 
- 
+
+
 http.listen(8000, function () {
   console.log('listening on *:8000');
 });

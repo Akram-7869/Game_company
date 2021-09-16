@@ -3,8 +3,8 @@ const asyncHandler = require('../middleware/async');
 // const {Players} = require('../models/Players');
 // const {User} = require('../models/User');
 let axios = require("axios");
-const { callApi } = require('../helper/common');
-let apiUrl = 'http://localhost:3000/api/v1/dashboards/';
+const { callApi, api_url, redirect } = require('../helper/common');
+let apiUrl = api_url + '/dashboards/';
 
 // @desc      Get all Players
 // @route     GET /api/v1/Players

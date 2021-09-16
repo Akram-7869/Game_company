@@ -1,6 +1,6 @@
 const asyncHandler = require('../middleware/async');
-const { callApi } = require('../helper/common');
-var apiUrl = 'http://localhost:3000/api/v1/tickets/';
+const { callApi, api_url, redirect } = require('../helper/common');
+var apiUrl = api_url + '/tickets/';
 
 
 exports.listTicket = asyncHandler(async (req, res, next) => {
@@ -30,7 +30,7 @@ exports.updateTicket = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   req.flash('message', 'Data save');
-                  res.redirect('/admin/ticket');
+                  res.redirect(process.env.ADMIN_URL + '/admin/ticket');
             })
             .catch(error => {
                   req.flash('error', 'Data not updated');
@@ -60,13 +60,11 @@ exports.getTickets = asyncHandler(async (req, res, next) => {
 
 exports.addTicket = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Ticket' };
-
       res.render('Ticket/add', { row: {} });
 });
 
 
 exports.createTickets = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Ticket' };
       callApi(req).post(apiUrl + 'add', req.body)
             .then(r => {
                   // Assign value in session
@@ -81,23 +79,16 @@ exports.createTickets = asyncHandler(async (req, res, next) => {
                   req.flash('error', 'Data not updated');
 
             })
-      res.render('Ticket/edit', { row: {} });
 });
 
 exports.showTicketView = asyncHandler(async (req, res, next) => {
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
                   // Assign value in session
-
                   res.locals = { title: 'Ticket' };
                   res.render('Ticket/view', { row: r.data.data });
-
-
             })
             .catch(error => {
-
-
                   //   req.flash('error', 'Incorrect email or password!');
-
             })
 });

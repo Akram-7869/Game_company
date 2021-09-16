@@ -2,11 +2,11 @@
 const asyncHandler = require('../middleware/async');
 // const {Players} = require('../models/Players');
 // const {User} = require('../models/User');
-const { callApi } = require('../helper/common');
+const { callApi, api_url, redirect } = require('../helper/common');
 
-var apiUrl = 'http://localhost:3000/api/v1/players/';
-var apiUrlGame = 'http://localhost:3000/api/v1/games/';
-var apiUrlTransaction = 'http://localhost:3000/api/v1/transactions/';
+var apiUrl = api_url + '/players/';
+var apiUrlGame = api_url + '/games/';
+var apiUrlTransaction = api_url + '/transactions/';
 
 exports.getPlayerReport = asyncHandler(async (req, res, next) => {
 
@@ -49,7 +49,7 @@ exports.getPlayerPayoutEdit = asyncHandler(async (req, res, next) => {
 exports.postPlayerPayoutEdit = asyncHandler(async (req, res, next) => {
       callApi(req).post(apiUrlTransaction + 'payout/' + req.params.id, req.body)
             .then(r => {
-                  res.redirect('/admin/payout');
+                  res.redirect(process.env.ADMIN_URL + '/admin/payout');
             })
             .catch(error => {
                   req.flash('error', 'Data not updated');
@@ -126,7 +126,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Player-edit' };
                   req.flash('message', 'Data save');
-                  res.redirect('player');
+                  res.redirect(process.env.ADMIN_URL + 'player');
 
             })
             .catch(error => {

@@ -2,15 +2,15 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('./async');
 //const ErrorResponse = require('../utils/errorResponse');
 //const Player = require('../models/Player');
- // Protect routes
+// Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
- // console.log('auth',req.session);
+  // console.log('auth',req.session);
   if (!req.session.user) {
-      res.redirect('/login');
-   }else{
-     next();
-   }
-  
+    res.redirect(process.env.ADMIN_URL + '/login');
+  } else {
+    next();
+  }
+
 });
 
 // Grant access to specific roles
@@ -27,4 +27,4 @@ exports.authorize = (...roles) => {
     next();
   };
 };
- 
+

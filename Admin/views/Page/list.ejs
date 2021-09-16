@@ -126,60 +126,63 @@
                 <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
                 <%- contentFor('BottomJs') %>
                     <script>
-       function delRec(id){
-        let r = confirm('Want to delete?');
-        debugger
-       if( id){
-        handleDel(id);
-       }
-    }
+                        function delRec(id) {
+                            let r = confirm('Want to delete?');
+
+                            if (id) {
+                                handleDel(id);
+                            }
+                        }
 
 
-function handleDel (id){
-   return $.ajax({
-                    type: 'DELETE',
-                    url: '/admin/page/'+id,
-                    success: (results)=> {
-                        alert('Record Delete');
-                          location.reload();
-                    },
-                    error: (err)=>{
-                        alert('Error While Deleting');
-                    }
-                });
-//         $.ajax({
-//     url: '/admin/player/'+id,
-//     type: 'DELETE',
-//     success: ()=>{alert('done');location.reload()},
-//     error: ()=>alert('failed')
-// });
-     }
-     function view(id){
-        alert(id);
-     }
-     var i = 1;
-     $('#listsetting').DataTable( {  
-    "processing": true,    
-                "serverSide": true,    
-                "ajax": {    
-                    url:"/admin/page/data", type: "post" },    
-                "columns": [    
-                {data: null, "render": function(data, type, full, meta) {return meta.row + 1; }}, 
-                     
-                        {data:'name'},
-                      
-                        {data: null, "render": function(data, type, full, meta) {
-        return '<a class="px-3 text-primary" href="/admin/page/' 
-                + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a class="px-3 text-danger" onclick="delRec(\'' 
-                + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
-      }},   
-                ]    
-} );
+                        function handleDel(id) {
+                            return $.ajax({
+                                type: 'DELETE',
+                                url: '/admin/page/' + id,
+                                success: (results) => {
+                                    alert('Record Delete');
+                                    location.reload();
+                                },
+                                error: (err) => {
+                                    alert('Error While Deleting');
+                                }
+                            });
+                            //         $.ajax({
+                            //     url: '/admin/player/'+id,
+                            //     type: 'DELETE',
+                            //     success: ()=>{alert('done');location.reload()},
+                            //     error: ()=>alert('failed')
+                            // });
+                        }
+                        function view(id) {
+                            alert(id);
+                        }
+                        var i = 1;
+                        $('#listsetting').DataTable({
+                            "processing": true,
+                            "serverSide": true,
+                            "ajax": {
+                                url: "/admin/page/data", type: "post"
+                            },
+                            "columns": [
+                                { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
+
+                                { data: 'name' },
+
+                                {
+                                    data: null, "render": function (data, type, full, meta) {
+                                        return '<a class="px-3 text-primary" href="/admin/page/'
+                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a class="px-3 text-danger" onclick="delRec(\''
+                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
+                                    }
+                                },
+                            ]
+                        });
 
  // Setup - add a text input to each footer cell
 
- 
-    
-      
- 
+
+
+
+
                     </script>

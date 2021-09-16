@@ -90,6 +90,8 @@ router.route('/banner/:id').get(bannerControler.editBanner).post(bannerControler
 router.route('/wallet/player/:id').post(transactionCotroller.createTransaction);
 //router.route('/transaction/view/:id').get(transactionView);
 router.route('/transaction/data').post(transactionCotroller.getTranscations);
+router.route('/transaction/:id').get(transactionCotroller.getTransaction).post(transactionCotroller.updateTransaction).delete(transactionCotroller.deleteTransaction);
+
 router.route('/transaction').get(transactionCotroller.transcationList);
 router.route('/wallet').get(palyerCtrl.getPlayerWallet);
 router.route('/payout/edit/:id').get(palyerCtrl.getPlayerPayoutEdit).post(palyerCtrl.postPlayerPayoutEdit);

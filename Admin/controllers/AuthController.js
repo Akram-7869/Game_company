@@ -2,11 +2,12 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var urlencodeParser = bodyParser.urlencoded({ extended: false });
 const asyncHandler = require('../middleware/async');
-
+const { callApi, api_url, redirect } = require('../helper/common');
+let apiUrl = api_url;
 var validator = require('express-validator');
 
 var axios = require("axios");
- 
+
 
 module.exports = function (app) {
 
@@ -50,7 +51,7 @@ module.exports = function (app) {
 
 
 	app.get('/register', function (req, res) {
-		if (req.user) { res.redirect('Dashboard/index'); }
+		if (req.user) { res.redirect(process.env.ADMIN_URL + 'Dashboard/index'); }
 		else {
 			res.render('Auth/auth-register', { 'message': req.flash('message'), 'error': req.flash('error') });
 		}
@@ -64,7 +65,7 @@ module.exports = function (app) {
 		sess = req.session;
 		sess.user = tempUser;
 
-		res.redirect('/');
+		res.redirect(process.env.ADMIN_URL + '/');
 	});
 
 
@@ -72,67 +73,68 @@ module.exports = function (app) {
 		res.render('Auth/auth-login', { 'message': req.flash('message'), 'error': req.flash('error') });
 	});
 	app.get('/page/:name', function (req, res) {
-		axios.get('http://localhost:3000/api/v1/settings/filter/page/terms', {
-    email: req.body.email,
-		password:req.body.password,
-  })
-  .then(r => {
-				console.log( r.data.data.one);
+		axios.get(apiUrl + '/v1/settings/filter/page/terms', {
+			email: req.body.email,
+			password: req.body.password,
+		})
+			.then(r => {
+				console.log(r.data.data.one);
 				res.render('Page/dynamic', r.data.data.one);
-   
-  }).catch(error => {})
-//	res.render('Page/dynamic', {title:'',content:''});
+
+			}).catch(error => { })
+		//	res.render('Page/dynamic', {title:'',content:''});
 	});
 
 	app.post('/post-login', urlencodeParser, function (req, res) {
- 		axios.post('http://localhost:3000/api/v1/auth/login', {
-    email: req.body.email,
-		password:req.body.password,
-  })
-  .then(r => {
+		axios.post(apiUrl + '/auth/login', {
+			email: req.body.email,
+			password: req.body.password,
+		})
+			.then(r => {
 				// Assign value in session
-				if(!r.data.success){
+				if (!r.data.success) {
 					req.flash('error', 'Incorrect email or password!');
-					res.redirect('/login');
+					res.res.redirect(process.env.ADMIN_URL + '/login');
 					return;
 				}
 				req.session.user = r.data;
-				res.redirect('/admin/dashboard');
-   
-  })
-  .catch(error => {
-		
-  })
-		
-	 
+				res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
+
+			})
+			.catch(error => {
+
+			})
+
+
 	});
 
-		app.get('/login', function (req, res) {
+	app.get('/login', function (req, res) {
 		res.render('Auth/auth-login', { 'message': req.flash('message'), 'error': req.flash('error') });
 	});
 
-	app.post('/post-login', urlencodeParser, function (req, res) {
- 		axios.post('http://localhost:3000/api/v1/auth/login', {
-    email: req.body.email,
-		password:req.body.password,
-  })
-  .then(r => {
-				// Assign value in session
-				if(!r.data.success){
-					req.flash('error', 'Incorrect email or password!');
-					res.redirect('/login');
-					return;
-				}
-				req.session.user = r.data;
-				res.redirect('/admin/dashboard');
-   
-  })
-  .catch(error => {
-		
-  })
-		
-	 
-	});
+	// app.post('/post-login', urlencodeParser, function (req, res) {
+	// 	console.log(apiUrl + '/auth/login')
+	// 	axios.post(apiUrl + '/auth/login', {
+	// 		email: req.body.email,
+	// 		password: req.body.password,
+	// 	})
+	// 		.then(r => {
+	// 			// Assign value in session
+	// 			if (!r.data.success) {
+	// 				req.flash('error', 'Incorrect email or password!');
+	// 				res.redirect(process.env.ADMIN_URL + '/login');
+	// 				return;
+	// 			}
+	// 			req.session.user = r.data;
+	// 			res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
+
+	// 		})
+	// 		.catch(error => {
+
+	// 		})
+
+
+	// });
 
 	app.get('/forgot-password', function (req, res) {
 		res.render('Auth/auth-forgot-password', { 'message': req.flash('message'), 'error': req.flash('error') });
@@ -142,23 +144,23 @@ module.exports = function (app) {
 		const validUser = users.filter(usr => usr.email === req.body.email);
 		if (validUser['length'] === 1) {
 			req.flash('message', 'We have e-mailed your password reset link!');
-			res.redirect('/forgot-password');
+			res.redirect(process.env.ADMIN_URL + '/forgot-password');
 		} else {
 			req.flash('error', 'Email Not Found !!');
-			res.redirect('/forgot-password');
+			res.redirect(process.env.ADMIN_URL + '/forgot-password');
 		}
 	});
 
 	app.get('/logout', function (req, res) {
 
 		// Assign  null value in session
- 		req.session.user = undefined;
+		req.session.user = undefined;
 		res.cookie('token', 'none', {
 			expires: new Date(Date.now() + 10 * 1000),
 			httpOnly: true
 		});
-	
-		res.redirect('/login');
+
+		res.redirect(process.env.ADMIN_URL + apiUrl + '/login');
 	});
 
 

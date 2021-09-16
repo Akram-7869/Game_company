@@ -1,5 +1,5 @@
 const asyncHandler = require('../middleware/async');
-const { callApi, api_url } = require('../helper/common');
+const { callApi, api_url, redirect } = require('../helper/common');
 var apiUrl = api_url + '/settings/';
 
 
@@ -26,7 +26,7 @@ exports.createPage = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Page' };
                   req.flash('success', 'Data save');
-                  res.redirect('/admin/page/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/page/');
 
             })
             .catch(error => {
@@ -57,7 +57,7 @@ exports.updatePage = asyncHandler(async (req, res, next) => {
             .then(r => {
                   res.locals = { title: 'Page ' };
                   req.flash('success', 'Updated');
-                  res.redirect('/admin/page/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/page/');
                   return;
             }).catch(error => { })
 });
@@ -68,7 +68,7 @@ exports.deletePage = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Page' };
                   req.flash('success', 'Deleted');
-                  res.redirect('/admin/page/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/page/');
 
             }).catch(error => { req.flash('error', 'Data not updated'); })
       res.status(200).json({
@@ -102,11 +102,11 @@ exports.createPayment = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Payment' };
                   req.flash('success', 'Data save');
-                  res.redirect('/admin/payment/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/payment/');
 
             })
             .catch(error => {
-                  req.flash('error', 'Data not updated'); res.render('Payment/edit', { row: {} });
+                  req.flash('error', 'Data not updated');
             })
 
 });
@@ -133,7 +133,7 @@ exports.updatePayment = asyncHandler(async (req, res, next) => {
             .then(r => {
                   res.locals = { title: 'Payment ' };
                   req.flash('success', 'Updated');
-                  res.redirect('/admin/payment/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/payment/');
                   return;
             }).catch(error => { })
 });
@@ -144,7 +144,7 @@ exports.deletePayment = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Payment' };
                   req.flash('success', 'Deleted');
-                  res.redirect('/admin/payment/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/payment/');
 
             }).catch(error => { req.flash('error', 'Data not updated'); })
       res.status(200).json({
@@ -181,7 +181,7 @@ exports.createSmsGateway = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'SmsGateway' };
                   req.flash('success', 'Data save');
-                  res.redirect('/admin/smsgateway/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/smsgateway/');
 
             })
             .catch(error => {
@@ -212,7 +212,7 @@ exports.updateSmsGateway = asyncHandler(async (req, res, next) => {
             .then(r => {
                   res.locals = { title: 'SmsGateway' };
                   req.flash('success', 'Updated');
-                  res.redirect('/admin/smsgateway/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/smsgateway/');
                   return;
             }).catch(error => { })
 });
@@ -222,7 +222,7 @@ exports.deleteSmsGateway = asyncHandler(async (req, res, next) => {
             .then(r => {
                   res.locals = { title: 'SmsGateway' };
                   req.flash('success', 'Deleted');
-                  res.redirect('/admin/smsgateway/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/smsgateway/');
 
             }).catch(error => { req.flash('error', 'Data not updated'); })
       res.status(200).json({
@@ -258,7 +258,7 @@ exports.createSite = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Site' };
                   req.flash('success', 'Data save');
-                  res.redirect('/admin/site/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/site/');
 
             })
             .catch(error => {
@@ -289,7 +289,7 @@ exports.updateSite = asyncHandler(async (req, res, next) => {
             .then(r => {
                   res.locals = { title: 'Site' };
                   req.flash('success', 'Updated');
-                  res.redirect('/admin/site/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/site/');
                   return;
             }).catch(error => { })
 });
@@ -301,7 +301,7 @@ exports.updateSiteField = asyncHandler(async (req, res, next) => {
             .then(r => {
                   res.locals = { title: 'Site' };
                   req.flash('success', 'Updated');
-                  res.redirect('/admin/site/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/site/');
                   return;
             }).catch(error => { })
 });
@@ -311,7 +311,7 @@ exports.deleteSite = asyncHandler(async (req, res, next) => {
             .then(r => {
                   res.locals = { title: 'Site' };
                   req.flash('success', 'Deleted');
-                  res.redirect('/admin/site/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/site/');
 
             }).catch(error => { req.flash('error', 'Data not updated'); })
       res.status(200).json({

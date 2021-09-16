@@ -1,6 +1,6 @@
 const asyncHandler = require('../middleware/async');
-const { callApi } = require('../helper/common');
-var apiUrl = 'http://localhost:3000/api/v1/transactions/';
+const { callApi, api_url, redirect } = require('../helper/common');
+var apiUrl = api_url + '/transactions/';
 
 
 exports.transcationList = asyncHandler(async (req, res, next) => {
@@ -14,7 +14,7 @@ exports.getTransaction = asyncHandler(async (req, res, next) => {
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
 
-                  res.locals = { title: 'Player-edit' };
+                  res.locals = { title: 'Transaction-edit' };
                   res.render('Transaction/edit', { row: r.data.data });
             })
             .catch(error => {
@@ -23,13 +23,13 @@ exports.getTransaction = asyncHandler(async (req, res, next) => {
 });
 
 
-exports.updatePlayer = asyncHandler(async (req, res, next) => {
+exports.updateTransaction = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'Datatables' };
       callApi(req).post(apiUrl + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Player-edit' };
+                  res.locals = { title: 'Transaction-edit' };
                   req.flash('error', 'Data save');
                   res.render('Transaction/edit', { row: r.data.data });
 
@@ -43,9 +43,12 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
 });
 
 
-exports.deletePlayer = asyncHandler(async (req, res, next) => {
-      ;
+exports.deleteTransaction = asyncHandler(async (req, res, next) => {
+      callApi(req).delete(apiUrl + req.params.id, req.body)
+            .then(r => {
+                  req.flash('success', 'Deleted');
 
+            }).catch(error => { req.flash('error', 'Data not updated'); })
       res.status(200).json({
             success: true,
             data: {}
@@ -70,29 +73,29 @@ exports.getTranscations = asyncHandler(async (req, res, next) => {
 
 
 exports.getAddForm = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Player-edit' };
+      res.locals = { title: 'Transaction-edit' };
 
       res.render('Transaction/edit', { row: {} });
 });
 
 exports.createTransaction = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Player-edit' };
-      callApi(req).post(apiUrl + 'add/player/' + req.params.id, req.body)
+      res.locals = { title: 'Transaction-edit' };
+      callApi(req).post(apiUrl + 'add/Transaction/' + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
-                  res.redirect('/admin/player');
+                  res.redirect(process.env.ADMIN_URL + '/admin/Transaction');
             })
             .catch(error => {
                   req.flash('error', 'Data not updated');
             })
 });
 
-exports.showPlayerView = asyncHandler(async (req, res, next) => {
+exports.showTransactionView = asyncHandler(async (req, res, next) => {
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
                   // Assign value in session
 
-                  res.locals = { title: 'Player-edit' };
+                  res.locals = { title: 'Transaction-edit' };
                   res.render('Transaction/view', { row: r.data.data });
 
 
