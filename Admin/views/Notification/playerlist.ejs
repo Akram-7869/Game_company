@@ -154,7 +154,7 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "/admin/player/data", type: "post"
+                                url: "<%=process.env.ADMIN_URL%>/admin/player/data", type: "post"
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return i = i + 1; } },

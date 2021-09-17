@@ -2,7 +2,7 @@ const asyncHandler = require('../middleware/async');
 const { callApi, api_url, redirect } = require('../helper/common');
 var apiUrl = api_url + '/settings/';
 
-
+var axios = require("axios");
 exports.pageList = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Page' };
       let data = { 'message': req.flash('message'), 'error': req.flash('error') };
@@ -341,6 +341,19 @@ exports.updateSitelogo = asyncHandler(async (req, res, next) => {
 
                   res.locals = { title: 'Player-edit' };
                   res.render('Settings/admin_logo', { 'message': req.flash('message'), 'error': req.flash('error'), row: r.data.data });
+            })
+            .catch(error => {
+
+            })
+});
+exports.getSiteData = asyncHandler(async (req, res, next) => {
+      //req.locals['sitename'] =
+      axios.get(apiUrl + 'filter/SITE')
+            .then(r => {
+                  req.app.locals['sitename'] = r.data.data.one.site_name;
+                  req.app.locals['siteLogoUrl'] = api_url + '/settings/image/' + r.data.data.siteLogo;
+                  console.log('ddd', r.data.data);
+                  res.redirect(process.env.ADMIN_URL + '/login');
             })
             .catch(error => {
 

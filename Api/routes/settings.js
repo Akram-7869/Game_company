@@ -9,7 +9,7 @@ const {
     getSettingByName,
     uploadeImage,
     getFile,
-    setCommission
+    setCommission, getSitedata
 
 } = require('../controllers/settings');
 
@@ -25,6 +25,7 @@ router.route('/image/:id').get(getFile);
 
 
 router.route('/add').post(protect, createSetting);
+router.route('/filter/SITE').get(getSitedata);
 router.route('/filter/:type/:name').get(getSettingByName);
 router.route('/filter/:type').post(protect, getSettings);
 router.route('/commission/:id').post(protect, setCommission);

@@ -12,6 +12,7 @@ dotenv.config({ path: './config/config.env' });
 // import controller
 var AuthController = require('./controllers/AuthController');
 
+var SettingController = require('./controllers/SettingController');
 // import Router file
 var adminRoutes = require('./routers/admin');
 var session = require('express-session');
@@ -20,6 +21,7 @@ var bodyParser = require('body-parser');
 
 var flash = require('connect-flash');
 var i18n = require("i18n-express");
+const { siteDate, siteData } = require('./middleware/auth');
 
 
 // enable files upload
@@ -62,18 +64,19 @@ AuthController(app);
 
 //For set layouts of html view
 var expressLayouts = require('express-ejs-layouts');
+app.use(function (req, res, next) {
+  req.app.locals['user'] = req.session.user;
+
+  next();
+});
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
-
 // Define All Route 
 //pageRouter(app);
 app.use('/admin', adminRoutes);
 
-
-app.get('/', function (req, res) {
-  res.redirect(process.env.ADMIN_URL + '/login');
-});
+app.get('/', SettingController.getSiteData);
 
 const PORT = process.env.PORT;
 

@@ -170,7 +170,8 @@ const sendTokenResponse = (user, statusCode, res) => {
       token,
       playerId: user._id,
       firstName: user.firstName,
-      lastName: user.lastName
+      lastName: user.lastName,
+      email: user.email
     });
 };
 

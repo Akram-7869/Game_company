@@ -159,7 +159,7 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "/admin/smsgateway/data", type: "post"
+                                url: "<%=process.env.ADMIN_URL%>/admin/smsgateway/data", type: "post"
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },

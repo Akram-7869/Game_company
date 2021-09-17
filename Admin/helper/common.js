@@ -5,9 +5,6 @@ exports.callApi = (req) => {
 }
 exports.api_url = process.env.API_URL;
 
-exports.redirect = (s) => {
-  return process.env.API_URL + s
-}
-exports.api = (s) => {
-  process.env.API_URL + s
+exports.adminUi = (s) => {
+  return process.env.ADMIN_URL + s
 }

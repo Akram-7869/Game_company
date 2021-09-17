@@ -147,7 +147,8 @@
                                     </form>
                                 </div>
                                 <div class="tab-pane" id="fees" role="tabpanel">
-                                    <form id="banner" action="/admin/site/commision/<%=row._id%>"
+                                    <form id="banner"
+                                        action="<%=process.env.ADMIN_URL%>/admin/site/commision/<%=row._id%>"
                                         onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
                                         <p class="mb-0">
                                         <div class="mb-3">
@@ -293,15 +294,11 @@
 
                             //send all the form data along with the files:
                             this.on("sending", function (data, xhr, formData) {
-                                alert('ddd');
                                 formData.append("col", $("#siteLogo").val());
-
-
                             });
                         }
                     }
                     function handleSubmit(params) {
-                        alert('sdsdsd');
                         if (params.checkValidity()) {
                             //Swal.showLoading();
                             Swal.fire({

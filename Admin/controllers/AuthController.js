@@ -95,7 +95,7 @@ module.exports = function (app) {
 				// Assign value in session
 				if (!r.data.success) {
 					req.flash('error', 'Incorrect email or password!');
-					res.res.redirect(process.env.ADMIN_URL + '/login');
+					res.redirect(process.env.ADMIN_URL + '/login');
 					return;
 				}
 				req.session.user = r.data;
@@ -161,7 +161,7 @@ module.exports = function (app) {
 			httpOnly: true
 		});
 
-		res.redirect(process.env.ADMIN_URL + apiUrl + '/login');
+		res.redirect(process.env.ADMIN_URL + '/login');
 	});
 
 

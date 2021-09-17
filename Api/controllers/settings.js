@@ -53,6 +53,19 @@ exports.getSettingByName = asyncHandler(async (req, res, next) => {
     data: setting
   });
 });
+// @desc      Get single Setting
+// @route     GET /api/v1/auth/Settings/:id
+// @access    Private/Admin
+exports.getSitedata = asyncHandler(async (req, res, next) => {
+  const setting = await Setting.findOne({
+    type: 'SITE'
+  });
+
+  res.status(200).json({
+    success: true,
+    data: setting
+  });
+});
 
 // @desc      Create Setting
 // @route     POST /api/v1/auth/Settings

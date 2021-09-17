@@ -175,7 +175,8 @@
                                 </div>
                                 <div class="tab-pane" id="messages1" role="tabpanel">
                                     <p class="mb-0">
-                                    <form class="custom-validation" action="/admin/player/status/<%=row._id %>"
+                                    <form class="custom-validation"
+                                        action="<%=process.env.ADMIN_URL%>/admin/player/status/<%=row._id %>"
                                         onsubmit="handleSubmit(this)" method="POST" name="player"
                                         enctype="application/x-www-form-urlencoded">
 
@@ -209,7 +210,8 @@
                                 </div>
                                 <div class="tab-pane" id="settings1" role="tabpanel">
                                     <p class="mb-0">
-                                    <form class="custom-validation" action="/admin/payout/edit/<%=row._id %>"
+                                    <form class="custom-validation"
+                                        action="<%=process.env.ADMIN_URL%>/admin/payout/edit/<%=row._id %>"
                                         onsubmit="handleSubmit(this)" method="POST" name="player"
                                         enctype="application/x-www-form-urlencoded">
 

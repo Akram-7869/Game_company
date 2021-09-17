@@ -61,8 +61,6 @@ const importData = async () => {
 // Delete data
 const deleteData = async () => {
   try {
-    await Service.deleteMany();
-    await Lookup.deleteMany();
     await User.deleteMany();
     console.log('Data Destroyed...'.red.inverse);
     process.exit();
