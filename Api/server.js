@@ -120,8 +120,6 @@ const PORT = process.env.PORT || 5000;
 //   )
 // );
 
-const { initGame, gameLoop, getUpdatedVelocity } = require('./utils/game');
-const { FRAME_RATE } = require('./utils/constants');
 const { makeid } = require('./utils/utils');
 
 const state = {};
