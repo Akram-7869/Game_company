@@ -1,8 +1,11 @@
 const path = require('path');
+const http = require('http');
+const socketio = require('socket.io');
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const colors = require('colors');
+
 const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -37,9 +40,16 @@ const game = require('./routes/game');
 const dashboards = require('./routes/dashboard');
 const tournaments = require('./routes/tournament');
 
-
+const formatMessage = require('./utils/messages');
+const {
+  userJoin,
+  getCurrentUser,
+  userLeave,
+  getRoomUsers
+} = require('./utils/users');
 const app = express();
-
+const server = http.createServer(app);
+const io = socketio(server);
 
 // Body parser
 app.use(express.json());
@@ -103,12 +113,77 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(
-  PORT,
-  console.log(
-    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
-  )
-);
+// const server = app.listen(
+//   PORT,
+//   console.log(
+//     `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
+//   )
+// );
+
+const { initGame, gameLoop, getUpdatedVelocity } = require('./utils/game');
+const { FRAME_RATE } = require('./utils/constants');
+const { makeid } = require('./utils/utils');
+
+const state = {};
+const clientRooms = {};
+
+// Run when client connects
+io.on('connection', socket => {
+  socket.on('createRoom', ({ userId }) => {
+    let roomName = makeid(5);
+    let data = { roomName }
+
+    socket.emit('res', { ev: 'roomCode', data });
+    const user = userJoin(socket.id, userId, room);
+
+    socket.join(roomName);
+    // socket.number = 1;
+    // socket.emit('init', 1);
+  });
+  socket.on('joinFriend', ({ userId, room }) => {
+    const user = userJoin(socket.id, userId, room);
+    socket.join(user.room);
+
+    // Welcome current user
+    socket.emit('res', { ev: 'userJoined', data });
+
+    // Broadcast when a user connects
+    socket.broadcast
+      .to(user.room)
+      .emit(
+        'res',
+        { ev: 'userJoined', data }
+      );
+
+    // Send users and room info
+    io.to(user.room).emit('roomUsers', {
+      room: user.room,
+      users: getRoomUsers(user.room)
+    });
+  });
+
+
+
+  // Runs when client disconnects
+  socket.on('disconnect', () => {
+    const user = userLeave(socket.id);
+
+    if (user) {
+      io.to(user.room).emit(
+        'message',
+        formatMessage(botName, `${user.username} has left the chat`)
+      );
+
+      // Send users and room info
+      io.to(user.room).emit('roomUsers', {
+        room: user.room,
+        users: getRoomUsers(user.room)
+      });
+    }
+  });
+});
+
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {

@@ -587,7 +587,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   let dashUpdate = {};
   if (req.body.logType = "won") {
     const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
-    console.log(row.commission);
+    // console.log(row.commission);
     commision = (row.commission / 100) * amount;
     let tranData = {
       'playerId': player._id,
@@ -601,7 +601,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     let tran1 = await Transaction.create(tranData);
     player = await tran1.debitPlayer(commision);
   }
-  console.log('debit', player.balance);
+  //console.log('debit', player.balance);
 
   await updateDashboradStat(amount, commision)
   res.status(200).json({
