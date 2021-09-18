@@ -120,6 +120,7 @@ const PORT = process.env.PORT || 5000;
 //   )
 // );
 
+
 const { makeid } = require('./utils/utils');
 
 const state = {};
@@ -127,37 +128,23 @@ const clientRooms = {};
 
 // Run when client connects
 io.on('connection', socket => {
+
   socket.on('createRoom', ({ userId }) => {
     let roomName = makeid(5);
     let data = { roomName }
-
     socket.emit('res', { ev: 'roomCode', data });
     const user = userJoin(socket.id, userId, room);
-
     socket.join(roomName);
-    // socket.number = 1;
-    // socket.emit('init', 1);
+
   });
   socket.on('joinFriend', ({ userId, room }) => {
     const user = userJoin(socket.id, userId, room);
     socket.join(user.room);
-
+    let data = {};
     // Welcome current user
-    socket.emit('res', { ev: 'userJoined', data });
-
-    // Broadcast when a user connects
-    socket.broadcast
-      .to(user.room)
-      .emit(
-        'res',
-        { ev: 'userJoined', data }
-      );
-
+    // socket.emit('res', { ev: 'userJoined', data })
     // Send users and room info
-    io.to(user.room).emit('roomUsers', {
-      room: user.room,
-      users: getRoomUsers(user.room)
-    });
+    io.to(user.room).emit('res', { ev: 'joinFriend', data });
   });
 
 
@@ -165,18 +152,20 @@ io.on('connection', socket => {
   // Runs when client disconnects
   socket.on('disconnect', () => {
     const user = userLeave(socket.id);
-
+    let data = {
+      room: user.room,
+      users: getRoomUsers(user.room)
+    };
     if (user) {
       io.to(user.room).emit(
-        'message',
-        formatMessage(botName, `${user.username} has left the chat`)
+        'res', { ev: 'disconnect', data }
       );
 
-      // Send users and room info
-      io.to(user.room).emit('roomUsers', {
-        room: user.room,
-        users: getRoomUsers(user.room)
-      });
+      // // Send users and room info
+      // io.to(user.room).emit('roomUsers', {
+      //   room: user.room,
+      //   users: getRoomUsers(user.room)
+      // });
     }
   });
 });
