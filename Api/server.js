@@ -124,25 +124,35 @@ const PORT = process.env.PORT || 5000;
 const { makeid } = require('./utils/utils');
 
 const state = {};
-const clientRooms = {};
+const userRooms = {};
 
 // Run when client connects
 io.on('connection', socket => {
-
+  console.log('contedt');
   socket.on('createRoom', ({ userId }) => {
     let roomName = makeid(5);
     let data = { roomName }
+
+
     socket.emit('res', { ev: 'roomCode', data });
-    const user = userJoin(socket.id, userId, room);
+    const user = userJoin(socket.id, userId, roomName);
     socket.join(roomName);
 
   });
   socket.on('joinFriend', ({ userId, room }) => {
+    let r = io.sockets.adapter.rooms.get(room)
+    console.log(r.size, r.sockets)
+    if (!r || r.size > 5) {
+      socket.emit('res', { ev: 'room', data });
+    }
     const user = userJoin(socket.id, userId, room);
     socket.join(user.room);
-    let data = {};
-    // Welcome current user
-    // socket.emit('res', { ev: 'userJoined', data })
+    console.log('createRoom', io.sockets.adapter.rooms);
+
+    let data = {
+      room: user.room,
+      users: getRoomUsers(user.room)
+    };
     // Send users and room info
     io.to(user.room).emit('res', { ev: 'joinFriend', data });
   });
