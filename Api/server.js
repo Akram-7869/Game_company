@@ -128,6 +128,7 @@ const userRooms = {};
 
 // Run when client connects
 io.on('connection', socket => {
+  socket.emit('res', { ev: 'connected', 'connected' });
   console.log('contedt');
   socket.on('createRoom', ({ userId }) => {
     let roomName = makeid(5);
