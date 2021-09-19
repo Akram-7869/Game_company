@@ -111,7 +111,7 @@ app.use('/api/v1/dashboards', dashboards);
 app.use('/api/v1/tournaments', tournaments);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // const server = app.listen(
 //   PORT,
@@ -124,6 +124,7 @@ const PORT = process.env.PORT || 5000;
 const { makeid } = require('./utils/utils');
 
 const state = {};
+const publicRoom = { playerCount: 0, roomName: '' };
 
 // Run when client connects
 io.on('connection', socket => {
@@ -144,24 +145,29 @@ io.on('connection', socket => {
 
   });
   socket.on('join', ({ userId }) => {
+    let roomName = publicRoom.roomName;
+    if (publicRoom.playerCount === 0 || publicRoom.playerCount === 2) {
+      roomName = makeid(5);
+      publicRoom.roomName = roomName;
+      publicRoom.playerCount = 0;
+      state[roomName] = initRoom();
+    }
 
-    let roomName = makeid(5);
     let data = { roomName }
 
-    socket.room = roomName;
-    socket.userId = userId;
-    socket.emit('res', { ev: 'roomCode', data });
-    const user = userJoin(socket.id, userId, roomName);
-    socket.join(roomName);
 
+
+    joinRoom(socket, userId, roomName);
+    socket.join(roomName);
+    publicRoom.playerCount = Object.keys(state[roomName].players).length;
+    console.dir(state);
+    console.dir(socket.room);
+    socket.emit('res', { ev: 'roomCode', data });
   });
   socket.on('joinFriend', ({ userId, room }) => {
-    socket.room = room;
-    socket.userId = userId;
+
     joinRoom(socket, userId, room);
     socket.join(room);
-
-
     let data = {
       room: room,
       users: getRoomUsers(room)
@@ -176,11 +182,13 @@ io.on('connection', socket => {
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
+    let { room, userId } = socket;
     userLeave(socket);
 
     let data = {
-      room: socket.room,
-      users: getRoomUsers(socket.room)
+      room: room,
+      users: getRoomUsers(room),
+      userId: userId
     };
     console.dir(state);
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
@@ -198,15 +206,16 @@ let initRoom = () => {
 }
 
 let joinRoom = (socket, palyerId, room) => {
-  socket.room = room;
-  socket.userId = palyerId;
+  socket['room'] = room;
+  socket['userId'] = palyerId;
+  console.log('jjj', socket.userId);
   state[room].players[palyerId] = 1
 }
 let getRoomUsers = (room) => {
   return Object.keys(state[room].players);
 }
 let userLeave = (s) => {
-  if (state[s.room].players[s.userId]) {
+  if (state[s.room] && state[s.room].players[s.userId]) {
     delete state[s.room].players[s.userId];
   }
 
