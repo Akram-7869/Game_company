@@ -41,12 +41,12 @@ const dashboards = require('./routes/dashboard');
 const tournaments = require('./routes/tournament');
 
 const formatMessage = require('./utils/messages');
-const {
-  userJoin,
-  getCurrentUser,
-  userLeave,
-  getRoomUsers
-} = require('./utils/users');
+// const {
+//   userJoin,
+//   getCurrentUser,
+//   userLeave,
+//   getRoomUsers
+// } = require('./utils/users');
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
@@ -124,64 +124,93 @@ const PORT = process.env.PORT || 5000;
 const { makeid } = require('./utils/utils');
 
 const state = {};
-const userRooms = {};
 
 // Run when client connects
 io.on('connection', socket => {
-  let data = { status: 'connectes' };
+  let data = { status: 'connected' };
   socket.emit('res', { ev: 'connected', data });
   console.log('contedt');
+
   socket.on('createRoom', ({ userId }) => {
     let roomName = makeid(5);
     let data = { roomName }
+    state[roomName] = initRoom();
+    joinRoom(socket, userId, roomName);
 
+    socket.emit('res', { ev: 'roomCode', data });
+    // const user = userJoin(socket.id, userId, roomName);
+    socket.join(roomName);
+    console.dir(state);
 
+  });
+  socket.on('join', ({ userId }) => {
+
+    let roomName = makeid(5);
+    let data = { roomName }
+
+    socket.room = roomName;
+    socket.userId = userId;
     socket.emit('res', { ev: 'roomCode', data });
     const user = userJoin(socket.id, userId, roomName);
     socket.join(roomName);
 
   });
   socket.on('joinFriend', ({ userId, room }) => {
-    let r = io.sockets.adapter.rooms.get(room)
-    console.log(r.size, r.sockets)
-    if (!r || r.size > 5) {
-      socket.emit('res', { ev: 'room', data });
-    }
-    const user = userJoin(socket.id, userId, room);
-    socket.join(user.room);
-    console.log('createRoom', io.sockets.adapter.rooms);
+    socket.room = room;
+    socket.userId = userId;
+    joinRoom(socket, userId, room);
+    socket.join(room);
+
 
     let data = {
-      room: user.room,
-      users: getRoomUsers(user.room)
+      room: room,
+      users: getRoomUsers(room)
     };
     // Send users and room info
-    io.to(user.room).emit('res', { ev: 'joinFriend', data });
+    io.to(room).emit('res', { ev: 'joinFriend', data });
   });
 
-
+  socket.on('sendToRoom', ({ room, ev, data }) => {
+    io.to(room).emit('res', { ev, data });
+  });
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
-    const user = userLeave(socket.id);
-    let data = {
-      room: user.room,
-      users: getRoomUsers(user.room)
-    };
-    if (user) {
-      io.to(user.room).emit(
-        'res', { ev: 'disconnect', data }
-      );
+    userLeave(socket);
 
-      // // Send users and room info
-      // io.to(user.room).emit('roomUsers', {
-      //   room: user.room,
-      //   users: getRoomUsers(user.room)
-      // });
-    }
+    let data = {
+      room: socket.room,
+      users: getRoomUsers(socket.room)
+    };
+    console.dir(state);
+    io.to(socket.room).emit('res', { ev: 'disconnect', data });
+
   });
 });
 
+
+let initRoom = () => {
+  const t = {
+    full: 0,
+    players: {}
+  }
+  return t;
+}
+
+let joinRoom = (socket, palyerId, room) => {
+  socket.room = room;
+  socket.userId = palyerId;
+  state[room].players[palyerId] = 1
+}
+let getRoomUsers = (room) => {
+  return Object.keys(state[room].players);
+}
+let userLeave = (s) => {
+  if (state[s.room].players[s.userId]) {
+    delete state[s.room].players[s.userId];
+  }
+
+}
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Handle unhandled promise rejections
