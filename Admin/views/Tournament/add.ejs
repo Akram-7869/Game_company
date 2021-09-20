@@ -68,6 +68,16 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
+                                    <label class="form-label">Bot Complexity</label>
+                                    <select class="form-select" name="complexity" required>
+                                        <option value="EASY" <%=row.complexity==='EASY' ?'selected':'' %>>EASY</option>
+                                        <option value="MEDIUM" <%=row.complexity==='MEDIUM' ?'selected':'' %>>MEDIUM
+                                        </option>
+                                        <option value="HARD" <%=row.complexity==='HARD' ?'selected':'' %>>HARD</option>
+                                    </select>
+
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Status</label>
                                     <select class="form-select" name="status" required>
                                         <option value="false" <%=row.status===false?'selected':'' %>>OFF</option>

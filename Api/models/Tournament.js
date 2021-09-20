@@ -18,6 +18,9 @@ const TournamentSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    complexity: {
+        type: String
+    },
 
     createdBy: {
         type: mongoose.Schema.ObjectId,
