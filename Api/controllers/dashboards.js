@@ -143,7 +143,7 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findOne({ 'type': req.params.type });
 
   const graph = await getGraphData(req);
-  console.log('graph', row, graph)
+  //console.log('graph', row, graph)
   res.status(200).json({
     success: true,
     data: { row, graph }

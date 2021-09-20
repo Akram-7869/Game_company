@@ -42,6 +42,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 
   } else {
     // create new player
+
     let data = {
       'phone': phone,
       'verifyPhone': vcode,
