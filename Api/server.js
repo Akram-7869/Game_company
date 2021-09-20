@@ -140,20 +140,24 @@ io.on('connection', socket => {
 
     socket.emit('res', { ev: 'roomCode', data });
     // const user = userJoin(socket.id, userId, roomName);
+
     socket.join(roomName);
     console.dir(state);
 
   });
   socket.on('join', ({ userId }) => {
     let roomName = publicRoom.roomName;
-    if (publicRoom.playerCount === 0 || publicRoom.playerCount === 2) {
+    if (publicRoom.playerCount === 0 || publicRoom.playerCount === 5) {
       roomName = makeid(5);
       publicRoom.roomName = roomName;
       publicRoom.playerCount = 0;
       state[roomName] = initRoom();
     }
 
-    let data = { roomName }
+    let data = {
+      roomName, users: getRoomUsers(roomName),
+      userId: userId
+    }
 
 
 
@@ -161,9 +165,10 @@ io.on('connection', socket => {
     socket.join(roomName);
     publicRoom.playerCount = Object.keys(state[roomName].players).length;
     console.dir(state);
-    console.dir(socket.room);
+    console.dir(io.sockets.adapter.rooms);
     socket.emit('res', { ev: 'roomCode', data });
   });
+
   socket.on('joinFriend', ({ userId, room }) => {
 
     joinRoom(socket, userId, room);
@@ -178,6 +183,19 @@ io.on('connection', socket => {
 
   socket.on('sendToRoom', ({ room, ev, data }) => {
     io.to(room).emit('res', { ev, data });
+
+  });
+  //leave
+  socket.on('leave', ({ room }) => {
+    socket.leave(room);
+    userLeave(socket);
+    console.dir(state);
+    console.dir(io.sockets.adapter.rooms);
+    let data = {
+      room: room,
+      users: getRoomUsers(room)
+    };
+    io.to(room).emit('res', { ev: 'leave', data });
   });
 
   // Runs when client disconnects
@@ -208,11 +226,15 @@ let initRoom = () => {
 let joinRoom = (socket, palyerId, room) => {
   socket['room'] = room;
   socket['userId'] = palyerId;
-  console.log('jjj', socket.userId);
+
   state[room].players[palyerId] = 1
 }
 let getRoomUsers = (room) => {
-  return Object.keys(state[room].players);
+
+  if (state[room]) {
+    return Object.keys(state[room].players);
+  }
+  return [];
 }
 let userLeave = (s) => {
   if (state[s.room] && state[s.room].players[s.userId]) {
