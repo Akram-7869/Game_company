@@ -42,6 +42,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 
   } else {
     // create new player
+
     let data = {
       'phone': phone,
       'verifyPhone': vcode,
@@ -222,7 +223,7 @@ let smsOtp = async (phone, otp, sms) => {
     "authkey": sms.one.AUTHKEY,
     "otp": otp
   };
-
+  console.error('sendingotp', otp, phone)
   return axios.get('https://api.msg91.com/api/v5/otp', { params }).catch(error => { console.error(error) });
 
 }

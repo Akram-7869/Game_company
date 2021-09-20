@@ -1,8 +1,11 @@
 const path = require('path');
+const http = require('http');
+const socketio = require('socket.io');
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const colors = require('colors');
+
 const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -37,9 +40,16 @@ const game = require('./routes/game');
 const dashboards = require('./routes/dashboard');
 const tournaments = require('./routes/tournament');
 
-
+const formatMessage = require('./utils/messages');
+// const {
+//   userJoin,
+//   getCurrentUser,
+//   userLeave,
+//   getRoomUsers
+// } = require('./utils/users');
 const app = express();
-
+const server = http.createServer(app);
+const io = socketio(server);
 
 // Body parser
 app.use(express.json());
@@ -101,14 +111,138 @@ app.use('/api/v1/dashboards', dashboards);
 app.use('/api/v1/tournaments', tournaments);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
-const server = app.listen(
-  PORT,
-  console.log(
-    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
-  )
-);
+// const server = app.listen(
+//   PORT,
+//   console.log(
+//     `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
+//   )
+// );
+
+
+const { makeid } = require('./utils/utils');
+
+const state = {};
+const publicRoom = { playerCount: 0, roomName: '' };
+
+// Run when client connects
+io.on('connection', socket => {
+  let data = { status: 'connected' };
+  socket.emit('res', { ev: 'connected', data });
+  console.log('contedt');
+
+  socket.on('createRoom', ({ userId }) => {
+    let roomName = makeid(5);
+    let data = { roomName }
+    state[roomName] = initRoom();
+    joinRoom(socket, userId, roomName);
+
+    socket.emit('res', { ev: 'roomCode', data });
+    // const user = userJoin(socket.id, userId, roomName);
+
+    socket.join(roomName);
+    console.dir(state);
+
+  });
+  socket.on('join', ({ userId }) => {
+    let roomName = publicRoom.roomName;
+    if (publicRoom.playerCount === 0 || publicRoom.playerCount === 5) {
+      roomName = makeid(5);
+      publicRoom.roomName = roomName;
+      publicRoom.playerCount = 0;
+      state[roomName] = initRoom();
+    }
+
+    let data = {
+      roomName, users: getRoomUsers(roomName),
+      userId: userId
+    }
+
+
+
+    joinRoom(socket, userId, roomName);
+    socket.join(roomName);
+    publicRoom.playerCount = Object.keys(state[roomName].players).length;
+    console.dir(state);
+    console.dir(io.sockets.adapter.rooms);
+    socket.emit('res', { ev: 'roomCode', data });
+  });
+
+  socket.on('joinFriend', ({ userId, room }) => {
+
+    joinRoom(socket, userId, room);
+    socket.join(room);
+    let data = {
+      room: room,
+      users: getRoomUsers(room)
+    };
+    // Send users and room info
+    io.to(room).emit('res', { ev: 'joinFriend', data });
+  });
+
+  socket.on('sendToRoom', ({ room, ev, data }) => {
+    io.to(room).emit('res', { ev, data });
+
+  });
+  //leave
+  socket.on('leave', ({ room }) => {
+    socket.leave(room);
+    userLeave(socket);
+    console.dir(state);
+    console.dir(io.sockets.adapter.rooms);
+    let data = {
+      room: room,
+      users: getRoomUsers(room)
+    };
+    io.to(room).emit('res', { ev: 'leave', data });
+  });
+
+  // Runs when client disconnects
+  socket.on('disconnect', () => {
+    let { room, userId } = socket;
+    userLeave(socket);
+
+    let data = {
+      room: room,
+      users: getRoomUsers(room),
+      userId: userId
+    };
+    console.dir(state);
+    io.to(socket.room).emit('res', { ev: 'disconnect', data });
+
+  });
+});
+
+
+let initRoom = () => {
+  const t = {
+    full: 0,
+    players: {}
+  }
+  return t;
+}
+
+let joinRoom = (socket, palyerId, room) => {
+  socket['room'] = room;
+  socket['userId'] = palyerId;
+
+  state[room].players[palyerId] = 1
+}
+let getRoomUsers = (room) => {
+
+  if (state[room]) {
+    return Object.keys(state[room].players);
+  }
+  return [];
+}
+let userLeave = (s) => {
+  if (state[s.room] && state[s.room].players[s.userId]) {
+    delete state[s.room].players[s.userId];
+  }
+
+}
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {

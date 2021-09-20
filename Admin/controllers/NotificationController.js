@@ -46,10 +46,9 @@ exports.addPlayerList = asyncHandler(async (req, res, next) => {
 });
 exports.removePlayerList = asyncHandler(async (req, res, next) => {
       // res.locals = { title: 'Selection Player for Notification',apiUrl, apiFile };
-      callApi(req).delete(apiUrl + 'player/' + req.params.nid + '/' + id, req.body)
+      callApi(req).delete(apiUrl + 'player/' + req.params.nid + '/' + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Player-edit' };
                   req.flash('success', 'Deleted');
                   // res.render('Players/List',{row:r.data.data}); 
 

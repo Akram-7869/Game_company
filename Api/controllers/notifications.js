@@ -24,7 +24,7 @@ exports.readNotification = asyncHandler(async (req, res, next) => {
 
 
   row = await PlayerNotifcation.findOneAndUpdate({ notificationId: req.body.id, playerId: req.player._id }, { read: req.body.read }, {
-    new: true,upsert:true,
+    new: true, upsert: true,
     runValidators: true
   });
 
@@ -46,45 +46,45 @@ exports.getPlayerNotifications = asyncHandler(async (req, res, next) => {
     );
   }
   // console.log(req.player._id)
-let query=  [
-  {
-    '$lookup': {
-      'from': 'playernotications', 
-      'localField': '_id', 
-      'foreignField': 'notificationId', 
-      'as': 'msg_read'
-    }
-  }, {
-    '$match': {
-      '$or': [
-        {
-          'sendTo': 'all'
-        }, {
-          'msg_read.playerId': req.player._id
-        }
-      ]
-    }
-  }, {
-    '$unwind': {
-      'path': '$msg_read', 
-      'preserveNullAndEmptyArrays': true
-    }
-  }, {
-    '$addFields': {
-      'read': {
-        '$cond': [
-          '$msg_read.read', true, false
+  let query = [
+    {
+      '$lookup': {
+        'from': 'playernotications',
+        'localField': '_id',
+        'foreignField': 'notificationId',
+        'as': 'msg_read'
+      }
+    }, {
+      '$match': {
+        '$or': [
+          {
+            'sendTo': 'all'
+          }, {
+            'msg_read.playerId': req.player._id
+          }
         ]
       }
+    }, {
+      '$unwind': {
+        'path': '$msg_read',
+        'preserveNullAndEmptyArrays': true
+      }
+    }, {
+      '$addFields': {
+        'read': {
+          '$cond': [
+            '$msg_read.read', true, false
+          ]
+        }
+      }
+    }, {
+      '$project': {
+        'msg_read': 0,
+        'updatedAt': 0
+      }
     }
-  }, {
-    '$project': {
-      'msg_read': 0, 
-      'updatedAt': 0
-    }
-  }
-];
-const rows = await Notification.aggregate(query);
+  ];
+  const rows = await Notification.aggregate(query);
   res.status(200).json(rows);
 });
 // @desc      Get all Notifications
@@ -137,7 +137,7 @@ exports.createNotification = asyncHandler(async (req, res, next) => {
       data: req.files.file.data,
       contentType: req.files.file.mimetype,
       size: req.files.file.size,
-      sendTo:req.body.sendTo,
+      sendTo: req.body.sendTo,
     }
     const newfile = await File.create(dataSave);
     notification['imageId'] = newfile._id;
@@ -167,7 +167,7 @@ exports.updateNotification = asyncHandler(async (req, res, next) => {
     url: req.body.url,
     message: req.body.message,
     status: req.body.status,
-    sendTo:req.body.sendTo,
+    sendTo: req.body.sendTo,
   };
   if (req.files) {
     let dataSave = {
@@ -231,7 +231,7 @@ exports.addPlayerList = asyncHandler(async (req, res, next) => {
     );
   }
   if (row.sendTo === 'player') {
-    let updated = { read:false }
+    let updated = { read: false }
     await PlayerNotifcation.findOneAndUpdate({ playerId: req.params.id, notificationId: req.params.nid }, updated, {
       new: false, upsert: true,
       runValidators: true
@@ -246,8 +246,8 @@ exports.addPlayerList = asyncHandler(async (req, res, next) => {
   });
 });
 exports.removePlayerList = asyncHandler(async (req, res, next) => {
-  const row = await Notification.findById(req.params.id);
-  await Notification.findByIdAndDelete(req.params.id);
+
+  await PlayerNotifcation.findOneAndDelete({ playerId: req.params.id, notificationId: req.params.nid });
 
   res.status(200).json({
     success: true,
