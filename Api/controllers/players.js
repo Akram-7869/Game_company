@@ -400,17 +400,18 @@ exports.join = asyncHandler(async (req, res, next) => {
   //dahboard online +  
   // player game add {gameStatus='playing', amountPaid:'10'}
   // player stat
-  let fieldsToUpdate = { playerId: req.player._id, gameStatus: 'lost', amountPaid: req.body.amountPaid, rank: 0, gameOnline: true };
-  let player = await Player.findOneAndUpdate({ playerId: req.player.id, gameId: req.body.gameId }, fieldsToUpdate, {
-    new: true, upsert: true,
-    runValidators: true
-  });
-  let addamount = req.body.amountPaid;
-  let dashUpdate = { $inc: { livePlayer: 1 }, $inc: { grossIncome: addamount } }
-  let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, dashUpdate, {
-    new: true, upsert: true,
-    runValidators: true
-  });
+  // let fieldsToUpdate = { playerId: req.player._id, logType: 'join', amountPaid: req.body.amountPaid };
+  // let tran = await Transactions.findOneAndUpdate({ playerId: req.player.id, gameId: req.body.gameId }, fieldsToUpdate, {
+  //   new: true, upsert: true,
+  //   runValidators: true
+  // });
+  // let addamount = req.body.amountPaid;
+  // let dashUpdate = { $inc: { livePlayer: 1 }, $inc: { grossIncome: addamount } }
+  // let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, dashUpdate, {
+  //   new: true, upsert: true,
+  //   runValidators: true
+  // });
+  // let player = await Player.joinCount(req.player.id);
   res.status(200).json({
     success: true,
     data: {}
@@ -422,18 +423,20 @@ exports.won = asyncHandler(async (req, res, next) => {
   // player game update  
   // play stat
 
-  let fieldsToUpdate = { playerId: req.player._id, gameStatus: 'won', amountWon: req.body.amountWon, rank: 1, gameOnline: false };
-  let player = await Transactions.findOneAndUpdate({ playerId: req.player.id, gameId: req.body.gameId }, fieldsToUpdate, {
-    new: true, upsert: true,
-    runValidators: true
-  });
+  // let fieldsToUpdate = { playerId: req.player._id, logType: 'won', amountWon: req.body.amountWon };
+  // let tran = await Transactions.findOneAndUpdate({ playerId: req.player.id, gameId: req.body.gameId }, fieldsToUpdate, {
+  //   new: true, upsert: false,
+  //   runValidators: true
+  // });
 
-  //let addamount = req.body.amountWon * 0.20;
-  let dashUpdate = { $inc: { livePlayer: -1 } }
-  let dash = await Dashboard.findAndUpdate({ type: 'dashboard' }, dashUpdate, {
-    new: true, upsert: true,
-    runValidators: true
-  });
+
+
+  // //let addamount = req.body.amountWon * 0.20;
+  // let dashUpdate = { $inc: { livePlayer: -1 } }
+  // let dash = await Dashboard.findAndUpdate({ type: 'dashboard' }, dashUpdate, {
+  //   new: true, upsert: true,
+  //   runValidators: true
+  // });
 
   res.status(200).json({
     success: true,
@@ -538,6 +541,10 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   let dashUpdate = {};
   if (req.body.logType === 'join') {
     Dashboard.join();
+    player = await Player.findByIdAndUpdate(req.player.id, { $inc: { joinCount: 1 } }, {
+      new: true,
+      runValidators: true
+    });
   }
 
 
@@ -600,6 +607,12 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     }
     let tran1 = await Transaction.create(tranData);
     player = await tran1.debitPlayer(commision);
+
+    player = await Player.findByIdAndUpdate(req.player.id, { $inc: { wonCount: 1 } }, {
+      new: true,
+      runValidators: true
+    });
+
   }
   //console.log('debit', player.balance);
 

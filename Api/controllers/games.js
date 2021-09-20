@@ -1,35 +1,31 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const PlayerGame = require('../models/PlayerGame');
+const Player = require('../models/Player');
 const Transaction = require('../models/Transaction');
 // @desc      Get all PlayerGames
 // @route     GET /api/v1/auth/PlayerGames
 // @access    Private/Admin
 exports.getPlayerGames = asyncHandler(async (req, res, next) => {
-  let row = await Transaction.aggregate([{ $match: { status: "complete" } },
-  //, tr: "$transactionType", gr: "$groupStatus " 
-  {
-    $group: { _id: { pid: "$playerId" }, n: { $sum: "$amount" } }
-  }
-    , { $sort: { n: -1 } }
-    , { $limit: 100 },
-  ]);
-  console.log('row', row)
-  let filter = {
-    limit: req.body.length,
-    skip: req.body.start,
-    //select: { 'gameId': 1, 'status': 1, 'createdAt': 1 },
-    find: {},
-    search: {
-      value: req.body.search ? req.body.search.value : '',
-      fields: ['rank', 'playerId']
-    },
-    columns: req.body.columns,
-    populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } },
-    sort: {
-      _id: 1
-    }
-  };
+
+  // let filter = {
+  //   limit: req.body.length,
+  //   skip: req.body.start,
+  //   //select: { 'gameId': 1, 'status': 1, 'createdAt': 1 },
+  //   find: {},
+  //   search: {
+  //     value: req.body.search ? req.body.search.value : '',
+  //     fields: ['rank', 'playerId']
+  //   },
+  //   columns: req.body.columns,
+  //   populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } },
+  //   sort: {
+  //     _id: 1
+  //   }
+  // };
+  // }
+  let filter = { status: "complete", logType: 'won' };
+
   //plaerId filter
   if (req.body.playerId) {
     filter['find']['playerId'] = req.body.playerId;
@@ -42,11 +38,21 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
     }
 
   }
+  let row = await Transaction.aggregate([{ $match: filter },
+  //, tr: "$transactionType", gr: "$groupStatus " 
+  {
+    $group: { _id: "$playerId", n: { $sum: "$amount" } }
+  }
+    , { $sort: { n: -1 } }
+    , { $limit: 100 },
+  ]);
+  await Player.populate(row, { path: "_id", select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } });
+
   //console.log(req.body, filter);
-  PlayerGame.dataTables(filter).then(function (table) {
-    res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
-  })
-  //res.status(200).json(res.advancedResults);
+  // PlayerGame.dataTables(filter).then(function (table) {
+  //   res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
+  // })
+  res.status(200).json({ data: row, recordsTotal: row.length, recordsFiltered: row.length, draw: req.body.draw });
 });
 
 // @desc      Get single PlayerGame

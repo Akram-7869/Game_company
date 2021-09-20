@@ -128,11 +128,13 @@ const PlayerSchema = new mongoose.Schema({
     type: Map,
   },
   wonCount: {
-    type: String,
+    type: Number,
+    default: 0
 
   },
-  loseCount: {
-    type: String,
+  joinCount: {
+    type: Number,
+    default: 0
 
   }
 
@@ -180,9 +182,6 @@ PlayerSchema.methods.getResetPasswordToken = function () {
 PlayerSchema.methods.getPhoneExpire = function () {
   this.verifyPhoneExpire = Date.now() + 10 * 60 * 1000;
   return verifyPhone;
-};
-PlayerSchema.methods.deletAllData = function (pid) {
-
 };
 PlayerSchema.plugin(dataTables)
 module.exports = mongoose.model('Players', PlayerSchema);
