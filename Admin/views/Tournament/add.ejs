@@ -109,5 +109,22 @@
                 <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
 
                 <script src="/public/assets/js/pages/form-validation.init.js"></script>
+                <script>
+                    function handleSubmit(params) {
+                        if (params.checkValidity()) {
+                            Swal.showLoading();
+                        }
+                        return false;
+                    }
+                    $(document).ready(function () {
+                        let v = $("#bot").val();
+                        alert(v)
+                        if (v) {
+                            $("#complexity").show();
+                        } else {
+                            $("#complexity").hide();
+                        }
+                    });
 
+                </script>
                 <%- contentFor('BottomJs') %>
