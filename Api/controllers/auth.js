@@ -13,14 +13,14 @@ const axios = require('axios')
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegister = asyncHandler(async (req, res, next) => {
-  const { phone, deviceToken, countryCode } = req.body;
+  const { email, phone, deviceToken, countryCode, password } = req.body;
 
-  let player = await Player.findOne({ $or: [{ 'phone': phone }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
   let vcode = Math.floor(1000 + Math.random() * 9000);
   const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
 
   if (player) {
-    if (player.phone !== phone) {
+    if (player.email !== email) {
       return next(
         new ErrorResponse(`phone  number changed use the number registered first time`)
       );
@@ -42,8 +42,9 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 
   } else {
     // create new player
-
     let data = {
+      'email': email,
+      'password': password,
       'phone': phone,
       'verifyPhone': vcode,
       'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
@@ -54,7 +55,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
     // Create user
     player = await Player.create(data);
   }
-  await smsOtp(phone, vcode, sms);
+  // await smsOtp(phone, vcode, sms);
 
   res.status(200).json({
     success: true,
@@ -123,17 +124,20 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   }
 
 });
-exports.chkPin = asyncHandler(async (req, res, next) => {
-  const { pin } = req.body;
+exports.playerLogin = asyncHandler(async (req, res, next) => {
+  const { password, email } = req.body;
 
-  if (!pin || !req.player || req.player.role !== 'player') {
+  if (!password || !email) {
     return next(new ErrorResponse('authentication faild'));
   }
 
   // Check for user
-  const user = await Player.findOne({ _id: req.player.id }).select('+password');
+  const user = await Player.findOne({ email: email }).select('+password');
+  if (!user) {
+    return next(new ErrorResponse('email not registred'));
+  }
   // Check if password matches
-  const isMatch = user.password === req.body.pin;
+  const isMatch = user.matchPassword(password);
   // Check for user
   if (!isMatch) {
     return next(new ErrorResponse('authentication faild'));
@@ -228,34 +232,32 @@ let smsOtp = async (phone, otp, sms) => {
 
 }
 
-let verifyOtp = async (phone, otp) => {
-  var params = {
-    "template_id": "5f322d94d6fc051d202b4522",
-    "mobile": phone,
-    "authkey": "338555AN0yGYvFhp5f342bcc",
-    "otp": otp
-  };
+// let verifyOtp = async (phone, otp) => {
+//   var params = {
+//     "template_id": "5f322d94d6fc051d202b4522",
+//     "mobile": phone,
+//     "authkey": "sms.one.AUTHKEY",
+//     "otp": otp
+//   };
+//   return axios.get('https://api.msg91.com/api/v5/otp/verify', { params }).catch(error => { console.error(error) })
 
+// }
 
-  return axios.get('https://api.msg91.com/api/v5/otp/verify', { params }).catch(error => { console.error(error) })
+// let resendOpt = async () => {
+//   var params = {
+//     //"template_id":"5f322d94d6fc051d202b4522",
+//     "mobile": "919665300923",
+//     "authkey": "sms.one.AUTHKEY",
+//     //  "otp":otp,
+//     "retrytype": "text"
+//   };
 
-}
+//   axios.get('https://api.msg91.com/api/v5/otp/retry', { params })
+//     .then(res => {
+//       console.log(res)
+//     })
+//     .catch(error => {
+//       console.error(error)
+//     })
 
-let resendOpt = async () => {
-  var params = {
-    //"template_id":"5f322d94d6fc051d202b4522",
-    "mobile": "919665300923",
-    "authkey": "338555AN0yGYvFhp5f342bcc",
-    //  "otp":otp,
-    "retrytype": "text"
-  };
-
-  axios.get('https://api.msg91.com/api/v5/otp/retry', { params })
-    .then(res => {
-      console.log(res)
-    })
-    .catch(error => {
-      console.error(error)
-    })
-
-}
+// }
