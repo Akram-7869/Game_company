@@ -132,11 +132,13 @@ io.on('connection', socket => {
   socket.emit('res', { ev: 'connected', data });
   console.log('contedt');
 
-  socket.on('createRoom', ({ userId }) => {
+  socket.on('createRoom', (d) => {
+    let dataParsed = d;//JSON.parse(d);
+    let { userId } = dataParsed;
     let roomName = makeid(5);
     let data = { roomName }
     state[roomName] = initRoom();
-    joinRoom(socket, userId, roomName);
+    joinRoom(socket, userId, roomName, dataParsed);
 
     socket.emit('res', { ev: 'roomCode', data });
     // const user = userJoin(socket.id, userId, roomName);
@@ -145,7 +147,12 @@ io.on('connection', socket => {
     console.dir(state);
 
   });
-  socket.on('join', ({ userId }) => {
+  socket.on('join', (d) => {
+    console.log('inputstring', d);
+    let dataParsed = d;// JSON.parse(d);
+    let { userId } = dataParsed;
+
+    console.log(d, userId);
     let roomName = publicRoom.roomName;
     if (publicRoom.playerCount === 0 || publicRoom.playerCount === 5) {
       roomName = makeid(5);
@@ -154,24 +161,26 @@ io.on('connection', socket => {
       state[roomName] = initRoom();
     }
 
+
+
+    joinRoom(socket, userId, roomName, dataParsed);
+    socket.join(roomName);
     let data = {
       roomName, users: getRoomUsers(roomName),
       userId: userId
     }
 
-
-
-    joinRoom(socket, userId, roomName);
-    socket.join(roomName);
     publicRoom.playerCount = Object.keys(state[roomName].players).length;
     console.dir(state);
-    console.dir(io.sockets.adapter.rooms);
-    socket.emit('res', { ev: 'roomCode', data });
+    console.dir(socket.userId);
+    io.to(roomName).emit('res', { ev: 'join', data });
   });
 
-  socket.on('joinFriend', ({ userId, room }) => {
+  socket.on('joinFriend', (d) => {
+    let dataParsed = d;//JSON.parse(d);
+    let { userId } = dataParsed;
 
-    joinRoom(socket, userId, room);
+    joinRoom(socket, userId, room, dataParsed);
     socket.join(room);
     let data = {
       room: room,
@@ -181,12 +190,15 @@ io.on('connection', socket => {
     io.to(room).emit('res', { ev: 'joinFriend', data });
   });
 
-  socket.on('sendToRoom', ({ room, ev, data }) => {
+  socket.on('sendToRoom', (d) => {
+    let { room, ev, data } = d;//JSON.parse(d);
     io.to(room).emit('res', { ev, data });
 
   });
   //leave
-  socket.on('leave', ({ room }) => {
+  socket.on('leave', (d) => {
+
+    let { room } = JSON.parse(d);
     socket.leave(room);
     userLeave(socket);
     console.dir(state);
@@ -208,7 +220,7 @@ io.on('connection', socket => {
       users: getRoomUsers(room),
       userId: userId
     };
-    console.dir(state);
+    console.log('dicconected', state);
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });
@@ -223,16 +235,17 @@ let initRoom = () => {
   return t;
 }
 
-let joinRoom = (socket, palyerId, room) => {
+let joinRoom = (socket, palyerId, room, d = {}) => {
+  console.log('join room', socket.id, palyerId, room);
   socket['room'] = room;
   socket['userId'] = palyerId;
 
-  state[room].players[palyerId] = 1
+  state[room].players[palyerId] = d
 }
 let getRoomUsers = (room) => {
 
   if (state[room]) {
-    return Object.keys(state[room].players);
+    return state[room].players;
   }
   return [];
 }
