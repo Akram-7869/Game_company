@@ -199,6 +199,17 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Players
 // @access    Private/Admin
 exports.getPlayers = asyncHandler(async (req, res, next) => {
+  let filter = {
+    limit: req.body.length,
+    skip: req.body.start,
+    find: req.query,
+    search: {
+
+    },
+    sort: {
+      username: 1
+    }
+  };
   if (req.body.s_date && req.body.e_date) {
     req.query['createdAt'] = {
       $gte: req.body.s_date,
@@ -206,18 +217,23 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
     }
 
   }
-  Player.dataTables({
-    limit: req.body.length,
-    skip: req.body.start,
-    find: req.query,
-    search: {
-      value: req.body.search.value,
-      fields: ['phone', 'email', 'firstName', 'lastName']
-    },
-    sort: {
-      username: 1
+  let key = req.body.search ? req.body.search.value : '';
+  if (key) {
+    if (isNaN(key)) {
+      if (key.length != 24) {
+        return res.json(empty);
+      }
+      filter['find']['_id'] = key;
     }
-  }).then(function (table) {
+    else {
+      filter['search'] = {
+        value: req.body.search.value,
+        fields: ['phone', 'email', 'firstName', 'lastName']
+
+      }
+    }
+  }
+  Player.dataTables(filter).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })
   //res.status(200).json(res.advancedResults);

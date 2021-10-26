@@ -76,7 +76,7 @@ app.use(expressLayouts);
 //pageRouter(app);
 app.use('/admin', adminRoutes);
 
-app.get('/', SettingController.getSiteData);
+app.use(SettingController.getSiteData);
 
 const PORT = process.env.PORT;
 
