@@ -122,17 +122,6 @@
                                     alert('Error While Deleting');
                                 }
                             });
-
-
-
-
-
-                            //         $.ajax({
-                            //     url: '<%=process.env.ADMIN_URL%>/admin/player/'+id,
-                            //     type: 'DELETE',
-                            //     success: ()=>{alert('done');location.reload()},
-                            //     error: ()=>alert('failed')
-                            // });
                         }
                         function view(id) {
                             alert(id);
@@ -142,6 +131,10 @@
 
                             "processing": true,
                             "serverSide": true,
+                            "language": {
+                                "search": "Player:",
+                                searchPlaceholder: "Player Id / phone"
+                            },
                             "ajax": {
                                 url: '<%=process.env.ADMIN_URL%>/admin/player/data', type: "post"
                             },

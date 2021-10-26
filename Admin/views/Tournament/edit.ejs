@@ -12,9 +12,7 @@
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                             <li class="breadcrumb-item active">
-                                <a href="<%=process.env.ADMIN_URL %>/admin/tournament">
                                     <%- title %> List
-                                </a>
                             </li>
                             <li class="breadcrumb-item active">Add</li>
                         </ol>
@@ -59,25 +57,15 @@
                                 <div class="mb-3">
                                     <label class="form-label">Time</label>
                                     <input type="text" name="time" value="<%=row.time?row.time:'' %>"
-                                        class="form-control" required placeholder="Time" />
+                                        class="form-control" required placeholder="App Link" />
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Bot</label>
-                                    <select class="form-select" name="bot" required id="bot" onchange="handleBot()">
+                                    <select class="form-select" name="bot" required>
                                         <option value="false" <%=row.bot===false?'selected':'' %>>OFF</option>
                                         <option value="true" <%=row.bot===true?'selected':'' %>>ON</option>
                                     </select>
-                                </div>
-                                <div class="mb-3" id="a1">
-                                    <label class="form-label">Bot Complexity</label>
-                                    <select class="form-select" name="complexity" required>
-                                        <option value="EASY" <%=row.complexity==='EASY' ?'selected':'' %>>EASY</option>
-                                        <option value="MEDIUM" <%=row.complexity==='MEDIUM' ?'selected':'' %>>MEDIUM
-                                        </option>
-                                        <option value="HARD" <%=row.complexity==='HARD' ?'selected':'' %>>HARD</option>
-                                    </select>
-
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
@@ -116,25 +104,11 @@
                 <!-- Sweet alert init js
   <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
                 <script>
-                    $(document).ready(function () {
-                        handleBot();
-                    });
                     function handleSubmit(params) {
                         if (params.checkValidity()) {
                             Swal.showLoading();
                         }
                         return false;
-                    }
-
-                    function handleBot() {
-                        let v = $("#bot").val();
-                        $("#a1").hide();
-
-                        if (v === "true") {
-                            $("#a1").show();
-                        } else {
-                            $("#a1").val('EASY');
-                        }
                     }
                 </script>
                 <%- contentFor('BottomJs') %>

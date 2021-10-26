@@ -121,23 +121,23 @@
                                             <label class="form-label">Pan Card</label>
                                             <input type="text" name="panNumber"
                                                 value="<%=row.panNumber?row.panNumber:'' %>" class="form-control"
-                                                required data-parsley-type="alphanum" placeholder="Enter only digits" />
+                                                required placeholder="Enter Pan Number" />
 
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Adhar Card</label>
                                             <input type="text" name="aadharNumber"
                                                 value="<%=row.aadharNumber?row.aadharNumber:'' %>" class="form-control"
-                                                required data-parsley-type="digits" placeholder="Enter only digits" />
+                                                required placeholder="Enter Adhar Number" />
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Gender</label>
                                             <div>
-                                                <select class="form-select" name="kycStatus" required>
+                                                <select class="form-select" name="gender" required>
                                                     <option value=""></option>
-                                                    <option value="male" <%=row.kycStatus==='Male' ?'selected':'' %>
+                                                    <option value="male" <%=row.gender==='male' ?'selected':'' %>
                                                         >male</option>
-                                                    <option value="female" <%=row.kycStatus==='Female' ?'selected':'' %>
+                                                    <option value="female" <%=row.gender==='female' ?'selected':'' %>
                                                         >female</option>
                                                 </select>
                                             </div>
@@ -146,8 +146,8 @@
                                             <label class="form-label">Kyc Status</label>
                                             <div class="col-md-10">
                                                 <select class="form-select" name="kycStatus" required>
-                                                    <option value="notverifed" <%=row.kycStatus==='notverifed'
-                                                        ?'selected':'' %>>notverifed</option>
+                                                    <option value="notverified" <%=row.kycStatus==='notverified'
+                                                        ?'selected':'' %>>notverified</option>
                                                     <option value="verified" <%=row.kycStatus==='verified'
                                                         ?'selected':'' %>>verified</option>
                                                 </select>

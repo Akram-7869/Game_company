@@ -103,8 +103,6 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/Players
 // @access    Private/Admin
 exports.getPlayer = asyncHandler(async (req, res, next) => {
-
-      res.locals = { title: 'Datatables' };
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
                   // Assign value in session
@@ -120,7 +118,8 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.updatePlayer = asyncHandler(async (req, res, next) => {
 
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Player' };
+      //console.log(req.body);
       callApi(req).post(apiUrl + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
@@ -138,7 +137,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.updatePlayerStatus = asyncHandler(async (req, res, next) => {
 
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Player' };
       callApi(req).post(apiUrl + 'status/' + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
@@ -160,7 +159,7 @@ exports.updatePlayerStatus = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.creditPlayer = asyncHandler(async (req, res, next) => {
       console.log(req.body);
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Player' };
       callApi(req).post(apiUrl + 'credit/' + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
@@ -289,7 +288,7 @@ exports.showPlayerView = asyncHandler(async (req, res, next) => {
 
 
 exports.getProfile = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Player' };
       callApi(req).get(apiUrl + 'profile/' + req.params.id)
             .then(r => {
 
@@ -304,7 +303,7 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
 });
 exports.updateProfile = asyncHandler(async (req, res, next) => {
 
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Player' };
       callApi(req).post(apiUrl + 'profile/' + req.params.id, req.body)
             .then(r => {
                   // Assign value in session

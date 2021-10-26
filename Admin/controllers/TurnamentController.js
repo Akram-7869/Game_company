@@ -86,7 +86,7 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
 exports.addTournament = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Tournament' };
 
-    res.render('Tournament/edit', { row: {} });
+    res.render('Tournament/add', { row: {} });
 });
 
 

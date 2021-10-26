@@ -97,6 +97,7 @@
 <script src="/public/assets/js/pages/datatables.init.js"></script> -->
                 <!-- Sweet Alerts js -->
                 <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <script src="/public/assets/libs/moment/moment.js"></script>
                 <%- contentFor('BottomJs') %>
                     <script>
                         function delRec(id) {
@@ -117,12 +118,7 @@
                                     alert('Error While Deleting');
                                 }
                             });
-                            //         $.ajax({
-                            //     url: '/admin/player/'+id,
-                            //     type: 'DELETE',
-                            //     success: ()=>{alert('done');location.reload()},
-                            //     error: ()=>alert('failed')
-                            // });
+
                         }
                         function view(id) {
                             alert(id);
@@ -142,7 +138,11 @@
                                 { data: 'email' },
                                 { data: 'phone' },
                                 { data: 'status' },
-                                { data: 'createdAt' },
+                                {
+                                    data: 'createdAt', render: function (data) {
+                                        return moment(data).format('DD-MM-YYYY');
+                                    }
+                                },
 
                                 {
                                     data: null, "render": function (data, type, full, meta) {
