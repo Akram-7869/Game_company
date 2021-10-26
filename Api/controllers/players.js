@@ -7,6 +7,7 @@ const File = require('../models/File');
 const Dashboard = require('../models/Dashboard');
 const { request } = require('express');
 const Setting = require('../models/Setting');
+const Tournament = require('../models/Tournament');
 let axios = require('axios');
 const FormData = require('form-data');
 
@@ -787,3 +788,11 @@ let buildProfileUrl = (player) => {
   }
 
 }
+exports.getTournaments = asyncHandler(async (req, res, next) => {
+  const rows = await Tournament.find({ active: true });
+
+  res.status(200).json({
+    success: true,
+    data: rows
+  });
+});

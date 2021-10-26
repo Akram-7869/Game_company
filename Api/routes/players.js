@@ -7,7 +7,7 @@ const {
   join, won,
   ticketAdd, ticketList, ticketReply,
   getOnlinePlayers, getNotication, getPage, editOnlinePlayers,
-  withDrawRequest, addMoney, addWallet, addBank, updatePlayerImage
+  withDrawRequest, addMoney, addWallet, addBank, updatePlayerImage, getTournaments
 
 } = require('../controllers/players');
 
@@ -18,6 +18,7 @@ const router = express.Router({ mergeParams: true });
 const { protect, authorize } = require('../middleware/auth');
 //router.use(protect);
 //router.use(authorize('admin','Player'));
+router.get('/tournaments', protect, getTournaments);
 router.post('/status/:id', protect, updateStatus);
 
 router.get('/page', protect, getPage);
