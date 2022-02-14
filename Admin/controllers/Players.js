@@ -95,7 +95,7 @@ exports.getLeaderBoardList = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.getPlayers = asyncHandler(async (req, res, next) => {
 
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Player' };
       res.render('Players/list')
 });
 
