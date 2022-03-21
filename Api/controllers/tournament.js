@@ -41,6 +41,7 @@ exports.getTournament = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Tournaments
 // @access    Private/Admin
 exports.createTournament = asyncHandler(async (req, res, next) => {
+    console.log('req.body', req.body);
     const row = await Tournament.create(req.body);
 
     res.status(201).json({

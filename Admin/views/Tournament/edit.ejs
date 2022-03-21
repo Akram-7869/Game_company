@@ -12,7 +12,7 @@
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                             <li class="breadcrumb-item active">
-                                    <%- title %> List
+                                <%- title %> List
                             </li>
                             <li class="breadcrumb-item active">Add</li>
                         </ol>
@@ -36,9 +36,18 @@
                             <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST"
                                 name="player" enctype="application/x-www-form-urlencoded">
                                 <div class="mb-3">
-                                    <label class="form-label">Name</label>
+                                    <label class="form-label">Name1</label>
                                     <input type="text" name="name" value="<%=row.name?row.name:'' %>"
                                         class="form-control" required placeholder="Tournament name" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Mode</label>
+                                    <select class="form-select" name="mode" required>
+                                        <option value="">Slect Mode..</option>
+                                        <option value="1" <%=row.mode===1 ?'selected':'' %>>Classic</option>
+                                        <option value="2" <%=row.mode===2 ?'selected':'' %>>Point</option>
+                                        <option value="3s" <%=row.mode===3 ?'selected':'' %>>Diceless</option>
+                                    </select>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Bet Amount</label>
@@ -53,18 +62,53 @@
                                         <option value="4" <%=row.players===4 ?'selected':'' %>>4 players</option>
                                     </select>
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Winner</label>
+                                    <select class="form-select" name="mode" required>
+                                        <option value="">Slect Winner..</option>
+                                        <option value="1" <%=row.winner===1 ?'selected':'' %>>1</option>
+                                        <option value="2" <%=row.winner===2 ?'selected':'' %>>2</option>
+                                        <option value="3" <%=row.winner===3 ?'selected':'' %>>3</option>
+                                    </select>
+                                </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Time</label>
-                                    <input type="text" name="time" value="<%=row.time?row.time:'' %>"
-                                        class="form-control" required placeholder="App Link" />
+                                    <select class="form-select" name="mode" required>
+                                        <option value="">Slect Time..</option>
+                                        <option value="5" <%=row.winner===5 ?'selected':'' %>>5</option>
+                                        <option value="10" <%=row.winner===10 ?'selected':'' %>>10</option>
+                                        <option value="15" <%=row.winner===15 ?'selected':'' %>>15</option>
+                                    </select>
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Accuracy</label>
+                                    <select class="form-select" name="mode" required>
+                                        <option value="">Slect Accuracy..</option>
+                                        <option value="1" <%=row.winner===1 ?'selected':'' %>>Low</option>
+                                        <option value="2" <%=row.winner===2 ?'selected':'' %>>Medium</option>
+                                        <option value="3" <%=row.winner===3 ?'selected':'' %>>Heigh</option>
+                                    </select>
+                                </div>
+
 
                                 <div class="mb-3">
                                     <label class="form-label">Bot</label>
                                     <select class="form-select" name="bot" required>
                                         <option value="false" <%=row.bot===false?'selected':'' %>>OFF</option>
                                         <option value="true" <%=row.bot===true?'selected':'' %>>ON</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Interval</label>
+                                    <select class="form-select" name="mode" required>
+                                        <option value="">Slect Interval..</option>
+                                        <option value="1" <%=row.winner===1 ?'selected':'' %>>1</option>
+                                        <option value="2" <%=row.winner===2 ?'selected':'' %>>3</option>
+                                        <option value="3" <%=row.winner===3 ?'selected':'' %>>5</option>
+                                        <option value="10" <%=row.winner===10 ?'selected':'' %>>10</option>
+                                        <option value="15" <%=row.winner===15 ?'selected':'' %>>15</option>
+                                        <option value="30" <%=row.winner===30 ?'selected':'' %>>30</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
