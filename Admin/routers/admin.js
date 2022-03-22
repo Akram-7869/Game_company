@@ -12,6 +12,7 @@ const ticketCtrl = require('../controllers/TicketController');
 const versionCtrl = require('../controllers/VersionController');
 const tournamentCtrl = require('../controllers/TurnamentController');
 const notificationCtrl = require('../controllers/NotificationController');
+const couponCtrl = require('../controllers/CouponController');
 
 const { protect } = require('../middleware/auth');
 const router = express.Router({ mergeParams: true });
@@ -62,6 +63,9 @@ router.route('/tournament').get(tournamentCtrl.listTournament); router.route('/t
 router.route('/tournament/add').get(tournamentCtrl.addTournament).post(tournamentCtrl.createTournaments);
 router.route('/tournament/:id').get(tournamentCtrl.getTournament).post(tournamentCtrl.updateTournament).delete(tournamentCtrl.deleteTournament);
 
+router.route('/coupon').get(couponCtrl.listCoupon); router.route('/coupon/data').post(couponCtrl.getCoupons);
+router.route('/coupon/add').get(couponCtrl.addCoupon).post(couponCtrl.createCoupons);
+router.route('/coupon/:id').get(couponCtrl.getCoupon).post(couponCtrl.updateCoupon).delete(couponCtrl.deleteCoupon);
 
 
 

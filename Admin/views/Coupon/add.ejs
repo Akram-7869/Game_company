@@ -1,0 +1,185 @@
+<%- contentFor('HeaderCss') %>
+    <link href="/public/assets/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
+
+    <%- contentFor('breadcrumb') %>
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">
+                        <%- title %>
+                    </h4>
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item active">
+                                <%- title %> List
+                            </li>
+                            <li class="breadcrumb-item active">Add</li>
+                        </ol>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <%- contentFor('body') %>
+
+
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <!--  <h4 class="card-title">Validation type</h4>
+                <p class="card-title-desc"> </p> -->
+
+                            <form action="" enctype="multipart/form-data" method="POST">
+                                <div class="mb-3">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" id="name" name="name" value="<%=row.name?row.name:'' %>"
+                                        class="form-control" required placeholder="coupon name" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">coupon Type</label>
+
+                                    <select class="form-select" name="couponType" required id="couponType"
+                                        onchange="handleBot()">
+                                        <option value="bonus" <%=row.bonus==='bonus' ?'selected':'' %>>bonus
+                                        </option>
+                                        <!-- <option value="true" <%=row.couponType==='percentage' ?'selected':'' %>
+                                            >Percentage
+                                        </option> -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">calculate Type</label>
+
+
+
+                                    <select class="form-select" name="calculateType" required id="calculateType"
+                                        onchange="handleBot()">
+                                        <option value="fixed" <%=row.calculateType==='fixed' ?'selected':'' %>>Fixed
+                                        </option>
+                                        <option value="percentage" <%=row.calculateType==='percentage' ?'selected':'' %>
+                                            >Percentage
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">couponAmount</label>
+                                    <input id="couponAmount" type="text" name="couponAmount"
+                                        value="<%=row.couponAmount?row.couponAmount:'' %>" class="form-control" required
+                                        placeholder="couponAmount" />
+                                </div>
+
+                                <!-- <div class="mb-3">
+                                    <label class="form-label">Image</label>
+                                    <input type="text" name="couponImage" value="<%=row.couponImage?row.couponImage:'' %>"
+                                        class="form-control" required placeholder="couponImage" />
+                                </div> -->
+
+                                <!-- <div class="mb-3">
+                    <label class="form-label">Bot</label>
+                    <select class="form-select" name="calculateType" required id="bot" onchange="handleBot()">
+                        <option value="false" <%=row.bot===false?'selected':'' %>>OFF</option>
+                        <option value="true" <%=row.bot===true?'selected':'' %>>ON</option>
+                    </select>
+                </div>
+                <div class="mb-3" id="a1">
+                    <label class="form-label">Bot Complexity</label>
+                    <select class="form-select" name="complexity" required>
+                        <option value="EASY" <%=row.complexity==='EASY' ?'selected':'' %>>EASY</option>
+                        <option value="MEDIUM" <%=row.complexity==='MEDIUM' ?'selected':'' %>>MEDIUM
+                        </option>
+                        <option value="HARD" <%=row.complexity==='HARD' ?'selected':'' %>>HARD</option>
+                    </select>
+
+                </div> -->
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select id="statustxt" class="form-select" name="status" required>
+                                        <option value="false" <%=row.status===false?'selected':'' %>>OFF</option>
+                                        <option value="true" <%=row.status===true?'selected':'' %>>ON</option>
+                                    </select>
+                                </div>
+                                <div>
+
+                                    <div class="dropzone" id="myDropzone"></div>
+                                    <div>
+                                        <button id="submit-all" type="submit"
+                                            class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div> <!-- end col -->
+
+
+            </div> <!-- end row -->
+
+            <%- contentFor('FooterJs') %>
+                <script src="/public/assets/libs/dropzone/min/dropzone.min.js"></script>
+
+                <!-- parsleyjs -->
+                <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
+
+                <script src="/public/assets/js/pages/form-validation.init.js"></script>
+                <!-- <script src="public/assets/js/pages/sweet-alerts.init.js"></script> -->
+
+                <script>
+                    let url = '<%= apiUrl + "add" %>'
+
+                    Dropzone.options.myDropzone = {
+                        url: url,
+                        autoProcessQueue: false,
+                        uploadMultiple: false,
+                        parallelUploads: 1,
+                        maxFiles: 50,
+                        maxFilesize: 5,
+                        acceptedFiles: 'image/*',
+                        addRemoveLinks: true,
+                        success: function (file, response) {
+                            window.location = '<%= indexUrl  %>';
+
+                        },
+                        init: function () {
+                            dzClosure = this; // Makes sure that 'this' is understood inside the functions below.
+
+                            // for Dropzone to process the queue (instead of default form behavior):
+                            document.getElementById("submit-all").addEventListener("click", function (e) {
+                                // Make sure that the form isn't actually being sent.
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (dzClosure.getQueuedFiles().length > 0) {
+                                    //Swal.showLoading();
+                                    dzClosure.processQueue();
+                                } else {
+
+                                    alert('Please Select File')
+                                }
+
+                            });
+
+                            //send all the form data along with the files:
+                            this.on("sending", function (data, xhr, formData) {
+                                formData.append("name", $("#name").val());
+                                formData.append("couponType", $("#couponType").val());
+                                formData.append("calculateType", $("#calculateType ").val());
+                                formData.append("couponAmount", $("#couponAmount ").val());
+                                formData.append("status", $("#statustxt").val());
+
+                            });
+                        }
+                    }
+
+
+                </script>
+                <%- contentFor('BottomJs') %>

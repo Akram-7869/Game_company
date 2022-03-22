@@ -39,6 +39,7 @@ const notifications = require('./routes/notifications');
 const game = require('./routes/game');
 const dashboards = require('./routes/dashboard');
 const tournaments = require('./routes/tournament');
+const coupon = require('./routes/coupon');
 
 const formatMessage = require('./utils/messages');
 // const {
@@ -109,6 +110,8 @@ app.use('/api/v1/banners', banners);
 app.use('/api/v1/games', game);
 app.use('/api/v1/dashboards', dashboards);
 app.use('/api/v1/tournaments', tournaments);
+app.use('/api/v1/coupon', coupon);
+
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
