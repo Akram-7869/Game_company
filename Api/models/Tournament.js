@@ -5,21 +5,30 @@ const TournamentSchema = new mongoose.Schema({
     name: {
         type: String
     },
+    mode: {
+        type: Number
+    },
     betAmount: {
         type: String
     },
     players: {
         type: Number
     },
+    winner: {
+        type: Number
+    },
     time: {
-        type: String
+        type: Number
     },
     bot: {
         type: Boolean,
         default: true
     },
     complexity: {
-        type: String
+        type: Number
+    },
+    interval: {
+        type: Number
     },
 
     createdBy: {

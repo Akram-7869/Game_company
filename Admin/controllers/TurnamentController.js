@@ -14,7 +14,7 @@ exports.getTournament = asyncHandler(async (req, res, next) => {
     callApi(req).get(apiUrl + req.params.id)
         .then(r => {
 
-            res.locals = { title: 'Tournament-edit' };
+            res.locals = { title: 'Tournament' };
             res.render('Tournament/edit', { row: r.data.data });
         })
         .catch(error => {
@@ -28,7 +28,7 @@ exports.updateTournament = asyncHandler(async (req, res, next) => {
     callApi(req).post(apiUrl + req.params.id, req.body)
         .then(r => {
             // Assign value in session
-            res.locals = { title: 'Tournament-edit' };
+            res.locals = { title: 'Tournament' };
             req.flash('error', 'Data save');
             res.redirect(process.env.ADMIN_URL + '/admin/tournament');
 
