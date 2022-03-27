@@ -63,15 +63,37 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Winner</label>
-                                    <select class="form-select" name="winner" required>
-                                        <option value="">Slect Winner..</option>
-                                        <option value="1" <%=row.winner===1 ?'selected':'' %>>1</option>
-                                        <option value="2" <%=row.winner===2 ?'selected':'' %>>2</option>
-                                        <option value="3" <%=row.winner===3 ?'selected':'' %>>3</option>
-                                    </select>
-                                </div>
 
+
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col">
+                                        <label class="form-label">Winner</label>
+                                        <select class="form-select" name="winner" id="winner" required>
+                                            <option value="">Slect Winner..</option>
+                                            <option value="1" <%=row.winner===1 ?'selected':'' %>>1</option>
+                                            <option value="2" <%=row.winner===2 ?'selected':'' %>>2</option>
+                                            <option value="3" <%=row.winner===3 ?'selected':'' %>>3</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col">
+
+                                        <div id="userFields">
+                                            <% for (const property in row.winnerRow) { %>
+                                                <div id="heading" class="form-group">
+                                                    <lable>
+                                                        <%= property%> :
+                                                    </lable><input type="text" placeholder="Wining Amount "
+                                                        name="winnerRow[<%=property%>]" id="name_1"
+                                                        value="<%=row.winnerRow[property] %>" class="form-control">
+                                                </div>
+
+                                                <% } %>
+
+                                        </div>
+
+                                    </div>
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">Time</label>
                                     <select class="form-select" name="time" required>
@@ -148,11 +170,40 @@
                 <!-- Sweet alert init js
   <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
                 <script>
+                    $(function () {
+                        $('#winner').change(function () {
+                            var userNumber = $(this).val();
+                            $("#userFields").empty();
+
+                            //Dynamically create input fields based on user selection
+                            create(userNumber);
+
+
+                        });
+                    });
                     function handleSubmit(params) {
                         if (params.checkValidity()) {
                             Swal.showLoading();
                         }
                         return false;
                     }
+                    function create(userNumber) {
+                        for (var i = 1; i <= userNumber; i++) {
+                            $("userForm").append($("#userFields").append($("<div/>", {
+                                id: 'heading', class: 'form-group'
+                            }).append($("<lable/>").text("winner_" + i + " : "), $("<input/>", {
+                                type: 'text',
+                                placeholder: 'Wining Amount ',
+                                name: 'winnerRow[winner_' + i + ']',
+                                id: 'winner_' + i,
+                                class: "form-control",
+                                required: 'true'
+                            })),
+
+
+                            ))
+                        }
+                    }
+
                 </script>
                 <%- contentFor('BottomJs') %>

@@ -17,6 +17,7 @@ const TournamentSchema = new mongoose.Schema({
     winner: {
         type: Number
     },
+    winnerRow: {},
     time: {
         type: Number
     },
