@@ -812,3 +812,18 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
     data: rows
   });
 });
+
+// @desc      Get current  in coupon
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.getCoupons = asyncHandler(async (req, res, next) => {
+  const coupon = await Coupon.find({ 'couponType': req.params.type, 'active': true }).lean();;
+  let x = coupon.map(d => {
+    d['imageUrl'] = process.env.API_URI + '/files/' + d.couponImage;
+    return d;
+  });
+  res.status(200).json({
+    success: true,
+    data: x
+  });
+});
