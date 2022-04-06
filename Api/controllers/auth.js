@@ -55,7 +55,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
     // Create user
     player = await Player.create(data);
   }
-  // await smsOtp(phone, vcode, sms);
+  await smsOtp(phone, vcode, sms);
 
   res.status(200).json({
     success: true,
