@@ -13,12 +13,12 @@ const axios = require('axios')
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegister = asyncHandler(async (req, res, next) => {
-  const { email, phone, deviceToken, countryCode, password } = req.body;
+  const { email, phone, deviceToken, countryCode } = req.body;
 
   let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
   let vcode = Math.floor(1000 + Math.random() * 9000);
   const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
-
+  console.log(sms, player)
   if (player) {
     if (player.email !== email) {
       return next(
@@ -44,7 +44,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
     // create new player
     let data = {
       'email': email,
-      'password': password,
+
       'phone': phone,
       'verifyPhone': vcode,
       'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
