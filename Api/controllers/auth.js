@@ -15,29 +15,30 @@ const axios = require('axios')
 exports.playerRegister = asyncHandler(async (req, res, next) => {
   const { email, phone, deviceToken, countryCode } = req.body;
 
-  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  let player = await Player.findOne({ $or: [{ 'phone': phone }] }).select('+deviceToken');
   let vcode = Math.floor(1000 + Math.random() * 9000);
   const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
   console.log(sms, player)
   if (player) {
-    if (player.email !== email) {
-      return next(
-        new ErrorResponse(`phone  number changed use the number registered first time`)
-      );
-    } else if (player.deviceToken !== deviceToken) {
-      return next(
-        new ErrorResponse(`Device changed use the device registered first time`)
-      );
-    } else {
-      let fieldsToUpdate = {
-        'verifyPhone': vcode,
-        'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
-      }
-      player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
-        new: true,
-        runValidators: true
-      });
+    // if (player.email !== email) {
+    //   return next(
+    //     new ErrorResponse(`phone  number changed use the number registered first time`)
+    //   );
+    // } else if (player.deviceToken !== deviceToken) {
+    //   return next(
+    //     new ErrorResponse(`Device changed use the device registered first time`)
+    //   );
+    // } else {
+    let fieldsToUpdate = {
+      'verifyPhone': vcode,
+      'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
+      'firebaseToken': firebaseToken,
     }
+    player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+    // }
 
 
   } else {
