@@ -8,7 +8,7 @@ const Transactions = require('../models/Transaction');
 const Setting = require('../models/Setting');
 const Dashboard = require('../models/Dashboard');
 const axios = require('axios');
-const makeid = require('../utils/utils');
+const { makeid } = require('../utils/utils');
 // @desc      Register user
 // @route     POST /api/v1/auth/register
 // @access    Public
