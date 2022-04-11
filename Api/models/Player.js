@@ -136,6 +136,18 @@ const PlayerSchema = new mongoose.Schema({
     type: Number,
     default: 0
 
+  },
+  join_code: {
+    type: String
+  },
+  refer_code: {
+    type: String
+  },
+  level_1: {
+    type: String
+  },
+  level_2: {
+    type: String
   }
 
 });

@@ -7,8 +7,8 @@ const User = require('../models/User');
 const Transactions = require('../models/Transaction');
 const Setting = require('../models/Setting');
 const Dashboard = require('../models/Dashboard');
-const axios = require('axios')
-
+const axios = require('axios');
+const makeid = require('../utils/utils');
 // @desc      Register user
 // @route     POST /api/v1/auth/register
 // @access    Public
@@ -51,7 +51,8 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
       'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
       'deviceToken': deviceToken,
       'status': 'notverified',
-      'countryCode': countryCode
+      'countryCode': countryCode,
+      'refer_code': makeid(6),
     };
     // Create user
     player = await Player.create(data);
@@ -76,12 +77,12 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
     );
   }
   //resetPasswordExpire: { $gt: Date.now() }
-  console.log('verifyPhone-input', req.body)
+  // console.log('verifyPhone-input', req.body)
   // await verifyOtp(req.body.phone, req.body.code).then(r=>{
   //   r.data.type
   // })
   let user = await Player.findOne({ phone: req.body.phone, verifyPhone: req.body.code });
-  console.log('verifyPhone', user)
+  // console.log('verifyPhone', user)
   const addamount = 10;
   if (!user) {
     return next(

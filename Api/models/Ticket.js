@@ -27,7 +27,9 @@ const TicketSchema = new mongoose.Schema({
         default: 'open',
         enum: ['close', 'open', 'pending']
     },
-
+    ticketImage: {
+        type: mongoose.Schema.ObjectId,
+    },
     createdBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',

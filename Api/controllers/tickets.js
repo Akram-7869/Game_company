@@ -40,7 +40,17 @@ exports.getTicket = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Tickets
 // @access    Private/Admin
 exports.createTicket = asyncHandler(async (req, res, next) => {
+  if (req.files) {
+    let dataSave = {
+      // createdBy: req.user.id,
+      data: req.files.file.data,
+      contentType: req.files.file.mimetype,
+      size: req.files.file.size,
+    }
+    const newfile = await File.create(dataSave);
+    req.body['ticketImage'] = newfile._id;
 
+  }
   const row = await Ticket.create(req.body);
 
   res.status(201).json({
