@@ -8,6 +8,7 @@ const Dashboard = require('../models/Dashboard');
 const { request } = require('express');
 const Setting = require('../models/Setting');
 const Tournament = require('../models/Tournament');
+const Banner = require('../models/Banner');
 let axios = require('axios');
 const FormData = require('form-data');
 
@@ -820,6 +821,21 @@ exports.getCoupons = asyncHandler(async (req, res, next) => {
   const coupon = await Coupon.find({ 'couponType': req.params.type, 'active': true }).lean();;
   let x = coupon.map(d => {
     d['imageUrl'] = process.env.API_URI + '/files/' + d.couponImage;
+    return d;
+  });
+  res.status(200).json({
+    success: true,
+    data: x
+  });
+});
+
+// @desc      Get current  in coupon
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.getBanners = asyncHandler(async (req, res, next) => {
+  const banner = await Banners.find({ 'active': true }).lean();
+  let x = banner.map(d => {
+    d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
     return d;
   });
   res.status(200).json({

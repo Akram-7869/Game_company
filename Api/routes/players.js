@@ -7,7 +7,7 @@ const {
   join, won,
   ticketAdd, ticketList, ticketReply,
   getOnlinePlayers, getNotication, getPage, editOnlinePlayers,
-  withDrawRequest, addMoney, addWallet, addBank, updatePlayerImage, getTournaments, getCoupons
+  withDrawRequest, addMoney, addWallet, addBank, updatePlayerImage, getTournaments, getCoupons, getBanners
 
 } = require('../controllers/players');
 
@@ -19,6 +19,8 @@ const { protect, authorize } = require('../middleware/auth');
 //router.use(protect);
 //router.use(authorize('admin','Player'));
 router.get('/tournaments', protect, getTournaments);
+router.get('/banners', protect, getBanners);
+
 router.post('/status/:id', protect, updateStatus);
 
 router.get('/page', protect, getPage);
