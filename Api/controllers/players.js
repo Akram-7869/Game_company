@@ -833,7 +833,8 @@ exports.getCoupons = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.getBanners = asyncHandler(async (req, res, next) => {
-  const banner = await Banner.find({ 'active': true }).lean();
+  const banner = await Banner.find({ 'status': 'active' }).lean();
+  console.log(banner);
   let x = banner.map(d => {
     d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
     return d;
