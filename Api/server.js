@@ -125,16 +125,15 @@ const PORT = process.env.PORT || 3000;
 
 
 const { makeid } = require('./utils/utils');
-
 const state = {};
-const publicRoom = { playerCount: 0, roomName: '' };
+const publicRoom = {};
 
 // Run when client connects
 io.on('connection', socket => {
   let data = { status: 'connected' };
   socket.emit('res', { ev: 'connected', data });
   console.log('contedt');
-
+  socket.join('notification_channel');
   socket.on('createRoom', (d) => {
     let dataParsed = d;//JSON.parse(d);
     let { userId } = dataParsed;
@@ -153,18 +152,18 @@ io.on('connection', socket => {
   socket.on('join', (d) => {
     console.log('inputstring', d);
     let dataParsed = d;// JSON.parse(d);
-    let { userId } = dataParsed;
+    let { userId, lobbyId, maxp = 4 } = dataParsed;
 
-    console.log(d, userId);
-    let roomName = publicRoom.roomName;
-    if (publicRoom.playerCount === 0 || publicRoom.playerCount === 5) {
+
+    let roomName = '';
+    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp) {
+      roomName = publicRoom[lobbyId]['roomName'];
+    } else {
       roomName = makeid(5);
-      publicRoom.roomName = roomName;
-      publicRoom.playerCount = 0;
+      console.log('naking new');
+      publicRoom[lobbyId] = { roomName, playerCount: 0 }
       state[roomName] = initRoom();
     }
-
-
 
     joinRoom(socket, userId, roomName, dataParsed);
     socket.join(roomName);
@@ -173,7 +172,7 @@ io.on('connection', socket => {
       userId: userId
     }
 
-    publicRoom.playerCount = Object.keys(state[roomName].players).length;
+    publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
     console.dir(state);
     console.dir(socket.userId);
     io.to(roomName).emit('res', { ev: 'join', data });
@@ -181,7 +180,7 @@ io.on('connection', socket => {
 
   socket.on('joinFriend', (d) => {
     let dataParsed = d;//JSON.parse(d);
-    let { userId } = dataParsed;
+    let { userId, room } = dataParsed;
 
     joinRoom(socket, userId, room, dataParsed);
     socket.join(room);
@@ -201,7 +200,7 @@ io.on('connection', socket => {
   //leave
   socket.on('leave', (d) => {
 
-    let { room } = JSON.parse(d);
+    let { room } = d; //JSON.parse(d);
     socket.leave(room);
     userLeave(socket);
     console.dir(state);
@@ -227,13 +226,52 @@ io.on('connection', socket => {
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });
+  //move user
+  socket.on('moveuser', (d) => {
+
+    let { room, userId, action } = d; //JSON.parse(d);
+    if (state[room]) {
+
+      const index = state[room].players.findIndex(user => user.userId === userId);
+      let toIndex
+      if (action === 'win') {
+        toIndex = index - 1;
+      } else {
+        toIndex = index + 1
+      }
+      arraymove(state[room].players, index, 1);
+
+    }
+
+
+
+    let data = {
+      room: room,
+      users: getRoomUsers(room)
+    };
+    io.to(room).emit('res', { ev: 'moveuser', data });
+  });
 });
 
-
+function arraymove(arr, fromIndex, toIndex) {
+  arr.unshift(arr.pop());
+  // var element = arr[fromIndex];
+  // arr.splice(fromIndex, 1);
+  // /// console.log("::" + arr);
+  // arr.push(element);
+  // // console.log("::" + arr);
+}
+// function arraymove(array, oldIndex, newIndex) {
+//   if (newIndex >= array.length) {
+//     newIndex = array.length - 1;
+//   }
+//   array.splice(newIndex, 0, array.splice(oldIndex, 1)[0]);
+//   return array;
+// }
 let initRoom = () => {
   const t = {
     full: 0,
-    players: {}
+    players: []
   }
   return t;
 }
@@ -243,7 +281,7 @@ let joinRoom = (socket, palyerId, room, d = {}) => {
   socket['room'] = room;
   socket['userId'] = palyerId;
 
-  state[room].players[palyerId] = d
+  state[room].players.push(d);
 }
 let getRoomUsers = (room) => {
 
@@ -253,8 +291,13 @@ let getRoomUsers = (room) => {
   return [];
 }
 let userLeave = (s) => {
-  if (state[s.room] && state[s.room].players[s.userId]) {
-    delete state[s.room].players[s.userId];
+  if (state[s.room] && state[s.room].players.length !== 0) {
+    //delete state[s.room].players[s.userId];
+    const index = state[s.room].players.findIndex(user => user.userId === s.userId);
+
+    if (index !== -1) {
+      state[s.room].players.splice(index, 1)[0];
+    }
   }
 
 }
