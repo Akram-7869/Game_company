@@ -13,7 +13,7 @@ const { makeid } = require('../utils/utils');
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegister = asyncHandler(async (req, res, next) => {
-  const { email, phone, deviceToken, countryCode } = req.body;
+  const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.body;
 
   let player = await Player.findOne({ 'phone': phone }).select('+deviceToken');
   let vcode = Math.floor(1000 + Math.random() * 9000);

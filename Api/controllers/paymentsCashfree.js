@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Setting = require('../models/Setting');
+const crypto = require('crypto');
 
 const Transaction = require('../models/Transaction');
 
