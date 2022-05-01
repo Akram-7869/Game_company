@@ -1,7 +1,7 @@
 {
-  "name": "Dukeplayanode",
+  "name": "Digiqlanode",
   "version": "2.0.0",
-  "description": "Dukeplay Node js",
+  "description": "Digiql Node js",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
