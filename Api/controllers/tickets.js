@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Ticket = require('../models/Ticket');
+const File = require('../models/File');
 
 // @desc      Get all Tickets
 // @route     GET /api/v1/auth/Tickets
@@ -9,7 +10,7 @@ exports.getTickets = asyncHandler(async (req, res, next) => {
   Ticket.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-    select: { 'PlayerId': 1, 'complexity': 1, 'status': 1, 'createdAt': 1 },
+    select: { 'PlayerId': 1, 'ticketImage': 1, 'subject': 1, 'email': 1, 'phone': 1 },
     search: {
       value: req.body.search ? req.body.search.value : '',
       fields: ['complexity']
@@ -95,9 +96,20 @@ exports.updateTicket = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deleteTicket = asyncHandler(async (req, res, next) => {
   const row = await Ticket.findByIdAndDelete(req.params.id);
+  await File.findByIdAndDelete(row.ticketImage);
   res.status(200).json({
     success: true,
     data: {}
   });
 });
 
+// @desc      Update Banner
+// @route     PUT /api/v1/auth/Banners/:id
+// @access    Private/Admin
+exports.getFile = asyncHandler(async (req, res, next) => {
+
+  let rec = await File.findById(req.params.id);
+  res.contentType('image/png');
+  res.send(rec.data);
+
+});

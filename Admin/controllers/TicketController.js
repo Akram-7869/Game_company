@@ -10,11 +10,9 @@ exports.listTicket = asyncHandler(async (req, res, next) => {
 
 
 exports.getTicket = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Ticket' };
+      res.locals = { title: 'Ticket', apiUrl, 'baseUrl': api_url };
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
-
-                  res.locals = { title: 'Ticket' };
                   res.render('Ticket/edit', { row: r.data.data });
             })
             .catch(error => {
@@ -25,7 +23,7 @@ exports.getTicket = asyncHandler(async (req, res, next) => {
 
 exports.updateTicket = asyncHandler(async (req, res, next) => {
 
-      res.locals = { title: 'Ticket' };
+      res.locals = { title: 'Ticket', apiUrl, 'baseUrl': api_url };
       callApi(req).post(apiUrl + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
@@ -91,6 +89,8 @@ exports.createTickets = asyncHandler(async (req, res, next) => {
 });
 
 exports.showTicketView = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Ticket', 'baseUrl': api_url };
+
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
                   // Assign value in session
