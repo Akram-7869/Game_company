@@ -1,10 +1,3 @@
-/*
-Template Name: Minible - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: Form repeater Js File
-*/
 
 $(document).ready(function () {
     'use strict';
@@ -21,7 +14,7 @@ $(document).ready(function () {
             $(this).slideDown();
         },
         hide: function (deleteElement) {
-            if(confirm('Are you sure you want to delete this element?')) {
+            if (confirm('Are you sure you want to delete this element?')) {
                 $(this).slideUp(deleteElement);
             }
         },

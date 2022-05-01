@@ -1,12 +1,5 @@
-/*
-Template Name: Minible - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: Lightbox  Js File
-*/
 
-(function($) {
+(function ($) {
 
 	'use strict';
 
@@ -50,7 +43,7 @@ File: Lightbox  Js File
 		gallery: {
 			enabled: true,
 			navigateByImgClick: true,
-			preload: [0,1] // Will preload 0 - before current, and 1 after the current image
+			preload: [0, 1] // Will preload 0 - before current, and 1 after the current image
 		},
 		image: {
 			tError: '<a href="%url%">The image #%curr%</a> could not be loaded.'
@@ -68,8 +61,8 @@ File: Lightbox  Js File
 		mainClass: 'mfp-with-zoom mfp-img-mobile',
 		image: {
 			verticalFit: true,
-			titleSrc: function(item) {
-				return item.el.attr('title') + ' &middot; <a href="'+item.el.attr('data-source')+'" target="_blank">image source</a>';
+			titleSrc: function (item) {
+				return item.el.attr('title') + ' &middot; <a href="' + item.el.attr('data-source') + '" target="_blank">image source</a>';
 			}
 		},
 		gallery: {
@@ -78,7 +71,7 @@ File: Lightbox  Js File
 		zoom: {
 			enabled: true,
 			duration: 300, // don't foget to change the duration also in CSS
-			opener: function(element) {
+			opener: function (element) {
 				return element.find('img');
 			}
 		}
@@ -140,13 +133,13 @@ File: Lightbox  Js File
 		// When elemened is focused, some mobile browsers in some cases zoom in
 		// It looks not nice, so we disable it:
 		callbacks: {
-		  beforeOpen: function() {
-			if($(window).width() < 700) {
-			  this.st.focus = false;
-			} else {
-			  this.st.focus = '#name';
+			beforeOpen: function () {
+				if ($(window).width() < 700) {
+					this.st.focus = false;
+				} else {
+					this.st.focus = '#name';
+				}
 			}
-		  }
 		}
 	});
 

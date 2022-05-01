@@ -1,14 +1,5 @@
 
 
-/*
-Template Name: Minible - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: leaflet init js
-*/
-
-
 // leaflet-map
 var mymap = L.map('leaflet-map').setView([51.505, -0.09], 13);
 
@@ -49,7 +40,7 @@ L.polygon([
     [51.509, -0.08],
     [51.503, -0.06],
     [51.51, -0.047]
-],{
+], {
     color: '#5b73e8',
     fillColor: '#5b73e8',
 }).addTo(markermap);
@@ -81,7 +72,7 @@ L.polygon([
     [51.509, -0.08],
     [51.503, -0.06],
     [51.51, -0.047]
-],{
+], {
     color: '#5b73e8',
     fillColor: '#5b73e8',
 }).addTo(popupmap).bindPopup("I am a polygon.");
@@ -99,15 +90,15 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 var LeafIcon = L.Icon.extend({
     options: {
-        iconSize:     [45, 95],
-        iconAnchor:   [22, 94],
-        popupAnchor:  [-3, -76]
+        iconSize: [45, 95],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76]
     }
 });
 
-var greenIcon = new LeafIcon({iconUrl: '/public/assets/images/logo.svg'});
+var greenIcon = new LeafIcon({ iconUrl: '/public/assets/images/logo.svg' });
 
-L.marker([51.5, -0.09], {icon: greenIcon}).addTo(customiconsmap);
+L.marker([51.5, -0.09], { icon: greenIcon }).addTo(customiconsmap);
 
 
 // Interactive Choropleth Map
@@ -127,13 +118,13 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 // get color depending on population density value
 function getColor(d) {
     return d > 1000 ? '#497fe5' :
-            d > 500  ? '#5b73e8' :
-            d > 200  ? '#6d99eb' :
-            d > 100  ? '#7fa5ed' :
-            d > 50   ? '#91b2f0' :
-            d > 20   ? '#a3bef2' :
-            d > 10   ? '#b4cbf5' :
-                        '#bdd1f6';
+        d > 500 ? '#5b73e8' :
+            d > 200 ? '#6d99eb' :
+                d > 100 ? '#7fa5ed' :
+                    d > 50 ? '#91b2f0' :
+                        d > 20 ? '#a3bef2' :
+                            d > 10 ? '#b4cbf5' :
+                                '#bdd1f6';
 }
 
 function style(feature) {
@@ -157,18 +148,18 @@ var geojson = L.geoJson(statesData, {
 var cities = L.layerGroup();
 
 L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.').addTo(cities),
-L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.').addTo(cities),
-L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.').addTo(cities),
-L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.').addTo(cities);
+    L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.').addTo(cities),
+    L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.').addTo(cities),
+    L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.').addTo(cities);
 
 
 var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+    'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
 
-var grayscale   = L.tileLayer(mbUrl, {id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr}),
-    streets  = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+var grayscale = L.tileLayer(mbUrl, { id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr }),
+    streets = L.tileLayer(mbUrl, { id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr });
 
 var layergroupcontrolmap = L.map('leaflet-map-group-control', {
     center: [39.73, -104.99],

@@ -1,10 +1,4 @@
-/*
-Template Name: Minible - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: Rating Js File
-*/
+
 
 $(document).ready(function () {
 
@@ -28,7 +22,7 @@ $(document).ready(function () {
         .find('span')
         .html(currentRating);
 
-    $('.stars-example-fontawesome-o .clear-rating').on('click', function(event) {
+    $('.stars-example-fontawesome-o .clear-rating').on('click', function (event) {
         event.preventDefault();
 
         $('#rating-current-fontawesome-o')
@@ -39,7 +33,7 @@ $(document).ready(function () {
         theme: 'fontawesome-stars-o',
         showSelectedRating: false,
         initialRating: currentRating,
-        onSelect: function(value, text) {
+        onSelect: function (value, text) {
             if (!value) {
                 $('#rating-current-fontawesome-o')
                     .barrating('clear');
@@ -53,7 +47,7 @@ $(document).ready(function () {
                     .html(value);
             }
         },
-        onClear: function(value, text) {
+        onClear: function (value, text) {
             $('.stars-example-fontawesome-o')
                 .find('.current-rating')
                 .removeClass('hidden')
@@ -89,7 +83,7 @@ $(document).ready(function () {
         showSelectedRating: false,
         allowEmpty: true,
         emptyValue: '-- no rating selected --',
-        onSelect: function(value, text) {
+        onSelect: function (value, text) {
             alert('Selected rating: ' + value);
         }
     });

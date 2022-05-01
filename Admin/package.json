@@ -1,7 +1,7 @@
 {
-  "name": "minibleanode",
+  "name": "Dukeplayanode",
   "version": "2.0.0",
-  "description": "Minible Node js",
+  "description": "Dukeplay Node js",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

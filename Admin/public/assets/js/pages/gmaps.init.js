@@ -1,13 +1,6 @@
-/*
-Template Name: Minible - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: gmaps init Js File
-*/
 
 var map;
-$(document).ready(function(){
+$(document).ready(function () {
   // Markers
   map = new GMaps({
     div: '#gmaps-markers',
@@ -22,8 +15,8 @@ $(document).ready(function(){
       database_id: 42,
       author: 'HPNeo'
     },
-    click: function(e){
-      if(console.log)
+    click: function (e) {
+      if (console.log)
         console.log(e);
       alert('You clicked in this marker');
     }
@@ -46,8 +39,8 @@ $(document).ready(function(){
   //panorama
   map = GMaps.createPanorama({
     el: '#panorama',
-    lat : 42.3455,
-    lng : -71.0983
+    lat: 42.3455,
+    lng: -71.0983
   });
 
   //Map type
@@ -56,11 +49,11 @@ $(document).ready(function(){
     lat: -12.043333,
     lng: -77.028333,
     mapTypeControlOptions: {
-      mapTypeIds : ["hybrid", "roadmap", "satellite", "terrain", "osm"]
+      mapTypeIds: ["hybrid", "roadmap", "satellite", "terrain", "osm"]
     }
   });
   map.addMapType("osm", {
-    getTileUrl: function(coord, zoom) {
+    getTileUrl: function (coord, zoom) {
       return "https://a.tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
     },
     tileSize: new google.maps.Size(256, 256),

@@ -1,24 +1,17 @@
-/*
-Template Name: Minible - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: Range sliders Js File
-*/
 
 
 $(document).ready(function () {
     $("#range_01").ionRangeSlider({
         skin: "round"
     });
-    
+
     $("#range_02").ionRangeSlider({
         skin: "round",
         min: 100,
         max: 1000,
         from: 550
     });
-    
+
     $("#range_03").ionRangeSlider({
         skin: "round",
         type: "double",
@@ -29,7 +22,7 @@ $(document).ready(function () {
         to: 800,
         prefix: "$"
     });
-   
+
     $("#range_04").ionRangeSlider({
         skin: "round",
         type: "double",
@@ -39,7 +32,7 @@ $(document).ready(function () {
         from: -500,
         to: 500
     });
-    
+
     $("#range_05").ionRangeSlider({
         skin: "round",
         type: "double",
@@ -50,14 +43,14 @@ $(document).ready(function () {
         to: 500,
         step: 250
     });
-    
+
     $("#range_06").ionRangeSlider({
         skin: "round",
         grid: true,
         from: 3,
         values: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     });
-    
+
     $("#range_07").ionRangeSlider({
         skin: "round",
         grid: true,
@@ -67,7 +60,7 @@ $(document).ready(function () {
         step: 1000,
         prettify_enabled: true
     });
-    
+
     $("#range_08").ionRangeSlider({
         skin: "round",
         min: 100,

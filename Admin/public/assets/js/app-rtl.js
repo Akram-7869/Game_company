@@ -1,11 +1,4 @@
-/*
-Template Name: Minible - Admin & Dashboard Template
-Author: Themesbrand
-Version: 2.0.0
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: Main Js File
-*/
+
 
 
 (function ($) {
@@ -47,17 +40,17 @@ File: Main Js File
 
     function initMenuItemScroll() {
         // focus active menu in left sidebar
-        $(document).ready(function(){
-            if($("#sidebar-menu").length > 0 && $("#sidebar-menu .mm-active .active").length > 0){
+        $(document).ready(function () {
+            if ($("#sidebar-menu").length > 0 && $("#sidebar-menu .mm-active .active").length > 0) {
                 var activeMenu = $("#sidebar-menu .mm-active .active").offset().top;
-                if( activeMenu > 300) {
+                if (activeMenu > 300) {
                     activeMenu = activeMenu - 300;
                     $(".vertical-menu .simplebar-content-wrapper").animate({ scrollTop: activeMenu }, "slow");
                 }
             }
         });
     }
-    
+
     function initHoriMenuActive() {
         $(".navbar-nav a").each(function () {
             var pageUrl = window.location.href.split(/[?#]/)[0];
@@ -122,11 +115,11 @@ File: Main Js File
     }
 
     function initDropdownMenu() {
-        if(document.getElementById("topnav-menu-content")){
+        if (document.getElementById("topnav-menu-content")) {
             var elements = document.getElementById("topnav-menu-content").getElementsByTagName("a");
-            for(var i = 0, len = elements.length; i < len; i++) {
+            for (var i = 0, len = elements.length; i < len; i++) {
                 elements[i].onclick = function (elem) {
-                    if(elem.target.getAttribute("href") === "#") {
+                    if (elem.target.getAttribute("href") === "#") {
                         elem.target.parentElement.classList.toggle("active");
                         elem.target.nextElementSibling.classList.toggle("show");
                     }
@@ -138,8 +131,8 @@ File: Main Js File
 
     function updateMenu() {
         var elements = document.getElementById("topnav-menu-content").getElementsByTagName("a");
-        for(var i = 0, len = elements.length; i < len; i++) {
-            if(elements[i].parentElement.getAttribute("class") === "nav-item dropdown active") {
+        for (var i = 0, len = elements.length; i < len; i++) {
+            if (elements[i].parentElement.getAttribute("class") === "nav-item dropdown active") {
                 elements[i].parentElement.classList.remove("active");
                 elements[i].nextElementSibling.classList.remove("show");
             }

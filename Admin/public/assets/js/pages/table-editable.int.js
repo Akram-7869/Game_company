@@ -1,10 +1,3 @@
-/*
-Template Name: Minible - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: Table editable Init Js File
-*/
 
 // table edits table
 
@@ -13,7 +6,7 @@ $(function () {
     $('.table-edits tr').editable({
         dropdowns: {
             gender: ['Male', 'Female']
-          },
+        },
         edit: function (values) {
             $(".edit i", this)
                 .removeClass('fa-pencil-alt')

@@ -1,182 +1,176 @@
-/*
-Template Name: Minible - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: Apex Chart init js
-*/
+
 
 //  line chart datalabel
-   
+
 var options = {
     chart: {
-      height: 380,
-      type: 'line',
-      zoom: {
-        enabled: false
-      },
-      toolbar: {
-        show: false
-      }
+        height: 380,
+        type: 'line',
+        zoom: {
+            enabled: false
+        },
+        toolbar: {
+            show: false
+        }
     },
     colors: ['#5b73e8', '#f1b44c'],
     dataLabels: {
-      enabled: false,
+        enabled: false,
     },
     stroke: {
-      width: [3, 3],
-      curve: 'straight'
+        width: [3, 3],
+        curve: 'straight'
     },
     series: [{
-      name: "High - 2018",
-      data: [26, 24, 32, 36, 33, 31, 33]
+        name: "High - 2018",
+        data: [26, 24, 32, 36, 33, 31, 33]
     },
     {
-      name: "Low - 2018",
-      data: [14, 11, 16, 12, 17, 13, 12]
+        name: "Low - 2018",
+        data: [14, 11, 16, 12, 17, 13, 12]
     }
     ],
     title: {
-      text: 'Average High & Low Temperature',
-      align: 'left'
+        text: 'Average High & Low Temperature',
+        align: 'left'
     },
     grid: {
-      row: {
-        colors: ['transparent', 'transparent'], // takes an array which will be repeated on columns
-        opacity: 0.2
-      },
-      borderColor: '#f1f1f1'
+        row: {
+            colors: ['transparent', 'transparent'], // takes an array which will be repeated on columns
+            opacity: 0.2
+        },
+        borderColor: '#f1f1f1'
     },
     markers: {
-      style: 'inverted',
-      size: 6
+        style: 'inverted',
+        size: 6
     },
     xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-      title: {
-        text: 'Month'
-      }
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        title: {
+            text: 'Month'
+        }
     },
     yaxis: {
-      title: {
-        text: 'Temperature'
-      },
-      min: 5,
-      max: 40
+        title: {
+            text: 'Temperature'
+        },
+        min: 5,
+        max: 40
     },
     legend: {
-      position: 'top',
-      horizontalAlign: 'right',
-      floating: true,
-      offsetY: -25,
-      offsetX: -5
+        position: 'top',
+        horizontalAlign: 'right',
+        floating: true,
+        offsetY: -25,
+        offsetX: -5
     },
     responsive: [{
-      breakpoint: 600,
-      options: {
-        chart: {
-          toolbar: {
-            show: false
-          }
-        },
-        legend: {
-          show: false
-        },
-      }
+        breakpoint: 600,
+        options: {
+            chart: {
+                toolbar: {
+                    show: false
+                }
+            },
+            legend: {
+                show: false
+            },
+        }
     }]
-  }
-  
-  var chart = new ApexCharts(
+}
+
+var chart = new ApexCharts(
     document.querySelector("#line_chart_datalabel"),
     options
-  );
-  
-  chart.render();
+);
+
+chart.render();
 
 
-  //  line chart datalabel
+//  line chart datalabel
 
-  var options = {
+var options = {
     chart: {
-      height: 380,
-      type: 'line',
-      zoom: {
-        enabled: false
-      },
-      toolbar: {
-        show: false,
-    }
+        height: 380,
+        type: 'line',
+        zoom: {
+            enabled: false
+        },
+        toolbar: {
+            show: false,
+        }
     },
     colors: ['#5b73e8', '#f1b44c', '#34c38f'],
     dataLabels: {
-      enabled: false
+        enabled: false
     },
     stroke: {
-      width: [3, 4, 3],
-      curve: 'straight',
-      dashArray: [0, 8, 5]
+        width: [3, 4, 3],
+        curve: 'straight',
+        dashArray: [0, 8, 5]
     },
     series: [{
         name: "Session Duration",
         data: [45, 52, 38, 24, 33, 26, 21, 20, 6, 8, 15, 10]
-      },
-      {
+    },
+    {
         name: "Page Views",
         data: [36, 42, 60, 42, 13, 18, 29, 37, 36, 51, 32, 35]
-      },
-      {
+    },
+    {
         name: 'Total Visits',
         data: [89, 56, 74, 98, 72, 38, 64, 46, 84, 58, 46, 49]
-      }
+    }
     ],
     title: {
-      text: 'Page Statistics',
-      align: 'left'
+        text: 'Page Statistics',
+        align: 'left'
     },
     markers: {
-      size: 0,
+        size: 0,
 
-      hover: {
-        sizeOffset: 6
-      }
+        hover: {
+            sizeOffset: 6
+        }
     },
     xaxis: {
-      categories: ['01 Jan', '02 Jan', '03 Jan', '04 Jan', '05 Jan', '06 Jan', '07 Jan', '08 Jan', '09 Jan',
-        '10 Jan', '11 Jan', '12 Jan'
-      ],
+        categories: ['01 Jan', '02 Jan', '03 Jan', '04 Jan', '05 Jan', '06 Jan', '07 Jan', '08 Jan', '09 Jan',
+            '10 Jan', '11 Jan', '12 Jan'
+        ],
     },
     tooltip: {
-      y: [{
-        title: {
-          formatter: function (val) {
-            return val + " (mins)"
-          }
-        }
-      }, {
-        title: {
-          formatter: function (val) {
-            return val + " per session"
-          }
-        }
-      }, {
-        title: {
-          formatter: function (val) {
-            return val;
-          }
-        }
-      }]
+        y: [{
+            title: {
+                formatter: function (val) {
+                    return val + " (mins)"
+                }
+            }
+        }, {
+            title: {
+                formatter: function (val) {
+                    return val + " per session"
+                }
+            }
+        }, {
+            title: {
+                formatter: function (val) {
+                    return val;
+                }
+            }
+        }]
     },
     grid: {
-      borderColor: '#f1f1f1',
+        borderColor: '#f1f1f1',
     }
 }
 
 var chart = new ApexCharts(
-document.querySelector("#line_chart_dashed"),
-options
+    document.querySelector("#line_chart_dashed"),
+    options
 );
 
-  chart.render();
+chart.render();
 
 //   spline_area
 
@@ -202,7 +196,7 @@ var options = {
     colors: ['#5b73e8', '#f1b44c'],
     xaxis: {
         type: 'datetime',
-        categories: ["2018-09-19T00:00:00", "2018-09-19T01:30:00", "2018-09-19T02:30:00", "2018-09-19T03:30:00", "2018-09-19T04:30:00", "2018-09-19T05:30:00", "2018-09-19T06:30:00"],                
+        categories: ["2018-09-19T00:00:00", "2018-09-19T01:30:00", "2018-09-19T02:30:00", "2018-09-19T03:30:00", "2018-09-19T04:30:00", "2018-09-19T05:30:00", "2018-09-19T06:30:00"],
     },
     grid: {
         borderColor: '#f1f1f1',
@@ -235,7 +229,7 @@ var options = {
         bar: {
             horizontal: false,
             columnWidth: '45%',
-            endingShape: 'rounded'	
+            endingShape: 'rounded'
         },
     },
     dataLabels: {
@@ -508,21 +502,21 @@ var options = {
                     return y.toFixed(0) + " points";
                 }
                 return y;
-  
+
             }
         }
     },
     grid: {
         borderColor: '#f1f1f1'
     }
-  }
-  
-  var chart = new ApexCharts(
+}
+
+var chart = new ApexCharts(
     document.querySelector("#mixed_chart"),
     options
-  );
+);
 
-  chart.render();
+chart.render();
 
 
 //  Radial chart
@@ -555,7 +549,7 @@ var options = {
     series: [44, 55, 67, 83],
     labels: ['Computer', 'Tablet', 'Laptop', 'Mobile'],
     colors: ['#5b73e8', '#34c38f', '#50a5f1', '#f1b44c'],
-    
+
 }
 
 var chart = new ApexCharts(
@@ -569,39 +563,39 @@ chart.render();
 // pie chart
 
 var options = {
-  chart: {
-      height: 320,
-      type: 'pie',
-  }, 
-  series: [44, 55, 41, 17, 15],
-  labels: ["Series 1", "Series 2", "Series 3", "Series 4", "Series 5"],
-  colors: ["#34c38f", "#5b73e8","#f1b44c", "#50a5f1", "#f46a6a"],
-  legend: {
-      show: true,
-      position: 'bottom',
-      horizontalAlign: 'center',
-      verticalAlign: 'middle',
-      floating: false,
-      fontSize: '14px',
-      offsetX: 0
-  },
-  responsive: [{
-      breakpoint: 600,
-      options: {
-          chart: {
-              height: 240
-          },
-          legend: {
-              show: false
-          },
-      }
-  }]
+    chart: {
+        height: 320,
+        type: 'pie',
+    },
+    series: [44, 55, 41, 17, 15],
+    labels: ["Series 1", "Series 2", "Series 3", "Series 4", "Series 5"],
+    colors: ["#34c38f", "#5b73e8", "#f1b44c", "#50a5f1", "#f46a6a"],
+    legend: {
+        show: true,
+        position: 'bottom',
+        horizontalAlign: 'center',
+        verticalAlign: 'middle',
+        floating: false,
+        fontSize: '14px',
+        offsetX: 0
+    },
+    responsive: [{
+        breakpoint: 600,
+        options: {
+            chart: {
+                height: 240
+            },
+            legend: {
+                show: false
+            },
+        }
+    }]
 
 }
 
 var chart = new ApexCharts(
-  document.querySelector("#pie_chart"),
-  options
+    document.querySelector("#pie_chart"),
+    options
 );
 
 chart.render();
@@ -610,39 +604,39 @@ chart.render();
 // Donut chart
 
 var options = {
-  chart: {
-      height: 320,
-      type: 'donut',
-  }, 
-  series: [44, 55, 41, 17, 15],
-  labels: ["Series 1", "Series 2", "Series 3", "Series 4", "Series 5"],
-  colors: ["#34c38f", "#5b73e8","#f1b44c", "#50a5f1", "#f46a6a"],
-  legend: {
-      show: true,
-      position: 'bottom',
-      horizontalAlign: 'center',
-      verticalAlign: 'middle',
-      floating: false,
-      fontSize: '14px',
-      offsetX: 0
-  },
-  responsive: [{
-      breakpoint: 600,
-      options: {
-          chart: {
-              height: 240
-          },
-          legend: {
-              show: false
-          },
-      }
-  }]
+    chart: {
+        height: 320,
+        type: 'donut',
+    },
+    series: [44, 55, 41, 17, 15],
+    labels: ["Series 1", "Series 2", "Series 3", "Series 4", "Series 5"],
+    colors: ["#34c38f", "#5b73e8", "#f1b44c", "#50a5f1", "#f46a6a"],
+    legend: {
+        show: true,
+        position: 'bottom',
+        horizontalAlign: 'center',
+        verticalAlign: 'middle',
+        floating: false,
+        fontSize: '14px',
+        offsetX: 0
+    },
+    responsive: [{
+        breakpoint: 600,
+        options: {
+            chart: {
+                height: 240
+            },
+            legend: {
+                show: false
+            },
+        }
+    }]
 
 }
 
 var chart = new ApexCharts(
-  document.querySelector("#donut_chart"),
-  options
+    document.querySelector("#donut_chart"),
+    options
 );
 
 chart.render();

@@ -1,11 +1,4 @@
 
-/*
-Template Name: Minible - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://themesbrand.com/
-Contact: support@themesbrand.com
-File: Dashboard
-*/
 
 
 //
