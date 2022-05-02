@@ -7,7 +7,7 @@ const {
   join, won,
   ticketAdd, ticketList, ticketReply,
   getOnlinePlayers, getNotication, getPage, editOnlinePlayers,
-  withDrawRequest, addMoney, addWallet, addBank, updatePlayerImage, getTournaments, getCoupons, getBanners
+  withDrawRequest, addMoney, addWallet, addBank, updatePlayerImage, getTournaments, getCoupons, getBanners, clearAllNotification
 
 } = require('../controllers/players');
 
@@ -27,6 +27,7 @@ router.get('/page', protect, getPage);
 
 router.route('/profile').get(protect, getPlayer).post(protect, updatePlayer);
 router.route('/profile/image').post(protect, updatePlayerImage);
+router.post('/notification/clearall', protect, clearAllNotification);
 router.get('/notification', protect, getNotication);
 router.post('/pin', protect, setPin);
 router.post('/checkpin', chkPin);

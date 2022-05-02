@@ -856,3 +856,22 @@ exports.getBanners = asyncHandler(async (req, res, next) => {
     data: x
   });
 });
+// @desc      Update Notification
+// @route     PUT /api/v1/auth/Notifications/:id
+// @access    Private/Admin
+exports.clearAllNotification = asyncHandler(async (req, res, next) => {
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Notifications  not found`)
+    );
+  }
+
+  player = await Player.findByIdAndUpdate(req.player._id, { notificationRead: Date.now() }, {
+    new: false,
+    runValidators: true
+  });
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
