@@ -10,10 +10,10 @@ exports.getTickets = asyncHandler(async (req, res, next) => {
   Ticket.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-    select: { 'PlayerId': 1, 'ticketImage': 1, 'subject': 1, 'email': 1, 'phone': 1 },
+    select: { 'PlayerId': 1, 'ticketImage': 1, 'subject': 1, 'email': 1, 'phone': 1, 'firstName': 1, 'lastName': 1, 'updatedAt': 1, 'createdAt': 1, status: 1 },
     search: {
       value: req.body.search ? req.body.search.value : '',
-      fields: ['complexity']
+      fields: ['phone']
     },
     sort: {
       _id: 1
