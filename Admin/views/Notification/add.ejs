@@ -42,6 +42,11 @@
                             <form id="banner" action="" enctype="multipart/form-data" method="POST">
                                 <input type="hidden" name="imageId" value="" id="imageId">
                                 <div class="mb-3">
+                                    <label class="form-label">Url</label>
+                                    <input type="text" id="url" name="url" value="<%=row.url?row.url:'' %>"
+                                        class="form-control" required placeholder="Url" />
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Title</label>
                                     <input type="text" id="title" name="title" value="<%=row.title?row.title:'' %>"
                                         class="form-control" required placeholder="Title" />
@@ -70,10 +75,10 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div style="display: none;">
-                                    <label>Image</label>
-                                    <div class="dropzone" id="myDropzone"></div>
-                                </div>
+
+                                <label>Image</label>
+                                <div class="dropzone" id="myDropzone"></div>
+
 
                                 <div>
                                     <button id="submit-all" type="submit"
@@ -140,6 +145,7 @@
                             //send all the form data along with the files:
                             dzClosure.on("sending", function (data, xhr, formData) {
                                 formData.append("title", $("#title").val());
+                                formData.append("url", $("#url").val());
                                 formData.append("message", $("#message").val());
                                 formData.append("sendTo", $("#sendTo").val());
                                 formData.append("status", $("#statustxt").val());

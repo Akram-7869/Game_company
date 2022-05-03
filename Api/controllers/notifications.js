@@ -122,6 +122,7 @@ exports.getNotification = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.createNotification = asyncHandler(async (req, res, next) => {
   let notification = {
+    url: req.body.url,
     title: req.body.title,
     message: req.body.message,
     sendTo: req.body.sendTo,
@@ -161,6 +162,7 @@ exports.updateNotification = asyncHandler(async (req, res, next) => {
     );
   }
   let fieldsToUpdate = {
+    url: req.body.url,
     title: req.body.title,
     message: req.body.message,
     status: req.body.status,
