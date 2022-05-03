@@ -109,7 +109,7 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
       verifyPhone: undefined,
       verifyPhoneExpire: undefined,
       status: 'active',
-      $inc: { balance: addamount },
+      $inc: { balance: addamount, bonus: addamount },
     }
 
     let tranData = {
