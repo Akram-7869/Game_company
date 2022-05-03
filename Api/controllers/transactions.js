@@ -2,7 +2,9 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Transaction = require('../models/Transaction');
 const Player = require('../models/Player');
-
+const PlayerNotifcation = require('../models/PlayerNotifcation');
+const Notification = require('../models/Notification');
+const admin = require('../utils/fiebase');
 // @desc      Get all Transactions
 // @route     GET /api/v1/auth/Transactions
 // @access    Private/Admin
@@ -40,7 +42,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
   let filter = {
     limit: req.body.length,
     skip: req.body.start,
-    select: { 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
+    select: { 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
     search: {
 
     },
@@ -116,7 +118,7 @@ exports.getTransaction = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Transactions/:id
 // @access    Private/Admin
 exports.getPayoutDetail = asyncHandler(async (req, res, next) => {
-  const transaction = await Transaction.findById(req.params.id).populate({ path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } });
+  const transaction = await Transaction.findById(req.params.id).populate({ path: 'playerId' });
   res.status(200).json({
     success: true,
     data: transaction
@@ -131,14 +133,69 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
     );
   }
   let fieldsToUpdate = { paymentStatus: req.body.paymentStatus, status: 'complete', paymentStatus: req.body.paymentStatus, note: req.body.note }
+  let amount = transaction.amount;
+  let playerId = transaction.playerId
 
   transaction = await Transaction.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
 
-  //Transaction.isNew = false;
-  // await Transaction.save();
+  if (req.body.paymentStatus === 'DECLINED') {
+    fieldsToUpdate = {
+      $inc: { balance: amount }
+    }
+    player = await Player.findByIdAndUpdate(playerId, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+  }
+
+
+  let title = `Rs.${amount} ${req.body.paymentStatus} `;
+  let notification = {
+    title: title,
+    message: req.body.note,
+    sendTo: 'player',
+    status: 'active',
+
+  }
+
+  const notificationDb = await Notification.create(notification);
+  let updated = { read: false }
+  await PlayerNotifcation.findOneAndUpdate({ playerId: transaction.playerId, notificationId: notificationDb._id }, updated, {
+    new: false, upsert: true,
+    runValidators: true
+  });
+  //console.log('sending message');
+
+  let to_player = await Player.findById(transaction.playerId).select('+firebaseToken');
+  var message = {
+    notification: {
+      title: title,
+      body: req.body.note
+    },
+    // topic: "/topics/all",
+    // token: ''
+  };
+  // message['token'] = to_player.firebaseToken;
+  // console.log('COnstructinmessage:', message);
+  // await admin.messaging().send(message)
+  //   .then((response) => {
+  //     // Response is a message ID string.
+  //     console.log('Successfully sent message:', response);
+
+  //   })
+  //   .catch((error) => {
+  //     console.log('Error sending message:', error);
+  //   });
+
+  req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": transaction.playerId } });
+
+
+
+
+
   res.status(200).json({
     success: true,
     data: transaction
@@ -149,7 +206,7 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Transactions
 // @access    Private/Admin
 exports.createTransaction = asyncHandler(async (req, res, next) => {
-  console.log('req.body'.red, req.body);
+  // console.log('req.body'.red, req.body);
   let { amount, note, gameId, transactionType } = req.body;
   let player = await Player.findById(req.params.id);
   let fieldsToUpdate;
@@ -190,7 +247,48 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
     new: true,
     runValidators: true
   });
-  res.status(201).json({
+  let title = `Rs. ${amount} ${transactionType} `;
+  let notification = {
+    title: title,
+    message: title,
+    sendTo: 'player',
+    status: 'active',
+
+  }
+
+
+
+  const notificationDb = await Notification.create(notification);
+  let updated = { read: false }
+  await PlayerNotifcation.findOneAndUpdate({ playerId: req.params.id, notificationId: notificationDb._id }, updated, {
+    new: false, upsert: true,
+    runValidators: true
+  });
+  //console.log('sending message');
+
+  let to_player = await Player.findById(req.params.id).select('+firebaseToken');
+  var message = {
+    notification: {
+      title: title,
+      body: title
+    },
+    // topic: "/topics/all",
+    // token: ''
+  };
+  message['token'] = to_player.firebaseToken;
+
+  // await admin.messaging().send(message)
+  //   .then((response) => {
+  //     // Response is a message ID string.
+  //     console.log('Successfully sent message:', response);
+
+  //   })
+  //   .catch((error) => {
+  //     console.log('Error sending message:', error);
+  //   });
+  req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.params.id } });
+
+  res.status(200).json({
     success: true,
     data: player
   });

@@ -13,7 +13,7 @@ exports.getFiles = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/users/:id
 // @access    Private/Admin
 exports.getFile = asyncHandler(async (req, res, next) => {
-    console.log('req.params.id', req.params.id);
+    //  console.log('req.params.id', req.params.id);
     const user = await File.findById(req.params.id);
     // if (err) return next(err);
     //  res.contentType(user.contentType);

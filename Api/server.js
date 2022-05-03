@@ -93,6 +93,10 @@ app.use(cors());
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
+app.use((req, res, next) => {
+  req.io = io;
+  return next();
+});
 
 // Mount routers
 app.use('/api/v1/auth', auth);

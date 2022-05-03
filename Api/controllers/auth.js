@@ -7,7 +7,11 @@ const User = require('../models/User');
 const Transactions = require('../models/Transaction');
 const Setting = require('../models/Setting');
 const Dashboard = require('../models/Dashboard');
-const axios = require('axios');
+const axios = require('axios')
+const admin = require('../utils/fiebase')
+
+
+
 const { makeid } = require('../utils/utils');
 // @desc      Register user
 // @route     POST /api/v1/auth/register
@@ -15,7 +19,13 @@ const { makeid } = require('../utils/utils');
 exports.playerRegister = asyncHandler(async (req, res, next) => {
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.body;
 
-  let player = await Player.findOne({ 'phone': phone }).select('+deviceToken');
+  if (!phone) {
+    return next(
+      new ErrorResponse(`select phone/email`)
+    );
+  }
+
+  let player = await Player.findOne({ $or: [{ 'phone': phone }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
   let vcode = Math.floor(1000 + Math.random() * 9000);
   const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
   console.log(sms, player)
@@ -50,6 +60,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
       'verifyPhone': vcode,
       'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
       'deviceToken': deviceToken,
+      // 'firebaseToken': firebaseToken,
       'status': 'notverified',
       'countryCode': countryCode,
       'refer_code': makeid(6),
@@ -58,7 +69,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
     player = await Player.create(data);
   }
   await smsOtp(phone, vcode, sms);
-
+  //subscribeToTopic(firebaseToken);
   res.status(200).json({
     success: true,
     data: {}

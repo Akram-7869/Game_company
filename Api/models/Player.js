@@ -27,6 +27,10 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
 
   },
+  registeredWith: {
+    type: String,
+    default: 'phone'
+  },
   phone: {
     type: String,
     minLength: 8,
@@ -36,6 +40,7 @@ const PlayerSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    trim: true,
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Please add a valid email'
@@ -50,9 +55,26 @@ const PlayerSchema = new mongoose.Schema({
   deviceType: {
     type: String
   },
+  deviceId: {
+    type: String
+  },
   deviceToken: {
     type: String,
-    select: false
+    select: false,
+    trim: true,
+    required: [true, 'Please provide device id']
+  },
+  firebaseToken: {
+    type: String,
+    select: false,
+    trim: true,
+    required: [true, 'Please provide firebase Token']
+  },
+  firebaseId: {
+    type: String,
+    select: false,
+    trim: true,
+
   },
   gamecode: {
     type: String
@@ -93,6 +115,10 @@ const PlayerSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  notificationRead: {
+    type: Date,
+    default: ''
+  },
 
   aadharNumber: {
     type: String,
@@ -127,6 +153,10 @@ const PlayerSchema = new mongoose.Schema({
     select: false,
     type: Map,
   },
+  upi: {
+    select: false,
+    type: Map,
+  },
   wonCount: {
     type: Number,
     default: 0
@@ -148,7 +178,22 @@ const PlayerSchema = new mongoose.Schema({
   },
   level_2: {
     type: String
-  }
+  },
+  deposit: {
+    type: Number,
+    default: 0
+
+  },
+  winings: {
+    type: Number,
+    default: 0
+
+  },
+  bonus: {
+    type: Number,
+    default: 0
+
+  },
 
 });
 

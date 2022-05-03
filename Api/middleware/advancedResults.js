@@ -1,6 +1,6 @@
 const Player = require("../models/Player");
 var mongoose = require('mongoose');
-mongoose.set('debug', true);
+ 
 exports.advancedResults = (model, populate, filter = {}) => async (req, res, next) => {
   let query;
 

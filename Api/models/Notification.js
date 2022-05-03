@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 var dataTables = require('mongoose-datatables')
 const NoticationSchema = new mongoose.Schema({
+    title: {
+        type: String
+    },
 
     url: {
         type: String
@@ -13,7 +16,7 @@ const NoticationSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['inactive', 'active', 'nouser'],
+        enum: ['inactive', 'active', 'processed'],
     },
     sendTo: {
         type: String,

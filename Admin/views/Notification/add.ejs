@@ -42,9 +42,9 @@
                             <form id="banner" action="" enctype="multipart/form-data" method="POST">
                                 <input type="hidden" name="imageId" value="" id="imageId">
                                 <div class="mb-3">
-                                    <label class="form-label">Url</label>
-                                    <input type="text" id="url" name="url" value="<%=row.url?row.url:'' %>"
-                                        class="form-control" required placeholder="Url" />
+                                    <label class="form-label">Title</label>
+                                    <input type="text" id="title" name="title" value="<%=row.title?row.title:'' %>"
+                                        class="form-control" required placeholder="Title" />
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Message</label>
@@ -54,24 +54,27 @@
                                 <div class="mb-3">
                                     <h5 class="font-size-14 mb-4">Send to</h5>
                                     <select id="sendTo" class="form-select" name="sendTo" required>
-                                        <option value="player" <%=row.status==='player' ?'selected':'' %>>Slected player
+                                        <option value="player" <%=row.sendTo==='player' ?'selected':'' %>>Slected player
                                         </option>
-                                        <option value="all" <%=row.status==='all' ?'selected':'' %>>All players</option>
+                                        <option value="all" <%=row.sendTo==='all' ?'selected':'' %>>All players</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
                                     <div class="col-md-10">
                                         <select id="statustxt" class="form-select" name="status" required>
-                                            <option value="active" <%=row.status==='active' ?'selected':'' %>>active
-                                            </option>
+                                            <!-- <option value="active" <%=row.status==='active' ?'selected':'' %>>active
+                                            </option> -->
                                             <option value="inactive" <%=row.status==='inactive' ?'selected':'' %>
                                                 >inactive</option>
                                         </select>
                                     </div>
                                 </div>
-                                <label>Image</label>
-                                <div class="dropzone" id="myDropzone"></div>
+                                <div style="display: none;">
+                                    <label>Image</label>
+                                    <div class="dropzone" id="myDropzone"></div>
+                                </div>
+
                                 <div>
                                     <button id="submit-all" type="submit"
                                         class="btn btn-primary waves-effect waves-light me-1">
@@ -136,8 +139,9 @@
 
                             //send all the form data along with the files:
                             dzClosure.on("sending", function (data, xhr, formData) {
-                                formData.append("url", $("#url").val());
+                                formData.append("title", $("#title").val());
                                 formData.append("message", $("#message").val());
+                                formData.append("sendTo", $("#sendTo").val());
                                 formData.append("status", $("#statustxt").val());
 
                             });

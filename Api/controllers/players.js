@@ -7,8 +7,15 @@ const File = require('../models/File');
 const Dashboard = require('../models/Dashboard');
 const { request } = require('express');
 const Setting = require('../models/Setting');
+//const Lobby = require('../models/Lobby');
+//const Coupon = require('../models/Coupon');
+//const Gift = require('../models/Gift');
+const PlayerNotifcation = require('../models/PlayerNotifcation');
+const Notification = require('../models/Notification');
+//const admin = require('../utils/fiebase');
 const Tournament = require('../models/Tournament');
 const Banner = require('../models/Banner');
+
 let axios = require('axios');
 const FormData = require('form-data');
 
@@ -34,17 +41,30 @@ const checkOrderStatus = async (trxId) => {
 exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   let { amount, note, gameId, to } = req.body;
 
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player Not Found`)
+    );
+  }
+
   if (!amount || amount < 0) {
     return next(
       new ErrorResponse(`Invalid amount`)
     );
   }
-  if (!req.player) {
+  if (amount > req.player.balance) {
     return next(
-      new ErrorResponse(`Invalid Code`)
+      new ErrorResponse(`Insufficent Balance`)
     );
   }
-  let player = await Player.findById(req.player.id).select('+bank +wallet');
+
+  if (amount < 200) {
+    return next(
+      new ErrorResponse(`Balance less than 200`)
+    );
+  }
+
+  let player = await Player.findById(req.player.id).select('+bank +wallet +upi');
 
   let tranData = {
     'playerId': req.player._id,
@@ -61,11 +81,13 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     tranData['withdraw'] = player.bank;
   } else if (req.body.to === 'wallet') {
     tranData['withdraw'] = player.wallet;
+  } else if (req.body.to === 'upi') {
+    tranData['withdraw'] = player.upi;
   }
   //tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
-  player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount } }, {
+  player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount, winings: -amount } }, {
     new: true,
     runValidators: true
   });
@@ -75,6 +97,50 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     new: true, upsert: true,
     runValidators: true
   });
+
+  let title = `Withdraw Request Rs. ${amount}  `;
+  let notification = {
+    title: title,
+    message: title,
+    sendTo: 'player',
+    status: 'active',
+
+  }
+
+
+
+  const notificationDb = await Notification.create(notification);
+  let updated = { read: false }
+  await PlayerNotifcation.findOneAndUpdate({ playerId: req.player.id, notificationId: notificationDb._id }, updated, {
+    new: false, upsert: true,
+    runValidators: true
+  });
+  //console.log('sending message');
+
+  let to_player = await Player.findById(req.player.id).select('+firebaseToken');
+  var message = {
+    notification: {
+      title: title,
+      body: title
+    },
+    // topic: "/topics/all",
+    // token: ''
+  };
+  message['token'] = to_player.firebaseToken;
+
+  // await admin.messaging().send(message)
+  //   .then((response) => {
+  //     // Response is a message ID string.
+  //     console.log('Successfully sent message:', response);
+
+  //   })
+  //   .catch((error) => {
+  //     console.log('Error sending message:', error);
+  //   });
+
+  req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.player.id } });
+
+
   res.status(200).json({
     success: true,
     data: player
@@ -148,7 +214,32 @@ exports.addWallet = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+exports.addUpi = asyncHandler(async (req, res, next) => {
+  let { upiId } = req.body;
+  let fieldsToUpdate = { upiId };
+  let player = req.player;
+  if (!upiId) {
+    return next(
+      new ErrorResponse(`All fields are requied`)
+    );
+  }
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  player = await Player.findByIdAndUpdate(player.id, { upi: fieldsToUpdate }, {
+    new: true,
+    runValidators: true
+  });
 
+  //Player.isNew = false;
+  // await Player.save();
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});
 exports.addMoney = asyncHandler(async (req, res, next) => {
   let { amount, note, orderId } = req.body;
   let player = req.player;
@@ -159,12 +250,12 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
   // }
   if (!req.player) {
     return next(
-      new ErrorResponse(`Invalid Code`)
+      new ErrorResponse(`Player Not Found`)
     );
   }
   if (!orderId) {
     return next(
-      new ErrorResponse(`Game id requied`)
+      new ErrorResponse(`Order Not Found`)
     );
   }
 
@@ -179,7 +270,7 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
   console.log('row', row.data, tran);
   if (row.data.details.orderStatus === 'PAID') {
     let fieldsToUpdate = {
-      $inc: { balance: parseInt(row.data.details.orderAmount) }
+      $inc: { balance: parseInt(row.data.details.orderAmount), deposit: parseInt(row.data.details.orderAmount) }
     }
 
     player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
@@ -247,10 +338,10 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
   let player;
   //set
   if (req.staff) {
-    player = await Player.findById(req.params.id);
+    player = await Player.findById(req.params.id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken');
   } else {
     //player = req.player;
-    player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet');
+    player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken');
   }
 
   if (!player) {
@@ -260,7 +351,7 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
   }
 
   player['profileUrl'] = 'dfdfdfdf';
-  console.log('workin on it', player)
+
   res.status(200).json({
     success: true,
     data: player
@@ -286,7 +377,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
   let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus } = req.body;
   let fieldsToUpdate = { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob };
   let player;
-  if (!firstName || !email || !gender || !country || !aadharNumber || !panNumber || !dob) {
+  if (!firstName) {
     return next(
       new ErrorResponse(`All fields are requied`)
     );
@@ -497,6 +588,21 @@ exports.ticketList = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.getLobbys = asyncHandler(async (req, res, next) => {
+
+  let rows = await Lobby.find({ 'active': true }).lean();
+  let x = rows.map(d => {
+    d['imageUrl'] = process.env.API_URI + '/files/' + d.lobbyImage;
+    return d;
+  });
+  // console.log('dsdsdsdsdsd', x);
+  res.status(200).json({
+    success: true,
+    data: x
+  });
+});
+
+
 exports.ticketReply = asyncHandler(async (req, res, next) => {
   //req.body['playerId'] = req.player._id
   if (!req.player) {
@@ -566,7 +672,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
-  player = await tran.debitPlayer(amount);
+  player = await tran.debitPlayerDeposit(amount);
 
   let dashUpdate = {};
   if (req.body.logType === 'join') {
@@ -585,13 +691,60 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.debitBonus = asyncHandler(async (req, res, next) => {
+  let { amount, note, gameId } = req.body;
+
+  if (!amount || amount < 0) {
+    return next(
+      new ErrorResponse(`Invalid amount`)
+    );
+  }
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Invalid Code`)
+    );
+  }
+  if (!gameId) {
+    return next(
+      new ErrorResponse(`Game id requied`)
+    );
+  }
+  if (req.player.bonus < amount) {
+    return next(
+      new ErrorResponse(`Insufficent bonus balance`)
+    );
+  }
+
+  let tranData = {
+    'playerId': req.player._id,
+    'amount': amount,
+    'transactionType': "debit",
+    'note': note,
+    'prevBalance': req.player.balance,
+    status: 'complete', paymentStatus: 'SUCCESS'
+  }
+
+  tranData['gameId'] = gameId;
+
+  let tran = await Transaction.create(tranData);
+
+  player = await tran.debitPlayerBonus(amount);
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});
 
 // @desc      Log user out / clear cookie
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.creditAmount = asyncHandler(async (req, res, next) => {
   let player = req.player;//await Player.findById(req.body.id);
-  let { amount, note, gameId } = req.body;
+  let { amount, note, gameId, adminCommision = 0 } = req.body;
+
   if (amount < 0) {
     return next(
       new ErrorResponse(`Invalid amount`)
@@ -604,7 +757,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   }
   amount = parseInt(amount).toFixed(3);
 
-  let commision = 0;
+  let commision = adminCommision;
   let tranData = {
     'playerId': player._id,
     'amount': amount,
@@ -619,31 +772,32 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   }
   console.log('tranData', tranData);
   let tran = await Transaction.create(tranData);
-  player = await tran.creditPlayer(amount);
+
   // await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
   let dashUpdate = {};
   if (req.body.logType = "won") {
-    const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
+    //  const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
     // console.log(row.commission);
-    commision = (row.commission / 100) * amount;
-    let tranData = {
-      'playerId': player._id,
-      'amount': commision,
-      'transactionType': "debit",
-      'note': 'Service Charge',
-      'prevBalance': player.balance,
-      status: 'complete', paymentStatus: 'SUCCESS'
+    //  commision = (row.commission / 100) * amount;
+    // let tranData = {
+    //   'playerId': player._id,
+    //   'amount': commision,
+    //   'transactionType': "debit",
+    //   'note': 'Service Charge',
+    //   'prevBalance': player.balance,
+    //   status: 'complete', paymentStatus: 'SUCCESS'
 
-    }
-    let tran1 = await Transaction.create(tranData);
-    player = await tran1.debitPlayer(commision);
+    // }
+    // let tran1 = await Transaction.create(tranData);
+    // player = await tran1.debitPlayer(commision);
 
-    player = await Player.findByIdAndUpdate(req.player.id, { $inc: { wonCount: 1 } }, {
-      new: true,
-      runValidators: true
-    });
+    player = await tran.creditPlayerWinings(amount);
 
   }
+  if (req.body.logType = "bonus") {
+    player = await tran.creditPlayerBonus(amount);
+  }
+
   //console.log('debit', player.balance);
 
   await updateDashboradStat(amount, commision)
@@ -762,7 +916,7 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
   let player = req.player;
   let newfile;
   let fieldsToUpdate;
-  console.log(req.file, req.files, req.body, req.query);
+  //  console.log(req.file, req.files, req.body, req.query);
 
 
   let dataSave = {
@@ -808,10 +962,10 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
 
 let buildProfileUrl = (player) => {
   if (player.profilePic) {
-    console.log('image'.green);
+    // console.log('image'.green);
     return process.env.API_URI + '/files/' + player.profilePic
   } else {
-    console.log('image'.red);
+    // console.log('image'.red);
 
     return '';
   }
@@ -844,11 +998,14 @@ exports.getCoupons = asyncHandler(async (req, res, next) => {
 // @desc      Get current  in coupon
 // @route     POST /api/v1/auth/me
 // @access    Private
+
+
 exports.getBanners = asyncHandler(async (req, res, next) => {
   const banner = await Banner.find({ 'status': 'active' }).lean();
   console.log(banner);
   let x = banner.map(d => {
     d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
+
     return d;
   });
   res.status(200).json({
@@ -856,6 +1013,22 @@ exports.getBanners = asyncHandler(async (req, res, next) => {
     data: x
   });
 });
+exports.getGifts = asyncHandler(async (req, res, next) => {
+  const gift = await Gift.find({ 'active': true }).lean();;
+  let x = gift.map(d => {
+    d['imageUrl'] = process.env.API_URI + '/files/' + d.giftImage;
+    return d;
+  });
+  res.status(200).json({
+    success: true,
+    data: x
+  });
+});
+
+
+
+
+
 // @desc      Update Notification
 // @route     PUT /api/v1/auth/Notifications/:id
 // @access    Private/Admin
@@ -869,6 +1042,27 @@ exports.clearAllNotification = asyncHandler(async (req, res, next) => {
   player = await Player.findByIdAndUpdate(req.player._id, { notificationRead: Date.now() }, {
     new: false,
     runValidators: true
+  });
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
+
+// @desc      Update firebase
+// @route     PUT /api/v1/auth/savefbtoken/:id
+// @access    Private/player
+exports.savefbtoken = asyncHandler(async (req, res, next) => {
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+
+  player = await Player.findByIdAndUpdate(req.player._id, { 'firebaseToken': req.body.firebaseToken }, {
+    new: false,
+    runValidators: true
+
   });
   res.status(200).json({
     success: true,

@@ -50,6 +50,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   let tranData = {
     'playerId': req.player._id,
     'amount': amount,
+    'couponId': req.coupon_id ? req.coupon_id : '',
     'transactionType': "credit",
     'note': req.body.note,
     'paymentGateway': 'Cash Free',
@@ -133,6 +134,45 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   });
   await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
 
+  //coupon data 
+  if (!tran.coupon_id) {
+    res.status(200);
+  }
+  let coupon_id = tran.coupon_id;
+  let bonusAmount = 0;
+  let couponRec = await Coupon.findOne({ _id: coupon_id });
+  if (!couponRec) {
+    res.status(200);
+  }
+
+  if (chkCoupon.couponType == 'percentage') {
+    bonusAmount = amount * (couponRec.couponAmount * 0.01);
+  } else {
+    bonusAmount = couponRec.couponAmount;
+  }
+
+
+  let bonusToUpdate = {
+    $inc: { balance: parseInt(bonusAmount) }
+  }
+  let tranBonusData = {
+    'playerId': player_id,
+    'amount': bonusAmount,
+    'transactionType': "credit",
+    'note': 'Bonus amount',
+    'paymentGateway': 'Razor Pay',
+    'logType': 'payment',
+    'prevBalance': player.balance,
+    'paymentStatus': payment.status,
+    'status': 'complete',
+    'paymentId': payment.id
+  }
+  player = await Player.findByIdAndUpdate(player_id, bonusToUpdate, {
+    new: true,
+    runValidators: true
+  });
+  tran = await Transaction.create(tranBonusData);
+  console.log('bonus added');
   res.status(200).json({
     success: true,
     data: player

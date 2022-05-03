@@ -8,7 +8,7 @@ const PlayerNoticationSchema = new mongoose.Schema({
   },
   notificationId: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Notification',
+    ref: 'Notication',
 
   },
 

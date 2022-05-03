@@ -80,10 +80,11 @@ exports.getAddForm = asyncHandler(async (req, res, next) => {
 
 exports.createTransaction = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Transaction-edit' };
-      callApi(req).post(apiUrl + 'add/Transaction/' + req.params.id, req.body)
+      callApi(req).post(apiUrl + 'add/player/' + req.params.id, req.body)
             .then(r => {
-                  // Assign value in session
-                  res.redirect(process.env.ADMIN_URL + '/admin/Transaction');
+                  // redirect 
+                  res.redirect(process.env.ADMIN_URL + '/admin/player/' + req.params.id);
+
             })
             .catch(error => {
                   req.flash('error', 'Data not updated');

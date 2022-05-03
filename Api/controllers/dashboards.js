@@ -15,7 +15,7 @@ exports.getDashboards = asyncHandler(async (req, res, next) => {
       fields: ['complexity', 'status']
     },
     sort: {
-      _id: 1
+      _id: -1
     }
   }).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
@@ -28,7 +28,7 @@ exports.getDashboards = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.getDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findById(req.params.id);
-
+  res.locals = { title: 'Dashboard', adminUrl: process.env.ADMIN_URL };
   res.status(200).json({
     success: true,
     data: row
@@ -156,7 +156,7 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
 exports.getGraphData = asyncHandler(async (req, res, next) => {
 
   const graph = await getGraphData(req);
-  console.log('graph', graph, req.body)
+  //console.log('graph', graph, req.body)
   res.status(200).json({
     success: true,
     data: { graph }

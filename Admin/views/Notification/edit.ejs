@@ -38,9 +38,9 @@
                             <form id="banner" action="" enctype="multipart/form-data" method="POST">
 
                                 <div class="mb-3">
-                                    <label class="form-label">Url</label>
-                                    <input type="text" name="url" value="<%=row.url?row.url:'' %>" class="form-control"
-                                        required placeholder="Url " />
+                                    <label class="form-label">Title</label>
+                                    <input type="text" name="title" value="<%=row.title?row.title:'' %>"
+                                        class="form-control" required placeholder="Title" />
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Message</label>
@@ -67,11 +67,15 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div style="display: none;">
+                                    <img width=100 src="<%=apiFile +row.imageId%>">
 
-                                <img width=100 src="<%=apiFile +row.imageId%>">
 
 
-                                <div class="dropzone" id="myDropzone"></div>
+                                    <div class="dropzone" id="myDropzone"></div>
+                                </div>
+
+
                                 <div>
                                     <button id="submit-all" type="submit"
                                         class="btn btn-primary waves-effect waves-light me-1">
@@ -138,7 +142,7 @@
                             //send all the form data along with the files:
                             this.on("sending", function (data, xhr, formData) {
                                 alert('ddd');
-                                formData.append("url", $("#url").val());
+                                formData.append("title", $("#title").val());
                                 formData.append("message", $("#message").val());
                                 formData.append("status", $("#statustxt").val());
                                 formData.append("sendTo", $("#sendTo").val());

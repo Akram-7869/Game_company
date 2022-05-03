@@ -66,7 +66,7 @@ exports.updateNotification = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Notification' };
-                  req.flash('error', 'Data save');
+                  req.flash('success', 'Data save');
 
                   res.render('Notification/edit', { row: r.data.data });
             })
@@ -82,7 +82,7 @@ exports.editNotification = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
 
-                  req.flash('error', 'Data save');
+                  req.flash('success', 'Data save');
 
                   res.render('Notification/edit', { row: r.data.data });
             })
@@ -130,6 +130,7 @@ exports.createNotifications = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Notification' };
       console.log('sending', req.body)
 
+      req.body['status'] = 'inactive';
       callApi(req).post(apiUrl + "add", req.body)
             .then(r => {
                   // Assign value in session
@@ -140,10 +141,25 @@ exports.createNotifications = asyncHandler(async (req, res, next) => {
             })
             .catch(error => {
                   //   
-                  console.log('errorr', error);
+                  // console.error('errorr');
                   req.flash('error', 'Data not updated');
 
             })
       // res.render('Notification/list',{row:{}});
+});
+
+exports.sentoAll = asyncHandler(async (req, res, next) => {
+      axios.post(apiUrl + 'player/all/' + req.params.id)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'Notification' };
+                  req.flash('error', 'Data save');
+                  res.render('Notification/edit', { row: r.data.data });
+            })
+            .catch(error => { req.flash('error', 'Data not updated'); });
+      res.status(200).json({
+            success: true,
+            data: {}
+      });
 });
 

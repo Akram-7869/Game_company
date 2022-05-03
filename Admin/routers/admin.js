@@ -75,6 +75,7 @@ router.route('/manager/add').get(managerCtrl.addManager).post(managerCtrl.create
 router.route('/manager/:id').get(managerCtrl.getManager).post(managerCtrl.updateManager).delete(managerCtrl.deleteManager);
 
 router.route('/notification/player/:nid/:id').post(notificationCtrl.addPlayerList).delete(notificationCtrl.removePlayerList);
+router.route('/notification/all/:id').get(notificationCtrl.sentoAll);
 router.route('/notification/player/:id').get(notificationCtrl.getPlayerList);
 router.route('/notification').get(notificationCtrl.notificationList); router.route('/notification/data').post(notificationCtrl.getNotifications);
 router.route('/notification/add').get(notificationCtrl.notificationAdd).post(notificationCtrl.createNotifications);
