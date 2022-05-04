@@ -2,6 +2,8 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Banner = require('../models/Banner');
 const File = require('../models/File');
+const PlayerPoll = require('../models/PlayerPoll');
+
 // @desc      Get all Banners
 // @route     GET /api/v1/auth/Banners
 // @access    Private/Admin
@@ -111,6 +113,8 @@ exports.deleteBanner = asyncHandler(async (req, res, next) => {
   const row = await Banner.findById(req.params.id);
   await Banner.findByIdAndDelete(req.params.id);
   await File.findByIdAndDelete(row.imageId);
+  await PlayerPoll.deleteMany({ bannerId: req.params.id });
+
   res.status(200).json({
     success: true,
     data: {}

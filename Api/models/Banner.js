@@ -18,10 +18,15 @@ const BannerSchema = new mongoose.Schema({
         type: String,
         enum: ['inactive', 'active'],
     },
-    isNotification: {
-        type: Boolean,
-        default: false
+    bannerType: {
+        type: String,
+        default: 'banner'
     },
+    poll: {
+        type: Number,
+        default: 0
+    },
+
 
     createdBy: {
         type: mongoose.Schema.ObjectId,

@@ -31,7 +31,6 @@ const TournamentSchema = new mongoose.Schema({
     interval: {
         type: Number
     },
-
     createdBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
