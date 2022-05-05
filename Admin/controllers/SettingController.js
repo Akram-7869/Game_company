@@ -52,7 +52,7 @@ exports.getPage = asyncHandler(async (req, res, next) => {
 });
 exports.updatePage = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Page Term' };
-      console.log('ddd', req.params.id, req.body);
+      console.log('', req.params.id, req.body);
       callApi(req).post(apiUrl + req.params.id, req.body)
             .then(r => {
                   res.locals = { title: 'Page ' };
@@ -128,7 +128,7 @@ exports.getPayment = asyncHandler(async (req, res, next) => {
 });
 exports.updatePayment = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Payment Term' };
-      console.log('ddd', req.params.id, req.body);
+      console.log('', req.params.id, req.body);
       callApi(req).post(apiUrl + req.params.id, req.body)
             .then(r => {
                   res.locals = { title: 'Payment ' };
@@ -207,7 +207,7 @@ exports.getSmsGateway = asyncHandler(async (req, res, next) => {
 });
 exports.updateSmsGateway = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'SmsGateway Term' };
-      console.log('ddd', req.params.id, req.body);
+      console.log('', req.params.id, req.body);
       callApi(req).post(apiUrl + req.params.id, req.body)
             .then(r => {
                   res.locals = { title: 'SmsGateway' };
@@ -284,7 +284,7 @@ exports.getSite = asyncHandler(async (req, res, next) => {
 });
 exports.updateSite = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Site Term' };
-      console.log('ddd', req.params.id, req.body);
+      console.log('', req.params.id, req.body);
       callApi(req).post(apiUrl + req.params.id, req.body)
             .then(r => {
                   res.locals = { title: 'Site' };
@@ -296,7 +296,7 @@ exports.updateSite = asyncHandler(async (req, res, next) => {
 
 exports.updateSiteField = asyncHandler(async (req, res, next) => {
 
-      console.log('ddd', req.url);
+      console.log('', req.url);
       callApi(req).post(apiUrl + 'commission/' + req.params.id, req.body)
             .then(r => {
                   res.locals = { title: 'Site' };
@@ -335,7 +335,7 @@ exports.getSitelogo = asyncHandler(async (req, res, next) => {
 });
 exports.updateSitelogo = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Datatables' };
-      console.log('ddd', req.params.id, req.body);
+      console.log('', req.params.id, req.body);
       callApi(req).post(apiUrl + 'admin', req.body)
             .then(r => {
 
@@ -352,7 +352,7 @@ exports.getSiteData = asyncHandler(async (req, res, next) => {
             .then(r => {
                   req.app.locals['sitename'] = r.data.data.one.site_name;
                   req.app.locals['siteLogoUrl'] = api_url + '/settings/image/' + r.data.data.siteLogo;
-                  console.log('ddd', r.data.data);
+                  console.log('', r.data.data);
                   res.redirect(process.env.ADMIN_URL + '/login');
             })
             .catch(error => {
