@@ -200,11 +200,11 @@
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
-                                { data: 'playerId._id' },
-                                { data: 'transactionType' },
-                                { data: 'amount' },
-                                { data: 'note' },
-                                { data: 'paymentStatus' },
+                                { data: 'playerId._id', "defaultContent": "" },
+                                { data: 'transactionType', "defaultContent": "" },
+                                { data: 'amount', "defaultContent": "" },
+                                { data: 'note', "defaultContent": "" },
+                                { data: 'paymentStatus', "defaultContent": "" },
                                 {
                                     data: 'createdAt', data: 'createdAt', render: function (data) {
                                         return moment(data).format('DD-MM-YYYY');

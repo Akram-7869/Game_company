@@ -142,11 +142,11 @@
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
 
-                                { data: 'name' },
-                                { data: 'betAmount' },
-                                { data: 'players' },
-                                { data: 'time' },
-                                { data: 'active' },
+                                { data: 'name', "defaultContent": "" },
+                                { data: 'betAmount', "defaultContent": "" },
+                                { data: 'players', "defaultContent": "" },
+                                { data: 'time', "defaultContent": "" },
+                                { data: 'active', "defaultContent": "" },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/tournament/'

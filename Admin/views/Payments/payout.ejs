@@ -184,11 +184,11 @@
                                         return meta.row + 1;
                                     }
                                 },
-                                { data: 'playerId.firstName' },
-                                { data: 'playerId.lastName' },
+                                { data: 'playerId.firstName', "defaultContent": "" },
+                                { data: 'playerId.lastName', "defaultContent": "" },
 
-                                { data: 'amount' },
-                                { data: 'paymentStatus' },
+                                { data: 'amount', "defaultContent": "" },
+                                { data: 'paymentStatus', "defaultContent": "" },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/payout/edit/'

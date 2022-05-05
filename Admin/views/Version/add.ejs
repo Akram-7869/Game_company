@@ -1,72 +1,78 @@
 <%- contentFor('HeaderCss') %>
 
-<%- contentFor('breadcrumb') %>
+    <%- contentFor('breadcrumb') %>
 
-<!-- start page title -->
-<div class="row">
-    <div class="col-12">
-        <div class="page-title-box d-flex align-items-center justify-content-between">
-            <h4 class="mb-0">Verson Controle </h4>
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0"> Version Controle </h4>
 
-            <div class="page-title-right">
-                <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                    <li class="breadcrumb-item active"><%- title %> List</li>
-                     <li class="breadcrumb-item active">Add</li>
-                </ol>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item active">
+                                <%- title %> List
+                            </li>
+                            <li class="breadcrumb-item active">Add</li>
+                        </ol>
+                    </div>
+
+                </div>
             </div>
-
         </div>
-    </div>
-</div>
-<!-- end page title -->
+        <!-- end page title -->
 
-<%- contentFor('body') %>
+        <%- contentFor('body') %>
 
- 
-<div class="row">
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-               <!--  <h4 class="card-title">Validation type</h4>
+
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <!--  <h4 class="card-title">Validation type</h4>
                 <p class="card-title-desc"> </p> -->
 
-                <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST" name="player"  enctype="application/x-www-form-urlencoded">
-                    <div class="mb-3">
-                        <label class="form-label">Version Controle</label>
-                        <input type="text" name="versionControle" value="<%=row.versionControle?row.versionControle:'' %>" class="form-control" required placeholder="Version Controle"/>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">App Link</label>
-                        <input type="text" name="appLink" value="<%=row.appLink?row.appLink:'' %>" class="form-control" required placeholder="App Link"/>
-                    </div>
+                            <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST"
+                                name="player" enctype="application/x-www-form-urlencoded">
+                                <div class="mb-3">
+                                    <label class="form-label">Version Controle</label>
+                                    <input type="text" name="versionControle"
+                                        value="<%=row.versionControle?row.versionControle:'' %>" class="form-control"
+                                        required placeholder="Version Controle" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">App Link</label>
+                                    <input type="text" name="appLink" value="<%=row.appLink?row.appLink:'' %>"
+                                        class="form-control" required placeholder="App Link" />
+                                </div>
 
-                     
-                     
-                    <div>
-                        <div>
-                            <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                                Submit
-                            </button>
-                            <button type="reset" class="btn btn-secondary waves-effect">
-                                Cancel
-                            </button>
+
+
+                                <div>
+                                    <div>
+                                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+                                        <button type="reset" class="btn btn-secondary waves-effect">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
                         </div>
                     </div>
-                </form>
+                </div> <!-- end col -->
 
-            </div>
-        </div>
-    </div> <!-- end col -->
 
-   
-</div> <!-- end row -->
+            </div> <!-- end row -->
 
-<%- contentFor('FooterJs') %>
+            <%- contentFor('FooterJs') %>
 
-<!-- parsleyjs -->
-<script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
+                <!-- parsleyjs -->
+                <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
 
-<script src="/public/assets/js/pages/form-validation.init.js"></script>
+                <script src="/public/assets/js/pages/form-validation.init.js"></script>
 
-<%- contentFor('BottomJs') %>
+                <%- contentFor('BottomJs') %>

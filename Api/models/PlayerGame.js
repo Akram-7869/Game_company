@@ -9,6 +9,10 @@ const PlayerGameSchema = new mongoose.Schema({
     type: String
 
   },
+  tournamentId: {
+    type: mongoose.Schema.ObjectId,
+
+  },
   gameType: {
     type: String,
     default: 'paid',
@@ -30,6 +34,10 @@ const PlayerGameSchema = new mongoose.Schema({
   rank: {
     type: Number,
     default: 0,
+  },
+  winner: {
+    type: String,
+    default: 'winner_1',
   },
 
   gameOnline: {

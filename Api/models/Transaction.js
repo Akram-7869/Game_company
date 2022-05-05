@@ -74,7 +74,7 @@ const TransactionsSchema = new mongoose.Schema({
     },
     logType: {
         type: String,
-        enum: ['deopsit', 'withdraw', 'payment', 'game', 'join', 'won', 'fees', 'bonus', 'adjustment'],
+        enum: ['deposit', 'withdraw', 'payment', 'game', 'join', 'won', 'fees', 'bonus', 'adjustment'],
         required: true,
         default: 'game'
     },

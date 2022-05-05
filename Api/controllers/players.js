@@ -16,6 +16,7 @@ const Notification = require('../models/Notification');
 const Tournament = require('../models/Tournament');
 const Banner = require('../models/Banner');
 const PlayerPoll = require('../models/PlayerPoll');
+const PlayerGame = require('../models/PlayerGame');
 let axios = require('axios');
 const FormData = require('form-data');
 
@@ -743,7 +744,7 @@ exports.debitBonus = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.creditAmount = asyncHandler(async (req, res, next) => {
   let player = req.player;//await Player.findById(req.body.id);
-  let { amount, note, gameId, adminCommision = 0 } = req.body;
+  let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1' } = req.body;
 
   if (amount < 0) {
     return next(
@@ -792,6 +793,15 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     // player = await tran1.debitPlayer(commision);
 
     player = await tran.creditPlayerWinings(amount);
+    let playerGame = {
+      'playerId': player._id,
+      'amountWon': amount,
+      'tournamentId': tournamentId,
+      'winner': 'winner_1',
+      'gameId': gameId,
+      'gameStatus': 'won'
+    }
+    await PlayerGame.create(playerGame);
 
   }
   if (req.body.logType = "bonus") {

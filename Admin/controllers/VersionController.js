@@ -4,13 +4,13 @@ var apiUrl = api_url + '/versions/';
 
 
 exports.listVersion = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Verson Controle' };
+      res.locals = { title: ' Version  Controle' };
       res.render('Version/list');
 });
 
 
 exports.getVersion = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Verson Controle' };
+      res.locals = { title: ' Version  Controle' };
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
 
@@ -25,7 +25,7 @@ exports.getVersion = asyncHandler(async (req, res, next) => {
 
 exports.updateVersion = asyncHandler(async (req, res, next) => {
 
-      res.locals = { title: 'Verson Controle' };
+      res.locals = { title: ' Version  Controle' };
       callApi(req).post(apiUrl + req.params.id, req.body)
             .then(r => {
                   // Assign value in session

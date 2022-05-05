@@ -226,12 +226,12 @@
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
-                                { data: 'playerId._id' },
-                                { data: 'transactionType' },
-                                { data: 'amount' },
-                                { data: 'note' },
-                                { data: 'paymentStatus' },
-                                { data: 'createdAt' },
+                                { data: 'playerId._id', "defaultContent": "" },
+                                { data: 'transactionType', "defaultContent": "" },
+                                { data: 'amount', "defaultContent": "" },
+                                { data: 'note', "defaultContent": "" },
+                                { data: 'paymentStatus', "defaultContent": "" },
+                                { data: 'createdAt', "defaultContent": "" },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/banner/'

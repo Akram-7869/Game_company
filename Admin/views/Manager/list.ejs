@@ -134,10 +134,10 @@
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return i++; } },
 
-                                { data: 'firstName' },
-                                { data: 'email' },
-                                { data: 'phone' },
-                                { data: 'status' },
+                                { data: 'firstName', "defaultContent": "" },
+                                { data: 'email', "defaultContent": "" },
+                                { data: 'phone', "defaultContent": "" },
+                                { data: 'status', "defaultContent": "" },
                                 {
                                     data: 'createdAt', render: function (data) {
                                         return moment(data).format('DD-MM-YYYY');

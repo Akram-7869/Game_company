@@ -56,7 +56,7 @@
                                         <th>Mobile</th>
                                         <th>Joing Date</th>
                                         <th>Status</th>
-                                        <th>Action</th>
+                                        <!-- <th>Action</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -156,12 +156,13 @@
                                 },
                                 { data: 'status' },
 
-                                {
-                                    data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-3 text-primary" href="<%=process.env.ADMIN_URL%>/admin/player/'
-                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a> ';
-                                    }
-                                },
+                                // {
+                                //     data: null, "render": function (data, type, full, meta) {
+                                //         return '<a class="px-3 text-primary" href="<%=process.env.ADMIN_URL%>/admin/player/'
+                                //             + full._id + '"><i class="uil uil-pen font-size-18"></i></a> ';
+                                //     }
+                                // }
+
                             ]
                         });
                     </script>
