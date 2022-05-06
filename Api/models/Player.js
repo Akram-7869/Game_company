@@ -68,7 +68,6 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
     select: false,
     trim: true,
-    required: [true, 'Please provide firebase Token']
   },
   firebaseId: {
     type: String,

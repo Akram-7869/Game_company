@@ -766,12 +766,12 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': player.balance,
     'adminCommision': commision,
-    status: 'complete', paymentStatus: 'SUCCESS'
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'logType': req.body.logType
   }
   if (gameId) {
     tranData['gameId'] = gameId;
   }
-  console.log('tranData', tranData);
   let tran = await Transaction.create(tranData);
 
   // await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });

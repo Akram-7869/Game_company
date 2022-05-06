@@ -24,7 +24,7 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
   //   }
   // };
   // }
-  let filter = { status: "complete", logType: 'won' };
+  let filter = { logType: 'won' };
 
   //plaerId filter
   if (req.body.playerId) {
@@ -46,9 +46,9 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
     , { $sort: { n: -1 } }
     , { $limit: 100 },
   ]);
-  await Player.populate(row, { path: "_id", select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } });
+  let x = await Player.populate(row, { path: "_id", select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } });
 
-  //console.log(req.body, filter);
+  console.log(req.body, x);
   // PlayerGame.dataTables(filter).then(function (table) {
   //   res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   // })
