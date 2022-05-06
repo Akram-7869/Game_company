@@ -36,6 +36,10 @@ const SettingSchema = new mongoose.Schema({
     active: {
         type: Boolean,
         default: true
+    },
+    level_1: {
+        type: Number,
+        default: 5
     }
 
 }, {

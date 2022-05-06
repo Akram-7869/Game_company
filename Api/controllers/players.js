@@ -1132,3 +1132,52 @@ exports.pollList = asyncHandler(async (req, res, next) => {
     data: x
   });
 });
+
+// @desc      Update refer
+// @route     PUT /api/v1/auth/savefbtoken/:id
+// @access    Private/player
+exports.updateRefer = asyncHandler(async (req, res, next) => {
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  if (!req.body.referId) {
+    return next(
+      new ErrorResponse(`refer id  not found`)
+    );
+  }
+
+  player = await Player.find({ 'refer_code': req.body.referId }, {
+    new: false,
+    runValidators: true
+
+  });
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  let note = "Refrer bonus";
+  let amount = 5;
+  let tranData = {
+    'playerId': player._id,
+    'amount': amount,
+    'transactionType': "credit",
+    'note': note,
+    'prevBalance': player.balance,
+    status: 'complete', paymentStatus: 'SUCCESS'
+  }
+
+  let tran = await Transaction.create(tranData);
+
+  player = await tran.debitPlayerBonus(amount);
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
