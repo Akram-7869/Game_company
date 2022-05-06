@@ -93,7 +93,7 @@ exports.bannerAdd = asyncHandler(async (req, res, next) => {
 
 exports.createBanners = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Banner' };
-      console.log('creating-image', req.files);
+      //console.log('creating-image', req.files);
 
       axios.post(apiUrl, { body: req.body, file: req.files })
             .then(r => {
@@ -117,16 +117,16 @@ exports.createBanners = asyncHandler(async (req, res, next) => {
 //       axios.get(apiUrl + req.params.id)
 //             .then(r => {
 //                   // Assign value in session
-//                  
+//
 //                   res.locals = { title: 'Banner' };
-//                   res.render('Ads/view',{row:r.data.data}); 
-//                 
+//                   res.render('Ads/view',{row:r.data.data});
+//
 
 //             })
 //             .catch(error => {
-//                   
+//
 
 //                //   req.flash('error', 'Incorrect email or password!');
-//                
+//
 //             })
 // });

@@ -79,7 +79,7 @@ module.exports = function (app) {
 			password: req.body.password,
 		})
 			.then(r => {
-				console.log(r.data.data.one);
+				////console.log(r.data.data.one);
 				res.render('Page/dynamic', r.data.data.one);
 
 			}).catch(error => { })

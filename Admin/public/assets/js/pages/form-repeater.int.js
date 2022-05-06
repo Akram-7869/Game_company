@@ -26,22 +26,22 @@ $(document).ready(function () {
     window.outerRepeater = $('.outer-repeater').repeater({
         defaultValues: { 'text-input': 'outer-default' },
         show: function () {
-            console.log('outer show');
+            //console.log('outer show');
             $(this).slideDown();
         },
         hide: function (deleteElement) {
-            console.log('outer delete');
+            //console.log('outer delete');
             $(this).slideUp(deleteElement);
         },
         repeaters: [{
             selector: '.inner-repeater',
             defaultValues: { 'inner-text-input': 'inner-default' },
             show: function () {
-                console.log('inner show');
+                //console.log('inner show');
                 $(this).slideDown();
             },
             hide: function (deleteElement) {
-                console.log('inner delete');
+                //console.log('inner delete');
                 $(this).slideUp(deleteElement);
             }
         }]

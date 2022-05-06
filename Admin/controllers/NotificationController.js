@@ -3,7 +3,7 @@ let axios = require("axios");
 const { callApi, api_url, redirect } = require('../helper/common');
 let apiUrl = api_url + '/notifications/';
 let apiFile = api_url + '/files/';
-console.log('apiUrl', apiUrl)
+//console.log('apiUrl', apiUrl)
 
 exports.notificationList = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Notification', apiUrl, apiFile };
@@ -128,7 +128,7 @@ exports.notificationAdd = asyncHandler(async (req, res, next) => {
 
 exports.createNotifications = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Notification' };
-      console.log('sending', req.body)
+      //console.log('sending', req.body)
 
       req.body['status'] = 'inactive';
       callApi(req).post(apiUrl + "add", req.body)

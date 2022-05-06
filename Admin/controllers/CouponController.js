@@ -68,7 +68,7 @@ exports.addCoupon = asyncHandler(async (req, res, next) => {
 
 
 exports.createCoupons = asyncHandler(async (req, res, next) => {
-    console.log(req.session);
+    //console.log(req.session);
     res.locals = { title: 'Coupon-add' };
     callApi(req).post(apiUrl + 'add', req.body)
         .then(r => {

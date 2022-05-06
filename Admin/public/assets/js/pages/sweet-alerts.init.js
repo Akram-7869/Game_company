@@ -129,7 +129,7 @@
                     // Read more about handling dismissals
                     result.dismiss === Swal.DismissReason.timer
                 ) {
-                    console.log('I was closed by the timer')
+                    //console.log('I was closed by the timer')
                 }
             })
         });

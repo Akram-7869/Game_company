@@ -21,7 +21,7 @@ exports.dashBoardView = asyncHandler(async (req, res, next) => {
                 return d.totalAmount
             });
 
-            console.log(lableDb, sumDb);
+            ////console.log(lableDb, sumDb);
             res.render('Dashboard/index', { list: r.data.data.row, lableDb, sumDb })
         })
         .catch(error => { req.flash('error', 'Incorrect email or password!'); })
@@ -45,7 +45,7 @@ exports.getChartData = asyncHandler(async (req, res, next) => {
     }
 
     let filter = { s_date: req.body.s_date, e_date: req.body.e_date, logType: req.body.logType };
-    console.log(filter, req.body);
+    //console.log(filter, req.body);
     callApi(req).post(apiUrl + 'chart/data', filter)
         .then(r => {
             let lableDb = r.data.data.graph.map(d => {

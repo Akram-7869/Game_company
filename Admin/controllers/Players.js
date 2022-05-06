@@ -40,7 +40,7 @@ exports.getPlayerPayoutEdit = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Player Payout' };
       callApi(req).get(apiUrlTransaction + 'payout/' + req.params.id)
             .then(r => {
-                  console.log(r.data.data);
+                  //console.log(r.data.data);
                   res.render('Payments/payoutedit', { row: r.data.data });
             })
             .catch(error => {//   req.flash('error', 'Incorrect email or password!');})
@@ -158,7 +158,7 @@ exports.updatePlayerStatus = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/Players
 // @access    Private/Admin
 exports.creditPlayer = asyncHandler(async (req, res, next) => {
-      console.log(req.body);
+      //console.log(req.body);
       res.locals = { title: 'Player' };
       callApi(req).post(apiUrl + 'credit/' + req.params.id, req.body)
             .then(r => {
@@ -210,7 +210,7 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
       // const config = {
       //       headers: { Authorization: `Bearer ${req.session.user.token}` }
       //   };
-      console.log('url', req.url);
+      //console.log('url', req.url);
 
 
 
