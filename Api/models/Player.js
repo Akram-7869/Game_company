@@ -180,17 +180,20 @@ const PlayerSchema = new mongoose.Schema({
   },
   deposit: {
     type: Number,
-    default: 0
+    default: 0,
+    min: 0
 
   },
   winings: {
     type: Number,
-    default: 0
+    default: 0,
+    min: 0
 
   },
   bonus: {
     type: Number,
-    default: 0
+    default: 0,
+    min: 0
 
   },
 

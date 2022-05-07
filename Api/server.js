@@ -63,6 +63,7 @@ app.use(cookieParser());
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
+  require('mongoose').set('debug', true);
   app.use(morgan('dev'));
 }
 

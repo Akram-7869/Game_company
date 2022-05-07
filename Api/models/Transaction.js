@@ -74,7 +74,7 @@ const TransactionsSchema = new mongoose.Schema({
     },
     logType: {
         type: String,
-        enum: ['deposit', 'withdraw', 'payment', 'game', 'join', 'won', 'fees', 'bonus', 'adjustment'],
+        enum: ['deposit', 'withdraw', 'game', 'won', 'bonus'],
         required: true,
         default: 'game'
     },
@@ -134,7 +134,7 @@ TransactionsSchema.methods.creditPlayerWinings = async function (amount) {
 
 };
 TransactionsSchema.methods.creditPlayerBonus = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { bonus: amount } }, {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { bonus: amount, balance: amount, } }, {
         new: true,
         runValidators: true
     });
