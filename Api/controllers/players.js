@@ -1099,7 +1099,7 @@ exports.poll = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Banner  not found`)
     );
   }
-  console.log(polled);
+
   if (!polled) {
     console.log('1');
     let a = await PlayerPoll.create({ 'playerId': req.player.id, bannerId: req.body.id });
@@ -1148,36 +1148,40 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     );
   }
 
-  player = await Player.find({ 'refer_code': req.body.referId }, {
-    new: false,
-    runValidators: true
-
-  });
-  if (!player) {
+  let codeGiver = await Player.findOne({ 'refer_code': req.body.referId });
+  if (!codeGiver || req.player.join_code || req.player.createdAt < codeGiver.createdAt) {
     return next(
       new ErrorResponse(`Player  not found`)
     );
   }
+
+  const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
   let note = "Refrer bonus";
-  let amount = 5;
+  let amount = row.referral_commission;
   let tranData = {
-    'playerId': player._id,
+    'playerId': codeGiver._id,
     'amount': amount,
     'transactionType': "credit",
     'note': note,
-    'prevBalance': player.balance,
+    'prevBalance': codeGiver.balance,
+    'logType': 'bonus',
     status: 'complete', paymentStatus: 'SUCCESS'
   }
 
   let tran = await Transaction.create(tranData);
+  await tran.creditPlayerBonus(amount);
+  let player = await Player.findByIdAndUpdate(req.player._id, { 'join_code': req.body.referId }, {
+    new: true,
+    runValidators: true
+  });
 
-  player = await tran.debitPlayerBonus(amount);
+  await Player.findByIdAndUpdate(codeGiver._id, { $inc: { joinCount: 1 } }, {
+    new: false,
+    runValidators: true
+  });
+
   res.status(200).json({
     success: true,
     data: player
-  });
-  res.status(200).json({
-    success: true,
-    data: {}
   });
 });

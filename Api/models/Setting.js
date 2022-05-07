@@ -20,9 +20,7 @@ const SettingSchema = new mongoose.Schema({
     one: {},
     commission: {
         type: Number,
-        default: 20,
-
-
+        default: 0,
     },
     type: {
         type: String,
@@ -37,9 +35,9 @@ const SettingSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
-    level_1: {
+    referral_commission: {
         type: Number,
-        default: 5
+        default: 0
     }
 
 }, {

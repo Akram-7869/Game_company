@@ -88,7 +88,13 @@ const TransactionsSchema = new mongoose.Schema({
 }, {
     timestamps: true,
 });
-
+// debit player
+TransactionsSchema.methods.debitPlayerWinings = async function (amount) {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: -amount, winings: -amount } }, {
+        new: true,
+        runValidators: true
+    });
+};
 // debit player
 TransactionsSchema.methods.debitPlayerBonus = async function (amount) {
     return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: -amount, bonus: -amount } }, {

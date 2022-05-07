@@ -10,7 +10,7 @@ const { protect, authorize } = require('../middleware/auth');
 //router.use(authorize('admin','Player'));
 router.get('/tournaments', protect, playerCtl.getTournaments);
 router.get('/banners', protect, playerCtl.getBanners);
-router.get('/refer', protect, playerCtl.updateRefer);
+router.post('/refer', protect, playerCtl.updateRefer);
 
 router.post('/status/:id', protect, playerCtl.updateStatus);
 

@@ -207,7 +207,7 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.createTransaction = asyncHandler(async (req, res, next) => {
   // console.log('req.body'.red, req.body);
-  let { amount, note, gameId, transactionType } = req.body;
+  let { amount, note, gameId, transactionType, logType } = req.body;
   let player = await Player.findById(req.params.id);
   let fieldsToUpdate;
   if (amount < 0) {
@@ -221,15 +221,7 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
     );
   }
   amount = parseInt(amount).toFixed(3);
-  if (transactionType === 'credit') {
-    fieldsToUpdate = {
-      $inc: { balance: amount }
-    }
-  } else if (transactionType === 'debit') {
-    fieldsToUpdate = {
-      $inc: { balance: -amount }
-    }
-  }
+
 
   let commision = 0;
   let tranData = {
@@ -238,15 +230,30 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
     'transactionType': transactionType,
     'note': note,
     'prevBalance': player.balance,
-    status: 'complete', paymentStatus: 'SUCCESS'
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'logType': logType
 
   }
 
   const transaction = await Transaction.create(tranData);
-  player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
-    new: true,
-    runValidators: true
-  });
+  if (transactionType === 'credit') {
+    if (logType === 'won') {
+      player = await transaction.creditPlayerWinings(amount);
+    } else if (logType === 'bonus') {
+      player = await transaction.creditPlayerBonus(amount);
+    } else if (logType === 'deposit') {
+      player = await transaction.creditPlayerDeposit(amount);
+    }
+  } else if (transactionType === 'debit') {
+    if (logType === 'won') {
+      player = await transaction.debitPlayerWinings(amount);
+    } else if (logType === 'bonus') {
+      player = await transaction.debitPlayerBonus(amount);
+    } else if (logType === 'deposit') {
+      player = await transaction.debitPlayerDeposit(amount);
+    }
+  }
+
   let title = `Rs. ${amount} ${transactionType} `;
   let notification = {
     title: title,

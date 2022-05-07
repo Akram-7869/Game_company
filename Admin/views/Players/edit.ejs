@@ -70,8 +70,23 @@
                                             class="form-control" required placeholder="Phone" />
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Wallet Balance</label>
+                                        <label class="form-label">Total Balance</label>
                                         <input readonly type="text" name="" value="<%=row.balance?row.balance:'' %>"
+                                            class="form-control" required placeholder="" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Winings Balance</label>
+                                        <input readonly type="text" name="" value="<%=row.winings?row.winings:'' %>"
+                                            class="form-control" required placeholder="" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Deposit Balance</label>
+                                        <input readonly type="text" name="" value="<%=row.deposit?row.deposit:'' %>"
+                                            class="form-control" required placeholder="" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Bonus Balance</label>
+                                        <input readonly type="text" name="" value="<%=row.bonus?row.bonus:'' %>"
                                             class="form-control" required placeholder="" />
                                     </div>
                                     <div class="mb-3">
@@ -238,9 +253,10 @@
                                                 <select class="form-select" name="logType" required>
                                                     <option value="bonus" <%=row.status==='bonus' ?'selected':'' %>
                                                         >bonus</option>
-                                                    <option value="adjustment" <%=row.status==='adjustment'
-                                                        ?'selected':'' %>
-                                                        >adjustment</option>
+                                                    <option value="deposit" <%=row.status==='deposit' ?'selected':'' %>
+                                                        >deposit</option>
+                                                    <option value="won" <%=row.status==='won' ?'selected':'' %>
+                                                        >winning</option>
 
                                                 </select>
                                             </div>
