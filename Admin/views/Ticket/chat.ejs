@@ -140,11 +140,11 @@
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
-                                { data: 'name' },
-                                { data: 'email' },
-                                { data: 'phone' },
-                                { data: 'subject' },
-                                { data: 'updatedAt' },
+                                { data: 'name', "defaultContent": "" },
+                                { data: 'email', "defaultContent": "" },
+                                { data: 'phone', "defaultContent": "" },
+                                { data: 'subject', "defaultContent": "" },
+                                { data: 'updatedAt', "defaultContent": "" },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-3 text-primary" href="<%=process.env.ADMIN_URL%>/admin/chat/'

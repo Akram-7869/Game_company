@@ -192,14 +192,14 @@
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return i++; } },
 
-                                { data: 'playerId._id' },
+                                { data: 'playerId._id', "defaultContent": "" },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return full.playerId.firstName + ' ' + full.playerId.lastName
                                     }
-                                }, { data: 'gameId' },
-                                { data: 'amountWon' },
-                                { data: 'amountPaid' },
+                                }, { data: 'gameId', "defaultContent": "" },
+                                { data: 'amountWon', "defaultContent": "" },
+                                { data: 'amountPaid', "defaultContent": "" },
 
                                 // {
                                 //     data: null, "render": function (data, type, full, meta) {

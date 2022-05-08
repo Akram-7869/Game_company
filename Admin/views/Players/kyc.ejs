@@ -145,10 +145,10 @@
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
-                                { data: '_id' },
+                                { data: '_id', "defaultContent": "" },
                                 { data: 'firstName', "defaultContent": "" },
                                 { data: 'email', "defaultContent": "" },
-                                { data: 'phone' },
+                                { data: 'phone', "defaultContent": "" },
                                 {
                                     data: 'createdAt', render: function (data) {
                                         return moment(data).format('DD-MM-YYYY');

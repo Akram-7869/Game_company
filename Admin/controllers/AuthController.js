@@ -22,7 +22,38 @@ module.exports = function (app) {
 	});
 	app.get('/auth-recoverpw', function (req, res) {
 		res.locals = { title: 'Recover Password' };
-		res.render('AuthInner/auth-recoverpw');
+		res.render('Auth/auth-recoverpw', { 'message': req.flash('message'), 'error': req.flash('error') });
+
+	});
+	app.post('/post-auth-recoverpw', function (req, res) {
+		console.log('posting----')
+		res.locals = { title: 'Recover Password' };
+		axios.post(apiUrl + '/auth/resetpassword', {
+			npassword: req.body.npassword,
+			phone: req.body.phone,
+			otp: req.body.otp
+		})
+			.then(r => {
+				if (!r.data.success) {
+					req.flash('error', r.data.error);
+					res.redirect(process.env.ADMIN_URL + '/auth-recoverpw');
+
+				} else {
+
+					req.flash('message', 'Password Changed Successfully');
+					res.redirect(process.env.ADMIN_URL + '/');
+				}
+				// Assign value in session
+
+
+
+			})
+			.catch(error => {
+				// req.flash('error', 'Email Not Found !!');
+				// res.redirect(process.env.ADMIN_URL + '/forgot-password');
+			})
+		//res.render('Auth/auth-recoverpw', { 'message': req.flash('message'), 'error': req.flash('error') });
+
 	});
 	app.get('/auth-lock-screen', function (req, res) {
 		res.locals = { title: 'Lock Screen' };
@@ -142,14 +173,33 @@ module.exports = function (app) {
 	});
 
 	app.post('/post-forgot-password', urlencodeParser, function (req, res) {
-		const validUser = users.filter(usr => usr.email === req.body.email);
-		if (validUser['length'] === 1) {
-			req.flash('message', 'We have e-mailed your password reset link!');
-			res.redirect(process.env.ADMIN_URL + '/forgot-password');
-		} else {
-			req.flash('error', 'Email Not Found !!');
-			res.redirect(process.env.ADMIN_URL + '/forgot-password');
-		}
+
+		// if (validUser['length'] === 1) {
+		// 	req.flash('message', 'We have e-mailed your password reset link!');
+		// 	res.redirect(process.env.ADMIN_URL + '/forgot-password');
+		// } else {
+		// 	req.flash('error', 'Email Not Found !!');
+		// 	res.redirect(process.env.ADMIN_URL + '/forgot-password');
+		// }
+		axios.post(apiUrl + '/auth/forgotpassword', {
+			email: req.body.email,
+			phone: req.body.phone
+		})
+			.then(r => {
+				if (!r.data.success) {
+					req.flash('error', r.data.error);
+					res.redirect(process.env.ADMIN_URL + '/forgot-password');
+
+				} else {
+					// Assign value in session
+					req.flash('message', 'otp sent');
+					res.redirect(process.env.ADMIN_URL + '/auth-recoverpw');
+				}
+
+			})
+			.catch(error => {
+				console.log('error', error);
+			})
 	});
 
 	app.get('/logout', function (req, res) {

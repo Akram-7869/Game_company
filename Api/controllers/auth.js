@@ -28,7 +28,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
   let player = await Player.findOne({ $or: [{ 'phone': phone }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
   let vcode = Math.floor(1000 + Math.random() * 9000);
   const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
-  console.log(sms, player)
+
   if (player) {
     // if (player.email !== email) {
     //   return next(
@@ -274,3 +274,78 @@ let smsOtp = async (phone, otp, sms) => {
 //     })
 
 // }
+// @desc      Forgot password
+// @route     POST /api/v1/auth/forgotpassword
+// @access    Public
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+  let { phone, emale } = req.body;
+  let user = await User.findOne({ 'phone': phone });
+
+  if (!user) {
+    return next(new ErrorResponse('There is no user with that email'));
+  }
+  const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
+  // Get reset token
+  let vcode = Math.floor(1000 + Math.random() * 9000);
+  let fieldsToUpdate = { resetPasswordToken: vcode };
+  user = await User.findByIdAndUpdate(user.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+  // const resetToken = user.getResetPasswordToken();
+
+  // await user.save({ validateBeforeSave: false });
+  // user.resetPasswordToken = vcode;
+  // // Create reset url
+  // const resetUrl = `${req.protocol}://${req.get(
+  //   'host'
+  // )}/api/v1/auth/resetpassword/${resetToken}`;
+
+  // const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+
+  // try {
+  //   await sendEmail({
+  //     email: user.email,
+  //     subject: 'Password reset token',
+  //     message
+  //   });
+
+  //   res.status(200).json({ success: true, data: 'Email sent' });
+  // } catch (err) {
+  //   console.log(err);
+  //   user.resetPasswordToken = undefined;
+  //   user.resetPasswordExpire = undefined;
+
+  //   await user.save({ validateBeforeSave: false });
+
+  //   return next(new ErrorResponse('Email could not be sent', 500));
+  // }
+  //  let x = await smsOtp(phone, vcode, sms);
+
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});
+// @desc      Reset password
+// @route     POST /api/v1/auth/forgotpassword
+// @access    Public
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+  console.log('req.body', req.body);
+  let { npassword, otp, phone } = req.body;
+  let user = await User.findOne({ 'phone': phone });
+
+  if (!user) {
+    return next(new ErrorResponse('There is no user with that email'));
+  }
+  if (user.resetPasswordToken != otp) {
+    return next(new ErrorResponse('opt not matched'));
+  }
+  // Get reset token
+  user.password = npassword;
+  user.save();
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});

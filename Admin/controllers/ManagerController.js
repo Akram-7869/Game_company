@@ -126,3 +126,27 @@ exports.showManager = asyncHandler(async (req, res, next) => {
 
             })
 });
+
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Manager' };
+      res.render('Manager/resetpassword');
+});
+
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+
+      res.locals = { title: 'Datatables' };
+      callApi(req).post(apiUrl + 'resetpassword', req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'Manager' };
+                  req.flash('message', 'Data save');
+                  res.redirect(process.env.ADMIN_URL + '/admin/manager');
+
+            })
+            .catch(error => {
+
+
+                  req.flash('error', 'Data not updated');
+
+            })
+});

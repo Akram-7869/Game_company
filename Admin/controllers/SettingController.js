@@ -348,14 +348,17 @@ exports.updateSitelogo = asyncHandler(async (req, res, next) => {
 });
 exports.getSiteData = asyncHandler(async (req, res, next) => {
       //req.locals['sitename'] =
-      axios.get(apiUrl + 'filter/SITE')
-            .then(r => {
-                  req.app.locals['sitename'] = r.data.data.one.site_name;
-                  req.app.locals['siteLogoUrl'] = api_url + '/settings/image/' + r.data.data.siteLogo;
-                  //console.log('', r.data.data);
-                  res.redirect(process.env.ADMIN_URL + '/login');
-            })
-            .catch(error => {
+      if (!req.app.locals.sitename) {
+            axios.get(apiUrl + 'filter/SITE')
+                  .then(r => {
+                        req.app.locals['sitename'] = r.data.data.one.site_name;
+                        req.app.locals['siteLogoUrl'] = api_url + '/settings/image/' + r.data.data.siteLogo;
+                        //console.log('', r.data.data);
+                        res.redirect(process.env.ADMIN_URL + '/login');
+                  })
+                  .catch(error => {
 
-            })
+                  })
+      }
+      res.redirect(process.env.ADMIN_URL + '/login');
 });

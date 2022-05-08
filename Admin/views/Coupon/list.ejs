@@ -146,14 +146,14 @@
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
 
-                                { data: 'name' },
+                                { data: 'name', "defaultContent": "" },
                                 { data: 'couponType', "defaultContent": "" },
                                 { data: 'benfitType', "defaultContent": "" },
 
                                 // { data: 'minAmount' },
                                 { data: 'couponAmount', "defaultContent": "" },
 
-                                { data: 'active' },
+                                { data: 'active', "defaultContent": "" },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/coupon/'

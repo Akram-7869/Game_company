@@ -71,6 +71,7 @@ router.route('/coupon/:id').get(couponCtrl.getCoupon).post(couponCtrl.updateCoup
 
 router.route('/manager').get(managerCtrl.listManager); router.route('/manager/data').post(managerCtrl.getManagers);
 //router.route('/manager/view/:id').get(  showManagerView);
+router.route('/manager/restpassword').get(managerCtrl.resetPassword).post(managerCtrl.updatePassword);
 router.route('/manager/add').get(managerCtrl.addManager).post(managerCtrl.createManagers);
 router.route('/manager/:id').get(managerCtrl.getManager).post(managerCtrl.updateManager).delete(managerCtrl.deleteManager);
 
