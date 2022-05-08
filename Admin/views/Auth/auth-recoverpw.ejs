@@ -12,7 +12,8 @@
   <link rel="shortcut icon" href="/public/assets/images/favicon.ico">
 
   <%- include ('../Partials/HeaderStyle') %>
-
+    <!-- Sweet Alert-->
+    <link href="public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body class="authentication-bg">
@@ -49,19 +50,22 @@
                         </div>
                         <% } %>
 
-                          <form class="form-horizontal" method="post" action="post-auth-recoverpw">
+                          <form class="form-horizontal" method="post" onsubmit="handleSubmit(this)"
+                            action="post-auth-recoverpw">
                             <div class="mb-3">
                               <label class="form-label" for="phone">Phone</label>
-                              <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone ">
+                              <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone "
+                                required>
                             </div>
                             <div class="mb-3">
                               <label class="form-label" for="useremail">New Password</label>
                               <input type="password" class="form-control" id="npassword" name="npassword"
-                                placeholder="Enter new password">
+                                placeholder="Enter new password" required>
                             </div>
                             <div class="mb-3">
                               <label class="form-label" for="phone">OTP</label>
-                              <input type="text" class="form-control" id="code" name="otp" placeholder="Enter otp  ">
+                              <input type="text" class="form-control" id="code" name="otp" placeholder="Enter otp  "
+                                required>
                             </div>
 
                             <div class="mt-3 text-end">
@@ -94,7 +98,18 @@
 
   <%- include ('../Partials/VendorScript') %>
 
+    <!-- Sweet Alerts js -->
+    <script src="public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
     <script src="/public/assets/js/app.js"></script>
+    <script>
+      function handleSubmit(params) {
+        if (params.checkValidity()) {
+          Swal.showLoading();
+
+        }
+
+      }
+    </script>
 
 </body>
 

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 var dataTables = require('mongoose-datatables')
 
-const BannerSchema = new mongoose.Schema({
+const PollSchema = new mongoose.Schema({
     location: {
         type: String
     },
@@ -18,11 +18,11 @@ const BannerSchema = new mongoose.Schema({
         type: String,
         enum: ['inactive', 'active'],
     },
-    bannerType: {
-        type: String,
-        default: 'banner'
-    },
 
+    poll: {
+        type: Number,
+        default: 0
+    },
 
 
     createdBy: {
@@ -37,6 +37,6 @@ const BannerSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
-BannerSchema.plugin(dataTables);
-BannerSchema.virtual('bannerUrl').get(function () { return process.env.API_URI + '/files/' + this.imageId; })
-module.exports = mongoose.model('Banners', BannerSchema);
+PollSchema.plugin(dataTables);
+PollSchema.virtual('PollUrl').get(function () { return process.env.API_URI + '/files/' + this.imageId; })
+module.exports = mongoose.model('Polls', PollSchema);
