@@ -320,7 +320,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   //   return next(new ErrorResponse('Email could not be sent', 500));
   // }
-  //  let x = await smsOtp(phone, vcode, sms);
+  let x = await smsOtp(phone, vcode, sms);
 
   res.status(200).json({
     success: true,
@@ -331,7 +331,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/forgotpassword
 // @access    Public
 exports.resetPassword = asyncHandler(async (req, res, next) => {
-  console.log('req.body', req.body);
+
   let { npassword, otp, phone } = req.body;
   let user = await User.findOne({ 'phone': phone });
 

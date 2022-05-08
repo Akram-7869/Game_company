@@ -1,5 +1,5 @@
 <%- contentFor('HeaderCss') %>
-
+    <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
     <%- contentFor('breadcrumb') %>
 
         <!-- start page title -->
@@ -101,4 +101,24 @@
 
                 <script src="/public/assets/js/pages/form-validation.init.js"></script>
 
+                <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <!-- Sweet alert init js -->
+                <script>
+                    function handleSubmit(params) {
+                        if (params.checkValidity()) {
+
+                            Swal.showLoading();
+                            //         Swal.fire({
+                            //   title: '',
+                            //   html: 'Please wait...',
+                            //   allowEscapeKey: false,
+                            //   allowOutsideClick: false,
+                            //   didOpen: () => {
+                            //     Swal.showLoading()
+                            //   }
+                            // });
+                        }
+
+                    }
+                </script>
                 <%- contentFor('BottomJs') %>

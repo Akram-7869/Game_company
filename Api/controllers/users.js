@@ -9,7 +9,7 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
   User.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-    select: { 'firstName': 1, 'phone': 1, 'email': 1, 'status': 1, 'createdAt': 1 },
+    select: { 'firstName': 1, 'phone': 1, 'email': 1, 'status': 1, 'createdAt': 1, 'role': 1 },
     search: {
       value: req.body.search ? req.body.search.value : '',
       fields: ['email']
@@ -63,15 +63,29 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
     );
   }
   //  Make sure user is provider owner
-  if (user.role === 'superadmin') {
+  if (req.staff.role == 'superadmin') {
+    if (req.staff.role == user.role && user.id !== req.staff.id) {
+      return next(
+        new ErrorResponse(
+          `User  is not authorized to update`)
+      );
+    }
+
+  } else if (req.staff.role == 'admin') {
+    if (user.role == 'superadmin') {
+      return next(
+        new ErrorResponse(
+          `User  is not authorized to update`)
+      );
+    }
+
+  } else if (user.id !== req.staff.id) {
     return next(
       new ErrorResponse(
-        `User ${req.user.id} is not authorized to update provider ${provider._id}`)
+        `User  is not authorized to update`)
     );
   }
-  if (req.body.password) {
-    //  user.password = req.body.password;
-  }
+
   user.firstName = req.body.firstName;
   user.lastName = req.body.lastName;
   user.status = req.body.status;

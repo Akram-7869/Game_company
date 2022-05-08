@@ -211,7 +211,7 @@ module.exports = function (app) {
 			httpOnly: true
 		});
 
-		res.redirect(process.env.ADMIN_URL + '/login');
+		res.redirect(process.env.ADMIN_URL + '/');
 	});
 
 

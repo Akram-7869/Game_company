@@ -5,7 +5,7 @@ var apiUrl = api_url + '/managers/';
 
 exports.listManager = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Datatables' };
-      res.render('Manager/list');
+      res.render('Manager/list', { 'message': req.flash('message'), 'error': req.flash('error') });
 });
 
 
@@ -28,11 +28,13 @@ exports.updateManager = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Datatables' };
       callApi(req).put(apiUrl + req.params.id, req.body)
             .then(r => {
-                  // Assign value in session
-                  res.locals = { title: 'Manager' };
-                  req.flash('message', 'Data save');
+                  if (r.data.success) {
+                        // Assign value in session
+                        req.flash('message', 'Data save');
+                  } else {
+                        req.flash('error', r.data.error);
+                  }
                   res.redirect(process.env.ADMIN_URL + '/admin/manager');
-
             })
             .catch(error => {
 
