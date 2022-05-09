@@ -805,8 +805,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     }
     await PlayerGame.create(playerGame);
 
-  }
-  if (req.body.logType = "bonus") {
+  } else if (req.body.logType = "bonus") {
     player = await tran.creditPlayerBonus(amount);
   }
 
