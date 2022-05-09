@@ -22,12 +22,9 @@ const SupportSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'User',
     }
-
-
 }, {
     timestamps: true,
 });
 
 SupportSchema.plugin(dataTables)
-
 module.exports = mongoose.model('Supports', SupportSchema);

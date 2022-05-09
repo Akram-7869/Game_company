@@ -16,6 +16,7 @@ const Notification = require('../models/Notification');
 const Tournament = require('../models/Tournament');
 const Banner = require('../models/Banner');
 const PlayerPoll = require('../models/PlayerPoll');
+const Poll = require('../models/Poll');
 const PlayerGame = require('../models/PlayerGame');
 let axios = require('axios');
 const FormData = require('form-data');
@@ -1090,21 +1091,21 @@ exports.poll = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
-  console.log('s1');
-  const polled = await PlayerPoll.findOne({ 'playerId': req.player.id, bannerId: req.body.id });
-  const banner = await Banner.find({ '_id': req.body.id, 'status': 'active' }).lean();
-  console.log('polled');
-  if (!banner) {
+
+  const polled = await PlayerPoll.findOne({ 'playerId': req.player.id, pollId: req.body.id });
+  const poll = await Poll.find({ '_id': req.body.id, 'status': 'active' }).lean();
+
+  if (!poll) {
     return next(
-      new ErrorResponse(`Banner  not found`)
+      new ErrorResponse(`Poll  not found`)
     );
   }
 
   if (!polled) {
-    console.log('1');
-    let a = await PlayerPoll.create({ 'playerId': req.player.id, bannerId: req.body.id });
-    console.log('2');
-    let b = await Banner.findByIdAndUpdate(req.body.id, { $inc: { poll: 1 } }, {
+
+    let m = await PlayerPoll.create({ 'playerId': req.player.id, pollId: req.body.id });
+
+    let s = await poll.findByIdAndUpdate(req.body.id, { $inc: { poll: 1 } }, {
       new: false,
       runValidators: true
 
@@ -1120,9 +1121,8 @@ exports.poll = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.pollList = asyncHandler(async (req, res, next) => {
-  const banner = await Banner.find({ 'status': 'active' }).lean();
-  console.log(banner);
-  let x = banner.map(d => {
+  const list = await Poll.find({ 'status': 'active' }).lean();
+  let x = list.map(d => {
     d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
 
     return d;
@@ -1183,5 +1183,21 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: player
+  });
+});
+
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
+  const banner = await PlayerGame.find().limit(20).populate('playerId');
+  // console.log(banner);
+  // let x = banner.map(d => {
+  //   d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
+  //   return d;
+  // });
+  res.status(200).json({
+    success: true,
+    data: x
   });
 });

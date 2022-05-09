@@ -885,10 +885,9 @@
                         }
 
                         function getChart() {
-                            .post('chart/data', ("#chart").serialize()).then(r => {
-
-                            LineChart(r.sumDb, r.lableDb);
-                        });
+                            $.post('chart/data', $("#chart").serialize()).then(r => {
+                                LineChart(r.sumDb, r.lableDb);
+                            });
 
                         }
 

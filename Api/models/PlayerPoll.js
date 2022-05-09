@@ -7,9 +7,9 @@ const PlayerPollSchema = new mongoose.Schema({
         ref: 'Player',
 
     },
-    bannerId: {
+    pollId: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Banner',
+        ref: 'Poll',
 
     }
 
