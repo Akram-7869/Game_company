@@ -18,6 +18,7 @@ const Banner = require('../models/Banner');
 const PlayerPoll = require('../models/PlayerPoll');
 const Poll = require('../models/Poll');
 const PlayerGame = require('../models/PlayerGame');
+const Version = require('../models/Version');
 let axios = require('axios');
 const FormData = require('form-data');
 
@@ -1199,5 +1200,21 @@ exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: x
+  });
+});
+
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.getVersion = asyncHandler(async (req, res, next) => {
+  const list = await Version.find();
+  // console.log(banner);
+  // let x = banner.map(d => {
+  //   d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
+  //   return d;
+  // });
+  res.status(200).json({
+    success: true,
+    data: list
   });
 });

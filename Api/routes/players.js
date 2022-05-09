@@ -9,6 +9,7 @@ const { protect, authorize } = require('../middleware/auth');
 //router.use(protect);
 //router.use(authorize('admin','Player'));
 router.get('/winnerfeed', playerCtl.getWinnerfeed);
+router.get('/version/list').get(playerCtl.getVersion);
 router.get('/tournaments', protect, playerCtl.getTournaments);
 router.get('/banners', protect, playerCtl.getBanners);
 router.post('/refer', protect, playerCtl.updateRefer);
@@ -35,6 +36,7 @@ router.post('/withdraw/request', protect, playerCtl.withDrawRequest);
 router.post('/debit', protect, playerCtl.debiteAmount);
 router.post('/credit/', protect, playerCtl.creditAmount);
 router.post('/debitBonus/', protect, playerCtl.debitBonus);
+
 
 router.post('/addMoney/', protect, playerCtl.addMoney);
 router.get('/info', protect, playerCtl.playerInfo);
