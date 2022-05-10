@@ -118,7 +118,8 @@ exports.setCommission = asyncHandler(async (req, res, next) => {
     );
   }
   let fieldsToUpdate = {
-    'commission': req.body.commission
+    'commission': req.body.commission,
+    'referral_commission': req.body.referral_commission
   }
 
   setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {

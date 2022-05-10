@@ -52,14 +52,14 @@ exports.createPoll = asyncHandler(async (req, res, next) => {
     }
     const newfile = await File.create(dataSave);
 
-    let Poll = {
+    let pollRow = {
         location: req.body.location,
         status: 'active',
         imageId: newfile._id,
         url: req.body.url,
     }
 
-    const row = await Poll.create(Poll);
+    const row = await Poll.create(pollRow);
 
     res.status(201).json({
         success: true,

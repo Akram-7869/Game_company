@@ -13,6 +13,7 @@ const versionCtrl = require('../controllers/VersionController');
 const tournamentCtrl = require('../controllers/TurnamentController');
 const notificationCtrl = require('../controllers/NotificationController');
 const couponCtrl = require('../controllers/CouponController');
+const pollCtrl = require('../controllers/PollController');
 
 const { protect } = require('../middleware/auth');
 const router = express.Router({ mergeParams: true });
@@ -20,6 +21,12 @@ const router = express.Router({ mergeParams: true });
 
 //var upload = multer({ storage: storage })
 router.use(protect);
+
+router.route('/poll/add').get(pollCtrl.pollAdd)
+      .post(pollCtrl.createPolls);
+router.route('/poll/data').post(pollCtrl.getPolls);
+router.route('/poll').get(pollCtrl.pollList);
+router.route('/poll/:id').get(pollCtrl.editPoll).post(pollCtrl.updatePoll).delete(pollCtrl.deletePoll);
 
 //setting
 router.route('/setting/logo').get(settingCtrl.getSitelogo).post(settingCtrl.updateSitelogo);
