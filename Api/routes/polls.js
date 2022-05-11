@@ -1,5 +1,5 @@
 const express = require('express');
-const pollCtrl = require('../controllers/Polls');
+const pollCtrl = require('../controllers/polls');
 
 
 const router = express.Router({ mergeParams: true });
