@@ -196,6 +196,11 @@ const PlayerSchema = new mongoose.Schema({
     min: 0
 
   },
+  membership: {
+    type: String,
+    default: 'free'
+
+  },
 
 });
 
