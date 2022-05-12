@@ -1218,3 +1218,32 @@ exports.getVersion = asyncHandler(async (req, res, next) => {
     data: list
   });
 });
+
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.sendAppUrl = asyncHandler(async (req, res, next) => {
+   let { mobile } = req.body;
+   const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
+  // Get reset token
+  let vcode = "1234";
+  
+  let x = await smsOtp(mobile, vcode, sms);
+  res.status(200).json({
+    success: true,
+    data: []
+  });
+});
+
+let smsOtp = async (phone, otp, sms) => {
+
+  var params = {
+    "template_id": sms.one.TEMPLATE_ID,
+    "mobile": phone,
+    "authkey": sms.one.AUTHKEY,
+    "otp": otp
+  };
+  console.error('sendingotp', otp, phone)
+  return axios.get('https://api.msg91.com/api/v5/otp', { params }).catch(error => { console.error(error) });
+
+}
