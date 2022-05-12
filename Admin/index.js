@@ -59,8 +59,7 @@ app.get('/layouts/', function (req, res) {
   res.render('view');
 });
 
-app.use(SettingController.getSiteData);
-
+AuthController(app);
 
 //For set layouts of html view
 var expressLayouts = require('express-ejs-layouts');
@@ -77,7 +76,7 @@ app.use(expressLayouts);
 // apply controller
 AuthController(app);
 app.use('/admin', adminRoutes);
-
+app.use(SettingController.getSiteData);
 
 
 const PORT = process.env.PORT;
