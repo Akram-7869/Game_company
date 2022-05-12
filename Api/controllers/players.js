@@ -1190,12 +1190,13 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
-  const banner = await PlayerGame.find().limit(20).populate('playerId');
+  const winners = await PlayerGame.find().limit(20).select({'amountWon':1}).populate({ path: 'playerId', select:{ '_id':0, 'firstName': 1} });
   // console.log(banner);
-  // let x = banner.map(d => {
-  //   d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
-  //   return d;
-  // });
+  let x = winners.map(d => {
+
+    let name =d.playerId.firstName || 'DUCKER'
+    return name + ' Won ' + d.amountWon + ' ' + 'DKC';
+  });
   res.status(200).json({
     success: true,
     data: x
