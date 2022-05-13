@@ -377,8 +377,8 @@ exports.createPlayer = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.updatePlayer = asyncHandler(async (req, res, next) => {
-  let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus } = req.body;
-  let fieldsToUpdate = { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob };
+  let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus, state } = req.body;
+  let fieldsToUpdate = { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, state };
   let player;
   if (!firstName) {
     return next(
@@ -1190,11 +1190,11 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
-  const winners = await PlayerGame.find().limit(20).select({'amountWon':1}).populate({ path: 'playerId', select:{ '_id':0, 'firstName': 1} });
+  const winners = await PlayerGame.find().limit(20).select({ 'amountWon': 1 }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
   // console.log(banner);
   let x = winners.map(d => {
 
-    let name =d.playerId.firstName || 'DUCKER'
+    let name = d.playerId.firstName || 'DUCKER'
     return name + ' Won ' + d.amountWon + ' ' + 'DKC';
   });
   res.status(200).json({
@@ -1223,11 +1223,11 @@ exports.getVersion = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.sendAppUrl = asyncHandler(async (req, res, next) => {
-   let { mobile } = req.body;
-   const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
+  let { mobile } = req.body;
+  const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
   // Get reset token
   let vcode = "1234";
-  
+
   let x = await smsOtp(mobile, vcode, sms);
   res.status(200).json({
     success: true,
