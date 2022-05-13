@@ -354,11 +354,15 @@ exports.getSiteData = asyncHandler(async (req, res, next) => {
                         req.app.locals['sitename'] = r.data.data.one.site_name;
                         req.app.locals['siteLogoUrl'] = api_url + '/settings/image/' + r.data.data.siteLogo;
                         //console.log('', r.data.data);
-                        res.redirect(process.env.ADMIN_URL + '/login');
+                       // res.redirect(process.env.ADMIN_URL + '/login');
+                       next();
                   })
                   .catch(error => {
 
                   })
+      }else{
+           next()  ;
       }
-      res.redirect(process.env.ADMIN_URL + '/login');
+     
+      //res.redirect(process.env.ADMIN_URL + '/login');
 });

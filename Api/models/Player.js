@@ -201,7 +201,12 @@ const PlayerSchema = new mongoose.Schema({
     default: 'free'
 
   },
-
+ membership_expire: {
+    type: String,
+  },
+  state: {
+    type: String,
+  },
 });
 
 // Encrypt password using bcrypt
