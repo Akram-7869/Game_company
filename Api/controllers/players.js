@@ -19,6 +19,8 @@ const PlayerPoll = require('../models/PlayerPoll');
 const Poll = require('../models/Poll');
 const PlayerGame = require('../models/PlayerGame');
 const Version = require('../models/Version');
+const moment = require('moment');
+
 let axios = require('axios');
 const FormData = require('form-data');
 
@@ -281,6 +283,87 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
       runValidators: true
     });
     await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', paymentStatus: 'SUCCESS' });
+    if (tran.couponId) {
+      let coupon = await Coupon.findOne({ _id: tran.couponId, 'active': true });
+      let bonus_amount = 0;
+      if (coupon.calculateType === 'percentage') {
+        bonus_amount = tran.amount * coupon.couponAmount * 0.01;
+      } else if (coupon.calculateType === 'fixed') {
+        bonus_amount = coupon.couponAmount;
+      }
+      if (coupon) {
+        //create transaction
+        let tranData = {
+          'playerId': tran.playerId,
+          'amount': bonus_amount,
+          'transactionType': "credit",
+          'note': 'coupon bonus',
+          'prevBalance': req.player.balance,
+          'status': 'complete',
+          'logType': 'bonus'
+        }
+        let tranb = await Transaction.create(tranData);
+        //
+        player = await tranb.creditPlayerBonus(bonus_amount);
+      }
+    }
+    //handle coupon
+
+
+  } else {
+    await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
+  }
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});
+
+exports.membership = asyncHandler(async (req, res, next) => {
+  let { amount, note, orderId } = req.body;
+  let player = req.player;
+  // if (!amount || amount < 0) {
+  //   return next(
+  //     new ErrorResponse(`Invalid amount`)
+  //   );
+  // }
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player Not Found`)
+    );
+  }
+  if (!orderId) {
+    return next(
+      new ErrorResponse(`Order Not Found`)
+    );
+  }
+
+
+  let tran = await Transaction.findOne({ _id: orderId, status: 'log' });
+  if (!tran) {
+    return next(
+      new ErrorResponse(`Transaction not found`)
+    );
+  }
+  //const row = await checkOrderStatus(orderId);
+  //console.log('row', row.data, tran);
+  // if (row.data.details.orderStatus !== 'PAID') {
+  if (tran) {
+    let fieldsToUpdate = {}
+    if (tran.membershipId === 'month') {
+      var currentDate = moment('2015-01-28');
+      var futureMonth = moment().add(1, 'M');
+      fieldsToUpdate = { membership: 'vip', membership_expire: futureMonth }
+    } else if (tran.membershipId === 'year') {
+
+      var futureYear = moment().add(1, 'Y');
+      fieldsToUpdate = { membership: 'vip', membership_expire: futureYear }
+    }
+    player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', paymentStatus: 'SUCCESS' });
   } else {
     await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
   }
@@ -382,9 +465,10 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
   let player;
   if (!firstName) {
     return next(
-      new ErrorResponse(`All fields are requied`)
+      new ErrorResponse(`Name is requied`)
     );
   }
+
   if (req.staff) {
     player = await Player.findById(req.params.id);
     fieldsToUpdate['kycStatus'] = kycStatus;
@@ -799,7 +883,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       'playerId': player._id,
       'amountWon': amount,
       'tournamentId': tournamentId,
-      'winner': 'winner_1',
+      'winner': winner,
       'gameId': gameId,
       'gameStatus': 'won'
     }
@@ -1169,7 +1253,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
   }
 
   let tran = await Transaction.create(tranData);
-  await tran.creditPlayerBonus(amount);
+  await tran.creditPlayerDeposit(amount);
   let player = await Player.findByIdAndUpdate(req.player._id, { 'join_code': req.body.referId }, {
     new: true,
     runValidators: true
@@ -1179,7 +1263,8 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     new: false,
     runValidators: true
   });
-
+  console.log(codeGiver, row.lvl1_commission, 'refer bonus level 1');
+  await referCommision(codeGiver.join_code, row.lvl1_commission, 'refer bonus level 1')
   res.status(200).json({
     success: true,
     data: player
@@ -1245,5 +1330,25 @@ let smsOtp = async (phone, otp, sms) => {
   };
   console.error('sendingotp', otp, phone)
   return axios.get('https://api.msg91.com/api/v5/otp', { params }).catch(error => { console.error(error) });
+
+}
+
+let referCommision = async (code, amount, note) => {
+
+  let parentPlayer1 = await Player.findOne({ 'refer_code': code });
+
+  let tranData = {
+    'playerId': parentPlayer1._id,
+    'amount': amount,
+    'transactionType': "credit",
+    'note': note,
+    'prevBalance': parentPlayer1.balance,
+    'logType': 'bonus',
+    status: 'complete', paymentStatus: 'SUCCESS'
+  }
+
+  let tran = await Transaction.create(tranData);
+
+  await tran.creditPlayerDeposit(amount);
 
 }

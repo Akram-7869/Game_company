@@ -201,11 +201,11 @@ const PlayerSchema = new mongoose.Schema({
     default: 'free'
 
   },
- membership_expire: {
-    type: String,
+  membership_expire: {
+    type: Date,
   },
   state: {
-    type: String,
+    type: String, default: ''
   },
 });
 

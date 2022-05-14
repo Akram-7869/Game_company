@@ -140,8 +140,8 @@ const getGraphMonth = async (req) => {
 // @route     GET /api/v1/auth/Dashboards/filter/:id
 // @access    Private/Admin
 exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
-  const row = await Dashboard.findOne({ 'type': req.params.type });
-
+  const row = await Dashboard.findOne({ 'type': req.params.type }).lean();
+  row['livePlayers'] = req.io.engine.clientsCount;
   const graph = await getGraphData(req);
   //console.log('graph', row, graph)
   res.status(200).json({

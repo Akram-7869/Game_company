@@ -33,7 +33,7 @@ const paymentConfig = async (amount, trxId) => {
 }
 
 exports.getToken = asyncHandler(async (req, res, next) => {
-  let amount = req.body.amount;
+  let { amount, membership_id = "", coupon_id = "" } = req.body;
   if (amount <= 0) {
     return next(
       new ErrorResponse(`Amount required`)
@@ -50,13 +50,15 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   let tranData = {
     'playerId': req.player._id,
     'amount': amount,
-    'couponId': req.coupon_id ? req.coupon_id : '',
+    'couponId': coupon_id,
+    'membershipId': membership_id,
+
     'transactionType': "credit",
     'note': req.body.note,
     'paymentGateway': 'Cash Free',
     'logType': 'payment',
     'prevBalance': 0,
-    'logType': 'payment'
+
   }
   let tran = await Transaction.create(tranData);
   if (!tran._id) {

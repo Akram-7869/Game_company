@@ -11,6 +11,9 @@ const TransactionsSchema = new mongoose.Schema({
     couponId: {
         type: String,
     },
+    membershipId: {
+        type: String,
+    },
     gameId: {
         type: String,
     },
@@ -74,7 +77,7 @@ const TransactionsSchema = new mongoose.Schema({
     },
     logType: {
         type: String,
-        enum: ['deposit', 'withdraw', 'game', 'won', 'bonus', 'payment', 'fees', 'adjustment'],
+        enum: ['deposit', 'withdraw', 'game', 'won', 'bonus', 'payment', 'fees', 'adjustment', 'membership'],
         required: true,
         default: 'game'
     },

@@ -55,10 +55,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static('public'));
 
-app.get('/layouts/', function (req, res) {
-  res.render('view');
-});
 
+app.use(SettingController.getSiteData);
 // apply controller
 AuthController(app);
 
@@ -75,8 +73,9 @@ app.use(expressLayouts);
 // Define All Route 
 //pageRouter(app);
 app.use('/admin', adminRoutes);
-
-app.use(SettingController.getSiteData);
+app.get('/', function (req, res) {
+  res.redirect('/login');
+});
 
 const PORT = process.env.PORT;
 
