@@ -345,13 +345,12 @@ exports.membership = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Transaction not found`)
     );
   }
-  //const row = await checkOrderStatus(orderId);
+  const row = await checkOrderStatus(orderId);
   //console.log('row', row.data, tran);
-  // if (row.data.details.orderStatus !== 'PAID') {
-  if (tran) {
+  if (row.data.details.orderStatus !== 'PAID') {
+    //if (tran) {
     let fieldsToUpdate = {}
     if (tran.membershipId === 'month') {
-      var currentDate = moment('2015-01-28');
       var futureMonth = moment().add(1, 'M');
       fieldsToUpdate = { membership: 'vip', membership_expire: futureMonth }
     } else if (tran.membershipId === 'year') {
