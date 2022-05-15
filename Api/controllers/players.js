@@ -1240,7 +1240,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
 
   const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
   let note = "Refrer bonus";
-  let amount = row.referral_commission;
+  let amount = row.lvl1_commission;
   let tranData = {
     'playerId': codeGiver._id,
     'amount': amount,
@@ -1262,7 +1262,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     new: false,
     runValidators: true
   });
-  console.log(codeGiver, row.lvl1_commission, 'refer bonus level 1');
+  console.log(codeGiver, row.lvl2_commission, 'refer bonus level 1');
   await referCommision(codeGiver.join_code, row.lvl1_commission, 'refer bonus level 1')
   res.status(200).json({
     success: true,

@@ -42,6 +42,10 @@ const SettingSchema = new mongoose.Schema({
     lvl1_commission: {
         type: Number,
         default: 0
+    },
+    lvl2_commission: {
+        type: Number,
+        default: 0
     }
 
 }, {

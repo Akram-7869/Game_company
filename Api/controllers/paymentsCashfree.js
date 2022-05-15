@@ -162,7 +162,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
     'amount': bonusAmount,
     'transactionType': "credit",
     'note': 'Bonus amount',
-    'paymentGateway': 'Razor Pay',
+    'paymentGateway': 'Cashfree Pay',
     'logType': 'payment',
     'prevBalance': player.balance,
     'paymentStatus': payment.status,
