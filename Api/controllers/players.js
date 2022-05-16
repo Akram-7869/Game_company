@@ -823,6 +823,52 @@ exports.debitBonus = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.creditBonus = asyncHandler(async (req, res, next) => {
+  let { amount, note, gameId } = req.body;
+
+  if (!amount || amount < 0) {
+    return next(
+      new ErrorResponse(`Invalid amount`)
+    );
+  }
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Invalid Code`)
+    );
+  }
+  // if (!gameId) {
+  //   return next(
+  //     new ErrorResponse(`Game id requied`)
+  //   );
+  // }
+  // if (req.player.bonus < amount) {
+  //   return next(
+  //     new ErrorResponse(`Insufficent bonus balance`)
+  //   );
+  // }
+
+  let tranData = {
+    'playerId': req.player._id,
+    'amount': amount,
+    'transactionType': "credit",
+    'note': note,
+    'prevBalance': req.player.balance,
+    status: 'complete', paymentStatus: 'SUCCESS'
+  }
+
+  //tranData['gameId'] = gameId;
+
+  let tran = await Transaction.create(tranData);
+  player = await tran.creditPlayerBonus(amount);
+
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});
 
 // @desc      Log user out / clear cookie
 // @route     GET /api/v1/auth/logout

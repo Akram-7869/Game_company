@@ -207,6 +207,26 @@ const PlayerSchema = new mongoose.Schema({
   state: {
     type: String, default: ''
   },
+  state: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  refer_count: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  refrer_level: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  refrer_amount_total: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
 });
 
 // Encrypt password using bcrypt

@@ -40,6 +40,7 @@ router.post('/withdraw/request', protect, playerCtl.withDrawRequest);
 router.post('/debit', protect, playerCtl.debiteAmount);
 router.post('/credit/', protect, playerCtl.creditAmount);
 router.post('/debitBonus/', protect, playerCtl.debitBonus);
+router.post('/creditBonus/', protect, playerCtl.creditBonus);
 
 
 router.post('/addMoney/', protect, playerCtl.addMoney);
