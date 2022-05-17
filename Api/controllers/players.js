@@ -1230,17 +1230,17 @@ exports.poll = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (!polled) {
-
-    let m = await PlayerPoll.create({ 'playerId': req.player.id, pollId: req.body.id });
-
-    let s = await poll.findByIdAndUpdate(req.body.id, { $inc: { poll: 1 } }, {
-      new: false,
-      runValidators: true
-
-    });
+  if (polled) {
+    return next(new ErrorResponse(`Polled `));
   }
 
+  let m = await PlayerPoll.create({ 'playerId': req.player.id, pollId: req.body.id });
+
+  let s = await Poll.findByIdAndUpdate(req.body.id, { $inc: { poll: 1 } }, {
+    new: false,
+    runValidators: true
+
+  });
   res.status(200).json({
     success: true,
     data: {}
@@ -1303,12 +1303,15 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     new: true,
     runValidators: true
   });
-
-  await Player.findByIdAndUpdate(codeGiver._id, { $inc: { joinCount: 1 } }, {
+  let playerStat = { $inc: { joinCount: 1, refer_count: 1, refer_lvl1_count: 1, refer_lvl1_total: amount, refrer_amount_total: amount } };
+  if (codeGiver.refrer_level === 0) {
+    playerStat['refrer_level'] = 1;
+  }
+  await Player.findByIdAndUpdate(codeGiver._id, playerStat, {
     new: false,
     runValidators: true
   });
-  console.log(codeGiver, row.lvl2_commission, 'refer bonus level 1');
+
   await referCommision(codeGiver.join_code, row.lvl2_commission, 'refer bonus level 2')
   res.status(200).json({
     success: true,
@@ -1395,5 +1398,13 @@ let referCommision = async (code, amount, note) => {
   let tran = await Transaction.create(tranData);
 
   await tran.creditPlayerDeposit(amount);
+  let playerStat = { $inc: { refer_lvl2_count: 1, refer_lvl2_total: amount, refrer_amount_total: amount } };
+  if (codeGiver.refrer_level === 1) {
+    playerStat['refrer_level'] = 2;
+  }
+  await Player.findByIdAndUpdate(parentPlayer1._id, playerStat, {
+    new: false,
+    runValidators: true
+  });
 
 }

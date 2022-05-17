@@ -217,6 +217,26 @@ const PlayerSchema = new mongoose.Schema({
     default: 0,
     min: 0
   },
+  refer_lvl1_count: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  refer_lvl2_count: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  refer_lvl1_total: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  refer_lvl2_total: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
   refrer_level: {
     type: Number,
     default: 0,
