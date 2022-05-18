@@ -1142,7 +1142,7 @@ exports.getCoupons = asyncHandler(async (req, res, next) => {
 
 exports.getBanners = asyncHandler(async (req, res, next) => {
   const banner = await Banner.find({ 'status': 'active' }).lean();
-  console.log(banner);
+  // console.log(banner);
   let x = banner.map(d => {
     d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
 
@@ -1324,7 +1324,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
   const winners = await PlayerGame.find().limit(20).select({ 'amountWon': 1 }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
-  console.log(winners);
+
   let x = winners.map(d => {
     let name = 'DUCKER'
     if (d.playerId && d.playerId.firstName) {

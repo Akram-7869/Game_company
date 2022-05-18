@@ -114,11 +114,11 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Payment not success full`)
     );
   }
-  if (!ok) {
-    return next(
-      new ErrorResponse(`Signature failed`)
-    );
-  }
+  // if (!ok) {
+  //   return next(
+  //     new ErrorResponse(`Signature failed`)
+  //   );
+  // }
 
   let fieldsToUpdate = {
     $inc: { balance: parseInt(req.body.orderAmount), deposit: parseInt(req.body.orderAmount) }
