@@ -1326,8 +1326,11 @@ exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
   const winners = await PlayerGame.find().limit(20).select({ 'amountWon': 1 }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
   // console.log(banner);
   let x = winners.map(d => {
+    let name = 'DUCKER'
+    if (d.playerId.firstName) {
+      name = d.playerId.firstName;
+    }
 
-    let name = d.playerId.firstName || 'DUCKER'
     return name + ' Won ' + d.amountWon + ' ' + 'DKC';
   });
   res.status(200).json({
@@ -1371,10 +1374,10 @@ exports.sendAppUrl = asyncHandler(async (req, res, next) => {
 let smsOtp = async (phone, otp, sms) => {
 
   var params = {
-    "template_id": sms.one.TEMPLATE_ID,
+    "template_id": sms.one.TEMPLATE_APP_LINK_ID,
     "mobile": phone,
     "authkey": sms.one.AUTHKEY,
-    "otp": otp
+    "otp": 'https://www.dukeplay.com/assets/DukePlay.apk'
   };
   console.error('sendingotp', otp, phone)
   return axios.get('https://api.msg91.com/api/v5/otp', { params }).catch(error => { console.error(error) });

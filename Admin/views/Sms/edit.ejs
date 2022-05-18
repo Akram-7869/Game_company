@@ -50,7 +50,12 @@
                                     <input type="text" class="form-control" required name="one[AUTHKEY]"
                                         value="<%= row ? row.one['AUTHKEY']:''%>" placeholder="authkey" />
                                 </div>
-
+                                <div class="mb-3">
+                                    <label class="form-label">Template Id App Link</label>
+                                    <input type="text" class="form-control" required name="one[TEMPLATE_APP_LINK_ID]"
+                                        value="<%= row ? row.one['TEMPLATE_APP_LINK_ID']:''%>"
+                                        placeholder="template id" />
+                                </div>
 
                                 <div>
                                     <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
