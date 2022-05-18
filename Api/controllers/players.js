@@ -1327,7 +1327,7 @@ exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
   // console.log(banner);
   let x = winners.map(d => {
     let name = 'DUCKER'
-    if (d.playerId.firstName) {
+    if (d.playerId && d.playerId.firstName) {
       name = d.playerId.firstName;
     }
 
