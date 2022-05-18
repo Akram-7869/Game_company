@@ -105,10 +105,10 @@ exports.getKey = asyncHandler(async (req, res, next) => {
 });
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {
-  console.log('notify', req.body);
+  console.log('casfree-notify-body', req.body);
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
   let ok = verifySignature(req.body, req.body.signature, row.one.SECRET_KEY);
-  console.log('ok', ok);
+  console.log('casfree-ok', ok);
   if (req.body.txStatus !== 'SUCCESS') {
     return next(
       new ErrorResponse(`Payment not success full`)

@@ -1364,7 +1364,7 @@ exports.sendAppUrl = asyncHandler(async (req, res, next) => {
   // Get reset token
   let vcode = "1234";
 
-  let x = await smsOtp(mobile, vcode, sms);
+  let x = await smsOtp('91' + mobile, vcode, sms);
   res.status(200).json({
     success: true,
     data: []
