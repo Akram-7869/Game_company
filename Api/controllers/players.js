@@ -925,7 +925,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
 
     player = await tran.creditPlayerWinings(amount);
     let playerGame = {
-      'playerId': player._id,
+      'playerId': req.player._id,
       'amountWon': amount,
       'tournamentId': tournamentId,
       'winner': winner,
@@ -1324,7 +1324,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
   const winners = await PlayerGame.find().limit(20).select({ 'amountWon': 1 }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
-  // console.log(banner);
+  console.log(winners);
   let x = winners.map(d => {
     let name = 'DUCKER'
     if (d.playerId && d.playerId.firstName) {
