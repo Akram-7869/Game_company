@@ -121,7 +121,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   }
 
   let fieldsToUpdate = {
-    $inc: { balance: parseInt(req.body.orderAmount) }
+    $inc: { balance: parseInt(req.body.orderAmount), deposit: parseInt(req.body.orderAmount) }
   }
   let tran = await Transaction.findOne({ _id: req.body.orderId, status: 'log' });
   if (!tran) {
@@ -137,17 +137,17 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
 
   //coupon data 
-  if (!tran.coupon_id) {
+  if (!tran.couponId) {
     res.status(200);
   }
-  let coupon_id = tran.coupon_id;
+
   let bonusAmount = 0;
-  let couponRec = await Coupon.findOne({ _id: coupon_id });
+  let couponRec = await Coupon.findOne({ _id: tran.couponId });
   if (!couponRec) {
     res.status(200);
   }
 
-  if (chkCoupon.couponType == 'percentage') {
+  if (couponRec.couponType == 'percentage') {
     bonusAmount = amount * (couponRec.couponAmount * 0.01);
   } else {
     bonusAmount = couponRec.couponAmount;
@@ -155,7 +155,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 
 
   let bonusToUpdate = {
-    $inc: { balance: parseInt(bonusAmount) }
+    $inc: { balance: parseInt(bonusAmount), bonus: parseInt(bonusAmount) }
   }
   let tranBonusData = {
     'playerId': player_id,
@@ -180,6 +180,12 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+
+let handleCoupon = () => {
+
+
+
+}
 
 const verifySignature = (body, signature, clientSecret) => {
 
