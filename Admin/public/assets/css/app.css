@@ -4120,7 +4120,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before {
 }
 
 .authentication-bg {
-  background-color: rgba(91, 140, 232, 0.25);
+  background-color: #03055A
 }
 
 .authentication-bg .auth-logo .logo {

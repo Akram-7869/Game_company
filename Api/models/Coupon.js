@@ -7,7 +7,7 @@ const CouponSchema = new mongoose.Schema({
     },
     couponType: {
         type: String,
-        enum: ['bonus']
+        enum: ['bonus', 'upi']
     },
     calculateType: {
         type: String,
@@ -17,10 +17,13 @@ const CouponSchema = new mongoose.Schema({
         type: String
     },
     minAmount: {
-        type: Number
+        type: Number,
+        default: 0
+
     },
     couponAmount: {
-        type: Number
+        type: Number,
+        default: 0
     },
 
     couponImage: {
