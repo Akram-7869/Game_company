@@ -283,6 +283,16 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
       runValidators: true
     });
     await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', paymentStatus: 'SUCCESS' });
+
+    if (player.refrer_player_id) {
+      playerStat = { $inc: { refer_deposit_count: 1 } };
+      await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
+        new: true,
+        runValidators: true
+      });
+    }
+
+
     if (tran.couponId) {
       let coupon = await Coupon.findOne({ _id: tran.couponId, 'active': true });
       let bonus_amount = 0;
@@ -306,6 +316,8 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
         //
         player = await tranb.creditPlayerBonus(bonus_amount);
       }
+
+
     }
     //handle coupon
 
@@ -320,7 +332,7 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
 });
 
 exports.membership = asyncHandler(async (req, res, next) => {
-  let { amount, note, orderId } = req.body;
+  let { orderId } = req.body;
   let player = req.player;
   // if (!amount || amount < 0) {
   //   return next(
@@ -361,18 +373,20 @@ exports.membership = asyncHandler(async (req, res, next) => {
   //   },
   //   status: 'OK'
   // } 
+  const amount = row.data.details.orderAmount;
   if (row.data.details.orderStatus == 'PAID') {
     //if (tran) {
-    let fieldsToUpdate = {}
-    if (tran.membershipId === 'month') {
-      var futureMonth = moment().add(1, 'M');
-      fieldsToUpdate = { membership: 'vip', membership_expire: futureMonth }
-    } else if (tran.membershipId === 'year') {
-
-      var futureYear = moment().add(1, 'Y');
-      fieldsToUpdate = { membership: 'vip', membership_expire: futureYear }
+    player = await tran.memberShip(amount);
+    if (player.refrer_player_id) {
+      playerStat = { $inc: { refer_vip_count: 1 } };
+      await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
+        new: true,
+        runValidators: true
+      });
     }
-    player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
+
+
+    await Player.findByIdAndUpdate(player.refrer_player_id, { $inc: { refer_vip_count: 1 } }, {
       new: true,
       runValidators: true
     });

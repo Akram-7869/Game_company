@@ -142,22 +142,28 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   if (tran.membershipId) {
     player = await tran.memberShip(amount);
     await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
-    playerStat = { $inc: { refer_vip_count: 1 } };
-    await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
-      new: true,
-      runValidators: true
-    });
+    if (player.refrer_player_id) {
+      playerStat = { $inc: { refer_vip_count: 1 } };
+      await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
+        new: true,
+        runValidators: true
+      });
+    }
+
     console.log('Membership added');
   } else {
 
     player = await tran.creditPlayerDeposit(amount);
     await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
     console.log('Deposit added');
-    playerStat = { $inc: { refer_deposit_count: 1 } };
-    await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
-      new: true,
-      runValidators: true
-    });
+    if (player.refrer_player_id) {
+      playerStat = { $inc: { refer_deposit_count: 1 } };
+      await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
+        new: true,
+        runValidators: true
+      });
+    }
+
     if (tran.couponId) {
       let bonusAmount = 0;
       let couponRec = await Coupon.findOne({ _id: tran.couponId });
