@@ -1351,7 +1351,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
-  const winners = await PlayerGame.find().limit(20).select({ 'amountWon': 1 }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
+  const winners = await PlayerGame.find().sort({ "_id": -1 }).limit(20).select({ 'amountWon': 1 }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
 
   let x = winners.map(d => {
     let name = 'DUCKER'
@@ -1405,7 +1405,7 @@ let smsOtp = async (phone, otp, sms) => {
     "template_id": sms.one.TEMPLATE_APP_LINK_ID,
     "mobile": phone,
     "authkey": sms.one.AUTHKEY,
-    "otp": 'https://www.dukeplay.com/assets/DukePlay.apk'
+    "URL": 'https://www.dukeplay.com/assets/DukePlay.apk'
   };
   console.error('sendingotp', otp, phone)
   return axios.get('https://api.msg91.com/api/v5/otp', { params }).catch(error => { console.error(error) });
