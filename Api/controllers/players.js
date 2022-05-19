@@ -347,7 +347,21 @@ exports.membership = asyncHandler(async (req, res, next) => {
   }
   const row = await checkOrderStatus(orderId);
   //console.log('row', row.data, tran);
-  if (row.data.details.orderStatus !== 'PAID') {
+  // {
+  //   details: {
+  //     orderId: '628528ebdf38c5099b17e3b4',
+  //     orderCurrency: 'INR',
+  //     orderAmount: '10.00',
+  //     orderNote: '_10-purchase',
+  //     customerName: '',
+  //     customerPhone: '918758989518',
+  //     sellerPhone: '',
+  //     orderStatus: 'PAID',
+  //     addedOn: '2022-05-18 22:42:12'
+  //   },
+  //   status: 'OK'
+  // } 
+  if (row.data.details.orderStatus == 'PAID') {
     //if (tran) {
     let fieldsToUpdate = {}
     if (tran.membershipId === 'month') {

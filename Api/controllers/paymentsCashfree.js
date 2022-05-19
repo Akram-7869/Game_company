@@ -4,7 +4,8 @@ const Setting = require('../models/Setting');
 const crypto = require('crypto');
 
 const Transaction = require('../models/Transaction');
-
+const Coupon = require('../models/Coupon');
+const Player = require('../models/Player');
 let axios = require('axios');
 
 
@@ -106,6 +107,16 @@ exports.getKey = asyncHandler(async (req, res, next) => {
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {
   console.log('casfree-notify-body', req.body);
+  // {
+  //   orderId: '628528ebdf38c5099b17e3b4',
+  //   orderAmount: '10.00',
+  //   referenceId: '961967351',
+  //   txStatus: 'SUCCESS',
+  //   paymentMode: 'UPI',
+  //   txMsg: '00::Transaction Success',
+  //   txTime: '2022-05-18 22:42:13',
+  //   signature: 'gyGch0TKO/KMvPnnhrJ7cIr0SLfcRjyuORnyqN706ww='
+  // }
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
   let ok = verifySignature(req.body, req.body.signature, row.one.SECRET_KEY);
   console.log('casfree-ok', ok);
@@ -119,73 +130,61 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   //     new ErrorResponse(`Signature failed`)
   //   );
   // }
-
-  let fieldsToUpdate = {
-    $inc: { balance: parseInt(req.body.orderAmount), deposit: parseInt(req.body.orderAmount) }
-  }
   let tran = await Transaction.findOne({ _id: req.body.orderId, status: 'log' });
   if (!tran) {
     return next(
       new ErrorResponse(`Transaction not found`)
     );
   }
-
-  let player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
-    new: true,
-    runValidators: true
-  });
-  await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
-
-  //coupon data 
-  if (!tran.couponId) {
-    res.status(200);
-  }
-
-  let bonusAmount = 0;
-  let couponRec = await Coupon.findOne({ _id: tran.couponId });
-  if (!couponRec) {
-    res.status(200);
-  }
-
-  if (couponRec.couponType == 'percentage') {
-    bonusAmount = amount * (couponRec.couponAmount * 0.01);
+  if (tran.membershipId) {
+    await tran.memberShip(amount);
+    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
+    console.log('Membership added');
   } else {
-    bonusAmount = couponRec.couponAmount;
+
+    let player = await tran.creditPlayerDeposit(req.body.orderAmount);
+    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
+    console.log('Deposit added');
+    if (tran.couponId) {
+      let bonusAmount = 0;
+      let couponRec = await Coupon.findOne({ _id: tran.couponId });
+      if (!couponRec) {
+        res.status(200);
+        return;
+      }
+
+      if (couponRec.couponType == 'percentage') {
+        bonusAmount = amount * (couponRec.couponAmount * 0.01);
+      } else {
+        bonusAmount = couponRec.couponAmount;
+      }
+
+      let tranBonusData = {
+        'playerId': tran.playerId,
+        'amount': bonusAmount,
+        'transactionType': "credit",
+        'note': 'Bonus amount',
+        'paymentGateway': 'Cashfree Pay',
+        'logType': 'payment',
+        'prevBalance': player.balance,
+        'paymentStatus': 'SUCCESS',
+        'status': 'complete',
+        'paymentId': req.body.referenceId
+      }
+      bonusTran = await Transaction.create(tranBonusData);
+      bonusTran.creditPlayerBonus(bonusAmount);
+
+      console.log('bonus added');
+
+    }
   }
 
-
-  let bonusToUpdate = {
-    $inc: { balance: parseInt(bonusAmount), bonus: parseInt(bonusAmount) }
-  }
-  let tranBonusData = {
-    'playerId': player_id,
-    'amount': bonusAmount,
-    'transactionType': "credit",
-    'note': 'Bonus amount',
-    'paymentGateway': 'Cashfree Pay',
-    'logType': 'payment',
-    'prevBalance': player.balance,
-    'paymentStatus': payment.status,
-    'status': 'complete',
-    'paymentId': payment.id
-  }
-  player = await Player.findByIdAndUpdate(player_id, bonusToUpdate, {
-    new: true,
-    runValidators: true
-  });
-  tran = await Transaction.create(tranBonusData);
-  console.log('bonus added');
   res.status(200).json({
     success: true,
     data: player
   });
 });
 
-let handleCoupon = () => {
-
-
-
-}
 
 const verifySignature = (body, signature, clientSecret) => {
 
