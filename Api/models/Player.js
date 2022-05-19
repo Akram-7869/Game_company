@@ -166,8 +166,9 @@ const PlayerSchema = new mongoose.Schema({
     default: 0
 
   },
-  join_code: {
-    type: String
+
+  refrer_player_id: {
+    type: mongoose.Schema.ObjectId,
   },
   refer_code: {
     type: String
@@ -240,14 +241,12 @@ const PlayerSchema = new mongoose.Schema({
     default: 0,
     min: 0
   },
-  refrer_amount_total: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
+  refrer_amount_total: { type: Number, default: 0, min: 0 },
+  refer_deposit_count: { type: Number, default: 0, min: 0 },
+  refer_vip_count: { type: Number, default: 0, min: 0 },
 });
 
-// Encrypt password using bcrypt
+// Encrypt password usinsg bcrypt
 PlayerSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();

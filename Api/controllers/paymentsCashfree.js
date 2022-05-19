@@ -136,15 +136,28 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Transaction not found`)
     );
   }
+  let playerStat = {};
+  let player;
+  const amount = req.body.orderAmount;
   if (tran.membershipId) {
-    await tran.memberShip(amount);
+    player = await tran.memberShip(amount);
     await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
+    playerStat = { $inc: { refer_vip_count: 1 } };
+    await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
+      new: true,
+      runValidators: true
+    });
     console.log('Membership added');
   } else {
 
-    let player = await tran.creditPlayerDeposit(req.body.orderAmount);
+    player = await tran.creditPlayerDeposit(amount);
     await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
     console.log('Deposit added');
+    playerStat = { $inc: { refer_deposit_count: 1 } };
+    await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
+      new: true,
+      runValidators: true
+    });
     if (tran.couponId) {
       let bonusAmount = 0;
       let couponRec = await Coupon.findOne({ _id: tran.couponId });
@@ -152,7 +165,10 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
         res.status(200);
         return;
       }
-
+      if (couponRec.minAmount > amount) {
+        res.status(200);
+        return;
+      }
       if (couponRec.couponType == 'percentage') {
         bonusAmount = amount * (couponRec.couponAmount * 0.01);
       } else {

@@ -1292,7 +1292,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
   }
 
   let codeGiver = await Player.findOne({ 'refer_code': req.body.referId });
-  if (!codeGiver || req.player.join_code || req.player.createdAt < codeGiver.createdAt) {
+  if (!codeGiver || req.player.refrer_player_id || req.player.createdAt < codeGiver.createdAt) {
     return next(
       new ErrorResponse(`Player  not found`)
     );
@@ -1313,7 +1313,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
 
   let tran = await Transaction.create(tranData);
   await tran.creditPlayerDeposit(amount);
-  let player = await Player.findByIdAndUpdate(req.player._id, { 'join_code': req.body.referId }, {
+  let player = await Player.findByIdAndUpdate(req.player._id, { 'refrer_player_id': codeGiver._id }, {
     new: true,
     runValidators: true
   });
@@ -1326,7 +1326,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     runValidators: true
   });
 
-  await referCommision(codeGiver.join_code, row.lvl2_commission, 'refer bonus level 2')
+  await referCommision(codeGiver.refrer_player_id, row.lvl2_commission, 'refer bonus level 2')
   res.status(200).json({
     success: true,
     data: player
@@ -1398,9 +1398,9 @@ let smsOtp = async (phone, otp, sms) => {
 
 }
 
-let referCommision = async (code, amount, note) => {
+let referCommision = async (player_id, amount, note) => {
 
-  let parentPlayer1 = await Player.findOne({ 'refer_code': code });
+  let parentPlayer1 = await Player.findOne({ '_id': player_id });
 
   let tranData = {
     'playerId': parentPlayer1._id,
