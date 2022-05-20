@@ -63,9 +63,9 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (amount < 200) {
+  if (amount < 100) {
     return next(
-      new ErrorResponse(`Balance less than 200`)
+      new ErrorResponse(`Balance less than 100`)
     );
   }
 
