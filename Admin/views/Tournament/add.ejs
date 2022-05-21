@@ -1,4 +1,5 @@
 <%- contentFor('HeaderCss') %>
+    <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
     <%- contentFor('breadcrumb') %>
 
@@ -85,6 +86,7 @@
                                     <label class="form-label">Time</label>
                                     <select class="form-select" name="time" required>
                                         <option value="">Select Time..</option>
+                                        <option value="2" <%=row.time===2 ?'selected':'' %>>2</option>
                                         <option value="5" <%=row.time===5 ?'selected':'' %>>5</option>
                                         <option value="10" <%=row.time===10 ?'selected':'' %>>10</option>
                                         <option value="15" <%=row.time===15 ?'selected':'' %>>15</option>
@@ -152,6 +154,7 @@
                 <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
 
                 <script src="/public/assets/js/pages/form-validation.init.js"></script>
+                <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
                 <script>
                     $(function () {
                         $('#winner').change(function () {

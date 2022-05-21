@@ -5,7 +5,7 @@ var apiUrl = api_url + '/Tournaments/';
 
 exports.listTournament = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Tournament' };
-    res.render('Tournament/list');
+    res.render('Tournament/list', { 'message': req.flash('message'), 'error': req.flash('error') });
 });
 
 
@@ -13,7 +13,6 @@ exports.getTournament = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Tournament' };
     callApi(req).get(apiUrl + req.params.id)
         .then(r => {
-
             res.locals = { title: 'Tournament' };
             res.render('Tournament/edit', { row: r.data.data });
         })
@@ -24,20 +23,16 @@ exports.getTournament = asyncHandler(async (req, res, next) => {
 
 
 exports.updateTournament = asyncHandler(async (req, res, next) => {
-    console.log(req.body);
+
     callApi(req).post(apiUrl + req.params.id, req.body)
         .then(r => {
             // Assign value in session
-            res.locals = { title: 'Tournament' };
-            req.flash('error', 'Data save');
-            res.redirect(process.env.ADMIN_URL + '/admin/tournament');
 
+            req.flash('message', 'Data save');
+            res.redirect(process.env.ADMIN_URL + '/admin/tournament');
         })
         .catch(error => {
-
-
             req.flash('error', 'Data not updated');
-
         })
 });
 
@@ -47,10 +42,10 @@ exports.deleteTournament = asyncHandler(async (req, res, next) => {
         .then(r => {
             // Assign value in session
             res.locals = { title: 'Tournament' };
-            req.flash('success', 'Deleted');
+            req.flash('message', 'Deleted');
             // res.render('Players/List',{row:r.data.data}); 
 
-        }).catch(error => { req.flash('error', 'Data not updated'); })
+        }).catch(error => { req.flash('error', 'Data not deleted'); })
 
     res.status(200).json({
         success: true,
@@ -66,22 +61,12 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
     callApi(req).post(apiUrl, { ...req.body })
         .then(r => {
             // Assign value in session
-
-
             res.status(200).json(r.data);
-
-
-
         })
         .catch(error => {
-
-
             //   req.flash('error', 'Incorrect email or password!');
-
         })
-
 });
-
 
 exports.addTournament = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Tournament' };
@@ -95,18 +80,14 @@ exports.createTournaments = asyncHandler(async (req, res, next) => {
     callApi(req).post(apiUrl + 'add', req.body)
         .then(r => {
             // Assign value in session
-            res.locals = { title: 'Tournament-edit' };
             req.flash('message', 'Data save');
-            res.redirect(process.env.ADMIN_URL + '/admin/tournament');
 
+            res.redirect(process.env.ADMIN_URL + '/admin/tournament');
         })
         .catch(error => {
-
-
             req.flash('error', 'Data not updated');
-
         })
-    res.render('Tournament/edit', { row: {} });
+
 });
 
 exports.showTournament = asyncHandler(async (req, res, next) => {

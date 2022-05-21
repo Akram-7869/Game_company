@@ -1,4 +1,5 @@
 <%- contentFor('HeaderCss') %>
+    <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
     <%- contentFor('breadcrumb') %>
 
@@ -101,6 +102,7 @@
                                     <label class="form-label">Time</label>
                                     <select class="form-select" name="time" required>
                                         <option value="">Select Time..</option>
+                                        <option value="2" <%=row.time===2 ?'selected':'' %>>2</option>
                                         <option value="5" <%=row.time===5 ?'selected':'' %>>5</option>
                                         <option value="10" <%=row.time===10 ?'selected':'' %>>10</option>
                                         <option value="15" <%=row.time===15 ?'selected':'' %>>15</option>
@@ -177,11 +179,8 @@
                         $('#winner').change(function () {
                             var userNumber = $(this).val();
                             $("#userFields").empty();
-
                             //Dynamically create input fields based on user selection
                             create(userNumber);
-
-
                         });
                     });
                     function handleSubmit(params) {
