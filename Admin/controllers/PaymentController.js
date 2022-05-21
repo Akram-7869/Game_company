@@ -89,7 +89,7 @@ exports.createPlayers = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Player-edit' };
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
                   res.redirect(process.env.ADMIN_URL + '/admin/player');
 
 

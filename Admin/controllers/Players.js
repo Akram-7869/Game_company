@@ -142,7 +142,7 @@ exports.updatePlayerStatus = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Player-edit' };
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
                   res.render('Players/edit', { row: r.data.data });
 
             })
@@ -164,7 +164,7 @@ exports.creditPlayer = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Player-edit' };
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
                   res.render('Players/edit', { row: r.data.data });
 
             })
@@ -252,7 +252,7 @@ exports.createPlayers = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Player-edit' };
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
                   res.render('Players/edit', { row: r.data.data });
 
             })

@@ -25,7 +25,7 @@ exports.createPage = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Page' };
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
                   res.redirect(process.env.ADMIN_URL + '/admin/page/');
 
             })
@@ -101,7 +101,7 @@ exports.createPayment = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Payment' };
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
                   res.redirect(process.env.ADMIN_URL + '/admin/payment/');
 
             })
@@ -180,7 +180,7 @@ exports.createSmsGateway = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'SmsGateway' };
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
                   res.redirect(process.env.ADMIN_URL + '/admin/smsgateway/');
 
             })
@@ -257,7 +257,7 @@ exports.createSite = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Site' };
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
                   res.redirect(process.env.ADMIN_URL + '/admin/site/');
 
             })
@@ -354,15 +354,15 @@ exports.getSiteData = asyncHandler(async (req, res, next) => {
                         req.app.locals['sitename'] = r.data.data.one.site_name;
                         req.app.locals['siteLogoUrl'] = api_url + '/settings/image/' + r.data.data.siteLogo;
                         //console.log('', r.data.data);
-                       // res.redirect(process.env.ADMIN_URL + '/login');
-                       next();
+                        // res.redirect(process.env.ADMIN_URL + '/login');
+                        next();
                   })
                   .catch(error => {
 
                   })
-      }else{
-           next()  ;
+      } else {
+            next();
       }
-     
+
       //res.redirect(process.env.ADMIN_URL + '/login');
 });

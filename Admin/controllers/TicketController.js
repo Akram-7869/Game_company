@@ -76,7 +76,7 @@ exports.createTickets = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Ticket' };
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
                   res.render('Ticket/edit', { row: r.data.data });
 
             })

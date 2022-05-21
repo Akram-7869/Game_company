@@ -66,7 +66,7 @@ exports.updateNotification = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Notification' };
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
 
                   res.render('Notification/edit', { row: r.data.data });
             })
@@ -82,7 +82,7 @@ exports.editNotification = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
 
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
 
                   res.render('Notification/edit', { row: r.data.data });
             })
@@ -135,7 +135,7 @@ exports.createNotifications = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   req.locals = { title: 'Notification' };
-                  req.flash('success', 'Data save');
+                  req.flash('message', 'Data save');
                   res.redirect(process.env.ADMIN_URL + '/admin/notication');
 
             })
