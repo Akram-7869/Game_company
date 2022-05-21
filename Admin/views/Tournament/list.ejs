@@ -20,15 +20,24 @@
                     <h4 class="mb-0">
                         <%- title %>
                     </h4>
-
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                            <li class="breadcrumb-item active">
-                                <%- title %> List
-                            </li>
-                        </ol>
-                    </div>
+                    <% if(error.length> 0) { %>
+                        <div class="alert alert-danger text-center mb-4 flash" role="alert">
+                            <%= error %>
+                        </div>
+                        <% } %>
+                            <% if(message.length> 0) { %>
+                                <div class="alert alert-success text-center mb-4 flash" role="alert">
+                                    <%= message %>
+                                </div>
+                                <% } %>
+                                    <div class="page-title-right">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                                            <li class="breadcrumb-item active">
+                                                <%- title %> List
+                                            </li>
+                                        </ol>
+                                    </div>
 
                 </div>
             </div>
@@ -119,7 +128,7 @@
                                 type: 'DELETE',
                                 url: '<%=process.env.ADMIN_URL%>/admin/tournament/' + id,
                                 success: (results) => {
-                                    alert('Record Delete');
+
                                     location.reload();
                                 },
                                 error: (err) => {
