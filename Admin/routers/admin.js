@@ -135,6 +135,7 @@ router.route('/player/add').get(palyerCtrl.getAddForm).post(palyerCtrl.createPla
 router.route('/player/data').post(palyerCtrl.getPlayerList);
 
 router.route('/player/deleted').get(palyerCtrl.getPlayers);
+router.route('/player/membership').get(palyerCtrl.getPlayerMembership);
 router.route('/player/kyc').get(palyerCtrl.getPlayerKyc);
 router.route('/player/banned').get(palyerCtrl.getPlayerBanned);
 router.route('/player').get(palyerCtrl.getPlayers);

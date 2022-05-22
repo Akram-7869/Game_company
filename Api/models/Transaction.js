@@ -169,7 +169,7 @@ TransactionsSchema.methods.memberShip = async function () {
         });
     }
 
-
+    return false;
 
 };
 TransactionsSchema.plugin(dataTables);

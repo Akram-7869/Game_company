@@ -95,6 +95,14 @@
                                             class="form-control" required />
                                     </div>
                                     <div class="mb-3">
+                                        <label class="form-label">Member Ship</label>
+                                        <input readonly type="text" name=""
+                                            value="<%=row.membership?row.membership:'' %>" class="form-control"
+                                            required />
+                                        <%=row.membership?row.membership:'' %>
+                                            Expire : <%=row.membership_expire?row.membership_expire:'' %>
+                                    </div>
+                                    <div class="mb-3">
                                         <label class="form-label">Status</label>
                                         <input readonly type="text" name="" value="<%=row.status?row.status:'' %>"
                                             class="form-control" required />

@@ -117,9 +117,9 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   //   txTime: '2022-05-18 22:42:13',
   //   signature: 'gyGch0TKO/KMvPnnhrJ7cIr0SLfcRjyuORnyqN706ww='
   // }
-  const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
-  let ok = verifySignature(req.body, req.body.signature, row.one.SECRET_KEY);
-  console.log('casfree-ok', ok);
+  //const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
+  //let ok = verifySignature(req.body, req.body.signature, row.one.SECRET_KEY);
+  //console.log('casfree-ok', ok);
   if (req.body.txStatus !== 'SUCCESS') {
     return next(
       new ErrorResponse(`Payment not success full`)
@@ -130,7 +130,8 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   //     new ErrorResponse(`Signature failed`)
   //   );
   // }
-  let tran = await Transaction.findOne({ _id: req.body.orderId, status: 'log' });
+  const amount = parseInt(req.body.orderAmount);
+  let tran = await Transaction.findOne({ _id: req.body.orderId, 'amount': { $eq: amount }, status: 'log' });
   if (!tran) {
     return next(
       new ErrorResponse(`Transaction not found`)
@@ -138,9 +139,10 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   }
   let playerStat = {};
   let player;
-  const amount = req.body.orderAmount;
+
   if (tran.membershipId) {
-    player = await tran.memberShip(amount);
+    await tran.memberShip(amount);
+
     await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
     if (player.refrer_player_id) {
       playerStat = { $inc: { refer_vip_count: 1 } };
@@ -149,7 +151,6 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
         runValidators: true
       });
     }
-
     console.log('Membership added');
   } else {
 
@@ -166,12 +167,8 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 
     if (tran.couponId) {
       let bonusAmount = 0;
-      let couponRec = await Coupon.findOne({ _id: tran.couponId });
+      let couponRec = await Coupon.findOne({ _id: tran.couponId, minAmount: { $gte: amount }, maxAmount: { $lte: amount } });
       if (!couponRec) {
-        res.status(200);
-        return;
-      }
-      if (couponRec.minAmount > amount) {
         res.status(200);
         return;
       }

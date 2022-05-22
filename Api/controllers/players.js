@@ -1294,18 +1294,19 @@ exports.pollList = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/savefbtoken/:id
 // @access    Private/player
 exports.updateRefer = asyncHandler(async (req, res, next) => {
+  let { referId } = req.body;
   if (!req.player) {
     return next(
       new ErrorResponse(`Player  not found`)
     );
   }
-  if (!req.body.referId) {
+  if (!referId) {
     return next(
       new ErrorResponse(`refer id  not found`)
     );
   }
 
-  let codeGiver = await Player.findOne({ 'refer_code': req.body.referId });
+  let codeGiver = await Player.findOne({ 'refer_code': req.body.referId, status: 'active' });
   if (!codeGiver || req.player.refrer_player_id || req.player.createdAt < codeGiver.createdAt) {
     return next(
       new ErrorResponse(`Player  not found`)
@@ -1339,8 +1340,11 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     new: false,
     runValidators: true
   });
+  console.log('refrer level - 1');
+  if (codeGiver.refrer_player_id) {
+    await referCommision(codeGiver.refrer_player_id, row.lvl2_commission, 'refer bonus level 2')
 
-  await referCommision(codeGiver.refrer_player_id, row.lvl2_commission, 'refer bonus level 2')
+  }
   res.status(200).json({
     success: true,
     data: player
@@ -1391,8 +1395,10 @@ exports.sendAppUrl = asyncHandler(async (req, res, next) => {
   const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
   // Get reset token
   let vcode = "1234";
+  if (sms.one.TEMPLATE_APP_LINK_ID) {
+    let x = await smsOtp('91' + mobile, vcode, sms);
+  }
 
-  let x = await smsOtp('91' + mobile, vcode, sms);
   res.status(200).json({
     success: true,
     data: []
@@ -1414,8 +1420,10 @@ let smsOtp = async (phone, otp, sms) => {
 
 let referCommision = async (player_id, amount, note) => {
 
-  let parentPlayer1 = await Player.findOne({ '_id': player_id });
-
+  let parentPlayer1 = await Player.findOne({ '_id': player_id, status: 'active' });
+  if (!parentPlayer1) {
+    return;
+  }
   let tranData = {
     'playerId': parentPlayer1._id,
     'amount': amount,
@@ -1437,5 +1445,6 @@ let referCommision = async (player_id, amount, note) => {
     new: false,
     runValidators: true
   });
+  console.log('refrer level - 2');
 
 }

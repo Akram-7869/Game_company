@@ -72,6 +72,11 @@ exports.getPlayerKyc = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Player Kyc' };
       res.render('Players/kyc')
 });
+exports.getPlayerMembership = asyncHandler(async (req, res, next) => {
+
+      res.locals = { title: 'Player Membership' };
+      res.render('Players/membership')
+});
 exports.getPlayerHistory = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Player History' };
       res.render('Players/history', { playerId: req.params.id })
@@ -125,7 +130,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Player-edit' };
                   req.flash('message', 'Data save');
-                  res.redirect(process.env.ADMIN_URL + 'player');
+                  res.redirect(process.env.ADMIN_URL + '/player');
 
             })
             .catch(error => {
