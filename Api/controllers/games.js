@@ -8,23 +8,23 @@ const Transaction = require('../models/Transaction');
 // @access    Private/Admin
 exports.getPlayerGames = asyncHandler(async (req, res, next) => {
 
-  // let filter = {
-  //   limit: req.body.length,
-  //   skip: req.body.start,
-  //   //select: { 'gameId': 1, 'status': 1, 'createdAt': 1 },
-  //   find: {},
-  //   search: {
-  //     value: req.body.search ? req.body.search.value : '',
-  //     fields: ['rank', 'playerId']
-  //   },
-  //   columns: req.body.columns,
-  //   populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } },
-  //   sort: {
-  //     _id: 1
-  //   }
-  // };
-  // }
-  let filter = { logType: 'won' };
+  let filter = {
+    limit: req.body.length,
+    skip: req.body.start,
+    //select: { 'gameId': 1, 'status': 1, 'createdAt': 1 },
+    find: {},
+    search: {
+      value: req.body.search ? req.body.search.value : '',
+      fields: ['rank', 'playerId']
+    },
+    columns: req.body.columns,
+    populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, phone: 1 } },
+    sort: {
+      _id: 1
+    }
+  };
+
+  // let filter = { logType: 'won' };
 
   //plaerId filter
   if (req.body.playerId) {
@@ -38,20 +38,20 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
     }
 
   }
-  let row = await Transaction.aggregate([{ $match: filter },
-  //, tr: "$transactionType", gr: "$groupStatus " 
-  {
-    $group: { _id: "$playerId", n: { $sum: "$amount" } }
-  }
-    , { $sort: { n: -1 } }
-    , { $limit: 100 },
-  ]);
-  let x = await Player.populate(row, { path: "_id", select: { phone: 1, firstName: 1, lastName: 1, rank: 1, profilePic: 1 } });
+  // let row = await Transaction.aggregate([{ $match: filter },
+  // //, tr: "$transactionType", gr: "$groupStatus " 
+  // {
+  //   $group: { _id: "$playerId", n: { $sum: "$amount" } }
+  // }
+  //   , { $sort: { n: -1 } }
+  //   , { $limit: 100 },
+  // ]);
+  // let x = await Player.populate(row, { path: "_id", select: { phone: 1, firstName: 1, lastName: 1, rank: 1, profilePic: 1 } });
 
-  // PlayerGame.dataTables(filter).then(function (table) {
-  //   res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
-  // })
-  res.status(200).json({ data: row, recordsTotal: row.length, recordsFiltered: row.length, draw: req.body.draw });
+  PlayerGame.dataTables(filter).then(function (table) {
+    res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
+  })
+  //res.status(200).json({ data: row, recordsTotal: row.length, recordsFiltered: row.length, draw: req.body.draw });
 });
 
 // @desc      Get single PlayerGame

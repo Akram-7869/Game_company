@@ -274,57 +274,62 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
   const row = await checkOrderStatus(orderId);
   console.log('row', row.data, tran);
   if (row.data.details.orderStatus === 'PAID') {
-    let fieldsToUpdate = {
-      $inc: { balance: parseInt(row.data.details.orderAmount), deposit: parseInt(row.data.details.orderAmount) }
-    }
 
-    player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
-      new: true,
-      runValidators: true
-    });
-    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', paymentStatus: 'SUCCESS' });
+    if (tran.membershipId) {
 
-    if (player.refrer_player_id) {
-      playerStat = { $inc: { refer_deposit_count: 1 } };
-      await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
+    } else {
+      let fieldsToUpdate = {
+        $inc: { balance: parseInt(row.data.details.orderAmount), deposit: parseInt(row.data.details.orderAmount) }
+      }
+
+      player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
         new: true,
         runValidators: true
       });
-    }
+      await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', paymentStatus: 'SUCCESS' });
 
-
-    if (tran.couponId) {
-      let coupon = await Coupon.findOne({ _id: tran.couponId, 'active': true });
-      let bonus_amount = 0;
-      if (coupon.calculateType === 'percentage') {
-        bonus_amount = tran.amount * coupon.couponAmount * 0.01;
-      } else if (coupon.calculateType === 'fixed') {
-        bonus_amount = coupon.couponAmount;
+      if (player.refrer_player_id) {
+        playerStat = { $inc: { refer_deposit_count: 1 } };
+        await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
+          new: true,
+          runValidators: true
+        });
       }
-      if (coupon) {
-        //create transaction
-        let tranData = {
-          'playerId': tran.playerId,
-          'amount': bonus_amount,
-          'transactionType': "credit",
-          'note': 'coupon bonus',
-          'prevBalance': req.player.balance,
-          'status': 'complete',
-          'logType': 'bonus'
+
+
+      if (tran.couponId) {
+        let coupon = await Coupon.findOne({ _id: tran.couponId, 'active': true });
+        let bonus_amount = 0;
+        if (coupon.calculateType === 'percentage') {
+          bonus_amount = tran.amount * coupon.couponAmount * 0.01;
+        } else if (coupon.calculateType === 'fixed') {
+          bonus_amount = coupon.couponAmount;
         }
-        let tranb = await Transaction.create(tranData);
-        //
-        player = await tranb.creditPlayerBonus(bonus_amount);
-      }
+        if (coupon) {
+          //create transaction
+          let tranData = {
+            'playerId': tran.playerId,
+            'amount': bonus_amount,
+            'transactionType': "credit",
+            'note': 'coupon bonus',
+            'prevBalance': req.player.balance,
+            'status': 'complete',
+            'logType': 'bonus'
+          }
+          let tranb = await Transaction.create(tranData);
+          //
+          player = await tranb.creditPlayerBonus(bonus_amount);
+        }
 
+
+      }
+      //handle coupon
 
     }
-    //handle coupon
-
-
   } else {
     await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
   }
+
   res.status(200).json({
     success: true,
     data: player
@@ -398,6 +403,7 @@ exports.membership = asyncHandler(async (req, res, next) => {
     success: true,
     data: player
   });
+  console.log('player/membership');
 });
 
 // @desc      Get all Players
@@ -958,7 +964,8 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       'tournamentId': tournamentId,
       'winner': winner,
       'gameId': gameId,
-      'gameStatus': 'won'
+      'gameStatus': 'won',
+      'note': note
     }
     await PlayerGame.create(playerGame);
 

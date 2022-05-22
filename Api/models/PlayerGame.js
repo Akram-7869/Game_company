@@ -39,6 +39,10 @@ const PlayerGameSchema = new mongoose.Schema({
     type: String,
     default: 'winner_1',
   },
+  note: {
+    type: String,
+    default: '',
+  },
 
   gameOnline: {
     type: Boolean,

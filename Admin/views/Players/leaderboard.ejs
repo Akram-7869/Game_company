@@ -79,10 +79,10 @@
                                 <thead>
                                     <tr>
                                         <th>Srno</th>
-
                                         <th>Name</th>
                                         <th>Mobile</th>
-                                        <th>Rank</th>
+                                        <th>Note</th>
+                                        <th>Played</th>
                                         <!-- <th>Action</th> -->
                                     </tr>
                                 </thead>
@@ -120,6 +120,7 @@
 <script src="/public/assets/js/pages/datatables.init.js"></script> -->
                 <!-- Sweet Alerts js -->
                 <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <script src="/public/assets/libs/moment/moment.js"></script>
                 <%- contentFor('BottomJs') %>
                     <script>
                         var minDate, maxDate;
@@ -183,10 +184,15 @@
                                         return meta.row + 1;
                                     }
                                 },
-                                { data: '_id.firstName', "defaultContent": "" },
+                                { data: 'playerId.firstName', "defaultContent": "" },
 
-                                { data: '_id.phone', "defaultContent": "" },
-                                { data: 'n', "defaultContent": 0 },
+                                { data: 'playerId.phone', "defaultContent": "" },
+                                { data: 'note', "defaultContent": "WON" },
+                                {
+                                    data: 'createdAt', render: function (data) {
+                                        return moment(data).format('DD-MM-YYYY h:mm a');
+                                    }
+                                },
                                 // {
                                 //     data: null, "render": function (data, type, full, meta) {
                                 //         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/playerhistory/'

@@ -107,31 +107,53 @@ exports.getKey = asyncHandler(async (req, res, next) => {
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {
   console.log('casfree-notify-body', req.body);
-  // {
-  //   orderId: '628528ebdf38c5099b17e3b4',
-  //   orderAmount: '10.00',
-  //   referenceId: '961967351',
-  //   txStatus: 'SUCCESS',
-  //   paymentMode: 'UPI',
-  //   txMsg: '00::Transaction Success',
-  //   txTime: '2022-05-18 22:42:13',
-  //   signature: 'gyGch0TKO/KMvPnnhrJ7cIr0SLfcRjyuORnyqN706ww='
-  // }
+
   //const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
   //let ok = verifySignature(req.body, req.body.signature, row.one.SECRET_KEY);
   //console.log('casfree-ok', ok);
-  if (req.body.txStatus !== 'SUCCESS') {
+  if (req.body.data.payment.payment_status !== 'SUCCESS') {
     return next(
       new ErrorResponse(`Payment not success full`)
     );
   }
+  const orderId = req.body.data.order.order_id;
+  //const payment_status = req.body.data.payment.payment_status;
+  const amount = parseInt(req.body.data.payment.payment_amount);
   // if (!ok) {
-  //   return next(
+  //    {
+  //  data: {
+  //      order: {
+  //        order_id: '628a3967594a521adb9983e0',
+  //        order_amount: 49,
+  //        order_currency: 'INR',
+  //        order_tags: null
+  //      },
+  //      payment: {
+  //        cf_payment_id: 969879417,
+  //        payment_status: 'SUCCESS',
+  //        payment_amount: 49,
+  //        payment_currency: 'INR',
+  //        payment_message: '00::Transaction success',
+  //        payment_time: '2022-05-22T18:53:53+05:30',
+  //        bank_reference: '214261124865',
+  //        auth_id: null,
+  //        payment_method: [Object],
+  //        payment_group: 'upi'
+  //      },
+  //      customer_details: {
+  //        customer_name: null,
+  //        customer_id: null,
+  //        customer_email: 'mobile@52.com',
+  //        customer_phone: '918758989518'
+  //      }
+  //    },
+  //    event_time: '2022-05-22T18:54:06+05:30',
+  //    type: 'PAYMENT_SUCCESS_WEBHOOK'
+  //  }
   //     new ErrorResponse(`Signature failed`)
   //   );
   // }
-  const amount = parseInt(req.body.orderAmount);
-  let tran = await Transaction.findOne({ _id: req.body.orderId, 'amount': { $eq: amount }, status: 'log' });
+  let tran = await Transaction.findOne({ _id: orderId, 'amount': { $eq: amount }, status: 'log' });
   if (!tran) {
     return next(
       new ErrorResponse(`Transaction not found`)
@@ -141,10 +163,10 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   let player;
 
   if (tran.membershipId) {
-    await tran.memberShip(amount);
+    player = await tran.memberShip(amount);
 
     await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
-    if (player.refrer_player_id) {
+    if (player && player.refrer_player_id) {
       playerStat = { $inc: { refer_vip_count: 1 } };
       await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
         new: true,
@@ -187,8 +209,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
         'logType': 'payment',
         'prevBalance': player.balance,
         'paymentStatus': 'SUCCESS',
-        'status': 'complete',
-        'paymentId': req.body.referenceId
+        'status': 'complete'
       }
       bonusTran = await Transaction.create(tranBonusData);
       bonusTran.creditPlayerBonus(bonusAmount);
