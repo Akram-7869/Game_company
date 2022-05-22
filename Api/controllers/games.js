@@ -20,7 +20,7 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
     columns: req.body.columns,
     populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, phone: 1 } },
     sort: {
-      _id: 1
+      _id: -1
     }
   };
 
