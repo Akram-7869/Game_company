@@ -37,7 +37,7 @@ exports.updateCoupon = asyncHandler(async (req, res, next) => {
         .then(r => {
             // Assign value in session
             res.locals = { title: 'Coupon-edit' };
-            req.flash('error', 'Data save');
+            req.flash('message', 'Data save');
             res.redirect(process.env.ADMIN_URL + '/admin/Coupon');
         })
         .catch(error => {
@@ -50,7 +50,7 @@ exports.deleteCoupon = asyncHandler(async (req, res, next) => {
         .then(r => {
             // Assign value in session
             res.locals = { title: 'Coupon' };
-            req.flash('success', 'Deleted');
+            req.flash('message', 'Deleted');
         }).catch(error => { req.flash('error', 'Data not updated'); })
 
     res.status(200).json({

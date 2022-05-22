@@ -167,7 +167,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 
     if (tran.couponId) {
       let bonusAmount = 0;
-      let couponRec = await Coupon.findOne({ _id: tran.couponId, minAmount: { $gte: amount }, maxAmount: { $lte: amount } });
+      let couponRec = await Coupon.findOne({ _id: tran.couponId, minAmount: { $gte: amount }, maxAmount: { $lte: amount }, active: true });
       if (!couponRec) {
         res.status(200);
         return;

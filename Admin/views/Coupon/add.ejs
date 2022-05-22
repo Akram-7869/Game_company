@@ -36,7 +36,8 @@
                             <!--  <h4 class="card-title">Validation type</h4>
                 <p class="card-title-desc"> </p> -->
 
-                            <form action="" enctype="multipart/form-data" method="POST">
+                            <form id="coupon" action="" onsubmit="handleSubmit(this)" enctype="multipart/form-data"
+                                method="POST">
                                 <div class="mb-3">
                                     <label class="form-label">Name</label>
                                     <input type="text" id="name" name="name" value="<%=row.name?row.name:'' %>"
@@ -45,9 +46,8 @@
                                 <div class="mb-3">
                                     <label class="form-label">coupon Type</label>
 
-                                    <select class="form-select" name="couponType" required id="couponType"
-                                        onchange="handleBot()">
-                                        <option value="bonus" <%=row.bonus==='bonus' ?'selected':'' %>>bonus
+                                    <select class="form-select" name="couponType" required id="couponType">
+                                        <option value="bonus" <%=row.bonus==='bonus' ?'selected':'' %>>Bonus
                                         </option>
                                         <!-- <option value="true" <%=row.couponType==='percentage' ?'selected':'' %>
                                             >Percentage
@@ -59,8 +59,7 @@
 
 
 
-                                    <select class="form-select" name="calculateType" required id="calculateType"
-                                        onchange="handleBot()">
+                                    <select class="form-select" name="calculateType" required id="calculateType">
                                         <option value="fixed" <%=row.calculateType==='fixed' ?'selected':'' %>>Fixed
                                         </option>
                                         <option value="percentage" <%=row.calculateType==='percentage' ?'selected':'' %>
@@ -74,40 +73,30 @@
                                         value="<%=row.couponAmount?row.couponAmount:'' %>" class="form-control" required
                                         placeholder="couponAmount" />
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Max Amount</label>
+                                    <input type="text" id="max" name="maxAmount"
+                                        value="<%=row.maxAmount?row.maxAmount:'' %>" class="form-control" required
+                                        placeholder="Max Amount" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Min Amount</label>
+                                    <input type="text" id="min" name="minAmount"
+                                        value="<%=row.minAmount?row.minAmount:'' %>" class="form-control"
+                                        placeholder="Min Amount" />
+                                </div>
 
-                                <!-- <div class="mb-3">
-                                    <label class="form-label">Image</label>
-                                    <input type="text" name="couponImage" value="<%=row.couponImage?row.couponImage:'' %>"
-                                        class="form-control" required placeholder="couponImage" />
-                                </div> -->
 
-                                <!-- <div class="mb-3">
-                    <label class="form-label">Bot</label>
-                    <select class="form-select" name="calculateType" required id="bot" onchange="handleBot()">
-                        <option value="false" <%=row.bot===false?'selected':'' %>>OFF</option>
-                        <option value="true" <%=row.bot===true?'selected':'' %>>ON</option>
-                    </select>
-                </div>
-                <div class="mb-3" id="a1">
-                    <label class="form-label">Bot Complexity</label>
-                    <select class="form-select" name="complexity" required>
-                        <option value="EASY" <%=row.complexity==='EASY' ?'selected':'' %>>EASY</option>
-                        <option value="MEDIUM" <%=row.complexity==='MEDIUM' ?'selected':'' %>>MEDIUM
-                        </option>
-                        <option value="HARD" <%=row.complexity==='HARD' ?'selected':'' %>>HARD</option>
-                    </select>
-
-                </div> -->
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
-                                    <select id="statustxt" class="form-select" name="status" required>
-                                        <option value="false" <%=row.status===false?'selected':'' %>>OFF</option>
-                                        <option value="true" <%=row.status===true?'selected':'' %>>ON</option>
+                                    <select id="statustxt" class="form-select" name="active" required>
+                                        <option value="false" <%=row.active===false?'selected':'' %>>OFF</option>
+                                        <option value="true" <%=row.active===true?'selected':'' %>>ON</option>
                                     </select>
                                 </div>
                                 <div>
 
-                                    <div class="dropzone" id="myDropzone"></div>
+                                    <!-- <div class="dropzone" id="myDropzone"></div> -->
                                     <div>
                                         <button id="submit-all" type="submit"
                                             class="btn btn-primary waves-effect waves-light me-1">
@@ -133,8 +122,24 @@
 
                 <script src="/public/assets/js/pages/form-validation.init.js"></script>
                 <!-- <script src="public/assets/js/pages/sweet-alerts.init.js"></script> -->
-
                 <script>
+                    function handleSubmit(params) {
+                        if (params.checkValidity()) {
+                            //Swal.showLoading();
+                            Swal.fire({
+                                title: '',
+                                html: 'Please wait...',
+                                allowEscapeKey: false,
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading()
+                                }
+                            });
+                        }
+
+                    }
+                </script>
+                <!-- <script>
                     let url = '<%= apiUrl + "add" %>'
 
                     Dropzone.options.myDropzone = {
@@ -159,11 +164,13 @@
                                 e.preventDefault();
                                 e.stopPropagation();
                                 if (dzClosure.getQueuedFiles().length > 0) {
-                                    //Swal.showLoading();
                                     dzClosure.processQueue();
                                 } else {
+                                    alert(JSON.stringify($("#coupon").serialize()))
 
-                                    alert('Please Select File')
+                                    $.post(url, $("#coupon").serialize()).then(r => {
+                                        location.reload();
+                                    });
                                 }
 
                             });
@@ -174,12 +181,14 @@
                                 formData.append("couponType", $("#couponType").val());
                                 formData.append("calculateType", $("#calculateType ").val());
                                 formData.append("couponAmount", $("#couponAmount ").val());
-                                formData.append("status", $("#statustxt").val());
+                                formData.append("maxAmount", $("#max").val());
+                                formData.append("minAmount", $("#min").val());
+                                formData.append("active", $("#statustxt").val());
 
                             });
                         }
                     }
 
 
-                </script>
+                </script> -->
                 <%- contentFor('BottomJs') %>
