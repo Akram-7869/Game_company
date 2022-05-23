@@ -31,7 +31,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.role === 'player') {
       req.player = await Player.findById(decoded.id);
-      if (req.player === 'active' || req.player === 'notverified') { } else {
+      if (req.player === 'banned') {
         return next(new ErrorResponse('Account is banned'));
       }
     } else {
