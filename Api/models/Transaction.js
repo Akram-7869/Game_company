@@ -152,14 +152,14 @@ TransactionsSchema.methods.creditPlayerDeposit = async function (amount) {
 };
 TransactionsSchema.methods.memberShip = async function () {
     let fieldsToUpdate = {}
-    if (tran.membershipId === 'month') {
+    if (this.membershipId === 'month') {
         var futureMonth = moment().add(1, 'M');
         fieldsToUpdate = { membership: 'vip', membership_expire: futureMonth }
         return await Player.findByIdAndUpdate(this.playerId, fieldsToUpdate, {
             new: true,
             runValidators: true
         });
-    } else if (tran.membershipId === 'year') {
+    } else if (this.membershipId === 'year') {
 
         var futureYear = moment().add(1, 'Y');
         fieldsToUpdate = { membership: 'vip', membership_expire: futureYear }
