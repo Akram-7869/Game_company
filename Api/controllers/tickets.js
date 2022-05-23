@@ -18,7 +18,9 @@ exports.getTickets = asyncHandler(async (req, res, next) => {
     sort: {
       _id: 1
     },
-    populate: 'PlayerId'
+    populate: {
+      path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 }, options: { sort: { 'membership': -1 } }
+    }
   }).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })

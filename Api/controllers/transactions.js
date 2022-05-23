@@ -42,12 +42,15 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
   let filter = {
     limit: req.body.length,
     skip: req.body.start,
+    find: req.query,
     select: { 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
     search: {
 
     },
-    find: {},
-    populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 } },
+
+    populate: {
+      path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 }, options: { sort: { 'membership': -1 } }
+    },
     sort: {
       _id: -1
     }
