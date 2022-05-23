@@ -4,7 +4,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const Player = require('../models/Player');
 const User = require('../models/User');
 var mongoose = require('mongoose');
- 
+
 // Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
   let token;
@@ -31,7 +31,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.role === 'player') {
       req.player = await Player.findById(decoded.id);
-      if (req.player === 'banned') {
+      if (req.player === 'active' || req.player === 'notverified') { } else {
         return next(new ErrorResponse('Account is banned'));
       }
     } else {
@@ -41,7 +41,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
       }
 
     }
-   
+
 
     next();
   } catch (err) {
@@ -62,4 +62,4 @@ exports.authorize = (...roles) => {
     next();
   };
 };
- 
+
