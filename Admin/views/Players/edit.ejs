@@ -99,15 +99,69 @@
                                         <input readonly type="text" name=""
                                             value="<%=row.membership?row.membership:'' %>" class="form-control"
                                             required />
-                                        <%=row.membership?row.membership:'' %>
-                                            Expire : <%=row.membership_expire?row.membership_expire:'' %>
+                                        Expire : <%=row.membership_expire?row.membership_expire:'' %>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Status</label>
                                         <input readonly type="text" name="" value="<%=row.status?row.status:'' %>"
                                             class="form-control" required />
                                     </div>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
 
+                                                <th scope="col">level</th>
+
+                                                <th scope="col">Refer Count</th>
+                                                <th scope="col">Refer Total</th>
+
+
+                                                <th scope="col">Refer Deposit Count:
+                                                    <%=row.refer_deposit_count?row.refer_deposit_count:'' %>
+                                                </th>
+                                                <th scope="col">Refer Vip Count:
+                                                    <%=row.refer_vip_count?row.refer_vip_count:'' %>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">
+                                                    1
+                                                </th>
+                                                <td>
+                                                    <%=row.refer_lvl1_count?row.refer_lvl1_count:'' %>
+                                                </td>
+                                                <td>
+                                                    <%=row.refer_lvl1_total?row.refer_lvl1_total:'' %>
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">2</th>
+                                                <td>
+                                                    <%=row.refer_lvl2_count?row.refer_lvl2_count:'' %>
+                                                </td>
+                                                <td>
+                                                    <%=row.refer_lvl2_total?row.refer_lvl2_total:'' %>
+                                                </td>
+
+
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"></th>
+                                                <td>
+                                                    total
+                                                </td>
+                                                <td>
+                                                    <%=row.refrer_amount_total?row.refrer_amount_total:'' %>
+                                                </td>
+
+
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
                                     <!-- </form> -->
                                     </p>
                                 </div>
