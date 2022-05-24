@@ -68,7 +68,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
     // Create user
     player = await Player.create(data);
   }
-  await smsOtp(phone, vcode, sms);
+  await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
   //subscribeToTopic(firebaseToken);
   res.status(200).json({
     success: true,
@@ -232,15 +232,15 @@ exports.logout = asyncHandler(async (req, res, next) => {
   });
 });
 
-let smsOtp = async (phone, otp, sms) => {
+let smsOtp = async (mobile, otp, template_id, authkey) => {
 
   var params = {
-    "template_id": sms.one.TEMPLATE_ID,
-    "mobile": phone,
-    "authkey": sms.one.AUTHKEY,
-    "otp": otp
+    template_id,
+    mobile,
+    authkey,
+    otp
   };
-  console.error('sendingotp', otp, phone)
+  // console.error('sendingotp', otp, phone)
   return axios.get('https://api.msg91.com/api/v5/otp', { params }).catch(error => { console.error(error) });
 
 }
@@ -320,7 +320,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   //   return next(new ErrorResponse('Email could not be sent', 500));
   // }
-  let x = await smsOtp(phone, vcode, sms);
+  let x = await smsOtp(phone, vcode, sms.one.TEMPLATE_ADMIN_PASS, sms.one.AUTHKEY);
 
   res.status(200).json({
     success: true,
