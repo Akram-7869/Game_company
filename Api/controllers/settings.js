@@ -58,7 +58,7 @@ exports.getSettingByName = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.getSitedata = asyncHandler(async (req, res, next) => {
   const setting = await Setting.findOne({
-    type: 'SITE'
+    type: 'SITE',
   });
 
   res.status(200).json({
@@ -85,7 +85,7 @@ exports.createSetting = asyncHandler(async (req, res, next) => {
 exports.updateSetting = asyncHandler(async (req, res, next) => {
 
   let { one, many } = req.body;
-  console.log('server-post', one);
+
   let setting = await Setting.findOne({ _id: req.params.id });
   if (!setting) {
     return next(
@@ -98,7 +98,7 @@ exports.updateSetting = asyncHandler(async (req, res, next) => {
     new: true,
     runValidators: true
   });
-
+  res.app.set('site_setting', setting);
   //Setting.isNew = false;
   // await Setting.save();
   res.status(200).json({

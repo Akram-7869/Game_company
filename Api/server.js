@@ -41,17 +41,10 @@ const dashboards = require('./routes/dashboard');
 const tournaments = require('./routes/tournament');
 const coupon = require('./routes/coupon');
 const polls = require('./routes/polls');
-
-const formatMessage = require('./utils/messages');
-// const {
-//   userJoin,
-//   getCurrentUser,
-//   userLeave,
-//   getRoomUsers
-// } = require('./utils/users');
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
+const Setting = require('./models/Setting');
 
 // Body parser
 app.use(express.json());
@@ -92,11 +85,20 @@ app.use(hpp());
 
 // Enable CORS
 app.use(cors());
-
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+
   req.io = io;
+  if (!app.get('site_setting')) {
+    console.log('site setting');
+    const setting = await Setting.findOne({
+      type: 'SITE',
+    });
+    app.set('site_setting', setting);
+  }
+
+
   return next();
 });
 

@@ -46,6 +46,15 @@ const SettingSchema = new mongoose.Schema({
     lvl2_commission: {
         type: Number,
         default: 0
+    }, monthly_plan: {
+        type: Number,
+        default: 0
+    }, yearly_plan: {
+        type: Number,
+        default: 0
+    }, currency_symbol: {
+        type: String,
+        default: 'INR'
     }
 
 }, {

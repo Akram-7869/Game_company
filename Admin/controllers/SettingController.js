@@ -352,6 +352,7 @@ exports.getSiteData = asyncHandler(async (req, res, next) => {
             axios.get(apiUrl + 'filter/SITE')
                   .then(r => {
                         req.app.locals['sitename'] = r.data.data.one.site_name;
+                        req.app.locals['currency_symbol'] = r.data.data.one.currency_symbol;
                         req.app.locals['siteLogoUrl'] = api_url + '/settings/image/' + r.data.data.siteLogo;
                         //console.log('', r.data.data);
                         // res.redirect(process.env.ADMIN_URL + '/login');

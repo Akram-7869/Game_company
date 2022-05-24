@@ -1362,15 +1362,16 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
+
   const winners = await PlayerGame.find().sort({ "_id": -1 }).limit(20).select({ 'amountWon': 1 }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
 
   let x = winners.map(d => {
-    let name = 'DUCKER'
+    let name = 'DUCKE'
     if (d.playerId && d.playerId.firstName) {
       name = d.playerId.firstName;
     }
 
-    return name + ' Won ' + d.amountWon + ' ' + 'DKC';
+    return name + ' Won ' + d.amountWon + ' ' + res.app.get('site_setting').one.currency_symbol;
   });
   res.status(200).json({
     success: true,
