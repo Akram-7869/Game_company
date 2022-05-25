@@ -31,6 +31,10 @@ const TournamentSchema = new mongoose.Schema({
     interval: {
         type: Number
     },
+    bonusAmountDeduction: {
+        type: Number,
+        default: 0
+    },
     createdBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',

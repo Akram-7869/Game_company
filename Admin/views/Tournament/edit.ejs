@@ -59,6 +59,12 @@
                                         class="form-control" required placeholder="Bet amount" />
                                 </div>
                                 <div class="mb-3">
+                                    <label class="form-label">Bet Amount Used</label>
+                                    <input type="text" name="bonusAmountDeduction"
+                                        value="<%=row.bonusAmountDeduction?row.bonusAmountDeduction:'' %>"
+                                        class="form-control" required placeholder="Bonus  amount used" />
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Players</label>
                                     <select class="form-select" name="players" required>
                                         <option value="">Select Palyers..</option>
