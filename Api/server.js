@@ -140,7 +140,6 @@ const publicRoom = {};
 // Run when client connects
 io.on('connection', socket => {
   let data = { status: 'connected' };
-  console.log(io.engine.clientsCount);
   socket.emit('res', { ev: 'connected', data });
   console.log('contedt');
   socket.join('notification_channel');
@@ -232,7 +231,6 @@ io.on('connection', socket => {
       users: getRoomUsers(room),
       userId: userId
     };
-    console.log('dicconected', state);
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });

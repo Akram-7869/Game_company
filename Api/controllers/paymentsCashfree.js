@@ -187,36 +187,36 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
       });
     }
 
-    if (tran.couponId) {
-      let bonusAmount = 0;
-      let couponRec = await Coupon.findOne({ _id: tran.couponId, minAmount: { $gte: amount }, maxAmount: { $lte: amount }, active: true });
-      if (!couponRec) {
-        res.status(200);
-        return;
-      }
-      if (couponRec.couponType == 'percentage') {
-        bonusAmount = amount * (couponRec.couponAmount * 0.01);
-      } else {
-        bonusAmount = couponRec.couponAmount;
-      }
-
-      let tranBonusData = {
-        'playerId': tran.playerId,
-        'amount': bonusAmount,
-        'transactionType': "credit",
-        'note': 'Bonus amount',
-        'paymentGateway': 'Cashfree Pay',
-        'logType': 'payment',
-        'prevBalance': player.balance,
-        'paymentStatus': 'SUCCESS',
-        'status': 'complete'
-      }
-      bonusTran = await Transaction.create(tranBonusData);
-      bonusTran.creditPlayerBonus(bonusAmount);
-
-      console.log('bonus added');
-
+    //if (tran.couponId) {
+    let bonusAmount = 0;
+    let couponRec = await Coupon.findOne({ _id: tran.couponId, minAmount: { $gte: amount }, maxAmount: { $lte: amount }, active: true });
+    if (!couponRec) {
+      res.status(200);
+      return;
     }
+    if (couponRec.couponType == 'percentage') {
+      bonusAmount = amount * (couponRec.couponAmount * 0.01);
+    } else {
+      bonusAmount = couponRec.couponAmount;
+    }
+
+    let tranBonusData = {
+      'playerId': tran.playerId,
+      'amount': bonusAmount,
+      'transactionType': "credit",
+      'note': 'Bonus amount',
+      'paymentGateway': 'Cashfree Pay',
+      'logType': 'payment',
+      'prevBalance': player.balance,
+      'paymentStatus': 'SUCCESS',
+      'status': 'complete'
+    }
+    bonusTran = await Transaction.create(tranBonusData);
+    bonusTran.creditPlayerBonus(bonusAmount);
+
+    console.log('bonus added');
+
+    //}
   }
 
   res.status(200).json({
