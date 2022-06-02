@@ -165,7 +165,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   if (tran.membershipId) {
     player = await tran.memberShip(amount);
 
-    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
+    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', 'paymentStatus': 'SUCCESS' });
     if (player && player.refrer_player_id) {
       playerStat = { $inc: { refer_vip_count: 1 } };
       await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
