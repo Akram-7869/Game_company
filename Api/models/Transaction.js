@@ -152,7 +152,7 @@ TransactionsSchema.methods.creditPlayerDeposit = async function (amount) {
 
 };
 TransactionsSchema.methods.memberShip = async function () {
-    let fieldsToUpdate = {}
+    let fieldsToUpdate = { membership_amount: this.amount }
     if (this.membershipId === 'month') {
         var futureMonth = moment().add(1, 'M');
         fieldsToUpdate = { membership: 'vip', membership_expire: futureMonth }

@@ -202,6 +202,11 @@ const PlayerSchema = new mongoose.Schema({
     default: 'free'
 
   },
+  membership_amount: {
+    type: Number
+
+
+  },
   membership_expire: {
     type: Date,
   },

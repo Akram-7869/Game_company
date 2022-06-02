@@ -55,6 +55,7 @@
 
                                         <th>Mobile</th>
                                         <th>Membership</th>
+                                        <th>Amount</th>
                                         <th>Expire Date</th>
                                         <th>Status</th>
                                         <!-- <th>Action</th> -->
@@ -151,6 +152,7 @@
 
                                 { data: 'phone', "defaultContent": "" },
                                 { data: 'membership', "defaultContent": "" },
+                                { data: 'membership_amount', "defaultContent": "" },
                                 {
                                     data: 'membership_expire', render: function (data) {
                                         return moment(data).format('DD-MM-YYYY');
