@@ -189,7 +189,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 
     //if (tran.couponId) {
     let bonusAmount = 0;
-    let couponRec = await Coupon.findOne({ _id: tran.couponId, minAmount: { $gte: amount }, maxAmount: { $lte: amount }, active: true });
+    let couponRec = await Coupon.findOne({ minAmount: { $gte: amount }, maxAmount: { $lte: amount }, active: true });
     if (!couponRec) {
       res.status(200);
       return;
@@ -209,7 +209,8 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
       'logType': 'payment',
       'prevBalance': player.balance,
       'paymentStatus': 'SUCCESS',
-      'status': 'complete'
+      'status': 'complete',
+      'paymentId': tran._id
     }
     bonusTran = await Transaction.create(tranBonusData);
     bonusTran.creditPlayerBonus(bonusAmount);
