@@ -99,7 +99,10 @@
                                         <input readonly type="text" name=""
                                             value="<%=row.membership?row.membership:'' %>" class="form-control"
                                             required />
-                                        Expire : <%=row.membership_expire?row.membership_expire:'' %>
+                                        <p>Membership Amount : <%=row.membership_amount?row.membership_amount:'' %>
+                                        </p>
+
+                                        Membership Expire : <%=row.membership_expire?row.membership_expire:'' %>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Status</label>
