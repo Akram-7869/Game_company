@@ -212,8 +212,8 @@ io.on('connection', socket => {
     let { room } = d; //JSON.parse(d);
     socket.leave(room);
     userLeave(socket);
-    console.dir(state);
-    console.dir(io.sockets.adapter.rooms);
+    //console.dir(state);
+    //console.dir(io.sockets.adapter.rooms);
     let data = {
       room: room,
       users: getRoomUsers(room)
