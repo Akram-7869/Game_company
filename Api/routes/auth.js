@@ -3,12 +3,12 @@ const authCtrl = require('../controllers/auth');
 
 const router = express.Router();
 
-const { init, protect, maintenance } = require('../middleware/auth');
+const { init, protect, maintenance_chk } = require('../middleware/auth');
 
-router.post('/player/register', maintenance, authCtrl.playerRegister);
-router.post('/player/verify', maintenance, authCtrl.verifyPhoneCode);
+router.post('/player/register', maintenance_chk, authCtrl.playerRegister);
+router.post('/player/verify', maintenance_chk, authCtrl.verifyPhoneCode);
 
-router.post('/player/login', maintenance, authCtrl.playerLogin);
+router.post('/player/login', maintenance_chk, authCtrl.playerLogin);
 router.post('/login', authCtrl.login);
 router.get('/logout', authCtrl.logout);
 
