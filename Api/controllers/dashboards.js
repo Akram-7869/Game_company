@@ -4,7 +4,6 @@ const Dashboard = require('../models/Dashboard');
 const Player = require('../models/Player');
 const Transaction = require('../models/Transaction');
 const Support = require('../models/Support');
-const Support = require('../models/');
 // @desc      Get all Dashboards
 // @desc      Get all Dashboards
 // @route     GET /api/v1/auth/Dashboards
