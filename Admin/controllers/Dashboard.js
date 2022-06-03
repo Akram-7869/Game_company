@@ -20,8 +20,6 @@ exports.dashBoardView = asyncHandler(async (req, res, next) => {
             let sumDb = r.data.data.graph.map(d => {
                 return d.totalAmount
             });
-
-            ////console.log(lableDb, sumDb);
             res.render('Dashboard/index', { list: r.data.data.row, lableDb, sumDb })
         })
         .catch(error => { req.flash('error', 'Incorrect email or password!'); })

@@ -1,7 +1,11 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Dashboard = require('../models/Dashboard');
+const Player = require('../models/Player');
 const Transaction = require('../models/Transaction');
+const Support = require('../models/Support');
+const Support = require('../models/');
+// @desc      Get all Dashboards
 // @desc      Get all Dashboards
 // @route     GET /api/v1/auth/Dashboards
 // @access    Private/Admin
@@ -27,6 +31,7 @@ exports.getDashboards = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Dashboards/:id
 // @access    Private/Admin
 exports.getDashboard = asyncHandler(async (req, res, next) => {
+
   const row = await Dashboard.findById(req.params.id);
   res.locals = { title: 'Dashboard', adminUrl: process.env.ADMIN_URL };
   res.status(200).json({
@@ -143,13 +148,36 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findOne({ 'type': req.params.type }).lean();
   row['livePlayers'] = req.io.engine.clientsCount;
   const graph = await getGraphData(req);
+  row['totals'] = await calTotal();
   //console.log('graph', row, graph)
   res.status(200).json({
     success: true,
     data: { row, graph }
   });
 });
+let calTotal = async () => {
 
+  const total = await Player.aggregate([{
+    $group: {
+      _id: null,
+      bonusTotal: {
+        $sum: "$bonus"
+      },
+      balanceTotal: {
+        $sum: "$balance"
+      },
+      depositTotal: {
+        $sum: "$deposit"
+      },
+      winingsTotal: {
+        $sum: "$winings"
+      }
+    }
+  }]);
+  console.log('ttttt', total[0]);
+  return total[0];
+
+}
 // @desc      Get single Dashboard
 // @route     GET /api/v1/auth/Dashboards/filter/:id
 // @access    Private/Admin
