@@ -279,7 +279,7 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
 
     } else {
       let fieldsToUpdate = {
-        $inc: { balance: parseInt(row.data.details.orderAmount), deposit: parseInt(row.data.details.orderAmount) }
+        $inc: { balance: row.data.details.orderAmount, deposit: row.data.details.orderAmount }
       }
 
       player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
@@ -921,7 +921,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player Not found`)
     );
   }
-  amount = parseInt(amount).toFixed(3);
+  amount = parseFloat(amount).toFixed(2);
 
   let commision = adminCommision;
   let tranData = {
@@ -988,9 +988,9 @@ const updateDashboradStat = async (amount, commision) => {
     dash['livePlayers'] -= 1;
   }
   if (commision > 0) {
-    dash['totalIncome'] = dash['totalIncome'] + parseInt(commision);
+    dash['totalIncome'] = dash['totalIncome'] + parseFloat(commision);
   }
-  dash['grossIncome'] = dash['grossIncome'] + parseInt(amount);
+  dash['grossIncome'] = dash['grossIncome'] + parseFloat(amount);
 
   dash.save();
 }

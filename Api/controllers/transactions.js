@@ -223,7 +223,7 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player Not found`)
     );
   }
-  amount = parseInt(amount).toFixed(3);
+  amount = parseFloat(amount).toFixed(3);
 
 
   let commision = 0;

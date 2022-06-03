@@ -118,7 +118,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   }
   const orderId = req.body.data.order.order_id;
   //const payment_status = req.body.data.payment.payment_status;
-  const amount = parseInt(req.body.data.payment.payment_amount);
+  const amount = parseFloat(req.body.data.payment.payment_amount).toFixed(2);
   // if (!ok) {
   //    {
   //  data: {
