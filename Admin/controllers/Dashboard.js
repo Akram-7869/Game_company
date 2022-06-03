@@ -13,7 +13,7 @@ exports.dashBoardView = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Dashboard' };
     callApi(req).post(apiUrl + 'filter/dashboard', { s_date: '2021-08-01', e_date: '2021-09-01', logType: 'game' })
         .then(r => {
-            console.log(r.data.data.row)
+
             let lableDb = r.data.data.graph.map(d => {
                 return d._id
             });

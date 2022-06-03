@@ -72,9 +72,9 @@
                             </div>
                             <div>
                                 <h4 class="mb-1 mt-1"><span data-plugin="counterup">
-                                        <%=list.totalPayoutRequest%>
+                                        <%=list.withdrawRequest%>
                                     </span></h4>
-                                <p class="text-muted mb-0">Request</p>
+                                <p class="text-muted mb-0">Payout Count</p>
                             </div>
                             <!-- <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i class="mdi mdi-arrow-down-bold me-1"></i>6.24%</span> since last week -->
                             </p>
@@ -187,27 +187,92 @@
                     </div> -->
                 </div> <!-- end col-->
             </div> <!-- end row-->
-            <table>
-                <tr>
-                    <th>head</th>
-                    <th>total</th>
-                    <th>Count</th>
-                </tr>
-                <% for(var i=0; i < list.tranTotal.length; i++) { %>
+            <div class="row">
+                <div class="col-md-6 col-xl-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="float-end mt-2">
+                                <div id="total-revenue-chart">
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="mb-1 mt-1">
+                                    <span data-plugin="counterup">
+                                        <%=parseInt(list.supportRequest)%>
+                                    </span>
+                                </h4>
+                                <p class="text-muted mb-0">Support</p>
+                            </div>
+                            <!-- <p class="text-muted mt-3 mb-0"><span class="text-success me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>2.65%</span> since last week -->
+                            </p>
+                        </div>
+                    </div>
+                </div> <!-- end col-->
 
-                    <tr>
-                        <td>
-                            <%= list.tranTotal[i]._id %>
-                        </td>
-                        <td>
-                            <%= list.tranTotal[i].bonusTotal %>
-                        </td>
-                        <td>
-                            <%= list.tranTotal[i].count %>
-                        </td>
-                    </tr>
-                    <% } %>
-            </table>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="float-end mt-2">
+                                <div id="orders-chart"> </div>
+                            </div>
+                            <div>
+                                <h4 class="mb-1 mt-1">
+                                    <span data-plugin="counterup">
+                                        <%=parseInt(list.gameCount)%>
+                                    </span>
+                                </h4>
+                                <p class="text-muted mb-0">GameCount</p>
+                            </div>
+                            <!-- <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
+                                        class="mdi mdi-arrow-down-bold me-1"></i>0.82%</span> since last week
+                            </p> -->
+                        </div>
+                    </div>
+                </div> <!--  end col-->
+
+                <!-- <div class="col-md-6 col-xl-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="float-end mt-2">
+                                <div id="customers-chart"> </div>
+                            </div>
+                            <div>
+                                <h4 class="mb-1 mt-1">
+                                    <%=currency_symbol%> <span data-plugin="counterup">
+                                            <%=parseInt(list.totals.depositTotal)%>
+                                        </span>
+                                </h4>
+                                <p class="text-muted mb-0">DepositTotal</p>
+                            </div>
+                              <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
+                                        class="mdi mdi-arrow-down-bold me-1"></i>6.24%</span> since last week
+                            </p> 
+                        </div>
+                    </div>
+                </div> 
+
+                <div class="col-md-6 col-xl-3">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="float-end mt-2">
+                                <div id="growth-chart"></div>
+                            </div>
+                            <div>
+                                <h4 class="mb-1 mt-1">
+                                    <%=currency_symbol%> <span data-plugin="counterup">
+                                            <%=parseInt(list.totals.bonusTotal)%>
+                                        </span>
+                                </h4>
+                                <p class="text-muted mb-0"> BonusTotal</p>
+                            </div>
+                             <p class="text-muted mt-3 mb-0"><span class="text-success me-1"><i
+                                        class="mdi mdi-arrow-up-bold me-1"></i>10.51%</span> since last week
+                            </p> 
+                        </div>
+                    </div> -->
+            </div> <!-- end col-->
+            </div> <!-- end row-->
             <div class="row">
                 <div class="col-xl-8">
                     <div class="card">

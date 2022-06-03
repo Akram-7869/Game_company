@@ -4,6 +4,7 @@ const Dashboard = require('../models/Dashboard');
 const Player = require('../models/Player');
 const Transaction = require('../models/Transaction');
 const Support = require('../models/Support');
+const PlayerGame = require('../models/PlayerGame');
 // @desc      Get all Dashboards
 // @desc      Get all Dashboards
 // @route     GET /api/v1/auth/Dashboards
@@ -167,10 +168,14 @@ const transTotals = async () => {
 exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findOne({ 'type': req.params.type }).lean();
   row['livePlayers'] = req.io.engine.clientsCount;
+  row['withdrawRequest'] = await Transaction.find({ transactionType: 'withdraw' }).count();
+  row['supportRequest'] = await Support.count();
+  row['gameCount'] = await PlayerGame.count();
+
   const graph = await getGraphData(req);
   row['totals'] = await calTotal();
-  row['tranTotal'] = await transTotals();
-  console.log('graph', row, graph)
+
+
   res.status(200).json({
     success: true,
     data: { row, graph }
