@@ -3,7 +3,7 @@ const asyncHandler = require('../middleware/async');
 const Dashboard = require('../models/Dashboard');
 const Player = require('../models/Player');
 const Transaction = require('../models/Transaction');
-const Support = require('../models/Support');
+const Ticket = require('../models/Ticket');
 const PlayerGame = require('../models/PlayerGame');
 // @desc      Get all Dashboards
 // @desc      Get all Dashboards
@@ -168,9 +168,9 @@ const transTotals = async () => {
 exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findOne({ 'type': req.params.type }).lean();
   row['livePlayers'] = req.io.engine.clientsCount;
-  row['withdrawRequest'] = await Transaction.find({ transactionType: 'withdraw' }).count();
-  row['supportRequest'] = await Support.count();
-  row['gameCount'] = await PlayerGame.count();
+  row['withdrawRequest'] = await Transaction.countDocuments({ transactionType: 'withdraw' });
+  row['supportRequest'] = await Ticket.countDocuments();
+  row['gameCount'] = await PlayerGame.countDocuments();
 
   const graph = await getGraphData(req);
   row['totals'] = await calTotal();
