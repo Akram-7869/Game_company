@@ -140,6 +140,27 @@ const getGraphMonth = async (req) => {
   ]);
   return row;
 };
+
+const transTotals = async () => {
+  const row = await Transaction.aggregate([
+    {
+      '$match': {
+        'status': 'complete'
+      }
+    }, {
+      '$group': {
+        '_id': '$logType',
+        'bonusTotal': {
+          '$sum': '$amount'
+        },
+        'count': {
+          '$sum': 1
+        }
+      }
+    }
+  ]);
+  return row;
+}
 // @desc      Get single Dashboard
 // @route     GET /api/v1/auth/Dashboards/filter/:id
 // @access    Private/Admin
@@ -148,7 +169,8 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   row['livePlayers'] = req.io.engine.clientsCount;
   const graph = await getGraphData(req);
   row['totals'] = await calTotal();
-  //console.log('graph', row, graph)
+  row['tranTotal'] = await transTotals();
+  console.log('graph', row, graph)
   res.status(200).json({
     success: true,
     data: { row, graph }

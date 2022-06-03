@@ -187,6 +187,27 @@
                     </div> -->
                 </div> <!-- end col-->
             </div> <!-- end row-->
+            <table>
+                <tr>
+                    <th>head</th>
+                    <th>total</th>
+                    <th>Count</th>
+                </tr>
+                <% for(var i=0; i < list.tranTotal.length; i++) { %>
+
+                    <tr>
+                        <td>
+                            <%= list.tranTotal[i]._id %>
+                        </td>
+                        <td>
+                            <%= list.tranTotal[i].bonusTotal %>
+                        </td>
+                        <td>
+                            <%= list.tranTotal[i].count %>
+                        </td>
+                    </tr>
+                    <% } %>
+            </table>
             <div class="row">
                 <div class="col-xl-8">
                     <div class="card">
