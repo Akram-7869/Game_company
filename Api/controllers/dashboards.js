@@ -168,7 +168,7 @@ const transTotals = async () => {
 exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findOne({ 'type': req.params.type }).lean();
   row['livePlayers'] = req.io.engine.clientsCount;
-  row['withdrawRequest'] = await Transaction.countDocuments({ transactionType: 'withdraw' });
+  row['withdrawRequest'] = await Transaction.countDocuments({ logType: 'withdraw' });
   row['supportRequest'] = await Ticket.countDocuments();
   row['gameCount'] = await PlayerGame.countDocuments();
 
