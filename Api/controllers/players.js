@@ -989,9 +989,9 @@ const updateDashboradStat = async (amount, commision) => {
     dash['livePlayers'] -= 1;
   }
   if (commision > 0) {
-    dash['totalIncome'] = dash['totalIncome'] + parseFloat(commision);
+    dash['totalIncome'] = dash['totalIncome'] + parseFloat(commision).toFixed(2);
   }
-  dash['grossIncome'] = dash['grossIncome'] + parseFloat(amount);
+  dash['grossIncome'] = dash['grossIncome'] + parseFloat(amount).toFixed(2);
 
   dash.save();
 }
