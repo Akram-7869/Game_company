@@ -272,7 +272,8 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
     );
   }
   const row = await checkOrderStatus(orderId);
-  console.log('row', row.data, tran);
+  //console.log('row', row.data, tran);
+  amount = row.data.details.orderAmount;
   if (row.data.details.orderStatus === 'PAID') {
 
     if (tran.membershipId) {
@@ -297,32 +298,32 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
       }
 
 
-      if (tran.couponId) {
-        let coupon = await Coupon.findOne({ _id: tran.couponId, 'active': true });
-        let bonus_amount = 0;
-        if (coupon.calculateType === 'percentage') {
-          bonus_amount = tran.amount * coupon.couponAmount * 0.01;
-        } else if (coupon.calculateType === 'fixed') {
-          bonus_amount = coupon.couponAmount;
-        }
-        if (coupon) {
-          //create transaction
-          let tranData = {
-            'playerId': tran.playerId,
-            'amount': bonus_amount,
-            'transactionType': "credit",
-            'note': 'coupon bonus',
-            'prevBalance': req.player.balance,
-            'status': 'complete',
-            'logType': 'bonus'
-          }
-          let tranb = await Transaction.create(tranData);
-          //
-          player = await tranb.creditPlayerBonus(bonus_amount);
-        }
-
-
+      // if (tran.couponId) {
+      let coupon = await Coupon.findOne({ minAmount: { $gte: amount }, maxAmount: { $lte: amount }, active: true });
+      let bonus_amount = 0;
+      if (coupon.calculateType === 'percentage') {
+        bonus_amount = tran.amount * coupon.couponAmount * 0.01;
+      } else if (coupon.calculateType === 'fixed') {
+        bonus_amount = coupon.couponAmount;
       }
+      if (coupon) {
+        //create transaction
+        let tranData = {
+          'playerId': tran.playerId,
+          'amount': bonus_amount,
+          'transactionType': "credit",
+          'note': 'coupon bonus',
+          'prevBalance': req.player.balance,
+          'status': 'complete',
+          'logType': 'bonus'
+        }
+        let tranb = await Transaction.create(tranData);
+        //
+        player = await tranb.creditPlayerBonus(bonus_amount);
+      }
+
+
+      //  }
       //handle coupon
 
     }
