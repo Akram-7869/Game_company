@@ -189,8 +189,9 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 
     //if (tran.couponId) {
     let bonusAmount = 0;
-    let couponRec = await Coupon.findOne({ minAmount: { $gte: amount }, maxAmount: { $lte: amount }, active: true });
+    let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true });
     if (!couponRec) {
+      console.log('Coupon not found');
       res.status(200);
       return;
     }
@@ -206,7 +207,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
       'transactionType': "credit",
       'note': 'Bonus amount',
       'paymentGateway': 'Cashfree Pay',
-      'logType': 'payment',
+      'logType': 'bonus',
       'prevBalance': player.balance,
       'paymentStatus': 'SUCCESS',
       'status': 'complete',
