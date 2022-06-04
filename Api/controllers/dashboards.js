@@ -142,25 +142,18 @@ const getGraphMonth = async (req) => {
   return row;
 };
 
-const transTotals = async () => {
+const adminCommision = async () => {
   const row = await Transaction.aggregate([
     {
-      '$match': {
-        'status': 'complete'
-      }
-    }, {
       '$group': {
-        '_id': '$logType',
-        'bonusTotal': {
-          '$sum': '$amount'
-        },
-        'count': {
-          '$sum': 1
+        '_id': null,
+        'totalIncome': {
+          '$sum': '$adminCommision'
         }
       }
     }
   ]);
-  return row;
+  return row[0].totalIncome;
 }
 // @desc      Get single Dashboard
 // @route     GET /api/v1/auth/Dashboards/filter/:id
@@ -171,7 +164,7 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   row['withdrawRequest'] = await Transaction.countDocuments({ logType: 'withdraw' });
   row['supportRequest'] = await Ticket.countDocuments();
   row['gameCount'] = await PlayerGame.countDocuments();
-
+  row['totalIncome'] = await adminCommision();
   const graph = await getGraphData(req);
   row['totals'] = await calTotal();
 
@@ -200,7 +193,6 @@ let calTotal = async () => {
       }
     }
   }]);
-  console.log('ttttt', total[0]);
   return total[0];
 
 }

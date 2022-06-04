@@ -328,7 +328,7 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
 
     }
   } else {
-    await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
+    //await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
   }
 
   res.status(200).json({
@@ -398,7 +398,7 @@ exports.membership = asyncHandler(async (req, res, next) => {
     });
     await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', paymentStatus: 'SUCCESS' });
   } else {
-    await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
+    //await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
   }
   res.status(200).json({
     success: true,
@@ -976,7 +976,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
 
   //console.log('debit', player.balance);
 
-  await updateDashboradStat(amount, commision)
+  //await updateDashboradStat(amount, commision)
   res.status(200).json({
     success: true,
     data: player
@@ -985,9 +985,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
 
 const updateDashboradStat = async (amount, commision) => {
   let dash = await Dashboard.findOne({ type: 'dashboard' });
-  if (dash['livePlayers'] > 0) {
-    dash['livePlayers'] -= 1;
-  }
+
   if (commision > 0) {
     dash['totalIncome'] = dash['totalIncome'] + parseFloat(commision).toFixed(2);
   }
