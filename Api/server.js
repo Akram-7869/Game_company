@@ -234,6 +234,18 @@ io.on('connection', socket => {
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });
+  // Runs when client disconnects
+  socket.on('gameEnd', (d) => {
+    let { room } = d;
+    if (state[room]) {
+      delete state[room];
+    }
+    let data = {
+      room: room
+    };
+    io.to(socket.room).emit('res', { ev: 'gameEnd', data });
+
+  });
   //move user
   socket.on('moveuser', (d) => {
 
