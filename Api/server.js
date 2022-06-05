@@ -297,11 +297,16 @@ let initRoom = () => {
 }
 
 let joinRoom = (socket, palyerId, room, d = {}) => {
-  console.log('join room', socket.id, palyerId, room);
+  //console.log('join room', socket.id, palyerId, room);
   socket['room'] = room;
   socket['userId'] = palyerId;
+  const index = state[room].players.findIndex(user => user.userId === palyerId);
+  console.log('i-', index);
+  if (index === -1) {
+    state[room].players.push(d);
+  }
 
-  state[room].players.push(d);
+
 }
 let getRoomUsers = (room) => {
 
