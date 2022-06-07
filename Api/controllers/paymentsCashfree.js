@@ -177,7 +177,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   } else {
 
     player = await tran.creditPlayerDeposit(amount);
-    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
+    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', 'paymentStatus': 'SUCCESS' });
     console.log('Deposit added');
     if (player.refrer_player_id) {
       playerStat = { $inc: { refer_deposit_count: 1 } };
