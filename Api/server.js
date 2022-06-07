@@ -164,17 +164,14 @@ io.on('connection', socket => {
     let { userId, tournamentId, maxp = 4 } = dataParsed;
 
 
-    let roomName = socket['room'] || '';
-    console.log('room-', socket['room']);
-    if (!roomName) {
-      if (publicRoom[tournamentId] && publicRoom[tournamentId]['playerCount'] < maxp) {
-        roomName = publicRoom[tournamentId]['roomName'];
-      } else {
-        roomName = makeid(5);
-        console.log('naking new');
-        publicRoom[tournamentId] = { roomName, playerCount: 0 }
-        state[roomName] = initRoom();
-      }
+    let roomName = '';
+    if (publicRoom[tournamentId] && publicRoom[tournamentId]['playerCount'] < maxp) {
+      roomName = publicRoom[tournamentId]['roomName'];
+    } else {
+      roomName = makeid(5);
+      console.log('naking new');
+      publicRoom[tournamentId] = { roomName, playerCount: 0 }
+      state[roomName] = initRoom();
     }
 
     joinRoom(socket, userId, roomName, dataParsed);
@@ -186,7 +183,6 @@ io.on('connection', socket => {
 
     publicRoom[tournamentId]['playerCount'] = state[roomName].players.length;
     console.dir(state);
-    console.dir(publicRoom);
     //console.dir(socket.userId);
     io.to(roomName).emit('res', { ev: 'join', data });
   });
