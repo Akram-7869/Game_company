@@ -162,19 +162,24 @@ io.on('connection', socket => {
     console.log('inputstring', d);
     let dataParsed = d;// JSON.parse(d);
     let { userId, tournamentId, maxp = 4 } = dataParsed;
-
+    let { room } = socket;
 
     let roomName = '';
-    if (publicRoom[tournamentId] && publicRoom[tournamentId]['playerCount'] < maxp) {
-      roomName = publicRoom[tournamentId]['roomName'];
+    if (!room) {
+      if (publicRoom[tournamentId] && publicRoom[tournamentId]['playerCount'] < maxp) {
+        roomName = publicRoom[tournamentId]['roomName'];
+      } else {
+        roomName = makeid(5);
+        console.log('naking new');
+        publicRoom[tournamentId] = { roomName, playerCount: 0 }
+        state[roomName] = initRoom();
+      }
+
+      joinRoom(socket, userId, roomName, dataParsed);
     } else {
-      roomName = makeid(5);
-      console.log('naking new');
-      publicRoom[tournamentId] = { roomName, playerCount: 0 }
-      state[roomName] = initRoom();
+      roomName = room;
     }
 
-    joinRoom(socket, userId, roomName, dataParsed);
     socket.join(roomName);
     let data = {
       roomName, users: getRoomUsers(roomName),
@@ -183,8 +188,7 @@ io.on('connection', socket => {
 
     publicRoom[tournamentId]['playerCount'] = state[roomName].players.length;
     console.dir(state, { depth: null });
-    console.dir(publicRoom, { depth: null });
-    console.dir(data, { depth: null });
+    //console.dir(socket.userId);
     io.to(roomName).emit('res', { ev: 'join', data });
   });
 
@@ -213,7 +217,7 @@ io.on('connection', socket => {
     let { room } = d; //JSON.parse(d);
     socket.leave(room);
     userLeave(socket);
-    // console.dir(state, 1);
+    //console.dir(state);
     //console.dir(io.sockets.adapter.rooms);
     let data = {
       room: room,
