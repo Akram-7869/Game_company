@@ -182,7 +182,7 @@ io.on('connection', socket => {
     }
 
     publicRoom[tournamentId]['playerCount'] = state[roomName].players.length;
-    console.dir(state, { depth: null });
+    console.dir(data, { depth: null });
     //console.dir(socket.userId);
     io.to(roomName).emit('res', { ev: 'join', data });
   });
