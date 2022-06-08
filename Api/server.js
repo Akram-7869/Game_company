@@ -161,16 +161,16 @@ io.on('connection', socket => {
   socket.on('join', (d) => {
     console.log('inputstring', d);
     let dataParsed = d;// JSON.parse(d);
-    let { userId, tournamentId, maxp = 4 } = dataParsed;
+    let { userId, lobbyId, maxp = 4 } = dataParsed;
 
 
     let roomName = '';
-    if (publicRoom[tournamentId] && publicRoom[tournamentId]['playerCount'] < maxp) {
-      roomName = publicRoom[tournamentId]['roomName'];
+    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp) {
+      roomName = publicRoom[lobbyId]['roomName'];
     } else {
       roomName = makeid(5);
       console.log('naking new');
-      publicRoom[tournamentId] = { roomName, playerCount: 0 }
+      publicRoom[lobbyId] = { roomName, playerCount: 0 }
       state[roomName] = initRoom();
     }
 
@@ -181,7 +181,7 @@ io.on('connection', socket => {
       userId: userId
     }
 
-    publicRoom[tournamentId]['playerCount'] = state[roomName].players.length;
+    publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
     console.dir(data, { depth: null });
     //console.dir(socket.userId);
     io.to(roomName).emit('res', { ev: 'join', data });
