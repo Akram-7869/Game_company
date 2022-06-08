@@ -122,7 +122,7 @@ app.use('/api/v1/coupon', coupon);
 app.use('/api/v1/polls', polls);
 
 app.get('/api/v1/so', function (req, res, next) {
-  res.json(state);
+  res.json({ state, publicRoom });
 })
 app.use(errorHandler);
 
@@ -162,7 +162,7 @@ io.on('connection', socket => {
 
   // });
   socket.on('join', (d) => {
-    console.log('inputstring', d);
+    //  console.log('inputstring', d);
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4 } = dataParsed;
 
