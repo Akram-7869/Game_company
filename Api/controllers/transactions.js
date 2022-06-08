@@ -26,7 +26,7 @@ exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
     },
     find: { 'playerId': req.player._id, status: 'complete' },
     sort: {
-      updatedAt: 1
+      updatedAt: -1
     }
   }).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data

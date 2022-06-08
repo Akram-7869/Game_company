@@ -16,7 +16,7 @@ exports.getTickets = asyncHandler(async (req, res, next) => {
       fields: ['phone']
     },
     sort: {
-      _id: 1
+      _id: -1
     },
     populate: {
       path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 }, options: { sort: { 'membership': -1 } }

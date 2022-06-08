@@ -18,7 +18,7 @@ exports.getPolls = asyncHandler(async (req, res, next) => {
             fields: ['status', 'location']
         },
         sort: {
-            _id: 1
+            _id: -1
         }
     }).then(function (table) {
         res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data

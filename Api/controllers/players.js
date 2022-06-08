@@ -419,7 +419,7 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
 
     },
     sort: {
-      username: 1
+      _id: -1, username: 1
     }
   };
   if (req.body.s_date && req.body.e_date) {
