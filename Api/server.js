@@ -91,7 +91,7 @@ app.use(async (req, res, next) => {
 
   req.io = io;
   if (!app.get('site_setting')) {
-    console.log('site setting');
+    // console.log('site setting');
     const setting = await Setting.findOne({
       type: 'SITE',
     });
@@ -121,6 +121,9 @@ app.use('/api/v1/tournaments', tournaments);
 app.use('/api/v1/coupon', coupon);
 app.use('/api/v1/polls', polls);
 
+app.get('/api/v1/so', function (req, res, next) {
+  res.json(state);
+})
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
@@ -182,7 +185,7 @@ io.on('connection', socket => {
     }
 
     publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
-    console.dir(data, { depth: null });
+    // console.dir(data, { depth: null });
     //console.dir(socket.userId);
     io.to(roomName).emit('res', { ev: 'join', data });
   });
