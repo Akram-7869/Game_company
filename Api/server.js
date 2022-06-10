@@ -174,10 +174,14 @@ io.on('connection', socket => {
       roomName = makeid(5);
       console.log('naking new');
       publicRoom[lobbyId] = { roomName, playerCount: 0 }
-      state[roomName] = initRoom();
+      state[roomName] = { full: 0, players: [] };
     }
-
+    if (!state[roomName]) {
+      socket.emit('res', { ev: 'error', data });
+      return;
+    }
     joinRoom(socket, userId, roomName, dataParsed);
+
     socket.join(roomName);
     let data = {
       roomName, users: getRoomUsers(roomName),
@@ -303,10 +307,11 @@ let joinRoom = (socket, palyerId, room, d = {}) => {
   //console.log('join room', socket.id, palyerId, room);
   socket['room'] = room;
   socket['userId'] = palyerId;
-  state[room].players.push(d);
-
-
-
+  const index = state[room].players.findIndex(user => user.userId === palyerId);
+  console.log('i-', index);
+  if (index === -1) {
+    state[room].players.push(d);
+  }
 }
 let getRoomUsers = (room) => {
 
