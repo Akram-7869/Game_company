@@ -311,7 +311,7 @@ exports.payout = asyncHandler(async (req, res, next) => {
 
   let token = response['data']['data']['token']
   //   console.log(token);
-  let url = 'https://payout-gamma.cashfree.com/payout/v1/directTransfer';
+  let url = 'https://payout-api.cashfree.com/payout/v1/directTransfer';
   console.log(data);
   let resPayout = await axios({
     method: 'post',
