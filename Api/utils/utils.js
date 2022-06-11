@@ -12,6 +12,3 @@ function makeid(length) {
    return result;
 }
 
-function handleMemberShip() {
-
-}
