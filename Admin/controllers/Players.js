@@ -9,7 +9,7 @@ var apiUrlGame = api_url + '/games/';
 var apiUrlTransaction = api_url + '/transactions/';
 
 exports.playerPayoutApprove = asyncHandler(async (req, res, next) => {
-      console.log('one');
+
 
       res.locals = { title: 'Player' };
       callApi(req).post(api_url + '/payments/cashfree/payout', { withdrawId: req.params.id })
@@ -18,7 +18,7 @@ exports.playerPayoutApprove = asyncHandler(async (req, res, next) => {
                   //res.render('Reports/payoutprocessing', { row: r.data.data });
             })
             .catch(error => {
-                  console.error('ee', error);
+                  res.status(400).json(error);
                   //   req.flash('error', 'Incorrect email or password!');})
             });
 });
