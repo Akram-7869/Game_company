@@ -177,7 +177,7 @@ io.on('connection', socket => {
       state[roomName] = { full: 0, players: [] };
     }
     if (!state[roomName]) {
-      socket.emit('res', { ev: 'error', data });
+
       return;
     }
     joinRoom(socket, userId, roomName, dataParsed);
