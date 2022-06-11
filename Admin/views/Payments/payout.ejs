@@ -129,20 +129,20 @@
                         function delRec(id) {
                             let r = confirm('Want to delete?');
 
-                            if (id) {
+                            if (r && id) {
                                 handleDel(id);
                             }
                         }
                         function handleDel(id) {
                             return $.ajax({
-                                type: 'DELETE',
-                                url: '<%=process.env.ADMIN_URL%>/admin/transaction/' + id,
+                                type: 'POST',
+                                url: '<%=process.env.ADMIN_URL%>/admin/payout/approve/' + id,
                                 success: (results) => {
-                                    alert('Record Delete');
-                                    location.reload();
+                                    alert(results.data.status + ' ' + results.data.message);
+                                    //location.reload();
                                 },
                                 error: (err) => {
-                                    alert('Error While Deleting');
+                                    alert('Error While Approving');
                                 }
                             });
                         }
@@ -200,10 +200,10 @@
                                     data: null, "render": function (data, type, full, meta) {
                                         let a = '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/payout/edit/'
                                             + full._id + '"><i class="uil uil-history font-size-18"></i></a>';
-                                        if (full.paymentStatus === 'log') {
-                                            a += ' <a class="px-2 text-primary" target="_blank" href="<%=process.env.ADMIN_URL%>/admin/payout/approve/'
-                                                + full._id + '">Approve</a> '
-                                        }
+
+                                        a += ' <a class="px-3 text-danger" onclick="delRec(\''
+                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a> '
+
                                         return a;
                                     }
                                 },

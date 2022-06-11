@@ -14,8 +14,8 @@ exports.playerPayoutApprove = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Player' };
       callApi(req).post(api_url + '/payments/cashfree/payout', { withdrawId: req.params.id })
             .then(r => {
-                  console.log('ss', r.data.data);
-                  res.render('Reports/payoutprocessing', { row: r.data.data });
+                  res.status(200).json(r.data);
+                  //res.render('Reports/payoutprocessing', { row: r.data.data });
             })
             .catch(error => {
                   console.error('ee', error);
