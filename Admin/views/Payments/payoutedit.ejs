@@ -6,12 +6,12 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0">Player Edit</h4>
+                    <h4 class="mb-0">Transaction Edit</h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="<%=process.env.ADMIN_URL%>/admin/player">Player
+                            <li class="breadcrumb-item active"><a href="<%=process.env.ADMIN_URL%>/admin/payout">Payout
                                     List</a></li>
                             <li class="breadcrumb-item active">Edit</li>
                         </ol>
@@ -34,13 +34,13 @@
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#settings1" role="tab">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#settings1" role="tab">
                                         <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
                                         <span class="d-none d-sm-block">Transactions</span>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link active" data-bs-toggle="tab" href="#home1" role="tab">
+                                <!--    <li class="nav-item">
+                                    <a class="nav-link " data-bs-toggle="tab" href="#home1" role="tab">
                                         <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
                                         <span class="d-none d-sm-block">Home</span>
                                     </a>
@@ -62,12 +62,12 @@
                                         <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
                                         <span class="d-none d-sm-block">Transactions</span>
                                     </a>
-                                </li>
+                                </li> -->
                             </ul>
 
                             <!-- Tab panes -->
                             <div class="tab-content p-3 text-muted">
-                                <div class="tab-pane active" id="home1" role="tabpanel">
+                                <div class="tab-pane " id="home1" role="tabpanel">
                                     <p class="mb-0">
                                         <!-- <form class="custom-validation" action="" onsubmit="false" method="POST" name="player"  enctype="application/x-www-form-urlencoded"> -->
                                     <div class="mb-3">
@@ -208,7 +208,7 @@
                                     </form>
                                     </p>
                                 </div>
-                                <div class="tab-pane" id="settings1" role="tabpanel">
+                                <div class="tab-pane active" id="settings1" role="tabpanel">
                                     <p class="mb-0">
                                     <form class="custom-validation"
                                         action="<%=process.env.ADMIN_URL%>/admin/payout/edit/<%=row._id %>"
@@ -221,6 +221,7 @@
                                             <input readonly type="text" name="amount" value="<%= row.amount %>"
                                                 class="form-control" required placeholder="Amount Requested" />
                                         </div>
+
                                         <div class="mb-3">
                                             <label class="form-label">Withdraw:</label>
                                             <% for (const key in row.withdraw) { %>
@@ -234,10 +235,24 @@
                                         <div class="mb-3">
                                             <label class="form-label">Note </label>
                                             <textarea name="note" value="" class="form-control" required
-                                                placeholder="Refrence id  ..."></textarea>
+                                                placeholder="Refrence id  ..."><%=row.note%></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Transaction Status</label>
+
+                                            <p>
+                                                <label class="form-label"> paymentStatus</label>
+                                                <%=row.paymentStatus%>
+                                            </p>
+                                            <p>
+                                                <label class="form-label"> logType</label>
+                                                <%=row.logType%>
+                                            </p>
+                                            <p>
+                                                <label class="form-label"> Status</label>
+                                                <%=row.status%>
+                                            </p>
+
+                                            <label class="form-label">Change Transaction Status</label>
                                             <div class="col-md-10">
                                                 <select class="form-select" name="paymentStatus" required>
                                                     <option value="PROCESSING" <%=row.paymentStatus==='PROCESSING'
@@ -250,6 +265,16 @@
 
                                                 </select>
                                             </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Gateway Response</label>
+                                            <% for (items of row.gateWayResponse) { %>
+                                                <ul>
+                                                    <li>
+                                                        <%=` ${items}`%>
+                                                    </li>
+                                                </ul>
+                                                <% }%>
                                         </div>
                                         <!-- <div class="mb-3">
                                             <label class="form-label">For</label>
@@ -264,6 +289,7 @@
                                                 </select>
                                             </div>
                                         </div> -->
+
 
                                         <div>
                                             <div>

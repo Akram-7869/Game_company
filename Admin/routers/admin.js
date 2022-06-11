@@ -107,6 +107,8 @@ router.route('/transaction/:id').get(transactionCotroller.getTransaction).post(t
 
 router.route('/transaction').get(transactionCotroller.transcationList);
 router.route('/wallet').get(palyerCtrl.getPlayerWallet);
+router.route('/payout/approve/:id').get(palyerCtrl.playerPayoutApprove);
+//router.route('/payout/edit/decline/:id').get(palyerCtrl.playerPayoutDecline);
 router.route('/payout/edit/:id').get(palyerCtrl.getPlayerPayoutEdit).post(palyerCtrl.postPlayerPayoutEdit);
 router.route('/payout').get(palyerCtrl.getPlayerPayout);
 

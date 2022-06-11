@@ -82,7 +82,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
       response.data['customerName'] = req.player.firstName;
       response.data['orderAmount'] = amount;
 
-      console.log(response.data);
+      //  console.log(response.data);
       res.status(200).json({
         success: true,
         data: response.data
@@ -245,3 +245,104 @@ const verifySignature = (body, signature, clientSecret) => {
 
   return expectedSignature === signature;
 };
+exports.payout = asyncHandler(async (req, res, next) => {
+  const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
+  let { withdrawId } = req.body;
+  let tran = await Transaction.findOne({ _id: withdrawId, logType: 'withdraw', status: 'log' });
+
+  if (!tran) {
+    return next(
+      new ErrorResponse('Transaction canot be processed')
+    );
+  }
+  let player = await Player.findById(tran.playerId).select('+withdraw');
+  let bene = {};
+  let transferMode = '';
+  bene['phone'] = player.phone;
+  bene['name'] = player.firstName;
+  bene['email'] = 'dummy@dukeplay.com';
+  bene['address1'] = 'India' + player.state;
+  if (tran.withdrawTo === 'bank') {
+    transferMode = 'banktransfer';
+    bene = {
+      "bankAccount": tran.withdraw.get('bankAccount'),
+      "ifsc": tran.withdraw.get('bankIfc'),
+      "name": tran.withdraw.get('bankAccountHolder'),
+      "email": 'dummy@dukeplay.com',
+      "phone": player.phone,
+      "address1": tran.withdraw.get('bankAddress')
+    };
+  } else if (tran.withdrawTo === 'wallet') {
+    transferMode = 'upi';
+    bene['vpa'] = tran.withdraw.get('walletAddress');
+  } else if (tran.withdrawTo === 'upi') {
+    transferMode = 'upi';
+    bene['vpa'] = tran.withdraw.get('upiId');
+  }
+
+
+  let data = JSON.stringify({
+    "amount": tran.amount,
+    "transferId": tran._id,
+    "transferMode": transferMode,
+    "remarks": "withdraw request",
+    "beneDetails": bene
+  });
+  let clienk = 'CF44403CAHBPTF9K8HNIAKSNKK0';
+  let sce = '16816426e9418dfcd537bb745d48cf5cc14ac52d';
+  let config = {
+    method: 'post',
+    url: 'https://payout-gamma.cashfree.com/payout/v1/authorize',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-client-id': row.one.PAYOUT_ID,
+      'x-client-secret': row.one.PAYOUT_SECRET,
+    }
+  };
+
+  let response = await axios(config);
+  if (response['data']['status'] === 'ERROR') {
+
+    return next(
+      new ErrorResponse(response['data']['message'])
+    );
+
+  }
+
+  let token = response['data']['data']['token']
+  //   console.log(token);
+  let url = 'https://payout-gamma.cashfree.com/payout/v1/directTransfer';
+  console.log(data);
+  let resPayout = await axios({
+    method: 'post',
+    url: url,
+    data: data,
+    headers: {
+      Authorization: 'Bearer ' + token,
+    }
+
+  })
+
+  if (response['data']['status'] === 'ERROR') {
+
+    return next(
+      new ErrorResponse(response['data']['message'])
+    );
+
+  }
+  let updateData = { 'paymentStatus': 'ERROR', gateWayResponse: JSON.stringify(resPayout['data']) };
+  if (resPayout['data']['status'] == 'SUCCESS') {
+    updateData['status'] = 'complete';
+    updateData['paymentStatus'] = 'SUCCESS';
+  }
+  if (resPayout['data']['status'] == 'PENDING') {
+    updateData['paymentStatus'] = 'PENDING';
+  }
+  await Transaction.findByIdAndUpdate(tran._id, updateData);
+
+  res.status(200).json({
+    success: true,
+    data: resPayout['data']
+  });
+
+});

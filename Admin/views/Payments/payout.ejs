@@ -49,6 +49,7 @@
                                                 for="order-selectinput">Status</label>
                                             <select class="form-select" id="status-filter">
                                                 <option value="PROCESSING" selected>Processing</option>
+                                                <option value="ERROR">Error</option>
                                                 <option value="SUCCESS">Approve</option>
                                                 <option value="DECLINED">Declined</option>
                                             </select>
@@ -197,8 +198,13 @@
                                 },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/payout/edit/'
-                                            + full._id + '"><i class="uil uil-history font-size-18"></i></a> ';
+                                        let a = '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/payout/edit/'
+                                            + full._id + '"><i class="uil uil-history font-size-18"></i></a>';
+                                        if (full.paymentStatus === 'log') {
+                                            a += ' <a class="px-2 text-primary" target="_blank" href="<%=process.env.ADMIN_URL%>/admin/payout/approve/'
+                                                + full._id + '">Approve</a> '
+                                        }
+                                        return a;
                                     }
                                 },
                             ]

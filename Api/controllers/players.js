@@ -57,15 +57,15 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Invalid amount`)
     );
   }
-  if (amount > req.player.balance) {
+  if (amount > req.player.winings) {
     return next(
-      new ErrorResponse(`Insufficent Balance`)
+      new ErrorResponse(`Insufficent wining Balance`)
     );
   }
 
-  if (amount < 100) {
+  if (req.player.winings < 100) {
     return next(
-      new ErrorResponse(`Balance less than 100`)
+      new ErrorResponse(`Wining Balance less than 100`)
     );
   }
 

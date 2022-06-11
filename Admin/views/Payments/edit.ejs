@@ -55,6 +55,23 @@
                                     <input type="text" class="form-control" required name="one[SECRET_KEY]"
                                         value="<%= row ? row.one['SECRET_KEY']:''%>" placeholder="Content" />
                                 </div>
+
+
+                                <div class="mb-3">
+                                    <label class="form-label">Payout ID</label>
+                                    <input type="text" class="form-control" required name="one[PAYOUT_ID]"
+                                        value="<%= row.one !== undefined ? row.one['PAYOUT_ID']:''%>"
+                                        placeholder="Title" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Payout Secreate</label>
+                                    <input type="text" class="form-control" required name="one[PAYOUT_SECRET]"
+                                        value="<%= row ? row.one['PAYOUT_SECRET']:''%>" placeholder="Content" />
+                                </div>
+
+
+
+
                                 <div>
                                     <div>
                                         <button type="submit" class="btn btn-primary waves-effect waves-light me-1">

@@ -213,9 +213,6 @@ const PlayerSchema = new mongoose.Schema({
   state: {
     type: String, default: ''
   },
-  state: {
-    type: String,
-  },
   refer_count: {
     type: Number,
     default: 0,

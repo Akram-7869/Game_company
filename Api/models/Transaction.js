@@ -53,21 +53,14 @@ const TransactionsSchema = new mongoose.Schema({
     paymentId: {
         type: String,
     },
-    gateWayResponse: {
-        type: Map
-    },
+    gateWayResponse: [],
     withdrawTo: {
         type: String,
 
     },
-    withdrawDetail: {
-        type: String,
-        enum: ['PROCESSING', 'FAILED', 'SUCCESS', 'DECLINED'],
-        default: 'PROCESSING'
-    },
+
     paymentStatus: {
         type: String,
-
         default: 'PROCESSING'
     },
     adminCommision: {

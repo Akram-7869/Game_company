@@ -8,6 +8,25 @@ var apiUrl = api_url + '/players/';
 var apiUrlGame = api_url + '/games/';
 var apiUrlTransaction = api_url + '/transactions/';
 
+exports.playerPayoutApprove = asyncHandler(async (req, res, next) => {
+      console.log('one');
+
+      res.locals = { title: 'Player' };
+      callApi(req).post(api_url + '/payments/cashfree/payout', { withdrawId: req.params.id })
+            .then(r => {
+                  console.log('ss', r.data.data);
+                  res.render('Reports/payoutprocessing', { row: r.data.data });
+            })
+            .catch(error => {
+                  console.error('ee', error);
+                  //   req.flash('error', 'Incorrect email or password!');})
+            });
+});
+// exports.playerPayoutDecline = asyncHandler(async (req, res, next) => {
+
+//       res.locals = { title: 'Player' };
+//       res.render('Reports/payoutresponse')
+// });
 exports.getPlayerReport = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'Player' };

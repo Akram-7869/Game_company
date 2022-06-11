@@ -20,6 +20,7 @@ const Setting = require('../models/Setting');
 router.route('/add').post(protect, createSetting);
 router.route('/').post(protect, getSettings);
 router.route('/cashfree/token').post(protect, paymentCashfreeCtrl.getToken);
+router.route('/cashfree/payout').post(protect, paymentCashfreeCtrl.payout);
 router.route('/cashfree/key').post(protect, paymentCashfreeCtrl.getKey);
 router.route('/cashfree/notify').post(paymentCashfreeCtrl.handleNotify);
 
