@@ -185,8 +185,10 @@ io.on('connection', socket => {
       roomName, users: getRoomUsers(roomName),
       userId: userId
     }
+    if (publicRoom[lobbyId]) {
+      publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
+    }
 
-    publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
     // console.dir(data, { depth: null });
     //console.dir(socket.userId);
     io.to(roomName).emit('res', { ev: 'join', data });
