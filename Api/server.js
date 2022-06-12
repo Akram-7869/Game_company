@@ -176,10 +176,7 @@ io.on('connection', socket => {
       publicRoom[lobbyId] = { roomName, playerCount: 0 }
       state[roomName] = { full: 0, players: [] };
     }
-    if (!state[roomName]) {
 
-      return;
-    }
     joinRoom(socket, userId, roomName, dataParsed);
 
     socket.join(roomName);
