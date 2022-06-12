@@ -308,11 +308,10 @@ let joinRoom = (socket, palyerId, room, d = {}) => {
   let index = -1;
   if (state[room]) {
     index = state[room].players.findIndex(user => user.userId === palyerId);
-  }
-
-  console.log('i-', index);
-  if (index === -1) {
-    state[room].players.push(d);
+    console.log('i-', index);
+    if (index === -1) {
+      state[room].players.push(d);
+    }
   }
 }
 let getRoomUsers = (room) => {
