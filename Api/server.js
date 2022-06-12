@@ -185,7 +185,7 @@ io.on('connection', socket => {
       roomName, users: getRoomUsers(roomName),
       userId: userId
     }
-    if (publicRoom[lobbyId]) {
+    if (state[roomName]) {
       publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
     }
 
@@ -309,8 +309,14 @@ let joinRoom = (socket, palyerId, room, d = {}) => {
   //console.log('join room', socket.id, palyerId, room);
   socket['room'] = room;
   socket['userId'] = palyerId;
-  state[room].players.push(d);
-
+  let index = -1;
+  if (state[room]) {
+    index = state[room].players.findIndex(user => user.userId === palyerId);
+    console.log('i-', index);
+    if (index === -1) {
+      state[room].players.push(d);
+    }
+  }
 }
 let getRoomUsers = (room) => {
 
