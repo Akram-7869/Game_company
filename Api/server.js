@@ -162,7 +162,7 @@ io.on('connection', socket => {
 
   // });
   socket.on('join', (d) => {
-    //  console.log('inputstring', d);
+    console.log('inputstring', d);
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4 } = dataParsed;
 
@@ -170,16 +170,17 @@ io.on('connection', socket => {
     let roomName = '';
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp) {
       roomName = publicRoom[lobbyId]['roomName'];
+      console.log('existing-');
     } else {
       roomName = makeid(5);
-      console.log('naking new');
+      console.log('new-');
       publicRoom[lobbyId] = { roomName, playerCount: 0 }
       state[roomName] = { full: 0, players: [] };
     }
-
+    console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
-
     socket.join(roomName);
+
     let data = {
       roomName, users: getRoomUsers(roomName),
       userId: userId
@@ -304,7 +305,11 @@ let joinRoom = (socket, palyerId, room, d = {}) => {
   //console.log('join room', socket.id, palyerId, room);
   socket['room'] = room;
   socket['userId'] = palyerId;
-  const index = state[room].players.findIndex(user => user.userId === palyerId);
+  let index = -1;
+  if (state[room]) {
+    index = state[room].players.findIndex(user => user.userId === palyerId);
+  }
+
   console.log('i-', index);
   if (index === -1) {
     state[room].players.push(d);
