@@ -185,9 +185,9 @@ io.on('connection', socket => {
       roomName, users: getRoomUsers(roomName),
       userId: userId
     }
-    if (state[roomName]) {
-      publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
-    }
+
+    publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
+
 
     // console.dir(data, { depth: null });
     //console.dir(socket.userId);
@@ -249,6 +249,7 @@ io.on('connection', socket => {
     if (state[room]) {
       delete state[room];
     }
+
     let data = {
       room: room
     };
