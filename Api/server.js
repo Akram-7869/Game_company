@@ -185,8 +185,15 @@ io.on('connection', socket => {
       roomName, users: getRoomUsers(roomName),
       userId: userId
     }
+    if (state[roomName]) {
+      publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
+      if (data.users.length == maxp || data.users.length == 0) {
+        delete publicRoom[lobbyId];
+      }
+    } else {
+      delete publicRoom[lobbyId];
+    }
 
-    publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
 
 
     // console.dir(data, { depth: null });
@@ -217,8 +224,8 @@ io.on('connection', socket => {
   socket.on('leave', (d) => {
 
     let { room } = d; //JSON.parse(d);
-    socket.leave(room);
     userLeave(socket);
+    socket.leave(room);
     console.log('leav-inputstring', d);
     //console.dir(state);
     //console.dir(io.sockets.adapter.rooms);
@@ -247,9 +254,14 @@ io.on('connection', socket => {
     console.log('gaemend-inputstring', d);
     let { room } = d;
     if (state[room]) {
-      delete state[room];
-    }
 
+      delete state[room];
+
+    }
+    // if (publicRoom[socket['lobbyId']]['roomName'] == room) {
+    //   publicRoom[socket['lobbyId']]['roomName'] = '';
+    //   publicRoom[socket['lobbyId']]['playerCount'] = 0;
+    // }
     let data = {
       room: room
     };
@@ -310,6 +322,7 @@ let joinRoom = (socket, palyerId, room, d = {}) => {
   //console.log('join room', socket.id, palyerId, room);
   socket['room'] = room;
   socket['userId'] = palyerId;
+  // socket['lobbyId'] = d.lobbyId;
   let index = -1;
   if (state[room]) {
     index = state[room].players.findIndex(user => user.userId === palyerId);
