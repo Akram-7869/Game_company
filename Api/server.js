@@ -258,6 +258,20 @@ io.on('connection', socket => {
       delete state[room];
 
     }
+
+    for (let r in state) {
+      if (state[r]['players'].length === 0) {
+        delete state[r];
+      }
+    }
+    for (let l in publicRoom) {
+      if (publicRoom[l]['roomName']) {
+        let rn = publicRoom[l]['roomName'];
+        if (!state[rn] || state[rn]['players'].length === 0) {
+          delete publicRoom[l];
+        }
+      }
+    }
     // if (publicRoom[socket['lobbyId']]['roomName'] == room) {
     //   publicRoom[socket['lobbyId']]['roomName'] = '';
     //   publicRoom[socket['lobbyId']]['playerCount'] = 0;
