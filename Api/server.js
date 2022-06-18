@@ -162,7 +162,7 @@ io.on('connection', socket => {
 
   // });
   socket.on('join', (d) => {
-    console.log('inputstring', d);
+    console.log('inputstring');
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4 } = dataParsed;
 
@@ -177,7 +177,7 @@ io.on('connection', socket => {
       publicRoom[lobbyId] = { roomName, playerCount: 0 }
       state[roomName] = { full: 0, players: [] };
     }
-    console.log('room', roomName);
+    // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
     socket.join(roomName);
 
@@ -193,8 +193,6 @@ io.on('connection', socket => {
     } else {
       delete publicRoom[lobbyId];
     }
-
-
 
     // console.dir(data, { depth: null });
     //console.dir(socket.userId);
@@ -216,6 +214,8 @@ io.on('connection', socket => {
   // });
 
   socket.on('sendToRoom', (d) => {
+    console.log('sendToRoom');
+
     let { room, ev, data } = d;//JSON.parse(d);
     io.to(room).emit('res', { ev, data });
 
@@ -226,7 +226,7 @@ io.on('connection', socket => {
     let { room } = d; //JSON.parse(d);
     userLeave(socket);
     socket.leave(room);
-    console.log('leav-inputstring', d);
+    console.log('leav-inputstring');
     //console.dir(state);
     //console.dir(io.sockets.adapter.rooms);
     let data = {
@@ -240,7 +240,7 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     let { room, userId } = socket;
     userLeave(socket);
-    console.log('disconnect-inputstring', room, userId);
+    console.log('disconnect-inputstring');
     let data = {
       room: room,
       users: getRoomUsers(room),
@@ -251,7 +251,7 @@ io.on('connection', socket => {
   });
   // Runs when client disconnects
   socket.on('gameEnd', (d) => {
-    console.log('gaemend-inputstring', d);
+    console.log('gaemend-inputstring');
     let { room } = d;
     if (state[room]) {
 
