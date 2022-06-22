@@ -292,7 +292,7 @@ exports.payout = asyncHandler(async (req, res, next) => {
   let sce = '16816426e9418dfcd537bb745d48cf5cc14ac52d';
   let config = {
     method: 'post',
-    url: 'https://payout-gamma.cashfree.com/payout/v1/authorize',
+    url: 'https://payout-api.cashfree.com/payout/v1/authorize',
     headers: {
       'Content-Type': 'application/json',
       'x-client-id': row.one.PAYOUT_ID,
