@@ -214,9 +214,10 @@ io.on('connection', socket => {
   // });
 
   socket.on('sendToRoom', (d) => {
-    console.log('sendToRoom', ev);
+
 
     let { room, ev, data } = d;//JSON.parse(d);
+    console.log('sendToRoom', ev);
     io.to(room).emit('res', { ev, data });
 
   });
