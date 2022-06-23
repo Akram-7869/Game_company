@@ -134,15 +134,25 @@
                             }
                         }
                         function handleDel(id) {
+                            Swal.showLoading();
                             return $.ajax({
                                 type: 'POST',
                                 url: '<%=process.env.ADMIN_URL%>/admin/payout/approve/' + id,
                                 success: (results) => {
-                                    alert(results.data.status + ' ' + results.data.message);
-                                    //location.reload();
+                                    Swal.close();
+                                    if (results.success) {
+                                        alert(results.data.status + ' ' + results.data.message);
+
+                                    } else {
+                                        alert(results.error);
+
+                                    }
+                                    location.reload();
                                 },
                                 error: (err) => {
                                     alert('Error While Approving');
+                                    location.reload();
+
                                 }
                             });
                         }
@@ -202,7 +212,7 @@
                                             + full._id + '"><i class="uil uil-history font-size-18"></i></a>';
 
                                         a += ' <a class="px-3 text-danger" onclick="delRec(\''
-                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a> '
+                                            + full._id + '\')"><i class="uil uil-wallet font-size-18"></i></a> '
 
                                         return a;
                                     }
