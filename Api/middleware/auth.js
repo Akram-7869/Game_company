@@ -36,7 +36,8 @@ exports.protect = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Site is in down', 503));
       }
       req.player = await Player.findById(decoded.id);
-      if (req.player === 'banned') {
+
+      if (req.player.status === 'banned') {
         return next(new ErrorResponse('Account is banned'));
       }
     } else {
