@@ -256,6 +256,11 @@ exports.payout = asyncHandler(async (req, res, next) => {
     );
   }
   let player = await Player.findById(tran.playerId).select('+withdraw');
+  if (player.status === 'banned') {
+    return next(
+      new ErrorResponse('Account is banned')
+    );
+  }
   let bene = {};
   let transferMode = '';
   bene['phone'] = player.phone;
