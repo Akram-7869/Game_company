@@ -293,8 +293,7 @@ exports.payout = asyncHandler(async (req, res, next) => {
     "remarks": "withdraw request",
     "beneDetails": bene
   });
-  let clienk = 'CF44403CAHBPTF9K8HNIAKSNKK0';
-  let sce = '16816426e9418dfcd537bb745d48cf5cc14ac52d';
+
   let config = {
     method: 'post',
     url: 'https://payout-api.cashfree.com/payout/v1/authorize',
@@ -351,3 +350,53 @@ exports.payout = asyncHandler(async (req, res, next) => {
   });
 
 });
+exports.upiValidate = async (req, res, next) => {
+  //asyncHandler(async (req, res, next) => {
+  const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
+  let { upiId } = req.body;
+
+  console.log('req.query', upiId);
+
+  let config = {
+    method: 'post',
+    url: 'https://payout-api.cashfree.com/payout/v1/authorize',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-client-id': row.one.PAYOUT_ID,
+      'x-client-secret': row.one.PAYOUT_SECRET,
+    }
+  };
+
+  let response = await axios(config);
+  console.log(response);
+  if (response['data']['status'] === 'ERROR') {
+
+    return response['data'];
+
+  }
+
+  let token = response['data']['data']['token']
+  //   console.log(token);
+  //let url = 'https://payout-api.cashfree.com/payout/v1/validation/upiDetails?vpa=success@upi&name=Cashfree';
+  let url = 'https://payout-api.cashfree.com/payout/v1/validation/upiDetails?vpa=' + upiId;
+
+
+  let resPayout = await axios({
+    method: 'get',
+    url: url,
+    headers: {
+      Authorization: 'Bearer ' + token,
+    }
+
+  });
+
+  if (resPayout['data']['status'] === 'ERROR') {
+
+    return resPayout['data'];
+
+  }
+
+  return { 'status': 'SUCCESS' };
+
+
+};

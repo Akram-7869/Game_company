@@ -20,6 +20,7 @@ const Poll = require('../models/Poll');
 const PlayerGame = require('../models/PlayerGame');
 const Version = require('../models/Version');
 const moment = require('moment');
+const cashfreeCtrl = require('./paymentsCashfree');
 
 let axios = require('axios');
 const FormData = require('form-data');
@@ -86,10 +87,23 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     tranData['withdraw'] = player.bank;
   } else if (req.body.to === 'wallet') {
     tranData['withdraw'] = player.wallet;
+    req.body['upiId'] = player.wallet.get('walletAddress');
   } else if (req.body.to === 'upi') {
     tranData['withdraw'] = player.upi;
+    req.body['upiId'] = player.upi.get('upiId');
   }
   //tranData['gameId'] = gameId;
+  if (!req.body['upiId']) {
+    return next(
+      new ErrorResponse('please add upi id')
+    );
+  }
+  const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
+  if (upiStatus['status'] !== 'SUCCESS') {
+    return next(
+      new ErrorResponse(upiStatus['message'])
+    );
+  }
 
   let tran = await Transaction.create(tranData);
   player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount, winings: -amount } }, {
@@ -97,7 +111,6 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     runValidators: true
   });
 
-  // tran = await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
   let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, { $set: { $inc: { totalPayoutRequest: 1 } } }, {
     new: true, upsert: true,
     runValidators: true
@@ -233,13 +246,20 @@ exports.addUpi = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
+
+  const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
+  if (upiStatus['status'] !== 'SUCCESS') {
+    return next(
+      new ErrorResponse(upiStatus['message'])
+    );
+  }
+
   player = await Player.findByIdAndUpdate(player.id, { upi: fieldsToUpdate }, {
     new: true,
     runValidators: true
   });
 
-  //Player.isNew = false;
-  // await Player.save();
+
   res.status(200).json({
     success: true,
     data: player

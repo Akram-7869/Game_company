@@ -161,7 +161,11 @@ const adminCommision = async () => {
 exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findOne({ 'type': req.params.type }).lean();
   row['livePlayers'] = req.io.engine.clientsCount;
-  row['withdrawRequest'] = await Transaction.countDocuments({ logType: 'withdraw' });
+  let payout = await payoutTotal();
+  console.log('payoutTotal', payout);
+  row['withdrawRequest'] = payout['totalCount'];
+  row['withdrawTotal'] = payout['totalWithdraw'];
+
   row['supportRequest'] = await Ticket.countDocuments();
   row['gameCount'] = await PlayerGame.countDocuments();
   row['totalIncome'] = await adminCommision();
@@ -195,6 +199,25 @@ let calTotal = async () => {
   }]);
   return total[0];
 
+}
+const payoutTotal = async () => {
+
+  const row = await Transaction.aggregate([
+    { '$match': { logType: 'withdraw', status: 'log' } },
+    {
+
+      '$group': {
+        '_id': null,
+        'totalWithdraw': {
+          '$sum': '$amount'
+        },
+        'totalCount': {
+          '$sum': 1
+        }
+      }
+    }
+  ]);
+  return row[0];
 }
 // @desc      Get single Dashboard
 // @route     GET /api/v1/auth/Dashboards/filter/:id
