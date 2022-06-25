@@ -203,7 +203,7 @@ let calTotal = async () => {
 const payoutTotal = async () => {
 
   const row = await Transaction.aggregate([
-    { '$match': { logType: 'withdraw', status: 'log' } },
+    { '$match': { logType: 'withdraw', paymentStatus: 'PROCESSING' } },
     {
 
       '$group': {
