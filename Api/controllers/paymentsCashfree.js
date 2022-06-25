@@ -368,7 +368,7 @@ exports.upiValidate = async (req, res, next) => {
   };
 
   let response = await axios(config);
-  console.log(response);
+
   if (response['data']['status'] === 'ERROR') {
 
     return response['data'];
