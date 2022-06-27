@@ -163,8 +163,8 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   row['livePlayers'] = req.io.engine.clientsCount;
   let payout = await payoutTotal();
   //console.log('payoutTotal', payout);
-  row['withdrawRequest'] = payout['totalCount'];
-  row['withdrawTotal'] = payout['totalWithdraw'];
+  row['withdrawRequest'] = await Transaction.countDocuments({ logType: 'withdraw', paymentStatus: 'PROCESSING' });
+  row['withdrawTotal'] = 0;
 
   row['supportRequest'] = await Ticket.countDocuments();
   row['gameCount'] = await PlayerGame.countDocuments();
