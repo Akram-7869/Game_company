@@ -162,7 +162,7 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findOne({ 'type': req.params.type }).lean();
   row['livePlayers'] = req.io.engine.clientsCount;
   let payout = await payoutTotal();
-  console.log('payoutTotal', payout);
+  //console.log('payoutTotal', payout);
   row['withdrawRequest'] = payout['totalCount'];
   row['withdrawTotal'] = payout['totalWithdraw'];
 
@@ -217,6 +217,9 @@ const payoutTotal = async () => {
       }
     }
   ]);
+  if (!row[0]) {
+    return { 'totalWithdraw': 0, 'totalCount': 0 };
+  }
   return row[0];
 }
 // @desc      Get single Dashboard
