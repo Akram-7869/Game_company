@@ -568,7 +568,7 @@ exports.deletePlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deletePlayerData = asyncHandler(async (req, res, next) => {
   // const player = await Player.findById(req.params.id);
-
+  console.log('deleting', req.params.id);
   await Transaction.deleteMany({ playerId: req.params.id });
   await Ticket.deleteMany({ playerId: req.params.id });
   await PlayerPoll.deleteMany({ playerId: req.params.id });
