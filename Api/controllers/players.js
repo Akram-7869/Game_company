@@ -563,6 +563,18 @@ exports.deletePlayer = asyncHandler(async (req, res, next) => {
     data: {}
   });
 });
+// @desc      Delete Player
+// @route     DELETE /api/v1/auth/Players/:id
+// @access    Private/Admin
+exports.deletePlayerData = asyncHandler(async (req, res, next) => {
+  const player = await Player.findById(req.params.id);
+  await Player.findByIdAndDelete(req.params.id);
+
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
 
 
 // @desc      Login user
