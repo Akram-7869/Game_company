@@ -204,7 +204,7 @@ exports.creditPlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deletePlayer = asyncHandler(async (req, res, next) => {
 
-      callApi(req).delete(apiUrl + '/deleteplayerdata/' + req.params.id, req.body)
+      callApi(req).delete(apiUrl + 'deleteplayerdata/' + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Player-edit' };
