@@ -431,6 +431,8 @@ exports.membership = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Players
 // @access    Private/Admin
 exports.getPlayers = asyncHandler(async (req, res, next) => {
+  let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.body.draw }
+
   let filter = {
     limit: req.body.length,
     skip: req.body.start,
