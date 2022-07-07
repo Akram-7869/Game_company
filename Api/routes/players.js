@@ -55,6 +55,7 @@ router.route('/wallet').post(protect, playerCtl.addWallet);
 router.route('/lobbys').get(protect, playerCtl.getLobbys);
 router.route('/couponlist/:type').get(protect, playerCtl.getCoupons);
 router.route('/giftlist').get(playerCtl.getGifts);
+router.route('/deleteplayerdata/:id').delete(playerCtl.deletePlayerData);
 router
   .route('/:id')
   .get(protect, playerCtl.getPlayer)

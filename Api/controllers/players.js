@@ -567,9 +567,20 @@ exports.deletePlayer = asyncHandler(async (req, res, next) => {
 // @route     DELETE /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.deletePlayerData = asyncHandler(async (req, res, next) => {
-  const player = await Player.findById(req.params.id);
-  await Player.findByIdAndDelete(req.params.id);
+  // const player = await Player.findById(req.params.id);
 
+  await Transaction.deleteMany({ playerId: req.params.id });
+  await Ticket.deleteMany({ playerId: req.params.id });
+  await PlayerPoll.deleteMany({ playerId: req.params.id });
+
+  var ids = await PlayerNotication.deleteMany({ playerId: req.params.id }).toArray();
+  await Notifcation.deleteMany({ _id: { $in: ids } });
+  await PlayerNotication.deleteMany({ playerId: req.params.id });
+
+
+
+
+  await Player.findByIdAndDelete(req.params.id);
   res.status(200).json({
     success: true,
     data: {}
