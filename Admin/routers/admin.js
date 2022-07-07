@@ -136,7 +136,7 @@ router.route('/player/credit/:id').post(palyerCtrl.creditPlayer);
 router.route('/player/add').get(palyerCtrl.getAddForm).post(palyerCtrl.createPlayers);
 router.route('/player/data').post(palyerCtrl.getPlayerList);
 
-router.route('player/delete-data/:id').delete(palyerCtrl.deletePlayerData);
+router.route('player/delete-data/:id').post(palyerCtrl.deletePlayerData);
 router.route('/player/membership').get(palyerCtrl.getPlayerMembership);
 router.route('/player/kyc').get(palyerCtrl.getPlayerKyc);
 router.route('/player/banned').get(palyerCtrl.getPlayerBanned);
