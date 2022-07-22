@@ -1360,7 +1360,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
   let codeGiver = await Player.findOne({ 'refer_code': req.body.referId, status: 'active' });
   if (!codeGiver || req.player.refrer_player_id || req.player.createdAt < codeGiver.createdAt) {
     return next(
-      new ErrorResponse(`Player  not found`)
+      new ErrorResponse(`You already used someone referral code`)
     );
   }
 
