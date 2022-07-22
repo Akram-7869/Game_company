@@ -129,7 +129,7 @@
 
                             if (r) {
                                 return $.ajax({
-                                    type: 'POST',
+                                    type: 'DELETE',
                                     url: '<%=process.env.ADMIN_URL%>/admin/player/delete-data/' + id,
                                     success: (results) => {
                                         alert('Record Delete');

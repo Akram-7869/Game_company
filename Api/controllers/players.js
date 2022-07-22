@@ -575,12 +575,12 @@ exports.deletePlayerData = asyncHandler(async (req, res, next) => {
   await Ticket.deleteMany({ playerId: req.params.id });
   await PlayerPoll.deleteMany({ playerId: req.params.id });
 
-  var ids = await PlayerNotication.deleteMany({ playerId: req.params.id }).toArray();
-  await Notifcation.deleteMany({ _id: { $in: ids } });
-  await PlayerNotication.deleteMany({ playerId: req.params.id });
-
-
-
+  let ids = await PlayerNotifcation.find({ playerId: req.params.id });
+  if (ids.length != 0) {
+    ids = ids.map(d => d._id)
+    await Notification.deleteMany({ _id: { $in: ids } });
+    await PlayerNotifcation.deleteMany({ playerId: req.params.id });
+  }
 
   await Player.findByIdAndDelete(req.params.id);
   res.status(200).json({
