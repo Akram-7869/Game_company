@@ -77,7 +77,69 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 
 });
 
+// @desc      Register user
+// @route     POST /api/v1/auth/register
+// @access    Public
+exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
+  const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.body;
 
+  if (!email) {
+    return next(
+      new ErrorResponse(`select email`)
+    );
+  }
+
+  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  let vcode = Math.floor(1000 + Math.random() * 9000);
+  // const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
+
+  if (player) {
+    // if (player.email !== email) {
+    //   return next(
+    //     new ErrorResponse(`phone  number changed use the number registered first time`)
+    //   );
+    // } else if (player.deviceToken !== deviceToken) {
+    //   return next(
+    //     new ErrorResponse(`Device changed use the device registered first time`)
+    //   );
+    // } else {
+    let fieldsToUpdate = {
+      'verifyPhone': vcode,
+      'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
+      'firebaseToken': firebaseToken,
+    }
+    player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+    // }
+
+
+  } else {
+    // create new player
+    let data = {
+      'email': email,
+
+      'phone': phone,
+      'verifyPhone': vcode,
+      'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
+      'deviceToken': deviceToken,
+      // 'firebaseToken': firebaseToken,
+      'status': 'notverified',
+      'countryCode': countryCode,
+      'refer_code': makeid(6),
+    };
+    // Create user
+    player = await Player.create(data);
+  }
+  //await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
+  //subscribeToTopic(firebaseToken);
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+
+});
 // @desc      Verify phone
 // @route     POST /api/v1/auth/register
 // @access    Public
@@ -217,7 +279,34 @@ exports.login = asyncHandler(async (req, res, next) => {
   if (!isMatch) {
     return next(new ErrorResponse('Invalid credentials'));
   }
+  if (user.status === 'notverified') {
+    //all ok new user 
+    let fieldsToUpdate = {
+      deviceType: req.body.deviceType,
+      deviceToken: req.body.deviceToken,
+      verifyPhone: undefined,
+      verifyPhoneExpire: undefined,
+      status: 'active',
+      $inc: { balance: addamount, deposit: addamount },
+    }
 
+    let tranData = {
+      playerId: user._id,
+      amount: addamount,
+      transactionType: 'credit',
+      note: 'player register',
+      prevBalance: user.balance,
+      status: 'complete', paymentStatus: 'SUCCESS'
+    }
+    let tran = await Transactions.create(tranData);
+    user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+    // let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, { $inc: { totalPlayers: 1 } });
+    // sendTokenResponse(user, 200, res);
+
+  }
   sendTokenResponse(user, 200, res);
 });
 

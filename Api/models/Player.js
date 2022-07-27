@@ -35,7 +35,6 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
     minLength: 8,
     trim: true,
-    required: true,
 
   },
   email: {
