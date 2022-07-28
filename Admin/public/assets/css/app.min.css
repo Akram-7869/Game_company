@@ -964,7 +964,7 @@ body[data-sidebar-size=small].vertical-collpsed .footer {
 }
 
 body[data-sidebar=colored] .vertical-menu {
-  background-color: #330664
+  background-color: #368268
 }
 
 body[data-sidebar=colored] .vertical-menu .vertical-menu-btn {
@@ -972,7 +972,7 @@ body[data-sidebar=colored] .vertical-menu .vertical-menu-btn {
 }
 
 body[data-sidebar=colored] .navbar-brand-box {
-  background-color: #330664
+  background-color: #368268
 }
 
 body[data-sidebar=colored] .navbar-brand-box .logo-dark {
@@ -4103,7 +4103,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before {
 }
 
 .authentication-bg {
-  background-color: #330664
+  background-color: #368268
 }
 
 .authentication-bg .auth-logo .logo {
