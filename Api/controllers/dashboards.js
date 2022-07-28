@@ -153,6 +153,10 @@ const adminCommision = async () => {
       }
     }
   ]);
+  if (row.length === 0) {
+    return 0;
+  }
+  console.log(row);
   return row[0].totalIncome;
 }
 // @desc      Get single Dashboard
@@ -197,6 +201,14 @@ let calTotal = async () => {
       }
     }
   }]);
+  console.log('total', total);
+  if (total.length === 0) {
+    return {
+      bonusTotal: 0,
+      balanceTotal: 0,
+      winingsTotal: 0
+    };
+  }
   return total[0];
 
 }
