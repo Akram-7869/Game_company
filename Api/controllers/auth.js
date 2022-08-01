@@ -134,10 +134,8 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   }
   //await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
   //subscribeToTopic(firebaseToken);
-  res.status(200).json({
-    success: true,
-    data: {}
-  });
+  sendTokenResponse(player, 200, res);
+
 
 });
 // @desc      Verify phone
