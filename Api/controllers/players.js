@@ -623,7 +623,7 @@ exports.setPin = asyncHandler(async (req, res, next) => {
       prevBalance: user.balance,
       status: 'complete', paymentStatus: 'SUCCESS'
     }
-    let tran = await Transactions.create(tranData);
+    let tran = await Transaction.create(tranData);
     user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
       new: true,
       runValidators: true
