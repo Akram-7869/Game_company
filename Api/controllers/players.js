@@ -607,6 +607,28 @@ exports.setPin = asyncHandler(async (req, res, next) => {
     new: true,
     runValidators: true
   });
+  if (req.player.status === 'notverified') {
+    const addamount = 10;
+    //all ok new user 
+    let fieldsToUpdate = {
+      status: 'active',
+      $inc: { balance: addamount, deposit: addamount },
+    }
+
+    let tranData = {
+      playerId: user._id,
+      amount: addamount,
+      transactionType: 'credit',
+      note: 'player register',
+      prevBalance: user.balance,
+      status: 'complete', paymentStatus: 'SUCCESS'
+    }
+    let tran = await Transactions.create(tranData);
+    user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+  }
 
   res.status(200).json({ success: true, data: {} });
 

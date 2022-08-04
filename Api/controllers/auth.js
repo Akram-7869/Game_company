@@ -277,34 +277,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   if (!isMatch) {
     return next(new ErrorResponse('Invalid credentials'));
   }
-  if (user.status === 'notverified') {
-    //all ok new user 
-    let fieldsToUpdate = {
-      deviceType: req.body.deviceType,
-      deviceToken: req.body.deviceToken,
-      verifyPhone: undefined,
-      verifyPhoneExpire: undefined,
-      status: 'active',
-      $inc: { balance: addamount, deposit: addamount },
-    }
 
-    let tranData = {
-      playerId: user._id,
-      amount: addamount,
-      transactionType: 'credit',
-      note: 'player register',
-      prevBalance: user.balance,
-      status: 'complete', paymentStatus: 'SUCCESS'
-    }
-    let tran = await Transactions.create(tranData);
-    user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
-      new: true,
-      runValidators: true
-    });
-    // let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, { $inc: { totalPlayers: 1 } });
-    // sendTokenResponse(user, 200, res);
-
-  }
   sendTokenResponse(user, 200, res);
 });
 
