@@ -217,7 +217,7 @@ io.on('connection', socket => {
 
 
     let { room, ev, data } = d;//JSON.parse(d);
-    console.log('sendToRoom', ev);
+    //console.log('sendToRoom', ev);
     io.to(room).emit('res', { ev, data });
 
   });
@@ -227,7 +227,7 @@ io.on('connection', socket => {
     let { room } = d; //JSON.parse(d);
     userLeave(socket);
     socket.leave(room);
-    console.log('leav-inputstring');
+    //console.log('leav-inputstring');
     //console.dir(state);
     //console.dir(io.sockets.adapter.rooms);
     let data = {
@@ -241,7 +241,7 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     let { room, userId } = socket;
     userLeave(socket);
-    console.log('disconnect-inputstring');
+    //console.log('disconnect-inputstring');
     let data = {
       room: room,
       users: getRoomUsers(room),
@@ -252,7 +252,7 @@ io.on('connection', socket => {
   });
   // Runs when client disconnects
   socket.on('gameEnd', (d) => {
-    console.log('gaemend-inputstring');
+    //console.log('gaemend-inputstring');
     let { room } = d;
     if (state[room]) {
 
@@ -341,7 +341,7 @@ let joinRoom = (socket, palyerId, room, d = {}) => {
   let index = -1;
   if (state[room]) {
     index = state[room].players.findIndex(user => user.userId === palyerId);
-    console.log('i-', index);
+    //console.log('i-', index);
     if (index === -1) {
       state[room].players.push(d);
     }

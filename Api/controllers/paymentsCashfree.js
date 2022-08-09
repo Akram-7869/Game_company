@@ -87,7 +87,6 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     'amount': amount,
     'couponId': coupon_id,
     'membershipId': membership_id,
-
     'transactionType': "credit",
     'note': req.body.note,
     'paymentGateway': 'Cash Free',
