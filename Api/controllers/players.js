@@ -558,7 +558,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deletePlayer = asyncHandler(async (req, res, next) => {
   const player = await Player.findById(req.params.id);
-  await Player.findByIdAndDelete(req.params.id);
+  //await Player.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
     success: true,
@@ -571,6 +571,13 @@ exports.deletePlayer = asyncHandler(async (req, res, next) => {
 exports.deletePlayerData = asyncHandler(async (req, res, next) => {
   // const player = await Player.findById(req.params.id);
   //console.log('deleting', req.params.id);
+  const user = req.staff;
+
+  if (user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`Not Allowed`)
+    );
+  }
   await Transaction.deleteMany({ playerId: req.params.id });
   await Ticket.deleteMany({ playerId: req.params.id });
   await PlayerPoll.deleteMany({ playerId: req.params.id });
