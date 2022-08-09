@@ -30,7 +30,21 @@ const CouponSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-
+    showToAll: {
+        type: Boolean,
+        default: true
+    },
+    useOnlyOnce: {
+        type: Boolean,
+        default: false
+    },
+    usageLimit: {
+        type: Number,
+        default: 0
+    },
+    expiryDate: {
+        type: Date
+    },
     couponImage: {
         type: mongoose.Schema.ObjectId,
     },

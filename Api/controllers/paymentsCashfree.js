@@ -43,9 +43,43 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   //create a transaction ;
   if (!req.player) {
     return next(
-      new ErrorResponse(`Invalid Code`)
+      new ErrorResponse(`Player not found`)
     );
   }
+  if (coupon_id) {
+    let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true, _id: coupon_id });
+    if (!couponRec) {
+      return next(
+        new ErrorResponse(`Invalid Coupon`)
+      );
+    }
+    if (couponRec.expiryDate) {
+      let today = new Date();
+      if (couponRec.expiryDate < today) {
+        await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
+        return next(
+          new ErrorResponse(`Code Expired`)
+        );
+
+      }
+    }
+    if (couponRec.useOnlyOnce === true) {
+      let used = await Transaction.findOne({ 'playerId': req.player._id, 'couponId': couponRec._id, 'status': 'complete' });
+      if (used) {
+        return next(new ErrorResponse(`Code Used`));
+      }
+    }
+    if (couponRec.usageLimit > 1) {
+      let useCount = await Transaction.find({ 'couponId': couponRec._id });
+      if (useCount > couponRec.usageLimit) {
+        await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
+        return next(new ErrorResponse(`Code Limit reached`));
+
+      }
+    }
+
+  }
+
 
 
   let tranData = {
@@ -187,38 +221,37 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
       });
     }
 
-    //if (tran.couponId) {
-    let bonusAmount = 0;
-    let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true });
-    if (!couponRec) {
-      console.log('Coupon not found');
-      res.status(200);
-      return;
-    }
-    if (couponRec.couponType == 'percentage') {
-      bonusAmount = amount * (couponRec.couponAmount * 0.01);
-    } else {
-      bonusAmount = couponRec.couponAmount;
-    }
+    if (tran.couponId) {
+      let bonusAmount = 0;
+      let couponRec = await Coupon.findOne({ 'minAmount': { $lte: amount }, 'maxAmount': { $gte: amount }, '_id': tran.couponId });
+      if (!couponRec) {
+        console.log('Coupon not found');
+        res.status(200);
+        return;
+      }
+      if (couponRec.couponType == 'percentage') {
+        bonusAmount = amount * (couponRec.couponAmount * 0.01);
+      } else {
+        bonusAmount = couponRec.couponAmount;
+      }
 
-    let tranBonusData = {
-      'playerId': tran.playerId,
-      'amount': bonusAmount,
-      'transactionType': "credit",
-      'note': 'Bonus amount',
-      'paymentGateway': 'Cashfree Pay',
-      'logType': 'bonus',
-      'prevBalance': player.balance,
-      'paymentStatus': 'SUCCESS',
-      'status': 'complete',
-      'paymentId': tran._id
+      let tranBonusData = {
+        'playerId': tran.playerId,
+        'amount': bonusAmount,
+        'transactionType': "credit",
+        'note': 'Bonus amount',
+        'paymentGateway': 'Cashfree Pay',
+        'logType': 'bonus',
+        'prevBalance': player.balance,
+        'paymentStatus': 'SUCCESS',
+        'status': 'complete',
+        'paymentId': tran._id
+      }
+      bonusTran = await Transaction.create(tranBonusData);
+      bonusTran.creditPlayerBonus(bonusAmount);
+      console.log('bonus added');
+
     }
-    bonusTran = await Transaction.create(tranBonusData);
-    bonusTran.creditPlayerBonus(bonusAmount);
-
-    console.log('bonus added');
-
-    //}
   }
 
   res.status(200).json({

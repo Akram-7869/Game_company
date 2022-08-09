@@ -125,7 +125,7 @@
                         }
 
                         function delAllRec(id) {
-                            let r = confirm('Want to delet all data?');
+                            let r = confirm('Want to delet all data of user ?');
 
                             if (r) {
                                 return $.ajax({
@@ -175,9 +175,8 @@
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-3 text-primary" href="<%=process.env.ADMIN_URL%>/admin/player/'
-                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a> <a class="px-3 text-danger" onclick="delRec(\''
-                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a><a class="px-3 text-danger" onclick="delAllRec(\''
-                                            + full._id + '\')">Delete ALL Data</i></a> ';
+                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a> <a class="px-3 text-danger" onclick="delAllRec(\''
+                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a> ';
                                     }
                                 },
                             ]

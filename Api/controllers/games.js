@@ -54,6 +54,42 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
   //res.status(200).json({ data: row, recordsTotal: row.length, recordsFiltered: row.length, draw: req.body.draw });
 });
 
+// @desc      Get all PlayerGames
+// @route     GET /api/v1/auth/PlayerGames
+// @access    Private/Admin
+exports.getPlayerLeaderBoard = asyncHandler(async (req, res, next) => {
+
+
+
+  let filter = {};
+
+  //plaerId filter
+  // if (req.body.playerId) {
+  //   filter['find']['playerId'] = req.body.playerId;
+  // }
+  // //date filter
+  // if (req.body.s_date && req.body.e_date) {
+  //   filter['find']['createdAt'] = {
+  //     $gte: req.body.s_date,
+  //     $lt: req.body.e_date
+  //   }
+
+  // }
+  let row = await PlayerGame.aggregate([{ $match: filter },
+  //, tr: "$transactionType", gr: "$groupStatus " 
+  {
+    $group: { _id: "$playerId", n: { $sum: 1 }, t: { $sum: "$amountWon" } }
+  }
+    , { $sort: { n: -1 } }
+    , { $limit: 20 },
+  ]);
+  let x = await Player.populate(row, { path: "_id", select: { phone: 1, firstName: 1, lastName: 1, rank: 1, profilePic: 1 } });
+
+  // PlayerGame.dataTables(filter).then(function (table) {
+  //   res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
+  // })
+  res.status(200).json({ data: row, recordsTotal: row.length, recordsFiltered: row.length, draw: req.body.draw });
+});
 // @desc      Get single PlayerGame
 // @route     GET /api/v1/auth/PlayerGames/:id
 // @access    Private/Admin

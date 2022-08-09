@@ -228,7 +228,7 @@ exports.deletePlayer = asyncHandler(async (req, res, next) => {
 // @route     DELETE /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.deletePlayerData = asyncHandler(async (req, res, next) => {
-      console.log('deleteing->');
+      // console.log('deleteing->');
       callApi(req).delete(apiUrl + 'deleteplayerdata/' + req.params.id)
             .then(r => {
                   // Assign value in session

@@ -141,7 +141,7 @@
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
 
-                                { data: 'phone', "defaultContent": "" },
+                                { data: 'playerId.phone', "defaultContent": "" },
                                 { data: 'subject', "defaultContent": "" },
                                 { data: 'status', "defaultContent": "" },
 
@@ -156,7 +156,8 @@
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-3 text-primary" href="<%=process.env.ADMIN_URL%>/admin/ticket/'
                                             + full._id + '"><i class="uil uil-pen font-size-18"></i></a> <a class="px-3 text-danger" onclick="delRec(\''
-                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
+                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a><a class="px-3 text-primary" href="<%=process.env.ADMIN_URL%>/admin/player/'
+                                            + full.playerId._id + '"><i class="uil uil-user font-size-18"></i></a> ';
                                     }
                                 },
                             ]
