@@ -86,7 +86,41 @@
                                         placeholder="Min Amount" />
                                 </div>
 
+                                <div class="mb-3">
+                                    <label class="form-label">Expiry Date</label>
+                                    <div class="input-group" id="datepicker2">
+                                        <input type="text" name="expiryDate" class="form-control"
+                                            placeholder="yyyy-mm-dd"
+                                            value="<%=row.expiryDate?row.expiryDate.split('T')[0]:'' %>"
+                                            data-date-format="yyyy-mm-dd" data-date-container='#datepicker2'
+                                            data-provide="datepicker" data-date-autoclose="true">
 
+                                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                    </div><!-- input-group -->
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Usage Limit </label>
+                                    <input type="text" id="usageLimit" name="usageLimit"
+                                        value="<%=row.usageLimit?row.usageLimit:'' %>" class="form-control" required
+                                        placeholder="Usage Limit  " />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Player Can Use Only One Time</label>
+                                    <select id="statustxt" class="form-select" name="useOnlyOnce" required>
+                                        <option value="false" <%=row.useOnlyOnce===false?'selected':'' %>>OFF</option>
+                                        <option value="true" <%=row.useOnlyOnce===true?'selected':'' %>>ON</option>
+
+
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Show To All</label>
+                                    <select id="statustxt" class="form-select" name="showToAll" required>
+                                        <option value="true" <%=row.showToAll===true?'selected':'' %>>ON</option>
+                                        <option value="false" <%=row.showToAll===false?'selected':'' %>>OFF</option>
+
+                                    </select>
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
                                     <select id="statustxt" class="form-select" name="active" required>
