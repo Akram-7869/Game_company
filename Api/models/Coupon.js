@@ -32,11 +32,15 @@ const CouponSchema = new mongoose.Schema({
     },
     showToAll: {
         type: Boolean,
-        default: true
+        default: true,
+        required: [true, 'Please provide showToAll']
+
     },
     useOnlyOnce: {
         type: Boolean,
-        default: false
+        default: false,
+        required: [true, 'Please provide useOnlyOnce']
+
     },
     usageLimit: {
         type: Number,
