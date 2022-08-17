@@ -110,7 +110,8 @@
                                 <thead>
                                     <tr>
                                         <th>Srno</th>
-                                        <th>Playerid</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
                                         <th>Type</th>
                                         <th>Amount</th>
                                         <th>note</th>
@@ -226,7 +227,8 @@
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
-                                { data: 'playerId._id', "defaultContent": "" },
+                                { data: 'playerId.phone', "defaultContent": "" },
+                                { data: 'playerId.email', "defaultContent": "" },
                                 { data: 'transactionType', "defaultContent": "" },
                                 { data: 'amount', "defaultContent": "" },
                                 { data: 'note', "defaultContent": "" },
@@ -236,7 +238,8 @@
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/banner/'
                                             + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\''
-                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
+                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a></a><a   class="px-2 text-danger" href="<%=process.env.ADMIN_URL%>/admin/player/'
+                                            + full.playerId._id + '"><i class="uil uil-user font-size-18"></i></a>';
 
                                     }
                                 },

@@ -49,7 +49,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     },
 
     populate: {
-      path: 'playerId', select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1 }, options: { sort: { 'membership': -1 } }
+      path: 'playerId', select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1, email:1 }, options: { sort: { 'membership': -1 } }
     },
     sort: {
       _id: -1
