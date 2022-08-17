@@ -100,7 +100,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Provide all required fields`)
     );
   }
-
+console.log('tran--', tran);
   let config = await paymentConfig(amount, tran._id);
 
   axios(config)
