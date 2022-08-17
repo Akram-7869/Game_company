@@ -46,7 +46,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player not found`)
     );
   }
-  if (coupon_id) {
+  if (coupon_id.length === 24) {
     let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true, _id: coupon_id });
     if (!couponRec) {
       return next(
