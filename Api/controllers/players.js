@@ -517,13 +517,9 @@ exports.createPlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.updatePlayer = asyncHandler(async (req, res, next) => {
   let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus, state } = req.body;
-  let fieldsToUpdate = { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, state };
+  let fieldsToUpdate = { firstName };
   let player;
-  if (!firstName) {
-    return next(
-      new ErrorResponse(`Name is requied`)
-    );
-  }
+   
 
   if (req.staff) {
     player = await Player.findById(req.params.id);
@@ -538,6 +534,21 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
+
+  if (!firstName && !player.firstName) {
+    return next(
+      new ErrorResponse(`firstName is requied`)
+    );
+  }
+  if (firstName) { fieldsToUpdate['firstName'] = firstName; }
+  if (lastName) { fieldsToUpdate['lastName'] = lastName; }
+  if (email) { fieldsToUpdate['email'] = email; }
+  if (gender) { fieldsToUpdate['gender'] = gender; }
+  if (country) { fieldsToUpdate['country'] = country; }
+  if (aadharNumber) { fieldsToUpdate['aadharNumber'] = aadharNumber; }
+  if (panNumber) { fieldsToUpdate['panNumber'] = panNumber; }
+  if (dob) { fieldsToUpdate['dob'] = dob; }
+  if (state) { fieldsToUpdate['state'] = state; }
 
 
   player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
