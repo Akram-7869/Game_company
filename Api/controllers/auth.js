@@ -10,7 +10,51 @@ const Dashboard = require('../models/Dashboard');
 const axios = require('axios')
 const admin = require('../utils/fiebase')
 
+// @desc      Register user
+// @route     POST /api/v1/auth/register
+// @access    Public
+exports.getByPhone = asyncHandler(async (req, res, next) => {
+  const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
 
+  if (!phone) {
+    return next(
+      new ErrorResponse(`select phone`)
+    );
+  }
+
+  let player = await Player.findOne({ $or: [{ 'phone': phone }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player not found`)
+    );
+  }
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+
+});
+exports.getByEmail = asyncHandler(async (req, res, next) => {
+  const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
+
+  if (!email) {
+    return next(
+      new ErrorResponse(`select email`)
+    );
+  }
+
+  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player not founf`)
+    );
+  }
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+
+});
 
 const { makeid } = require('../utils/utils');
 // @desc      Register user
