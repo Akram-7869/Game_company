@@ -252,7 +252,7 @@ io.on('connection', socket => {
   });
   // Runs when client disconnects
   socket.on('gameEnd', (d) => {
-    //console.log('gaemend-inputstring');
+    console.log('gaemend-inputstring');
     let { room } = d;
     if (state[room]) {
 
@@ -271,6 +271,7 @@ io.on('connection', socket => {
           delete publicRoom[l];
         }
         if (rn === room) {
+          console.log('del', room)
           delete publicRoom[l];
         }
       }
