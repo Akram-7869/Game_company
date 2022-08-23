@@ -252,13 +252,14 @@ io.on('connection', socket => {
   });
   // Runs when client disconnects
   socket.on('gameEnd', (d) => {
-    console.log('gaemend-inputstring');
+    //console.log('gaemend-inputstring');
     let { room } = d;
     if (state[room]) {
 
       delete state[room];
 
     }
+
     for (let r in state) {
       if (state[r]['players'].length === 0) {
         delete state[r];
@@ -270,10 +271,6 @@ io.on('connection', socket => {
         if (!state[rn] || state[rn]['players'].length === 0) {
           delete publicRoom[l];
         }
-        if (rn === room) {
-          console.log('del', room)
-          delete publicRoom[l];
-        }
       }
     }
     // if (publicRoom[socket['lobbyId']]['roomName'] == room) {
@@ -281,7 +278,7 @@ io.on('connection', socket => {
     //   publicRoom[socket['lobbyId']]['playerCount'] = 0;
     // }
     let data = {
-      room: ''
+      room: room
     };
     io.to(socket.room).emit('res', { ev: 'gameEnd', data });
 
