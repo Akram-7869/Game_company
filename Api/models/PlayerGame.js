@@ -47,7 +47,8 @@ const PlayerGameSchema = new mongoose.Schema({
   gameOnline: {
     type: Boolean,
     default: true
-  }
+  },
+  players:[]
 
 }, {
   timestamps: true,

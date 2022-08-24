@@ -1044,16 +1044,16 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     // player = await tran1.debitPlayer(commision);
 
     player = await tran.creditPlayerWinings(amount);
-    let playerGame = {
-      'playerId': req.player._id,
-      'amountWon': amount,
-      'tournamentId': tournamentId,
-      'winner': winner,
-      'gameId': gameId,
-      'gameStatus': 'won',
-      'note': note
-    }
-    await PlayerGame.create(playerGame);
+  //   let playerGame = {
+  //     'playerId': req.player._id,
+  //     'amountWon': amount,
+  //     'tournamentId': tournamentId,
+  //     'winner': winner,
+  //     'gameId': gameId,
+  //     'gameStatus': 'won',
+  //     'note': note
+  //   }
+  //  let leaderboard= await PlayerGame.create(playerGame);
 
   } else if (req.body.logType = "bonus") {
     player = await tran.creditPlayerBonus(amount);
@@ -1153,7 +1153,28 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
+  let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players=[] } = req.body;
 
+     let playerGame = {
+      'playerId': req.player._id,
+      'amountWon': amount,
+      'tournamentId': tournamentId,
+      'winner': winner,
+      'gameId': gameId,
+      'gameStatus': 'won',
+      'note': note,
+      players:JSON.parse(players)
+    }
+   let leaderboard= await PlayerGame.create(playerGame);
+  res.status(200).json({
+    success: true,
+    data: leaderboard
+  });
+});
 // @desc      Get current logged in user
 // @route     POST /api/v1/auth/me
 // @access    Private

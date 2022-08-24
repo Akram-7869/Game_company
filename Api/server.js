@@ -168,13 +168,13 @@ io.on('connection', socket => {
 
 
     let roomName = '';
-    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp) {
+    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
       console.log('existing-');
     } else {
       roomName = makeid(5);
       console.log('new-');
-      publicRoom[lobbyId] = { roomName, playerCount: 0 }
+      publicRoom[lobbyId] = { roomName, playerCount: 0, played:false }
       state[roomName] = { full: 0, players: [] };
     }
     // console.log('room', roomName);
@@ -251,20 +251,24 @@ io.on('connection', socket => {
 
   });
   // Runs when client disconnects
-  socket.on('gameEnd', (d) => {
+  socket.on('gameStart', (d) => {
     //console.log('gaemend-inputstring');
-    let { room } = d;
-    if (state[room]) {
-
-      delete state[room];
+    let { room, lobbyId } = d;
+     
+     if (publicRoom[lobbyId]) {
+      let rn = publicRoom[lobbyId]['roomName'];
+      if(rn == room){
+        publicRoom[lobbyId]['played']=true;
+      }
 
     }
-
+    //remove empty 
     for (let r in state) {
       if (state[r]['players'].length === 0) {
         delete state[r];
       }
     }
+    //remove 
     for (let l in publicRoom) {
       if (publicRoom[l]['roomName']) {
         let rn = publicRoom[l]['roomName'];
@@ -280,7 +284,7 @@ io.on('connection', socket => {
     let data = {
       room: room
     };
-    io.to(socket.room).emit('res', { ev: 'gameEnd', data });
+    io.to(socket.room).emit('res', { ev: 'gameStart', data });
 
   });
   //move user
