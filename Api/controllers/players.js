@@ -455,7 +455,7 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
   if (key) {
     filter['search'] = {
       value: req.body.search.value,
-      fields: ['phone', 'email', 'firstName', '_id']
+      fields: ['phone', 'email', 'firstName']
     }
   }
   Player.dataTables(filter).then(function (table) {
