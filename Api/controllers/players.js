@@ -453,18 +453,9 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
   }
   let key = req.body.search ? req.body.search.value : '';
   if (key) {
-    if (isNaN(key)) {
-      if (key.length != 24) {
-        return res.json(empty);
-      }
-      filter['find']['_id'] = key;
-    }
-    else {
-      filter['search'] = {
-        value: req.body.search.value,
-        fields: ['phone', 'email', 'firstName', 'lastName']
-
-      }
+    filter['search'] = {
+      value: req.body.search.value,
+      fields: ['phone', 'email', 'firstName', '_id']
     }
   }
   Player.dataTables(filter).then(function (table) {
@@ -519,7 +510,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
   let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus, state } = req.body;
   let fieldsToUpdate = { firstName };
   let player;
-   
+
 
   if (req.staff) {
     player = await Player.findById(req.params.id);
@@ -1044,16 +1035,16 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     // player = await tran1.debitPlayer(commision);
 
     player = await tran.creditPlayerWinings(amount);
-  //   let playerGame = {
-  //     'playerId': req.player._id,
-  //     'amountWon': amount,
-  //     'tournamentId': tournamentId,
-  //     'winner': winner,
-  //     'gameId': gameId,
-  //     'gameStatus': 'won',
-  //     'note': note
-  //   }
-  //  let leaderboard= await PlayerGame.create(playerGame);
+    //   let playerGame = {
+    //     'playerId': req.player._id,
+    //     'amountWon': amount,
+    //     'tournamentId': tournamentId,
+    //     'winner': winner,
+    //     'gameId': gameId,
+    //     'gameStatus': 'won',
+    //     'note': note
+    //   }
+    //  let leaderboard= await PlayerGame.create(playerGame);
 
   } else if (req.body.logType = "bonus") {
     player = await tran.creditPlayerBonus(amount);
@@ -1157,19 +1148,19 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
-  let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players=[] } = req.body;
+  let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players = [] } = req.body;
 
-     let playerGame = {
-      'playerId': req.player._id,
-      'amountWon': amount,
-      'tournamentId': tournamentId,
-      'winner': winner,
-      'gameId': gameId,
-      'gameStatus': 'won',
-      'note': note,
-      players:JSON.parse(players)
-    }
-   let leaderboard= await PlayerGame.create(playerGame);
+  let playerGame = {
+    'playerId': req.player._id,
+    'amountWon': amount,
+    'tournamentId': tournamentId,
+    'winner': winner,
+    'gameId': gameId,
+    'gameStatus': 'won',
+    'note': note,
+    players: JSON.parse(players)
+  }
+  let leaderboard = await PlayerGame.create(playerGame);
   res.status(200).json({
     success: true,
     data: leaderboard

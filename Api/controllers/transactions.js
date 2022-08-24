@@ -49,7 +49,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     },
 
     populate: {
-      path: 'playerId', select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1, email:1 }, options: { sort: { 'membership': -1 } }
+      path: 'playerId', select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1, email: 1 }, options: { sort: { 'membership': -1 } }
     },
     sort: {
       _id: -1
@@ -64,15 +64,11 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
   }
 
   if (key) {
-    if (isNaN(key)) {
-      console.log('key.length', key.length);
-      if (key.length != 24) {
-        return res.json(empty);
-      }
+    if (key.length == 24) {
       filter['find']['playerId'] = key;
     } else {
 
-      let player = await Player.findOne({ phone: { '$regex': key, '$options': 'i' } });
+      let player = await Player.findOne({ $or: [{ 'email': { '$regex': key, '$options': 'i' } }, { phone: { '$regex': key, '$options': 'i' } }] });
       if (!player) {
         return res.json(empty);
       }

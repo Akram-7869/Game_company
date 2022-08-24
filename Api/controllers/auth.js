@@ -15,14 +15,13 @@ const admin = require('../utils/fiebase')
 // @access    Public
 exports.getByPhone = asyncHandler(async (req, res, next) => {
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
-
   if (!phone) {
     return next(
       new ErrorResponse(`select phone`)
     );
   }
 
-  let player = await Player.findOne({ $or: [{ 'phone': phone }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  let player = await Player.findOne({ 'phone': phone, 'deviceToken': deviceToken }).select('+deviceToken');
   if (!player) {
     return next(
       new ErrorResponse(`Player not found`)
@@ -36,17 +35,16 @@ exports.getByPhone = asyncHandler(async (req, res, next) => {
 });
 exports.getByEmail = asyncHandler(async (req, res, next) => {
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
-
   if (!email) {
     return next(
       new ErrorResponse(`select email`)
     );
   }
 
-  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  let player = await Player.findOne({ 'email': email, 'deviceToken': deviceToken }).select('+deviceToken');
   if (!player) {
     return next(
-      new ErrorResponse(`Player not founf`)
+      new ErrorResponse(`Player not found`)
     );
   }
   res.status(200).json({
