@@ -141,13 +141,7 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
   });
 
   if (req.body.paymentStatus === 'DECLINED') {
-    fieldsToUpdate = {
-      $inc: { balance: amount }
-    }
-    player = await Player.findByIdAndUpdate(playerId, fieldsToUpdate, {
-      new: true,
-      runValidators: true
-    });
+    player = await transaction.creditPlayerWinings( amount);
   }
 
 
