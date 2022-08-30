@@ -59,6 +59,31 @@
                                         class="form-control" required placeholder="Bet amount" />
                                 </div>
                                 <div class="mb-3">
+                                    <label class="form-label">Min Bet Amount</label>
+                                    <input type="text" name="minBet" value="<%=row.minBet?row.minBet:'' %>"
+                                        class="form-control" required placeholder="Min Bet amount" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Max Bet Amount</label>
+                                    <input type="text" name="maxBet" value="<%=row.maxBet?row.maxBet:'' %>"
+                                        class="form-control" required placeholder="Max Bet amount" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Max Payout</label>
+                                    <input type="text" name="maxPayout" value="<%=row.maxPayout?row.maxPayout:'' %>"
+                                        class="form-control" required placeholder="Max Payout" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Chaal Limit</label>
+                                    <input type="text" name="challLimit" value="<%=row.challLimit?row.challLimit:'' %>"
+                                        class="form-control" required placeholder="Chall Limit" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Pot Limit</label>
+                                    <input type="text" name="potLimit" value="<%=row.potLimit?row.potLimit:'' %>"
+                                        class="form-control" required placeholder="Pot Limit amount" />
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Bonus Amount Use</label>
                                     <input type="text" name="bonusAmountDeduction"
                                         value="<%=row.bonusAmountDeduction?row.bonusAmountDeduction:'' %>"

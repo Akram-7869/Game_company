@@ -35,6 +35,21 @@ const TournamentSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    minBet: {
+        type: Number
+    },
+    maxBet: {
+        type: Number
+    },
+    maxPayout: {
+        type: Number
+    },
+    challLimit: {
+        type: Number
+    },
+    potLimit: {
+        type: Number
+    },
     createdBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
