@@ -174,8 +174,8 @@ io.on('connection', socket => {
     } else {
       roomName = makeid(5);
       console.log('new-');
-      publicRoom[lobbyId] = { roomName, playerCount: 0, played:false  }
-      state[roomName] = { full: 0, players: [], gameData:{} };
+      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
+      state[roomName] = { full: 0, players: [], gameData: {} };
     }
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
@@ -250,15 +250,15 @@ io.on('connection', socket => {
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });
-    // Runs when game start  disconnects
+  // Runs when game start  disconnects
   socket.on('gameStart', (d) => {
     console.log('start-');
     let { room, lobbyId } = d;
-     
-     if (publicRoom[lobbyId]) {
+
+    if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
-      if(rn == room){
-        publicRoom[lobbyId]['played']=true;
+      if (rn == room) {
+        publicRoom[lobbyId]['played'] = true;
       }
 
     }
@@ -312,23 +312,24 @@ io.on('connection', socket => {
     };
     io.to(room).emit('res', { ev: 'moveuser', data });
   });
-});
-
   //set game state 
   socket.on('setGameData', (d) => {
 
     let { room, gameData } = d; //JSON.parse(d);
     if (state[room]) {
 
-    state[room]['gameData'] = gameData;
+      state[room]['gameData'] = gameData;
 
     }
     let data = {
       room: room,
-      gameData:state[room]['gameData']
+      gameData: state[room]['gameData']
     };
     io.to(room).emit('res', { ev: 'setGameData', data });
   });
+});
+
+
 function arraymove(arr, fromIndex, toIndex) {
   arr.unshift(arr.pop());
   // var element = arr[fromIndex];
