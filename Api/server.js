@@ -146,35 +146,23 @@ io.on('connection', socket => {
   socket.emit('res', { ev: 'connected', data });
   console.log('contedt');
   socket.join('notification_channel');
-  // socket.on('createRoom', (d) => {
-  //   let dataParsed = d;//JSON.parse(d);
-  //   let { userId } = dataParsed;
-  //   let roomName = makeid(5);
-  //   let data = { roomName }
-  //   state[roomName] = initRoom();
-  //   joinRoom(socket, userId, roomName, dataParsed);
 
-  //   socket.emit('res', { ev: 'roomCode', data });
-  //   // const user = userJoin(socket.id, userId, roomName);
-
-  //   socket.join(roomName);
-  //   console.dir(state);
-
-  // });
   socket.on('join', (d) => {
     console.log('inputstring');
     let dataParsed = d;// JSON.parse(d);
-    let { userId, lobbyId, maxp = 4 } = dataParsed;
+    let { userId, lobbyId, maxp = 4, betAmount = 0 } = dataParsed;
 
 
     let roomName = '';
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp) {
       roomName = publicRoom[lobbyId]['roomName'];
+      publicRoom[lobbyId]['count'] += 1;
+      publicRoom[lobbyId]['total'] += betAmount;
       console.log('existing-');
     } else {
       roomName = makeid(5);
       console.log('new-');
-      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
+      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false, count: 1, total: betAmount }
       state[roomName] = { full: 0, players: [], gameData: {} };
     }
     // console.log('room', roomName);
@@ -197,6 +185,8 @@ io.on('connection', socket => {
     // console.dir(data, { depth: null });
     //console.dir(socket.userId);
     io.to(roomName).emit('res', { ev: 'join', data });
+    io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['total'] });
+
   });
 
   // socket.on('joinFriend', (d) => {
