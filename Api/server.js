@@ -209,12 +209,12 @@ io.on('connection', socket => {
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
       if (state[rn]) {
-        publicRoom[lobbyId]['count'] = state[rn].players.length;
+        cnt = publicRoom[lobbyId]['count'] = state[rn].players.length;
       }
 
     }
 
-    io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
+    io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': cnt });
 
   });
   socket.on('sendToRoom', (d) => {
