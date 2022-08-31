@@ -163,7 +163,7 @@ io.on('connection', socket => {
       roomName = makeid(5);
       console.log('new-');
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false, count: 1, total: betAmount }
-      state[roomName] = { full: 0, players: [], gameData: {} };
+      state[roomName] = { lobbyId, full: 0, players: [], gameData: {} };
     }
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
@@ -203,6 +203,20 @@ io.on('connection', socket => {
   //   io.to(room).emit('res', { ev: 'joinFriend', data });
   // });
 
+  socket.on('lobbyStat', (d) => {
+    let { userId, lobbyId } = d;//JSON.parse(d);
+    let cnt = 0;
+    if (publicRoom[lobbyId]) {
+      let rn = publicRoom[lobbyId]['roomName'];
+      if (state[rn]) {
+        publicRoom[lobbyId]['count'] = state[rn].players.length;
+      }
+
+    }
+
+    io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
+
+  });
   socket.on('sendToRoom', (d) => {
 
 
