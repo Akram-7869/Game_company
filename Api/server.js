@@ -206,6 +206,7 @@ io.on('connection', socket => {
   socket.on('lobbyStat', (d) => {
     let { userId, lobbyId } = d;//JSON.parse(d);
     let cnt = 0;
+    let total = 0;
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
       if (state[rn]) {
@@ -214,7 +215,9 @@ io.on('connection', socket => {
 
     }
 
-    io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': cnt });
+    io.emit('res', {
+      ev: 'lobbyStat', lobbyId, 'total': total, 'count': cnt
+    });
 
   });
   socket.on('sendToRoom', (d) => {
