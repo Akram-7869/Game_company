@@ -34,12 +34,14 @@ const PlayerSchema = new mongoose.Schema({
   phone: {
     type: String,
     minLength: 8,
+    unique: true,
     trim: true,
 
   },
   email: {
     type: String,
     trim: true,
+    unique: true,
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Please add a valid email'
@@ -170,7 +172,8 @@ const PlayerSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
   },
   refer_code: {
-    type: String
+    type: String,
+    unique: true,
   },
   level_1: {
     type: String
