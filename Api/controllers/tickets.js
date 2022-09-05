@@ -109,16 +109,19 @@ exports.deleteTicket = asyncHandler(async (req, res, next) => {
 // @route     DELETE /api/v1/auth/Tickets/:id
 // @access    Private/Admin
 exports.deleteTicketBbIds = asyncHandler(async (req, res, next) => {
-  let { tids } = req.body;
+  let { ids } = req.body;
 
-  if (!tids || tids.length === 0) {
+  if (!ids || ids.length === 0) {
     return next(
       new ErrorResponse(`Select Players`)
     );
   }
-  tids.map(async d => {
-    let row = await Ticket.findByIdAndDelete(req.params.id);
-    await File.findByIdAndDelete(row.ticketImage);
+  ids.map(async d => {
+    let row = await Ticket.findByIdAndDelete(d);
+    if (row.ticketImage) {
+      await File.findByIdAndDelete(row.ticketImage);
+    }
+
   });
 
   res.status(200).json({

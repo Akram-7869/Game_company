@@ -51,13 +51,14 @@ exports.deleteTicket = asyncHandler(async (req, res, next) => {
       });
 });
 exports.deleteTicketBbIds = asyncHandler(async (req, res, next) => {
-      callApi(req).delete(apiUrl + 'delete-byids', req.body)
+
+      callApi(req).post(apiUrl + 'deletebyids', req.body)
             .then(r => {
                   // Assign value in session
                   res.status(200).json(r.data);
                   // res.render('Players/List',{row:r.data.data}); 
 
-            }).catch(error => { res.status(400).json(r.data); })
+            }).catch(error => { res.status(400).json({}); })
 
 });
 
