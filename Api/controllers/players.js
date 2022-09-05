@@ -538,13 +538,18 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
   }
   if (firstName) { fieldsToUpdate['firstName'] = firstName; }
   if (lastName) { fieldsToUpdate['lastName'] = lastName; }
-  if (email) { fieldsToUpdate['email'] = email; }
+
   if (gender) { fieldsToUpdate['gender'] = gender; }
   if (country) { fieldsToUpdate['country'] = country; }
   if (aadharNumber) { fieldsToUpdate['aadharNumber'] = aadharNumber; }
   if (panNumber) { fieldsToUpdate['panNumber'] = panNumber; }
   if (dob) { fieldsToUpdate['dob'] = dob; }
   if (state) { fieldsToUpdate['state'] = state; }
+  if (!player.email) {
+    if (email) { fieldsToUpdate['email'] = email; }
+  }
+
+
 
 
   player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
