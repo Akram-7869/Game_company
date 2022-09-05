@@ -43,7 +43,7 @@
                 </div> <!-- end col-->
 
                 <div class="col-md-6 col-xl-3">
-                    <div class="card">
+                    <div class="card" onclick="fetchData()">
                         <div class="card-body">
                             <div class="float-end mt-2">
                                 <div id="orders-chart"> </div>
@@ -51,7 +51,7 @@
                             <div>
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%>
-                                        <span data-plugin="counterup">
+                                        <span id="totalIncome" data-plugin="counterup">
                                             <%=parseInt(list.totalIncome)%>
                                         </span>
                                 </h4>
@@ -1000,4 +1000,24 @@
                         }
 
                         getChart();
+
+
+
+                        function fetchData() {
+                            $.ajax({
+                                type: 'GET',
+                                url: '<%=process.env.ADMIN_URL%>/admin/dashboard/total-income',
+
+                                success: (results) => {
+                                    alert('Record Updated');
+                                    let totalIncome = parseInt(results.data.bonusTotal) + parseInt(results.data.depositTotal) + parseInt(results.data.winingsTotal);
+                                    $("#totalIncome").html(totalIncome);
+
+
+                                },
+                                error: (err) => {
+                                    alert('Error');
+                                }
+                            });
+                        }
                     </script>

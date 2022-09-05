@@ -1081,16 +1081,16 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     // player = await tran1.debitPlayer(commision);
 
     player = await tran.creditPlayerWinings(amount);
-    //   let playerGame = {
-    //     'playerId': req.player._id,
-    //     'amountWon': amount,
-    //     'tournamentId': tournamentId,
-    //     'winner': winner,
-    //     'gameId': gameId,
-    //     'gameStatus': 'won',
-    //     'note': note
-    //   }
-    //  let leaderboard= await PlayerGame.create(playerGame);
+    let playerGame = {
+      'playerId': req.player._id,
+      'amountWon': amount,
+      'tournamentId': tournamentId,
+      'winner': winner,
+      'gameId': gameId,
+      'gameStatus': 'won',
+      'note': note
+    }
+    let leaderboard = await PlayerGame.create(playerGame);
 
   } else if (req.body.logType = "bonus") {
     player = await tran.creditPlayerBonus(amount);
@@ -1206,7 +1206,7 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
     'note': note,
     players: JSON.parse(players)
   }
-  let leaderboard = await PlayerGame.create(playerGame);
+  let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': JSON.parse(players) });
   res.status(200).json({
     success: true,
     data: leaderboard

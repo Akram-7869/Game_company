@@ -25,7 +25,16 @@ exports.dashBoardView = asyncHandler(async (req, res, next) => {
         .catch(error => { req.flash('error', 'Incorrect email or password!'); })
 });
 
-
+// @desc      Get all Players
+// @route     GET /api/v1/Players
+// @access    Private/Admin
+exports.totalIncome = asyncHandler(async (req, res, next) => {
+    callApi(req).get(apiUrl + 'total-income')
+        .then(r => {
+            res.status(200).json(r.data)
+        })
+        .catch(error => { res.status(400).json(error); })
+});
 // @desc      Get all Players
 // @route     GET /api/v1/Players
 // @access    Private/Admin

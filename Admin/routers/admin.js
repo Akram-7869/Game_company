@@ -122,6 +122,7 @@ router.route('/game/data').post(palyerCtrl.getLeaderBoardList);
 router.route('/playerhistory/:id').get(palyerCtrl.getPlayerHistory);
 
 router.route('/dashboard').get(dashCtl.dashBoardView);
+router.route('/dashboard/total-income').get(dashCtl.totalIncome);
 router.route('/chart/data').post(dashCtl.getChartData);
 
 router.route('/player/upi/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);

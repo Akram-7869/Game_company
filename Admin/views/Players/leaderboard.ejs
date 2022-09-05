@@ -84,6 +84,7 @@
                                         <th>Won</th>
                                         <th>Note</th>
                                         <th>Played</th>
+                                        <th>Players</th>
                                         <!-- <th>Action</th> -->
                                     </tr>
                                 </thead>
@@ -192,6 +193,11 @@
                                 {
                                     data: 'createdAt', render: function (data) {
                                         return moment(data).format('DD-MM-YYYY h:mm a');
+                                    }
+                                },
+                                {
+                                    data: null, "render": function (data, type, full, meta) {
+                                        return JSON.stringify(full.players);
                                     }
                                 },
                                 // {
