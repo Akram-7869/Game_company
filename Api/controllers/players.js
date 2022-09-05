@@ -479,7 +479,7 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
     player = await Player.findById(req.params.id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken');
   } else {
     //player = req.player;
-    if (player.status === 'active') {
+    if (req.player.status === 'active') {
       player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken +refer_code');
     } else {
       player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken ');
