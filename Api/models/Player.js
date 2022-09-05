@@ -171,6 +171,7 @@ const PlayerSchema = new mongoose.Schema({
   },
   refer_code: {
     type: String,
+    select: false
   },
   level_1: {
     type: String

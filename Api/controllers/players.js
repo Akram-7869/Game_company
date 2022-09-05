@@ -479,7 +479,12 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
     player = await Player.findById(req.params.id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken');
   } else {
     //player = req.player;
-    player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken');
+    if (player.status === 'active') {
+      player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken +refer_code');
+    } else {
+      player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken ');
+    }
+
   }
 
   if (!player) {
@@ -487,6 +492,7 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
+
 
   player['profileUrl'] = 'dfdfdfdf';
 
@@ -526,7 +532,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
     player = req.player;
   }
 
-  if (!player) {
+  if (!player || player.status !== 'active') {
     return next(
       new ErrorResponse(`Player  not found`)
     );
@@ -1445,7 +1451,7 @@ exports.pollList = asyncHandler(async (req, res, next) => {
 exports.updateRefer = asyncHandler(async (req, res, next) => {
   console.log('updateRefer');
   let { referId } = req.body;
-  if (!req.player) {
+  if (!req.player || req.player.status !== 'active') {
     return next(
       new ErrorResponse(`Player  not found`)
     );

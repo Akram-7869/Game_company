@@ -14,6 +14,7 @@ const admin = require('../utils/fiebase')
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.getByPhone = asyncHandler(async (req, res, next) => {
+  console.log('getByPhone');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
   if (!phone) {
     return next(
@@ -21,7 +22,7 @@ exports.getByPhone = asyncHandler(async (req, res, next) => {
     );
   }
 
-  let player = await Player.findOne({ 'phone': phone, 'deviceToken': deviceToken }).select('+deviceToken');
+  let player = await Player.findOne({ 'phone': phone, 'deviceToken': deviceToken });
   if (!player) {
     return next(
       new ErrorResponse(`Player not found`)
@@ -34,6 +35,7 @@ exports.getByPhone = asyncHandler(async (req, res, next) => {
 
 });
 exports.getByEmail = asyncHandler(async (req, res, next) => {
+  console.log('getByEmail');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
   if (!email) {
     return next(
@@ -41,7 +43,7 @@ exports.getByEmail = asyncHandler(async (req, res, next) => {
     );
   }
 
-  let player = await Player.findOne({ 'email': email, 'deviceToken': deviceToken }).select('+deviceToken');
+  let player = await Player.findOne({ 'email': email, 'deviceToken': deviceToken });
   if (!player) {
     return next(
       new ErrorResponse(`Player not found`)
@@ -59,6 +61,7 @@ const { makeid } = require('../utils/utils');
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegister = asyncHandler(async (req, res, next) => {
+  console.log('playerRegister');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.body;
 
   if (!phone) {
@@ -124,7 +127,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 // @access    Public
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.body;
-
+  console.log('playerRegisterEmail');
   if (!email) {
     return next(
       new ErrorResponse(`select email`)
