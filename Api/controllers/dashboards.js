@@ -43,6 +43,7 @@ exports.getDashboard = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Dashboards/:id
 // @access    Private/Admin
 const getGraphData = async (req) => {
+  return [];
   if (req.period === 'year') {
     return getGraphMonth(req)
   }
@@ -143,6 +144,7 @@ const getGraphMonth = async (req) => {
 };
 
 const adminCommision = async () => {
+  return 0;
   const row = await Transaction.aggregate([
     {
       '$group': {
@@ -179,7 +181,7 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   });
 });
 let calTotal = async () => {
-
+  return {};
   const total = await Player.aggregate([{
     $group: {
       _id: null,
