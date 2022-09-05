@@ -105,6 +105,28 @@ exports.deleteTicket = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Delete Ticket
+// @route     DELETE /api/v1/auth/Tickets/:id
+// @access    Private/Admin
+exports.deleteTicketBbIds = asyncHandler(async (req, res, next) => {
+  let { tids } = req.body;
+
+  if (!tids || tids.length === 0) {
+    return next(
+      new ErrorResponse(`Select Players`)
+    );
+  }
+  tids.map(async d => {
+    let row = await Ticket.findByIdAndDelete(req.params.id);
+    await File.findByIdAndDelete(row.ticketImage);
+  });
+
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
+
 // @desc      Update Banner
 // @route     PUT /api/v1/auth/Banners/:id
 // @access    Private/Admin

@@ -49,12 +49,15 @@
                     provides the based framework upon which plug-ins can built.
                 </p> -->
                             <!-- <a class="btn btn-success waves-effect waves-light" href="<%=process.env.ADMIN_URL%>/admin/ticket/add">Add </a> -->
+                            <button type="button" class="btn btn-danger" id="btnSelectAll">DeletSelected</button>
+                            Check All <input type="checkbox" name="checkall" id="checkall"
+                                onClick="check_uncheck_checkbox(this.checked);" />
                             <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap"
                                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
                                     <tr>
                                         <th>Srno</th>
-                                        <th>phone</th>
+                                        <!-- <th>phone</th> -->
                                         <th>email</th>
                                         <th>subject</th>
                                         <th>Status</th>
@@ -103,6 +106,45 @@
                 <script src="/public/assets/libs/moment/moment.js"></script>
                 <%- contentFor('BottomJs') %>
                     <script>
+                        $('#btnSelectAll').click(function () {
+                            var favorite = [];
+                            $.each($("input[name='tids[]']:checked"), function () {
+                                favorite.push($(this).val());
+                            });
+                            if (favorite.length === 0) {
+                                alert("Select Ticket");
+                            } else {
+                                deleTicketByIds(favorite)
+                            }
+
+                        });
+                        function deleTicketByIds(ids) {
+                            return $.ajax({
+                                type: 'DELETE',
+                                url: '<%=process.env.ADMIN_URL%>/admin/ticket/delete-byids',
+                                data: { ids },
+                                success: (results) => {
+                                    alert('Record Delete');
+                                    location.reload();
+                                },
+                                error: (err) => {
+                                    alert('Error While Deleting');
+                                }
+                            });
+                        }
+
+
+                        function check_uncheck_checkbox(isChecked) {
+                            if (isChecked) {
+                                $('input[name="tids[]"]').each(function () {
+                                    this.checked = true;
+                                });
+                            } else {
+                                $('input[name="tids[]"]').each(function () {
+                                    this.checked = false;
+                                });
+                            }
+                        }
                         function delRec(id) {
                             let r = confirm('Want to delete?');
 
@@ -142,7 +184,7 @@
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
 
-                                { data: 'playerId.phone', "defaultContent": "" },
+                                // { data: 'playerId.phone', "defaultContent": "" },
                                 { data: 'playerId.email', "defaultContent": "" },
                                 { data: 'subject', "defaultContent": "" },
                                 { data: 'status', "defaultContent": "" },

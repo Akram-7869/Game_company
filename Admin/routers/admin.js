@@ -51,6 +51,7 @@ router.route('/page').get(settingCtrl.pageList); router.route('/page/data').post
 router.route('/page/add').get(settingCtrl.pageAdd).post(settingCtrl.createPage);
 router.route('/page/:id').get(settingCtrl.getPage).post(settingCtrl.updatePage).delete(settingCtrl.deletePage);
 
+router.route('/ticket/delete-byids').post(ticketCtrl.deleteTicketBbIds);
 router.route('/ticket').get(ticketCtrl.listTicket); router.route('/ticket/data').post(ticketCtrl.getTickets);
 router.route('/ticket/add').get(ticketCtrl.addTicket).post(ticketCtrl.createTickets);
 router.route('/ticket/:id').get(ticketCtrl.getTicket).post(ticketCtrl.updateTicket).delete(ticketCtrl.deleteTicket);
