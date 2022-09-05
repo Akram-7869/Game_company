@@ -512,6 +512,7 @@ exports.createPlayer = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.updatePlayer = asyncHandler(async (req, res, next) => {
+  console.log('updatePlayer');
   let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus, state } = req.body;
   let fieldsToUpdate = { firstName };
   let player;
@@ -1194,7 +1195,7 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players = [] } = req.body;
-
+  console.log('saveleaderboard');
   let playerGame = {
     'playerId': req.player._id,
     'amountWon': amount,
@@ -1442,6 +1443,7 @@ exports.pollList = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/savefbtoken/:id
 // @access    Private/player
 exports.updateRefer = asyncHandler(async (req, res, next) => {
+  console.log('updateRefer');
   let { referId } = req.body;
   if (!req.player) {
     return next(
