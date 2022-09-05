@@ -183,7 +183,7 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
   //     console.log('Error sending message:', error);
   //   });
 
-  req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": transaction.playerId } });
+  //req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": transaction.playerId } });
 
 
 
