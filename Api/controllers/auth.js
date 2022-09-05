@@ -135,7 +135,25 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   let vcode = Math.floor(1000 + Math.random() * 9000);
   // const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
 
-  if (player) {
+  if (!player) {
+
+    // create new player
+    let data = {
+      'email': email,
+
+      'phone': phone,
+      'verifyPhone': vcode,
+      'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
+      'deviceToken': deviceToken,
+      // 'firebaseToken': firebaseToken,
+      'status': 'notverified',
+      'countryCode': countryCode,
+      'refer_code': makeid(6),
+    };
+    // Create user
+    player = await Player.create(data);
+
+  } else {
     // if (player.email !== email) {
     //   return next(
     //     new ErrorResponse(`phone  number changed use the number registered first time`)
@@ -157,22 +175,6 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     // }
 
 
-  } else {
-    // create new player
-    let data = {
-      'email': email,
-
-      'phone': phone,
-      'verifyPhone': vcode,
-      'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
-      'deviceToken': deviceToken,
-      // 'firebaseToken': firebaseToken,
-      'status': 'notverified',
-      'countryCode': countryCode,
-      'refer_code': makeid(6),
-    };
-    // Create user
-    player = await Player.create(data);
   }
   //await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
   //subscribeToTopic(firebaseToken);

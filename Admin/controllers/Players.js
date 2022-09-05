@@ -241,6 +241,24 @@ exports.deletePlayerData = asyncHandler(async (req, res, next) => {
             data: {}
       });
 });
+// @desc      Delete Player
+// @route     DELETE /api/v1/auth/Players/:id
+// @access    Private/Admin
+exports.deletePlayerDataByIds = asyncHandler(async (req, res, next) => {
+      console.log('deleteing->', req.body);
+
+      return callApi(req).post(apiUrl + 'deleteplayerdata-byids', req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.status(200).json(r.data);
+                  // res.render('Players/List',{row:r.data.data}); 
+            })
+            .catch(error => {
+                  res.status(400).json(r.data);
+
+            })
+
+});
 
 
 // @desc      Get all Players

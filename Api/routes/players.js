@@ -58,6 +58,7 @@ router.route('/lobbys').get(protect, playerCtl.getLobbys);
 router.route('/couponlist/:type').get(protect, playerCtl.getCoupons);
 router.route('/giftlist').get(playerCtl.getGifts);
 router.route('/deleteplayerdata/:id').delete(protect, playerCtl.deletePlayerData);
+router.route('/deleteplayerdata-byids').post(protect, playerCtl.deletePlayerDataBIds);
 router
   .route('/:id')
   .get(protect, playerCtl.getPlayer)

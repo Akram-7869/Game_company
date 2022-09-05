@@ -432,7 +432,7 @@ exports.membership = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.getPlayers = asyncHandler(async (req, res, next) => {
   let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.body.draw }
-
+  console.log(req.body);
   let filter = {
     limit: req.body.length,
     skip: req.body.start,
@@ -441,7 +441,7 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
 
     },
     sort: {
-      _id: -1, username: 1
+      _id: -1, email: 1, phone: 1
     }
   };
   if (req.body.s_date && req.body.e_date) {
@@ -451,12 +451,17 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
     }
 
   }
+
+
   let key = req.body.search ? req.body.search.value : '';
   if (key) {
     filter['search'] = {
       value: req.body.search.value,
       fields: ['phone', 'email', 'firstName']
     }
+  }
+  if (req.body.status) {
+    filter['find']['status'] = req.body.status;
   }
   Player.dataTables(filter).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
@@ -598,7 +603,42 @@ exports.deletePlayerData = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Delete Player
+// @route     DELETE /api/v1/auth/Players/:id
+// @access    Private/Admin
+exports.deletePlayerDataBIds = asyncHandler(async (req, res, next) => {
+  // const player = await Player.findById(req.params.id);
+  console.log('deletePlayerDataBIds', req.body);
+  let { ids } = req.body;
+  if (!ids || ids.length === 0) {
+    return next(
+      new ErrorResponse(`Select Players`)
+    );
+  }
+  const user = req.staff;
 
+  if (!ids || user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`Not Allowed`)
+    );
+  }
+  //await Transaction.deleteMany({ playerId: { $in: ids } });
+  await Ticket.deleteMany({ playerId: { $in: ids } });
+  await PlayerPoll.deleteMany({ playerId: { $in: ids } });
+
+  let nids = await PlayerNotifcation.find({ playerId: { $in: ids } });
+  if (nids.length != 0) {
+    nids = nids.map(d => d._id)
+    await Notification.deleteMany({ _id: { $in: nids } });
+    await PlayerNotifcation.deleteMany({ playerId: { $in: ids } });
+  }
+
+  await Player.deleteMany({ _id: { $in: ids } });
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
 // @desc      Login user
 // @route     POST /api/v1/auth/login
 // @access    Public
