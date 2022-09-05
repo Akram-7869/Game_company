@@ -1487,7 +1487,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     playerStat['refrer_level'] = 1;
   }
   await Player.findByIdAndUpdate(codeGiver._id, playerStat, {
-    new: false,
+    new: true,
     runValidators: true
   });
   console.log('refrer level - 1');

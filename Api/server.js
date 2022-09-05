@@ -78,7 +78,7 @@ const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 mins
   max: 100
 });
-//app.use(limiter);
+app.use(limiter);
 
 // Prevent http param pollution
 app.use(hpp());
@@ -174,7 +174,7 @@ io.on('connection', socket => {
     } else {
       roomName = makeid(5);
       console.log('new-');
-      publicRoom[lobbyId] = { roomName, playerCount: 0, played:false }
+      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
       state[roomName] = { full: 0, players: [] };
     }
     // console.log('room', roomName);
@@ -254,11 +254,11 @@ io.on('connection', socket => {
   socket.on('gameStart', (d) => {
     console.log('start-');
     let { room, lobbyId } = d;
-     
-     if (publicRoom[lobbyId]) {
+
+    if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
-      if(rn == room){
-        publicRoom[lobbyId]['played']=true;
+      if (rn == room) {
+        publicRoom[lobbyId]['played'] = true;
       }
 
     }
