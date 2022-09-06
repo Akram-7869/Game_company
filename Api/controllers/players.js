@@ -669,6 +669,7 @@ exports.setPin = asyncHandler(async (req, res, next) => {
     runValidators: true
   });
   if (req.player.status === 'notverified') {
+    console.log('bonus-adding');
     const addamount = 10;
     //all ok new user 
     let fieldsToUpdate = {
