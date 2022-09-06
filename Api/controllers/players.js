@@ -1499,10 +1499,10 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     runValidators: true
   });
   console.log('refrer level - 1');
-  if (codeGiver.refrer_player_id) {
-    await referCommision(codeGiver.refrer_player_id, row.lvl2_commission, 'refer bonus level 2')
+  // if (codeGiver.refrer_player_id) {
+  //   await referCommision(codeGiver.refrer_player_id, row.lvl2_commission, 'refer bonus level 2')
 
-  }
+  // }
   res.status(200).json({
     success: true,
     data: player

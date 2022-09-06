@@ -347,7 +347,7 @@ exports.notifiyAll = asyncHandler(async (req, res, next) => {
     //     console.log('Error sending message:', error);
     //   });
 
-    req.io.to('notification_channel').emit('res', { ev: 'notification_all', data: {} });
+    //req.io.to('notification_channel').emit('res', { ev: 'notification_all', data: {} });
 
 
   }
