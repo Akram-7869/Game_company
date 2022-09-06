@@ -32,7 +32,7 @@ const PlayerSchema = new mongoose.Schema({
   },
   registeredWith: {
     type: String,
-    default: 'phone'
+    default: 'email'
   },
   phone: {
     type: String,

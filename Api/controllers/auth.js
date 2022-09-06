@@ -4,7 +4,7 @@ const asyncHandler = require('../middleware/async');
 const sendEmail = require('../utils/sendEmail');
 const Player = require('../models/Player');
 const User = require('../models/User');
-const Transactions = require('../models/Transaction');
+const Transaction = require('../models/Transaction');
 const Setting = require('../models/Setting');
 const Dashboard = require('../models/Dashboard');
 const axios = require('axios')
@@ -166,12 +166,32 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       'picture': picture,
       'deviceToken': deviceToken,
       'firebaseToken': firebaseToken,
-      'status': 'notverified',
+      'status': 'active',
       'countryCode': countryCode,
       'refer_code': makeid(6),
     };
     // Create user
     player = await Player.create(data);
+    const addamount = 10;
+    //all ok new user 
+    let fieldsToUpdate = {
+      status: 'active',
+      $inc: { balance: addamount, deposit: addamount },
+    }
+
+    let tranData = {
+      playerId: player._id,
+      amount: addamount,
+      transactionType: 'credit',
+      note: 'player register',
+      prevBalance: 0,
+      status: 'complete', paymentStatus: 'SUCCESS'
+    }
+    let tran = await Transaction.create(tranData);
+    player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
   }
   //await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
   //subscribeToTopic(firebaseToken);
@@ -219,7 +239,7 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
       prevBalance: user.balance,
       status: 'complete', paymentStatus: 'SUCCESS'
     }
-    let tran = await Transactions.create(tranData);
+    let tran = await Transaction.create(tranData);
     user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
       new: true,
       runValidators: true
