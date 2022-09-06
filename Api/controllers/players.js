@@ -710,6 +710,7 @@ exports.chkPin = asyncHandler(async (req, res, next) => {
   if (!user) {
     return next(new ErrorResponse('user not found'));
   }
+  console.log('lllllllllllllllllllllllllllllllllllllll', user.password, req.body.pin, user.id)
   // Check if password matches
   const isMatch = user.password === req.body.pin;
   // Check for user
