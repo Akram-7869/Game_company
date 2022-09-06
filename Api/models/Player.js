@@ -14,10 +14,13 @@ const PlayerSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ['male', 'female', 'other']
+
   },
   profilePic: {
     type: mongoose.Schema.ObjectId,
+  },
+  picture: {
+    type: String,
   },
   countryCode: {
     type: String,

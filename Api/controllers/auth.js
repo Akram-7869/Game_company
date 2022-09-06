@@ -126,7 +126,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
-  const { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", lastName = "", gender = "" } = req.body;
+  const { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
   console.log('playerRegisterEmail');
   if (!email || !deviceToken) {
     return next(
@@ -160,7 +160,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   } else {
     // create new player
     let data = {
-      firstName, lastName, gender,
+      firstName,
       'email': email,
       'phone': phone,
       'picture': picture,
