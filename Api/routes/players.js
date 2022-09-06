@@ -41,8 +41,8 @@ router.post('/savefbtoken', protect, playerCtl.savefbtoken);
 //router.post('/ticket/reply', protect, playerCtl.ticketReply);
 //router.get('/ticket/', protect, playerCtl.ticketList);
 router.post('/withdraw/request', protect, playerCtl.withDrawRequest);
-//router.post('/debit', protect, playerCtl.debiteAmount);
-//router.post('/credit/', protect, playerCtl.creditAmount);
+router.post('/debit', protect, playerCtl.debiteAmount);
+router.post('/credit/', protect, playerCtl.creditAmount);
 router.post('/debitBonus/', protect, playerCtl.debitBonus);
 router.post('/creditBonus/', protect, playerCtl.creditBonus);
 
