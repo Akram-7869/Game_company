@@ -49,7 +49,10 @@ exports.getByEmail = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player not found`)
     );
   }
-  sendTokenResponse(player, 200, res);
+  res.status(200).json({
+    success: true,
+    data: player
+  });
 
 });
 
