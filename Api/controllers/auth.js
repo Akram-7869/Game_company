@@ -126,64 +126,56 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
-  const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.body;
+  const { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", lastName = "", gender = "" } = req.body;
   console.log('playerRegisterEmail');
-  if (!email) {
+  if (!email || !deviceToken) {
     return next(
       new ErrorResponse(`select email`)
     );
   }
 
-  let player = await Player.findOne({ 'email': email });
-  // let vcode = Math.floor(1000 + Math.random() * 9000);
-  // const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
+  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
 
-  if (!player) {
 
-    // create new player
-    let data = {
-      'email': email,
+  if (player) {
+    if (player.email !== email) {
+      return next(
+        new ErrorResponse(`Email changed use the email registered first time`)
+      );
+    }
+    if (player.deviceToken !== deviceToken) {
+      return next(
+        new ErrorResponse(`Device changed use the device registered first time`)
+      );
+    }
 
-      'phone': phone,
-      //  'verifyPhone': vcode,
-      //  'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
-      'deviceToken': deviceToken,
-      // 'firebaseToken': firebaseToken,
-      'status': 'notverified',
-      'countryCode': countryCode,
-      'refer_code': makeid(6),
-    };
-    // Create user
-    player = await Player.create(data);
-
-  } else {
-    // if (player.email !== email) {
-    //   return next(
-    //     new ErrorResponse(`phone  number changed use the number registered first time`)
-    //   );
-    // } else if (player.deviceToken !== deviceToken) {
-    //   return next(
-    //     new ErrorResponse(`Device changed use the device registered first time`)
-    //   );
-    // } else {
     let fieldsToUpdate = {
-      //  'verifyPhone': vcode,
-      //  'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
       'firebaseToken': firebaseToken,
     }
     player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
       new: true,
       runValidators: true
     });
-    // }
 
-
+  } else {
+    // create new player
+    let data = {
+      firstName, lastName, gender,
+      'email': email,
+      'phone': phone,
+      'picture': picture,
+      'deviceToken': deviceToken,
+      'firebaseToken': firebaseToken,
+      'status': 'notverified',
+      'countryCode': countryCode,
+      'refer_code': makeid(6),
+    };
+    // Create user
+    player = await Player.create(data);
   }
   //await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
   //subscribeToTopic(firebaseToken);
   sendTokenResponse(player, 200, res);
-
-
 });
 // @desc      Verify phone
 // @route     POST /api/v1/auth/register

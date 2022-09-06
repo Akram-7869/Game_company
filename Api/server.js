@@ -103,26 +103,26 @@ app.use(async (req, res, next) => {
 });
 
 // Mount routers
-app.use('/api/v1/auth', auth);
-app.use('/api/v1/players', players);
-app.use('/api/v1/settings', settings);
-app.use('/api/v1/transactions', transactions);
-app.use('/api/v1/managers', managers);
-app.use('/api/v1/versions', versions);
-app.use('/api/v1/bots', bots);
-app.use('/api/v1/tickets', tickets);
-app.use('/api/v1/payments', payments);
-app.use('/api/v1/files', files);
-app.use('/api/v1/notifications', notifications);
-app.use('/api/v1/banners', banners);
-app.use('/api/v1/games', game);
-app.use('/api/v1/dashboards', dashboards);
-app.use('/api/v1/tournaments', tournaments);
-app.use('/api/v1/coupon', coupon);
-app.use('/api/v1/polls', polls);
+app.use('/api/v2/auth', auth);
+app.use('/api/v2/players', players);
+app.use('/api/v2/settings', settings);
+app.use('/api/v2/transactions', transactions);
+app.use('/api/v2/managers', managers);
+app.use('/api/v2/versions', versions);
+app.use('/api/v2/bots', bots);
+app.use('/api/v2/tickets', tickets);
+app.use('/api/v2/payments', payments);
+app.use('/api/v2/files', files);
+app.use('/api/v2/notifications', notifications);
+app.use('/api/v2/banners', banners);
+app.use('/api/v2/games', game);
+app.use('/api/v2/dashboards', dashboards);
+app.use('/api/v2/tournaments', tournaments);
+app.use('/api/v2/coupon', coupon);
+app.use('/api/v2/polls', polls);
 
-app.get('/api/v1/so', function (req, res, next) {
-  res.json({ state, publicRoom });
+app.get('/api/v2/so', function (req, res, next) {
+  // res.json({ state, publicRoom });
 })
 app.use(errorHandler);
 
