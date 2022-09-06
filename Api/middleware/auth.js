@@ -31,15 +31,10 @@ exports.protect = asyncHandler(async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.role === 'player') {
       let x = res.app.get('site_setting')
-
-      req.player = await Player.findById(decoded.id);
-      const playerrrrr = ['6316c77448db0a3bd8f226d9', '62c280a9ad0d0a54eefe610c', '63161afa05adfc0b0aa34178', '62f3672137b7662ccfff4acb'];
-      if (playerrrrr.includes(req.player._id)) {
-        if (x.one.maintenance === 'on') {
-          return next(new ErrorResponse('Site is in down', 503));
-        }
+      if (x.one.maintenance === 'on') {
+        return next(new ErrorResponse('Site is in down', 503));
       }
-
+      req.player = await Player.findById(decoded.id);
       if (req.player.status === 'banned') {
         return next(new ErrorResponse('Account is banned'));
       }
