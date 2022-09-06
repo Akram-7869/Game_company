@@ -134,8 +134,8 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     );
   }
 
-  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
-  let vcode = Math.floor(1000 + Math.random() * 9000);
+  let player = await Player.findOne({ 'email': email });
+  // let vcode = Math.floor(1000 + Math.random() * 9000);
   // const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
 
   if (!player) {
@@ -145,8 +145,8 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       'email': email,
 
       'phone': phone,
-      'verifyPhone': vcode,
-      'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
+      //  'verifyPhone': vcode,
+      //  'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
       'deviceToken': deviceToken,
       // 'firebaseToken': firebaseToken,
       'status': 'notverified',
@@ -167,8 +167,8 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     //   );
     // } else {
     let fieldsToUpdate = {
-      'verifyPhone': vcode,
-      'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
+      //  'verifyPhone': vcode,
+      //  'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
       'firebaseToken': firebaseToken,
     }
     player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
