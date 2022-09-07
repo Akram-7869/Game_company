@@ -71,7 +71,7 @@ app.use(mongoSanitize());
 app.use(helmet());
 
 // Prevent XSS attacks
-//app.use(xss());
+app.use(xss());
 
 // Rate limiting
 const limiter = rateLimit({
@@ -88,7 +88,7 @@ app.use(cors());
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(async (req, res, next) => {
-
+  console.log('app.use-90');
   req.io = io;
   if (!app.get('site_setting')) {
     // console.log('site setting');
@@ -97,8 +97,6 @@ app.use(async (req, res, next) => {
     });
     app.set('site_setting', setting);
   }
-
-
   return next();
 });
 
@@ -128,14 +126,6 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
-// const server = app.listen(
-//   PORT,
-//   console.log(
-//     `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
-//   )
-// );
-
-
 const { makeid } = require('./utils/utils');
 const state = {};
 const publicRoom = {};
@@ -148,7 +138,7 @@ io.on('connection', socket => {
   //socket.join('notification_channel');
 
   socket.on('join', (d) => {
-    console.log('inputstring');
+    console.log('join');
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4 } = dataParsed;
 
@@ -179,28 +169,12 @@ io.on('connection', socket => {
     } else {
       delete publicRoom[lobbyId];
     }
-
-    // console.dir(data, { depth: null });
-    //console.dir(socket.userId);
     io.to(roomName).emit('res', { ev: 'join', data });
   });
 
-  // socket.on('joinFriend', (d) => {
-  //   let dataParsed = d;//JSON.parse(d);
-  //   let { userId, room } = dataParsed;
-
-  //   joinRoom(socket, userId, room, dataParsed);
-  //   socket.join(room);
-  //   let data = {
-  //     room: room,
-  //     users: getRoomUsers(room)
-  //   };
-  //   // Send users and room info
-  //   io.to(room).emit('res', { ev: 'joinFriend', data });
-  // });
 
   socket.on('sendToRoom', (d) => {
-
+    console.log('sendToRoom');
 
     let { room, ev, data } = d;//JSON.parse(d);
     //console.log('sendToRoom', ev);
@@ -209,13 +183,11 @@ io.on('connection', socket => {
   });
   //leave
   socket.on('leave', (d) => {
-
-    let { room } = d; //JSON.parse(d);
+    console.log('leave');
+    let { room } = d;
     userLeave(socket);
     socket.leave(room);
-    //console.log('leav-inputstring');
-    //console.dir(state);
-    //console.dir(io.sockets.adapter.rooms);
+
     let data = {
       room: room,
       users: getRoomUsers(room)
@@ -238,7 +210,7 @@ io.on('connection', socket => {
   });
   // Runs when client disconnects
   socket.on('gameStart', (d) => {
-    console.log('start-');
+    console.log('gameStart-');
     let { room, lobbyId } = d;
 
     if (publicRoom[lobbyId]) {
@@ -302,26 +274,10 @@ io.on('connection', socket => {
 
 function arraymove(arr, fromIndex, toIndex) {
   arr.unshift(arr.pop());
-  // var element = arr[fromIndex];
-  // arr.splice(fromIndex, 1);
-  // /// console.log("::" + arr);
-  // arr.push(element);
-  // // console.log("::" + arr);
+
 }
-// function arraymove(array, oldIndex, newIndex) {
-//   if (newIndex >= array.length) {
-//     newIndex = array.length - 1;
-//   }
-//   array.splice(newIndex, 0, array.splice(oldIndex, 1)[0]);
-//   return array;
-// }
-let initRoom = () => {
-  const t = {
-    full: 0,
-    players: []
-  }
-  return t;
-}
+
+
 
 let joinRoom = (socket, palyerId, room, d = {}) => {
   //console.log('join room', socket.id, palyerId, room);
