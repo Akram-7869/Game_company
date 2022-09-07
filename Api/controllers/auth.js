@@ -184,7 +184,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       amount: addamount,
       transactionType: 'credit',
       note: 'player register',
-      prevBalance: 0,
+      prevBalance: 0, logType: 'deposit',
       status: 'complete', paymentStatus: 'SUCCESS'
     }
     let tran = await Transaction.create(tranData);

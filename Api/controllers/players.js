@@ -924,18 +924,13 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
 
   let tran = await Transaction.create(tranData);
   player = await tran.debitPlayerDeposit(amount);
-
-  let dashUpdate = {};
   if (req.body.logType === 'join') {
-    Dashboard.join();
+    //Dashboard.join();
     player = await Player.findByIdAndUpdate(req.player.id, { $inc: { joinCount: 1 } }, {
       new: true,
       runValidators: true
     });
   }
-
-
-
   res.status(200).json({
     success: true,
     data: player
@@ -975,6 +970,7 @@ exports.debitBonus = asyncHandler(async (req, res, next) => {
     'transactionType': "debit",
     'note': note,
     'prevBalance': req.player.balance,
+    'logType': 'deposit',
     status: 'complete', paymentStatus: 'SUCCESS'
   }
 
@@ -1020,7 +1016,7 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
     'amount': amount,
     'transactionType': "credit",
     'note': note,
-    'prevBalance': req.player.balance,
+    'prevBalance': req.player.balance, 'logType': 'deposit',
     status: 'complete', paymentStatus: 'SUCCESS'
   }
 
@@ -1039,6 +1035,7 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.creditAmount = asyncHandler(async (req, res, next) => {
+  console.log('creditAmount', req.body.logType);
   let player = req.player;//await Player.findById(req.body.id);
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1' } = req.body;
 
@@ -1054,7 +1051,10 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   }
   amount = parseFloat(amount).toFixed(2);
 
-  let commision = adminCommision;
+  let commision = 0;
+  if (req.body.logType = "won") {
+    commision = adminCommision;
+  }
   let tranData = {
     'playerId': player._id,
     'amount': amount,

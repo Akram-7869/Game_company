@@ -185,33 +185,34 @@ let calTotal = async () => {
     {
       '$match': {
         'transactionType': 'debit',
-        'logType': 'deposit',
+        'logType': 'game',
         'status': 'complete'
       }
     }, {
       '$group': {
         '_id': '$logType',
-        'depositTotal': {
+        'gameTotal': {
           '$sum': '$amount'
         }
       }
     }
   ]);
-  const total = await Player.aggregate([{
-    $group: {
-      _id: null,
-
-
-      depositTotal: {
-        $sum: "$deposit"
-      },
-      winingsTotal: {
-        $sum: "$winings"
+  const total = await Transaction.aggregate([{
+    '$match': {
+      'transactionType': 'credit',
+      'logType': 'won',
+      'status': 'complete'
+    }
+  }, {
+    '$group': {
+      '_id': '$logType',
+      'winTotal': {
+        '$sum': '$amount'
       }
     }
   }]);
-  total[0]['balanceTotal'] = 0;
-  total[0]['bonusTotal'] = row[0]['depositTotal'];
+  total[0]['balanceTotal'] = row[0]['gameTotal'] - total[0]['winTotal'];
+  total[0]['gameTotal'] = row[0]['gameTotal'];
   return total[0];
 
 }
