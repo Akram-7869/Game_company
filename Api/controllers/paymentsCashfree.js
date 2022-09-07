@@ -388,7 +388,7 @@ exports.upiValidate = async (req, res, next) => {
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
   let { upiId } = req.body;
 
-  console.log('req.query', upiId);
+  //console.log('req.query', upiId);
 
   let config = {
     method: 'post',
