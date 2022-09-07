@@ -296,7 +296,7 @@ exports.payout = asyncHandler(async (req, res, next) => {
   let transferMode = '';
   bene['phone'] = player.phone;
   bene['name'] = player.firstName;
-  bene['email'] = 'dummy@dukeplay.com';
+  bene['email'] = player.email;
   bene['address1'] = 'India' + player.state;
   if (tran.withdrawTo === 'bank') {
     transferMode = 'banktransfer';
