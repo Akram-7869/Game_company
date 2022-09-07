@@ -162,7 +162,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     let data = {
       firstName,
       'email': email,
-      'phone': phone,
+
       'picture': picture,
       'deviceToken': deviceToken,
       'firebaseToken': firebaseToken,

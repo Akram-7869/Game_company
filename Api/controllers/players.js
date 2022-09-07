@@ -1076,6 +1076,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
 
     player = await tran.creditPlayerWinings(amount);
     let playerGame = {
+      '_id': tournamentId + '-' + gameId,
       'playerId': req.player._id,
       'amountWon': amount,
       'tournamentId': tournamentId,

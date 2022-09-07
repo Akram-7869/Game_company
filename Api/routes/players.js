@@ -48,14 +48,14 @@ router.post('/creditBonus/', protect, playerCtl.creditBonus);
 
 
 router.post('/addMoney/', protect, playerCtl.addMoney);
-router.get('/info', protect, playerCtl.playerInfo);
-router.route('/online').get(protect, playerCtl.getOnlinePlayers).post(playerCtl.editOnlinePlayers);
+//router.get('/info', protect, playerCtl.playerInfo);
+//router.route('/online').get(protect, playerCtl.getOnlinePlayers).post(playerCtl.editOnlinePlayers);
 router.route('/').post(protect, playerCtl.getPlayers);
 
 router.route('/bank').post(protect, playerCtl.addBank);
 router.route('/upi').post(protect, playerCtl.addUpi);
 router.route('/wallet').post(protect, playerCtl.addWallet);
-router.route('/lobbys').get(protect, playerCtl.getLobbys);
+//router.route('/lobbys').get(protect, playerCtl.getLobbys);
 router.route('/couponlist/:type').get(protect, playerCtl.getCoupons);
 router.route('/giftlist').get(playerCtl.getGifts);
 router.route('/deleteplayerdata/:id').delete(protect, playerCtl.deletePlayerData);
