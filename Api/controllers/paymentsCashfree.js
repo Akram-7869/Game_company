@@ -383,7 +383,7 @@ exports.payout = asyncHandler(async (req, res, next) => {
 });
 exports.upiValidate = async (req, res, next) => {
   //disalbe it
-  return { 'status': 'SUCCESS' };
+  //return { 'status': 'SUCCESS' };
   //asyncHandler(async (req, res, next) => {
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
   let { upiId } = req.body;
