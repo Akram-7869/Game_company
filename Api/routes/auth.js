@@ -7,6 +7,8 @@ const { init, protect, maintenance_chk } = require('../middleware/auth');
 
 //router.post('/player/register', maintenance_chk, authCtrl.playerRegister);
 router.post('/player/registeremail', maintenance_chk, authCtrl.playerRegisterEmail);
+router.get('/maintanance', maintenance_chk, authCtrl.maintanance);
+
 //router.post('/player/verify', maintenance_chk, authCtrl.verifyPhoneCode);
 //router.get('/getbyphone', authCtrl.getByPhone);
 //router.get('/getbyemail', authCtrl.getByEmail);

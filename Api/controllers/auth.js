@@ -350,7 +350,16 @@ exports.logout = asyncHandler(async (req, res, next) => {
     data: {}
   });
 });
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.maintanance = asyncHandler(async (req, res, next) => {
 
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
 let smsOtp = async (mobile, otp, template_id, authkey) => {
 
   var params = {
