@@ -422,7 +422,7 @@ exports.upiValidate = async (req, res, next) => {
     }
 
   });
-
+  console.log(resPayout['data']);
   if (resPayout['data']['status'] === 'ERROR') {
 
     return resPayout['data'];
