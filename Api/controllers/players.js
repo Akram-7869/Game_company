@@ -98,12 +98,12 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
       new ErrorResponse('please add upi id')
     );
   }
-  const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
-  if (upiStatus['status'] !== 'SUCCESS') {
-    return next(
-      new ErrorResponse(upiStatus['message'])
-    );
-  }
+  // const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
+  // if (upiStatus['status'] !== 'SUCCESS') {
+  //   return next(
+  //     new ErrorResponse(upiStatus['message'])
+  //   );
+  // }
 
   let tran = await Transaction.create(tranData);
   player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount, winings: -amount } }, {
