@@ -197,9 +197,7 @@ let calTotal = async () => {
       }
     }
   ]);
-  if (!row) {
-    row[0]['gameTotal'] = 0;
-  }
+
   const total = await Transaction.aggregate([{
     '$match': {
       'transactionType': 'credit',
@@ -214,8 +212,14 @@ let calTotal = async () => {
       }
     }
   }]);
-  total[0]['balanceTotal'] = row[0]['gameTotal'] - total[0]['winTotal'];
-  total[0]['gameTotal'] = row[0]['gameTotal'];
+  if (row && total) {
+    total[0]['balanceTotal'] = row[0]['gameTotal'] - total[0]['winTotal'];
+    total[0]['gameTotal'] = row[0]['gameTotal'];
+  } else {
+    total[0]['balanceTotal'] = 0;
+    total[0]['gameTotal'] = 0;
+  }
+
   return total[0];
 
 }
