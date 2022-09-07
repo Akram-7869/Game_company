@@ -142,25 +142,11 @@ const publicRoom = {};
 
 // Run when client connects
 io.on('connection', socket => {
-  let data = { status: 'connected' };
-  socket.emit('res', { ev: 'connected', data });
+  // let data = { status: 'connected' };
+  // socket.emit('res', { ev: 'connected', data });
   console.log('contedt');
-  socket.join('notification_channel');
-  // socket.on('createRoom', (d) => {
-  //   let dataParsed = d;//JSON.parse(d);
-  //   let { userId } = dataParsed;
-  //   let roomName = makeid(5);
-  //   let data = { roomName }
-  //   state[roomName] = initRoom();
-  //   joinRoom(socket, userId, roomName, dataParsed);
+  //socket.join('notification_channel');
 
-  //   socket.emit('res', { ev: 'roomCode', data });
-  //   // const user = userJoin(socket.id, userId, roomName);
-
-  //   socket.join(roomName);
-  //   console.dir(state);
-
-  // });
   socket.on('join', (d) => {
     console.log('inputstring');
     let dataParsed = d;// JSON.parse(d);

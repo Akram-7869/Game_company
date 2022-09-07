@@ -268,7 +268,7 @@ exports.addPlayerList = asyncHandler(async (req, res, next) => {
     //   .catch((error) => {
     //     console.log('Error sending message:', error);
     //   });
-    req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.params.id } });
+    //req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.params.id } });
 
   }
   // else if (row.sendTo === 'all') {

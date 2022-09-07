@@ -1010,7 +1010,7 @@
 
                                 success: (results) => {
                                     alert('Record Updated');
-                                    let totalIncome = parseInt(results.data.bonusTotal) + parseInt(results.data.depositTotal) + parseInt(results.data.winingsTotal);
+                                    let totalIncome = parseInt(results.data.depositTotal) + (parseInt(results.data.bonusTotal) - parseInt(results.data.winingsTotal));
                                     $("#totalIncome").html(totalIncome);
 
 

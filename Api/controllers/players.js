@@ -156,7 +156,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   //     console.log('Error sending message:', error);
   //   });
 
-  req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.player.id } });
+  //req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.player.id } });
 
 
   res.status(200).json({
@@ -1073,20 +1073,6 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   // await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
   let dashUpdate = {};
   if (req.body.logType = "won") {
-    //  const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
-    // console.log(row.commission);
-    //  commision = (row.commission / 100) * amount;
-    // let tranData = {
-    //   'playerId': player._id,
-    //   'amount': commision,
-    //   'transactionType': "debit",
-    //   'note': 'Service Charge',
-    //   'prevBalance': player.balance,
-    //   status: 'complete', paymentStatus: 'SUCCESS'
-
-    // }
-    // let tran1 = await Transaction.create(tranData);
-    // player = await tran1.debitPlayer(commision);
 
     player = await tran.creditPlayerWinings(amount);
     let playerGame = {
