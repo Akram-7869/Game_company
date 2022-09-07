@@ -180,7 +180,7 @@ exports.addBank = asyncHandler(async (req, res, next) => {
 
     player = req.player;
   }
-  console.log('req.player'.red, req.player);
+  //console.log('req.player'.red, req.player);
   if (!player) {
     return next(
       new ErrorResponse(`Player  not found`)
@@ -424,7 +424,7 @@ exports.membership = asyncHandler(async (req, res, next) => {
     success: true,
     data: player
   });
-  console.log('player/membership');
+  //console.log('player/membership');
 });
 
 // @desc      Get all Players
@@ -432,7 +432,7 @@ exports.membership = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.getPlayers = asyncHandler(async (req, res, next) => {
   let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.body.draw }
-  console.log(req.body);
+  //console.log(req.body);
   let filter = {
     limit: req.body.length,
     skip: req.body.start,
@@ -518,7 +518,7 @@ exports.createPlayer = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.updatePlayer = asyncHandler(async (req, res, next) => {
-  console.log('updatePlayer');
+  //console.log('updatePlayer');
   let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus, state } = req.body;
   let fieldsToUpdate = { firstName };
   let player;
@@ -620,7 +620,7 @@ exports.deletePlayerData = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deletePlayerDataBIds = asyncHandler(async (req, res, next) => {
   // const player = await Player.findById(req.params.id);
-  console.log('deletePlayerDataBIds', req.body);
+  // console.log('deletePlayerDataBIds', req.body);
   let { ids } = req.body;
   if (!ids || ids.length === 0) {
     return next(
@@ -711,7 +711,7 @@ exports.chkPin = asyncHandler(async (req, res, next) => {
   if (!user) {
     return next(new ErrorResponse('user not found'));
   }
-  console.log('lllllllllllllllllllllllllllllllllllllll', user.password, req.body.pin, user.id)
+  //console.log('lllllllllllllllllllllllllllllllllllllll', user.password, req.body.pin, user.id)
   // Check if password matches
   const isMatch = user.password === req.body.pin;
   // Check for user
@@ -1076,7 +1076,6 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
 
     player = await tran.creditPlayerWinings(amount);
     let playerGame = {
-      '_id': tournamentId + '-' + gameId,
       'playerId': req.player._id,
       'amountWon': amount,
       'tournamentId': tournamentId,
@@ -1100,16 +1099,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   });
 });
 
-const updateDashboradStat = async (amount, commision) => {
-  let dash = await Dashboard.findOne({ type: 'dashboard' });
 
-  if (commision > 0) {
-    dash['totalIncome'] = dash['totalIncome'] + parseFloat(commision).toFixed(2);
-  }
-  dash['grossIncome'] = dash['grossIncome'] + parseFloat(amount).toFixed(2);
-
-  dash.save();
-}
 // @desc      Get current logged in user
 // @route     POST /api/v1/auth/me
 // @access    Private

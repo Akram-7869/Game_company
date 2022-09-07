@@ -197,6 +197,9 @@ let calTotal = async () => {
       }
     }
   ]);
+  if (!row) {
+    row[0]['gameTotal'] = 0;
+  }
   const total = await Transaction.aggregate([{
     '$match': {
       'transactionType': 'credit',
