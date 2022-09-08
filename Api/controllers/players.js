@@ -1124,9 +1124,9 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     status: 'complete', paymentStatus: 'SUCCESS',
     'logType': req.body.logType
   }
-  if (gameId) {
-    tranData['gameId'] = gameId;
-  }
+
+  tranData['gameId'] = gameId;
+
 
   let tran = await Transaction.create(tranData);
   player = await tran.creditPlayerWinings(winAmount);
@@ -1136,6 +1136,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+
 
 
 // @desc      Get current logged in user
@@ -1218,18 +1219,19 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players = [] } = req.body;
-  console.log('savelead', req.body);
-  let playerGame = {
-    'playerId': req.player._id,
-    'amountWon': amount,
-    'tournamentId': tournamentId,
-    'winner': winner,
-    'gameId': gameId,
-    'gameStatus': 'won',
-    'note': note,
-    players: JSON.parse(players)
+  playersObj = JSON.parse(players);
+  let player = playersObj['matchWinLeaderDatas'][winner];
+  const tournament = await Tournament.findById(tournamentId);
+  if (player.isBot) {
+    const tournament = await Tournament.findById(tournamentId);
+    const betAmout = parseFloat(tournament.betAmount) * 2;
+    const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
+    const commision = betAmout - winAmount;
+    Dashboard.totalIncome(betAmout, winAmount, commision);
+  } else {
+    let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': players });
   }
-  let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': JSON.parse(players) });
+  console.log('savelead', req.body);
   res.status(200).json({
     success: true,
     data: leaderboard
@@ -1641,10 +1643,24 @@ exports.checkUpi = asyncHandler(async (req, res, next) => {
   if (upiRes['status'] != 'SUCCESS') {
     return next(new ErrorResponse('upi verification failed'));
   }
+  if (upiRes.data.accountExists === 'YES') {
+    res.status(200).json({
+      success: true,
+      data: upiRes
+    });
 
-  res.status(200).json({
-    success: true,
-    data: upiRes
-  });
+  } else {
+    return next(new ErrorResponse('upi verification failed'));
+  }
 
-}); 
+
+});
+
+
+
+
+
+
+
+
+
