@@ -1218,7 +1218,7 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players = [] } = req.body;
-  console.log('saveleaderboard');
+  console.log('savelead', req.body);
   let playerGame = {
     'playerId': req.player._id,
     'amountWon': amount,
