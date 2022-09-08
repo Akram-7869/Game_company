@@ -1591,3 +1591,29 @@ let referCommision = async (player_id, amount, note) => {
   console.log('refrer level - 2');
 
 }
+
+exports.checkUpi = asyncHandler(async (req, res, next) => {
+  const { upiId } = req.body;
+  if (!req.player || req.player.status !== 'active') {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  if (!upiId) {
+    return next(new ErrorResponse('Please Provide Upi Id'));
+  }
+
+  // Check if password matches
+  const upiRes = await cashfreeCtrl.upiValidate(req, res, next);
+  console.log(upiRes);
+  // Check for user
+  if (upiRes['status'] != 'SUCCESS') {
+    return next(new ErrorResponse('upi verification failed'));
+  }
+
+  res.status(200).json({
+    success: true,
+    data: upiRes
+  });
+
+}); 

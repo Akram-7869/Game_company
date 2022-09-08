@@ -34,6 +34,7 @@ router.post('/poll', protect, playerCtl.poll);
 router.get('/pollList', protect, playerCtl.pollList);
 //router.post('/pin', protect, playerCtl.setPin);
 //router.post('/checkpin', playerCtl.chkPin);
+router.post('/checkupi', protect, playerCtl.checkUpi);
 router.post('/savefbtoken', protect, playerCtl.savefbtoken);
 // router.post('/game/join', protect, join);
 // router.post('/game/won', protect, won);

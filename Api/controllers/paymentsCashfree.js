@@ -423,14 +423,13 @@ exports.upiValidate = async (req, res, next) => {
     }
 
   });
-  console.log('upi-verify', upiId, resPayout['data']);
-  if (resPayout['data']['status'] === 'ERROR') {
+  // console.log('upi-verify', upiId, resPayout['data']);
+  // if (resPayout['data']['status'] === 'ERROR') {
 
-    return resPayout['data'];
+  //   return resPayout['data'];
 
-  }
+  // }
 
-  return { 'status': 'SUCCESS' };
-
-
+  return resPayout['data'];
 };
+
