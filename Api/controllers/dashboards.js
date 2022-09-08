@@ -163,14 +163,7 @@ const adminCommision = async () => {
 exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findOne({ 'type': req.params.type }).lean();
   row['livePlayers'] = req.io.engine.clientsCount;
-  let payout = await payoutTotal();
-  //console.log('payoutTotal', payout);
-  row['withdrawRequest'] = payout['totalCount'];
-  row['withdrawTotal'] = payout['totalWithdraw'];
 
-  row['supportRequest'] = await Ticket.countDocuments();
-  row['gameCount'] = await PlayerGame.countDocuments();
-  row['totalIncome'] = await adminCommision();
   const graph = await getGraphData(req);
   row['totals'] = {}; //await calTotal();
 

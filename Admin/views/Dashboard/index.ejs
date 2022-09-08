@@ -51,7 +51,7 @@
                             <div>
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%>
-                                        <span id="totalIncome" data-plugin="counterup">
+                                        <span data-plugin="counterup">
                                             <%=parseInt(list.totalIncome)%>
                                         </span>
                                 </h4>
@@ -136,7 +136,7 @@
                             <div>
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%> <span id="winTotal" data-plugin="counterup">
-                                            <%=parseInt(list.totals.winingsTotal)%>
+                                            <%=parseInt(list.winAmount)%>
                                         </span>
                                 </h4>
                                 <p class="text-muted mb-0">WinigsTotal</p>
@@ -157,7 +157,7 @@
                             <div>
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%> <span id="gameTotal" data-plugin="counterup">
-                                            <%=parseInt(list.totals.depositTotal)%>
+                                            <%=parseInt(list.betAmount)%>
                                         </span>
                                 </h4>
                                 <p class="text-muted mb-0">GameTotal</p>
