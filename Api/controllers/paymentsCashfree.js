@@ -294,8 +294,9 @@ exports.payout = asyncHandler(async (req, res, next) => {
   }
   let bene = {};
   let transferMode = '';
-  bene['phone'] = player.phone;
-  bene['name'] = player.firstName;
+  let phone = player.phone || '919660000023';
+  bene['phone'] = phone;
+  bene['name'] = player.firstName || player.email;
   bene['email'] = player.email;
   bene['address1'] = 'India' + player.state;
   if (tran.withdrawTo === 'bank') {
@@ -304,8 +305,8 @@ exports.payout = asyncHandler(async (req, res, next) => {
       "bankAccount": tran.withdraw.get('bankAccount'),
       "ifsc": tran.withdraw.get('bankIfc'),
       "name": tran.withdraw.get('bankAccountHolder'),
-      "email": 'dummy@dukeplay.com',
-      "phone": player.phone,
+      "email": player.email,
+      "phone": phone,
       "address1": tran.withdraw.get('bankAddress')
     };
   } else if (tran.withdrawTo === 'wallet') {

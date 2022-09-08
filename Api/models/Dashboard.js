@@ -12,6 +12,14 @@ const DashboardSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  winAmount: {
+    type: Number,
+    default: 0,
+  },
+  betAmount: {
+    type: Number,
+    default: 0,
+  },
   totalIncome: {
     type: Number,
     default: 0,
@@ -54,8 +62,8 @@ const DashboardSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-DashboardSchema.statics.totalIncome = async function (amount) {
-  return await this.findOneAndUpdate({ type: 'dashboard' }, { $inc: { totalIncome: amount } }, {
+DashboardSchema.statics.totalIncome = async function (betAmount, winAmount, commision) {
+  return await this.findOneAndUpdate({ type: 'dashboard' }, { $inc: { totalIncome: commision, winAmount, betAmount } }, {
     new: true,
     runValidators: true
   });

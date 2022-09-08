@@ -143,12 +143,12 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   if (player) {
     if (player.email !== email) {
       return next(
-        new ErrorResponse(`Email changed use the email registered first time`)
+        new ErrorResponse(`This device is registered with another email ID`)
       );
     }
     if (player.deviceToken !== deviceToken) {
       return next(
-        new ErrorResponse(`Device changed use the device registered first time`)
+        new ErrorResponse(`This device is registered with another email ID`)
       );
     }
 
@@ -357,15 +357,18 @@ exports.logout = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.maintanance = asyncHandler(async (req, res, next) => {
-  let bot_profile = []
-  filename = '/img/profile-picture/';
-  filePath = path.resolve(__dirname, '../../assets/' + filename);
-  let pathurl = process.env.IMAGE_URL + filename;
-  console.log(filePath);
-  fs.readdirSync(filePath).forEach(file => {
-    // console.log(file);
-    bot_profile.push(pathurl + file);
-  });
+  let bot_profile = [];
+
+  if (!req.app.get('bot_profile')) {
+    filename = '/img/profile-picture/';
+    filePath = path.resolve(__dirname, '../../assets/' + filename);
+    let pathurl = process.env.IMAGE_URL + filename;
+    console.log(filePath);
+    fs.readdirSync(filePath).forEach(file => {
+      // console.log(file);
+      bot_profile.push(pathurl + file);
+    });
+  }
 
   res.status(200).json({
     success: true,

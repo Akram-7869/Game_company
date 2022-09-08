@@ -130,6 +130,7 @@ module.exports = function (app) {
 					return;
 				}
 				req.session.user = r.data;
+				req.app.locals['user'] = r.data;
 				res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
 
 			})
