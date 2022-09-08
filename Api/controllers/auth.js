@@ -162,6 +162,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
 
   } else {
     // create new player
+    const addamount = 10;
     let data = {
       firstName,
       'email': email,
@@ -172,16 +173,11 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       'status': 'active',
       'countryCode': countryCode,
       'refer_code': makeid(6),
+      'balance': addamount,
+      'deposit': addamount,
     };
     // Create user
     player = await Player.create(data);
-    const addamount = 10;
-    //all ok new user 
-    let fieldsToUpdate = {
-      status: 'active',
-      $inc: { balance: addamount, deposit: addamount },
-    }
-
     let tranData = {
       playerId: player._id,
       amount: addamount,
@@ -191,10 +187,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       status: 'complete', paymentStatus: 'SUCCESS'
     }
     let tran = await Transaction.create(tranData);
-    player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
-      new: true,
-      runValidators: true
-    });
+
   }
   //await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
   //subscribeToTopic(firebaseToken);

@@ -164,13 +164,13 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findOne({ 'type': req.params.type }).lean();
   row['livePlayers'] = req.io.engine.clientsCount;
 
-  const graph = await getGraphData(req);
+
   row['totals'] = {}; //await calTotal();
 
 
   res.status(200).json({
     success: true,
-    data: { row, graph }
+    data: { row, graph: [] }
   });
 });
 let calTotal = async () => {
