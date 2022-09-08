@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0">Transaction Edit</h4>
+                    <h4 class="mb-0">Transaction Detail</h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
@@ -32,43 +32,28 @@
                         <div class="card-body">
                             <!--  <h4 class="card-title">Validation type</h4>
                 <p class="card-title-desc"> </p> -->
-                            <% if(error.length> 0) { %>
-                                <div class="alert alert-danger text-center mb-4 flash" role="alert">
-                                    <%= error %>
+
+
+
+                            <% for (key in row){%>
+
+                                <div class="form-group row">
+                                    <label for="staticEmail" class="col-sm-2 col-form-label">
+                                        <%=key%>
+                                    </label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" required name="<%='one['+key+']'%>"
+                                            value="<%=row[key]%>" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">
+
+                                    </label>
+
                                 </div>
                                 <% } %>
-                                    <% if(message.length> 0) { %>
-                                        <div class="alert alert-success text-center mb-4 flash" role="alert">
-                                            <%= message %>
-                                        </div>
-                                        <% } %>
-                                            <form class="custom-validation" action="" onsubmit="handleSubmit(this)"
-                                                method="POST" name="player" enctype="application/x-www-form-urlencoded">
-                                                <% for (key in row.one){%>
 
-
-                                                    <div class="mb-3">
-                                                        <label class="form-label">
-                                                            <%=key%>
-                                                        </label>
-                                                        <input type="text" class="form-control" required
-                                                            name="<%='one['+key+']'%>" value="<%=row.one[key]%>"
-                                                            placeholder="" />
-                                                    </div>
-                                                    <% } %>
-                                                        <div>
-                                                            <div>
-                                                                <button type="submit"
-                                                                    class="btn btn-primary waves-effect waves-light me-1">
-                                                                    Submit
-                                                                </button>
-                                                                <button type="reset"
-                                                                    class="btn btn-secondary waves-effect">
-                                                                    Cancel
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                            </form>
 
                         </div>
                     </div>
