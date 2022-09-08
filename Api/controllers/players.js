@@ -99,11 +99,17 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     );
   }
   const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
-  // if (upiStatus['status'] !== 'SUCCESS') {
-  //   return next(
-  //     new ErrorResponse(upiStatus['message'])
-  //   );
-  // }
+  if (upiStatus['status'] !== 'SUCCESS') {
+    return next(
+      new ErrorResponse(upiStatus['message'])
+    );
+  }
+  if (upiRes.data.accountExists === 'NO') {
+    return next(
+      new ErrorResponse('Invalid Upi')
+    );
+  }
+
 
   let tran = await Transaction.create(tranData);
   player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount, winings: -amount } }, {
@@ -1219,6 +1225,7 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players = [] } = req.body;
+  let leaderboard;
   playersObj = JSON.parse(players);
   let player = playersObj['matchWinLeaderDatas'][winner];
   const tournament = await Tournament.findById(tournamentId);
@@ -1643,7 +1650,7 @@ exports.checkUpi = asyncHandler(async (req, res, next) => {
   if (upiRes['status'] != 'SUCCESS') {
     return next(new ErrorResponse('upi verification failed'));
   }
-  if (upiRes.data.accountExists === 'YES') {
+  if (upiRes.data.accountExists === 'NO') {
     res.status(200).json({
       success: true,
       data: upiRes
