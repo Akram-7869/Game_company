@@ -2,6 +2,8 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Setting = require('../models/Setting');
 const File = require('../models/File');
+const { uploadFile, deletDiskFile } = require('../utils/utils');
+var path = require('path');
 
 
 
@@ -152,7 +154,7 @@ exports.deleteSetting = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Banners/:id
 // @access    Private/Admin
 exports.uploadeImage = asyncHandler(async (req, res, next) => {
-  //console.log('sdsdsssdsdsdsd',req.body,req.files, req.query);
+  console.log('sdsdsssdsdsdsd', req.body, req.files);
   let row = await Setting.findById(req.params.id);
 
   if (!row) {
@@ -165,30 +167,24 @@ exports.uploadeImage = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`File  not found`)
     );
   }
-  let newfile = {}
-  let dataSave = {
-    // createdBy: req.user.id,
-    data: req.files.file.data,
-    contentType: req.files.file.mimetype,
-    size: req.files.file.size,
-  }
-  if (!row.siteLogo) {
-    newfile = await File.create(dataSave);
+  let fieldsToUpdate = {};
+
+  let filename;
+  let filePath;
+  if (req.body.col === 'siteLogo') {
+    filename = '/img/logo/logo.png';
+    filePath = path.resolve(__dirname, '../../assets/' + filename);
+    fieldsToUpdate['siteLogo'] = filename;
   } else {
-    newfile = await File.findByIdAndUpdate(row.siteLogo, dataSave, {
-      new: true,
-      runValidators: true
-    });
+    filename = '/img/logo/fav.ico';
+    filePath = path.resolve(__dirname, '../../assets/' + filename);
+    fieldsToUpdate['favicon'] = filename;
   }
 
+  deletDiskFile(filePath);
+  uploadFile(req, filename, res);
 
-  if (!newfile) {
-    return next(
-      new ErrorResponse(`Setting  not found`)
-    );
-  }
 
-  let fieldsToUpdate = { siteLogo: newfile._id };
   row = await Setting.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
     new: true,
     runValidators: true

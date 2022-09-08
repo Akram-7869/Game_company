@@ -9,6 +9,9 @@ const Setting = require('../models/Setting');
 const Dashboard = require('../models/Dashboard');
 const axios = require('axios')
 const admin = require('../utils/fiebase')
+const fs = require('fs');
+var path = require('path');
+
 
 // @desc      Register user
 // @route     POST /api/v1/auth/register
@@ -354,10 +357,19 @@ exports.logout = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.maintanance = asyncHandler(async (req, res, next) => {
+  let bot_profile = []
+  filename = '/img/profile-picture/';
+  filePath = path.resolve(__dirname, '../../assets/' + filename);
+  let pathurl = process.env.IMAGE_URL + filename;
+  console.log(filePath);
+  fs.readdirSync(filePath).forEach(file => {
+    // console.log(file);
+    bot_profile.push(pathurl + file);
+  });
 
   res.status(200).json({
     success: true,
-    data: {}
+    data: { bot_profile }
   });
 });
 let smsOtp = async (mobile, otp, template_id, authkey) => {

@@ -155,7 +155,7 @@
                                             <input type="hidden" id="siteLogo" class="form-control" name="col"
                                                 value="siteLogo" />
                                         </div>
-                                        <img width=100 src="<%=apiUrl +'image/'+row.siteLogo%>">
+                                        <img width=100 src="<%= process.env.IMAGE_URL + row.siteLogo %>">
                                         <div class="dropzone" id="myDropzone"></div>
 
                                         <button id="submit-all" type="submit"
@@ -171,7 +171,9 @@
 
                                         </p>
                                     </form>
+
                                 </div>
+
                                 <div class="tab-pane" id="fees" role="tabpanel">
                                     <form id="banner"
                                         action="<%=process.env.ADMIN_URL%>/admin/site/commision/<%=row._id%>"
