@@ -99,11 +99,11 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     );
   }
   const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
-  if (upiStatus['status'] !== 'SUCCESS') {
-    return next(
-      new ErrorResponse(upiStatus['message'])
-    );
-  }
+  // if (upiStatus['status'] !== 'SUCCESS') {
+  //   return next(
+  //     new ErrorResponse(upiStatus['message'])
+  //   );
+  // }
 
   let tran = await Transaction.create(tranData);
   player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount, winings: -amount } }, {
@@ -247,12 +247,12 @@ exports.addUpi = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
-  if (upiStatus['status'] !== 'SUCCESS') {
-    return next(
-      new ErrorResponse(upiStatus['message'])
-    );
-  }
+  // const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
+  // if (upiStatus['status'] !== 'SUCCESS') {
+  //   return next(
+  //     new ErrorResponse(upiStatus['message'])
+  //   );
+  // }
 
   player = await Player.findByIdAndUpdate(player.id, { upi: fieldsToUpdate }, {
     new: true,
@@ -1066,7 +1066,7 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.creditAmount = asyncHandler(async (req, res, next) => {
-  console.log('creditAmount', req.body.logType);
+  console.log('creditAmount', req.body);
   let player = req.player;//await Player.findById(req.body.id);
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1' } = req.body;
   if (req.body.logType !== "won") {

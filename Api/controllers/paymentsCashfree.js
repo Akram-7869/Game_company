@@ -294,9 +294,9 @@ exports.payout = asyncHandler(async (req, res, next) => {
   }
   let bene = {};
   let transferMode = '';
-  let phone = player.phone || '919660000023';
-  bene['phone'] = phone;
-  bene['name'] = player.firstName || player.email;
+
+  bene['phone'] = player.phone;
+  bene['name'] = player.firstName;
   bene['email'] = player.email;
   bene['address1'] = 'India' + player.state;
   if (tran.withdrawTo === 'bank') {
