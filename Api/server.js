@@ -212,7 +212,7 @@ io.on('connection', socket => {
   });
   // Runs when client disconnects
   socket.on('gameStart', (d) => {
-    console.log('gameStart-', b);
+    console.log('gameStart-', d);
     let { room, lobbyId } = d;
 
     if (publicRoom[lobbyId]) {
