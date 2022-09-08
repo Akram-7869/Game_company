@@ -529,7 +529,9 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
     fieldsToUpdate['kycStatus'] = kycStatus;
   } else if (req.player) {
 
-    player = req.player;
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
   }
 
   if (!player || player.status !== 'active') {
@@ -571,7 +573,36 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+// @desc      Update Player
+// @route     PUT /api/v1/auth/Players/:id
+// @access    Private/Admin
+exports.updateProfile = asyncHandler(async (req, res, next) => {
+  //console.log('updatePlayer');
+  let { phone } = req.body;
+  let fieldsToUpdate = { phone };
 
+  if (!req.player || req.player.status !== 'active') {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+
+  if (!phone) {
+    return next(
+      new ErrorResponse(`Phone is requied`)
+    );
+  }
+
+  player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});
 // @desc      Delete Player
 // @route     DELETE /api/v1/auth/Players/:id
 // @access    Private/Admin
