@@ -593,7 +593,7 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
     );
   }
 
-  player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+  player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
