@@ -3,6 +3,9 @@ const asyncHandler = require('../middleware/async');
 const Banner = require('../models/Banner');
 const File = require('../models/File');
 const PlayerPoll = require('../models/PlayerPoll');
+var path = require('path');
+const fs = require('fs');
+
 
 // @desc      Get all Banners
 // @route     GET /api/v1/auth/Banners
@@ -42,20 +45,21 @@ exports.getBanner = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Banners
 // @access    Private/Admin
 exports.createBanner = asyncHandler(async (req, res, next) => {
+  console.log(req.files.file);
 
+  if (!req.files) {
 
-  let dataSave = {
-    // createdBy: req.user.id,
-    data: req.files.file.data,
-    contentType: req.files.file.mimetype,
-    size: req.files.file.size,
   }
-  const newfile = await File.create(dataSave);
+  let filename;
+  if (req.files) {
+    filename = '/img/banner/' + req.files.file.name;
+    uploadFile(req, filename, res);
+  }
 
   let banner = {
     location: req.body.location,
     status: 'active',
-    imageId: newfile._id,
+    imageId: filename,
     url: req.body.url,
   }
 
@@ -80,31 +84,28 @@ exports.updateBanner = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (req.files) {
-    let dataSave = {
-      // createdBy: req.user.id,
-      data: req.files.file.data,
-      contentType: req.files.file.mimetype,
-      size: req.files.file.size,
-    }
-    await File.findByIdAndUpdate(row.imageId, dataSave, {
-      new: true,
-      runValidators: true
-    });
-  }
+
+  let filename;
   let fieldsToUpdate = { url: req.body.url, location: req.body.location, status: req.body.status };
+  if (req.files) {
+    filename = '/img/banner/' + req.files.file.name;
+    let filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
+    deletDiskFile(filePath);
+    uploadFile(req, filename, res);
+    fieldsToUpdate['imageId'] = filename;
+  }
+
   row = await Banner.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
 
-  //Banner.isNew = false;
-  // await Banner.save();
   res.status(200).json({
     success: true,
     data: row
   });
 });
+
 
 // @desc      Delete Banner
 // @route     DELETE /api/v1/auth/Banners/:id
@@ -112,7 +113,9 @@ exports.updateBanner = asyncHandler(async (req, res, next) => {
 exports.deleteBanner = asyncHandler(async (req, res, next) => {
   const row = await Banner.findById(req.params.id);
   await Banner.findByIdAndDelete(req.params.id);
-  await File.findByIdAndDelete(row.imageId);
+  //await File.findByIdAndDelete(row.imageId);
+  let filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
+  deletDiskFile(filePath);
   await PlayerPoll.deleteMany({ bannerId: req.params.id });
 
   res.status(200).json({
@@ -122,7 +125,7 @@ exports.deleteBanner = asyncHandler(async (req, res, next) => {
 });
 
 exports.uploadFile = asyncHandler(async (req, res, next) => {
-  console.log(req.body, req.files);
+  //console.log(req.body, req.files);
   // if (!req.file) {
   //     return next(new ErrorResponse(`Please upload a file`));
   // }

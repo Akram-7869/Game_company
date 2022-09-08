@@ -12,7 +12,7 @@ const BannerSchema = new mongoose.Schema({
         type: String
     },
     imageId: {
-        type: mongoose.Schema.ObjectId,
+        type: String
     },
     status: {
         type: String,

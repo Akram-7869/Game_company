@@ -39,8 +39,8 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Url</label>
-                                    <input type="text" name="url" value="<%=row.url?row.url:'' %>" class="form-control"
-                                        required placeholder="Url " />
+                                    <input type="text" id="url" name="url" value="<%=row.url?row.url:'' %>"
+                                        class="form-control" required placeholder="Url " />
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Location</label>
@@ -52,7 +52,7 @@
                                             </option>
                                             <option value="LOBBY" <%=row.location==='LOBBY' ?'selected':'' %>>Lobby
                                             </option>
-                                            
+
                                         </select>
                                     </div>
                                 </div>
@@ -79,7 +79,7 @@
                                     </div>
                                 </div>
 
-                                <img width=100 src="<%=apiUrl +'/image/'+row.imageId%>">
+                                <img width=100 src="<%=process.env.IMAGE_URL + row.imageId%>">
 
 
                                 <div class="dropzone" id="myDropzone"></div>

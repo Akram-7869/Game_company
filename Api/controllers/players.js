@@ -843,7 +843,7 @@ exports.getLobbys = asyncHandler(async (req, res, next) => {
 
   let rows = await Lobby.find({ 'active': true }).lean();
   let x = rows.map(d => {
-    d['imageUrl'] = process.env.API_URI + '/files/' + d.lobbyImage;
+    d['imageUrl'] = process.env.IMAGE_URL + d.lobbyImage;
     return d;
   });
   // console.log('dsdsdsdsdsd', x);
@@ -1038,8 +1038,15 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   console.log('creditAmount', req.body.logType);
   let player = req.player;//await Player.findById(req.body.id);
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1' } = req.body;
-
-  if (amount < 0) {
+  if (req.body.logType !== "won") {
+    new ErrorResponse(`Invalid amount`);
+  }
+  if (!tournamentId) {
+    return next(
+      new ErrorResponse(`Invalid tournament`)
+    );
+  }
+  if (amount < 0 || !gameId) {
     return next(
       new ErrorResponse(`Invalid amount`)
     );
@@ -1049,15 +1056,36 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player Not found`)
     );
   }
-  amount = parseFloat(amount).toFixed(2);
+  // amount = parseFloat(amount).toFixed(2);
+  const tournament = await Tournament.findById(tournamentId);
 
-  let commision = 0;
-  if (req.body.logType = "won") {
-    commision = adminCommision;
+  if (!tournament) {
+    return next(
+      new ErrorResponse(`Tournament Not found`)
+    );
   }
+
+
+  const betAmout = parseFloat(tournament.betAmount) * 2;
+  const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
+  const commision = betAmout - winAmount;
+
+
+  let playerGame = {
+    'playerId': req.player._id,
+    'amountWon': winAmount,
+    'tournamentId': tournamentId,
+    'winner': winner,
+    'gameId': gameId,
+    'amountPaid': betAmout,
+    'gameStatus': 'won',
+    'note': note
+  }
+
+  let leaderboard = await PlayerGame.create(playerGame);
   let tranData = {
     'playerId': player._id,
-    'amount': amount,
+    'amount': winAmount,
     'transactionType': "credit",
     'note': note,
     'prevBalance': player.balance,
@@ -1068,31 +1096,10 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   if (gameId) {
     tranData['gameId'] = gameId;
   }
+
   let tran = await Transaction.create(tranData);
-
-  // await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
-  let dashUpdate = {};
-  if (req.body.logType = "won") {
-
-    player = await tran.creditPlayerWinings(amount);
-    let playerGame = {
-      'playerId': req.player._id,
-      'amountWon': amount,
-      'tournamentId': tournamentId,
-      'winner': winner,
-      'gameId': gameId,
-      'gameStatus': 'won',
-      'note': note
-    }
-    let leaderboard = await PlayerGame.create(playerGame);
-
-  } else if (req.body.logType = "bonus") {
-    player = await tran.creditPlayerBonus(amount);
-  }
-
-  //console.log('debit', player.balance);
-
-  //await updateDashboradStat(amount, commision)
+  player = await tran.creditPlayerWinings(winAmount);
+  Dashboard.totalIncome(commision);
   res.status(200).json({
     success: true,
     data: player
@@ -1265,7 +1272,7 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
 let buildProfileUrl = (player) => {
   if (player.profilePic) {
     // console.log('image'.green);
-    return process.env.API_URI + '/files/' + player.profilePic
+    return process.env.IMAGE_URL + player.profilePic
   } else {
     // console.log('image'.red);
 
@@ -1288,7 +1295,7 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
 exports.getCoupons = asyncHandler(async (req, res, next) => {
   const coupon = await Coupon.find({ 'couponType': req.params.type, 'active': true }).lean();;
   let x = coupon.map(d => {
-    d['imageUrl'] = process.env.API_URI + '/files/' + d.couponImage;
+    d['imageUrl'] = process.env.IMAGE_URL + d.couponImage;
     return d;
   });
   res.status(200).json({
@@ -1306,7 +1313,7 @@ exports.getBanners = asyncHandler(async (req, res, next) => {
   const banner = await Banner.find({ 'status': 'active' }).lean();
   // console.log(banner);
   let x = banner.map(d => {
-    d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
+    d['imageUrl'] = process.env.IMAGE_URL + d.imageId;
 
     return d;
   });
@@ -1318,7 +1325,7 @@ exports.getBanners = asyncHandler(async (req, res, next) => {
 exports.getGifts = asyncHandler(async (req, res, next) => {
   const gift = await Gift.find({ 'active': true }).lean();;
   let x = gift.map(d => {
-    d['imageUrl'] = process.env.API_URI + '/files/' + d.giftImage;
+    d['imageUrl'] = process.env.IMAGE_URL + d.giftImage;
     return d;
   });
   res.status(200).json({
@@ -1414,7 +1421,7 @@ exports.poll = asyncHandler(async (req, res, next) => {
 exports.pollList = asyncHandler(async (req, res, next) => {
   const list = await Poll.find({ 'status': 'active' }).lean();
   let x = list.map(d => {
-    d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
+    d['imageUrl'] = process.env.IMAGE_URL + d.imageId;
 
     return d;
   });
@@ -1514,7 +1521,7 @@ exports.getVersion = asyncHandler(async (req, res, next) => {
   const list = await Version.find();
   // console.log(banner);
   // let x = banner.map(d => {
-  //   d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
+  //   d['imageUrl'] = process.env.IMAGE_URL + d.imageId;
   //   return d;
   // });
   res.status(200).json({

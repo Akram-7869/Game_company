@@ -155,7 +155,7 @@
                                     data: null,
                                     "render": function (data, type, JsonResultRow, meta) {
 
-                                        let imgUrl = "<%= apiUrl +'/image/'%>" + JsonResultRow.imageId
+                                        let imgUrl = "<%= image_url %>" + JsonResultRow.imageId
                                         return '<img width="50" src="' + imgUrl + '">';
                                     }
                                 },

@@ -3,6 +3,10 @@ const asyncHandler = require('../middleware/async');
 const Poll = require('../models/Poll');
 const File = require('../models/File');
 const PlayerPoll = require('../models/PlayerPoll');
+var path = require('path');
+const fs = require('fs');
+const { uploadFile, deletDiskFile } = require('../utils/utils');
+
 
 // @desc      Get all Polls
 // @route     GET /api/v1/auth/Polls
@@ -42,20 +46,22 @@ exports.getPoll = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Polls
 // @access    Private/Admin
 exports.createPoll = asyncHandler(async (req, res, next) => {
+    console.log(req.body);
+    if (!req.files) {
 
-
-    let dataSave = {
-        // createdBy: req.user.id,
-        data: req.files.file.data,
-        contentType: req.files.file.mimetype,
-        size: req.files.file.size,
     }
-    const newfile = await File.create(dataSave);
+    let filename;
+    if (req.files) {
+        filename = '/img/banner/' + req.files.file.name;
+        uploadFile(req, filename, res);
+    }
+
+
 
     let pollRow = {
         location: req.body.location,
         status: 'active',
-        imageId: newfile._id,
+        imageId: filename,
         url: req.body.url,
     }
 
@@ -80,19 +86,15 @@ exports.updatePoll = asyncHandler(async (req, res, next) => {
         );
     }
 
-    if (req.files) {
-        let dataSave = {
-            // createdBy: req.user.id,
-            data: req.files.file.data,
-            contentType: req.files.file.mimetype,
-            size: req.files.file.size,
-        }
-        await File.findByIdAndUpdate(row.imageId, dataSave, {
-            new: true,
-            runValidators: true
-        });
-    }
+    let filename;
     let fieldsToUpdate = { url: req.body.url, location: req.body.location, status: req.body.status };
+    if (req.files) {
+        filename = '/img/poll/' + req.files.file.name;
+        let filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
+        deletDiskFile(filePath);
+        uploadFile(req, filename, res);
+        fieldsToUpdate['imageId'] = filename;
+    }
     row = await Poll.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
         new: true,
         runValidators: true
@@ -112,7 +114,9 @@ exports.updatePoll = asyncHandler(async (req, res, next) => {
 exports.deletePoll = asyncHandler(async (req, res, next) => {
     const row = await Poll.findById(req.params.id);
     await Poll.findByIdAndDelete(req.params.id);
-    await File.findByIdAndDelete(row.imageId);
+    //await File.findByIdAndDelete(row.imageId);
+    let filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
+    deletDiskFile(filePath);
     await PlayerPoll.deleteMany({ PollId: req.params.id });
 
     res.status(200).json({
