@@ -1235,11 +1235,12 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
   let gameRec = await PlayerGame.find({ 'gameId': gameId, 'tournamentId': tournamentId });
   const tournament = await Tournament.findById(tournamentId);
   if (winnerPlayer.isBot) {
+    console.log('isboat');
     const betAmout = parseFloat(tournament.betAmount) * 2;
     const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
     const commision = betAmout - winAmount;
     let playerGame = {
-      console.log('isboat');
+
       'playerId': req.player._id,
       'amountWon': winAmount,
       'tournamentId': tournamentId,
