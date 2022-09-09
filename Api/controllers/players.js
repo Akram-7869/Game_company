@@ -1231,7 +1231,8 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
   playersObj = JSON.parse(players);
   const winnerPlayer = playersObj.matchWinLeaderDatas.filter(x => x.userId === playerId)[0];
   const looserPlayer = playersObj.matchWinLeaderDatas.filter(x => x.userId !== playerId)[0];
-
+  console.log(winnerPlayer);
+  console.log(looserPlayer);
   let gameRec = await PlayerGame.find({ 'gameId': gameId, 'tournamentId': tournamentId });
   const tournament = await Tournament.findById(tournamentId);
   if (winnerPlayer.isBot) {
@@ -1257,8 +1258,8 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
     let leaderboard = await PlayerGame.create(playerGame);
     Dashboard.totalIncome(betAmout, winAmount, commision);
   } else {
-    console.log('update');
-    let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': players, "opponentName": winnerPlayer.userName });
+    console.log('update-oppppppppppppppppppppppppppppppppppppppppppp');
+    let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': players, "opponentName": looserPlayer.userName });
   }
   console.log('savelead', req.body);
   res.status(200).json({
