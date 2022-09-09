@@ -197,7 +197,7 @@
                                 },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return JSON.stringify(full.players);
+                                        return full.players ? JSON.stringify(full.players) : '';
                                     }
                                 },
                                 // {

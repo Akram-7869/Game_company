@@ -104,7 +104,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
       new ErrorResponse(upiStatus['message'])
     );
   }
-  if (upiRes.data.accountExists === 'NO') {
+  if (upiStatus.data.accountExists === 'NO') {
     return next(
       new ErrorResponse('Invalid Upi')
     );
@@ -231,8 +231,6 @@ exports.addWallet = asyncHandler(async (req, res, next) => {
     runValidators: true
   });
 
-  //Player.isNew = false;
-  // await Player.save();
   res.status(200).json({
     success: true,
     data: player
@@ -1227,13 +1225,26 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players = [] } = req.body;
   let leaderboard;
   playersObj = JSON.parse(players);
-  let player = playersObj['matchWinLeaderDatas'][winner];
+  let winnerPlayer = playersObj['matchWinLeaderDatas'][winner];
+  let gameRec = await PlayerGame.find({ 'gameId': gameId, 'tournamentId': tournamentId });
   const tournament = await Tournament.findById(tournamentId);
-  if (player.isBot) {
-    const tournament = await Tournament.findById(tournamentId);
+  if (winnerPlayer.isBot) {
     const betAmout = parseFloat(tournament.betAmount) * 2;
     const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
     const commision = betAmout - winAmount;
+    let playerGame = {
+      'playerId': req.player._id,
+      'amountWon': winAmount,
+      'tournamentId': tournamentId,
+      'winner': winner,
+      'gameId': gameId,
+      'amountPaid': betAmout,
+      'gameStatus': 'lost',
+      'note': note,
+      'players': players
+    }
+
+    let leaderboard = await PlayerGame.create(playerGame);
     Dashboard.totalIncome(betAmout, winAmount, commision);
   } else {
     let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': players });

@@ -26,7 +26,7 @@ router.post('/status/:id', protect, playerCtl.updateStatus);
 router.get('/page', protect, playerCtl.getPage);
 
 router.route('/profile').get(protect, playerCtl.getPlayer).post(protect, playerCtl.updateProfile);
-router.route('/profile/image').post(protect, playerCtl.updatePlayerImage);
+//router.route('/profile/image').post(protect, playerCtl.updatePlayerImage);
 router.post('/notification/clearall', protect, playerCtl.clearAllNotification);
 router.get('/notification', protect, playerCtl.getNotication);
 router.post('/poll', protect, playerCtl.poll);
