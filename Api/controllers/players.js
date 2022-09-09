@@ -1222,10 +1222,12 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
+  console.log('saveLeaderBoard', req.body);
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players = [] } = req.body;
   let leaderboard;
   playersObj = JSON.parse(players);
   let winnerPlayer = playersObj['matchWinLeaderDatas'][winner];
+  console.log('winnerPlayer', winnerPlayer);
   let gameRec = await PlayerGame.find({ 'gameId': gameId, 'tournamentId': tournamentId });
   const tournament = await Tournament.findById(tournamentId);
   if (winnerPlayer.isBot) {

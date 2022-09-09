@@ -141,9 +141,7 @@ module.exports = function (app) {
 
 	});
 
-	app.get('/login', function (req, res) {
-		res.render('Auth/auth-login', { 'message': req.flash('message'), 'error': req.flash('error') });
-	});
+
 
 	// app.post('/post-login', urlencodeParser, function (req, res) {
 	// 	console.log(apiUrl + '/auth/login')
