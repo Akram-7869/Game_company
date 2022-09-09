@@ -90,7 +90,6 @@ app.use(cors());
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(async (req, res, next) => {
-  console.log('app.use-90');
   req.io = io;
   if (!app.get('site_setting')) {
     // console.log('site setting');

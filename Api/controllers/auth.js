@@ -137,7 +137,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     );
   }
 
-  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  const player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
 
 
   if (player) {
@@ -155,7 +155,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     let fieldsToUpdate = {
       'firebaseToken': firebaseToken,
     }
-    player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+    playerNew = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
       new: true,
       runValidators: true
     });
@@ -177,9 +177,9 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       'deposit': addamount,
     };
     // Create user
-    player = await Player.create(data);
-    let tranData = {
-      playerId: player._id,
+    const playerNew = await Player.create(data);
+    const tranData = {
+      playerId: playerNew._id,
       amount: addamount,
       transactionType: 'credit',
       note: 'player register',
@@ -191,7 +191,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   }
   //await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
   //subscribeToTopic(firebaseToken);
-  sendTokenResponse(player, 200, res);
+  sendTokenResponse(playerNew, 200, res);
 });
 // @desc      Verify phone
 // @route     POST /api/v1/auth/register

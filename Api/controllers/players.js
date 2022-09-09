@@ -1258,7 +1258,7 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
     Dashboard.totalIncome(betAmout, winAmount, commision);
   } else {
     console.log('update');
-    let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': players, "opponentName": looserPlayer.userName });
+    let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': players, "opponentName": winnerPlayer.userName });
   }
   console.log('savelead', req.body);
   res.status(200).json({
