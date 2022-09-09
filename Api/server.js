@@ -136,11 +136,11 @@ const publicRoom = {};
 io.on('connection', socket => {
   // let data = { status: 'connected' };
   // socket.emit('res', { ev: 'connected', data });
-  console.log('contedt');
+  console.log('contedt', socket?.lobbyId);
   //socket.join('notification_channel');
 
   socket.on('join', (d) => {
-    console.log('join');
+    console.log('join', socket?.lobbyId);
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4 } = dataParsed;
 
@@ -185,8 +185,9 @@ io.on('connection', socket => {
   });
   //leave
   socket.on('leave', (d) => {
-    console.log('leave');
+    console.log('leave', socket?.lobbyId);
     let { room } = d;
+    console.log('leave-', room);
     userLeave(socket);
     socket.leave(room);
 
@@ -199,7 +200,9 @@ io.on('connection', socket => {
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
+
     let { room, userId } = socket;
+    console.log('disconnect-', room, userId, socket?.lobbyId);
     userLeave(socket);
     //console.log('disconnect-inputstring');
     let data = {
@@ -212,7 +215,7 @@ io.on('connection', socket => {
   });
   // Runs when client disconnects
   socket.on('gameStart', (d) => {
-    console.log('gameStart-', d);
+    console.log('gameStart-', socket?.lobbyId);
     let { room, lobbyId } = d;
 
     if (publicRoom[lobbyId]) {
@@ -285,7 +288,7 @@ let joinRoom = (socket, palyerId, room, d = {}) => {
   //console.log('join room', socket.id, palyerId, room);
   socket['room'] = room;
   socket['userId'] = palyerId;
-  // socket['lobbyId'] = d.lobbyId;
+  socket['lobbyId'] = d.lobbyId;
   let index = -1;
   if (state[room]) {
     index = state[room].players.findIndex(user => user.userId === palyerId);
