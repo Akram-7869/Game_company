@@ -80,8 +80,8 @@
                                     <tr>
                                         <th>Srno</th>
                                         <th>Email</th>
-                                        <!-- <th>Mobile</th> -->
-                                        <th>Won</th>
+                                        <th>amount</th>
+                                        <th>status</th>
                                         <th>Note</th>
                                         <th>Played</th>
                                         <th>Players</th>
@@ -187,8 +187,9 @@
                                     }
                                 },
                                 { data: 'playerId.email', "defaultContent": "" },
-                                // { data: 'playerId.phone', "defaultContent": "" },
+
                                 { data: 'amountWon', "defaultContent": "0" },
+                                { data: 'gameStatus', "defaultContent": "WON" },
                                 { data: 'note', "defaultContent": "WON" },
                                 {
                                     data: 'createdAt', render: function (data) {

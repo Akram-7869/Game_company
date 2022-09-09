@@ -48,6 +48,16 @@ const PlayerGameSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  isBot: {
+    type: Boolean,
+    default: false
+  },
+  opponentName: {
+    type: String,
+    default: ''
+
+  },
+
   players: {
     type: String,
   }
