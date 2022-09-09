@@ -6,7 +6,8 @@ const asyncHandler = require('./async');
 exports.protect = asyncHandler(async (req, res, next) => {
   // //console.log('auth',req.session);
   if (!req.session.user) {
-    res.redirect(process.env.ADMIN_URL + '/');
+    console.log('auth-session-not-found');
+    res.redirect(process.env.ADMIN_URL + '/login');
   } else {
     next();
   }
