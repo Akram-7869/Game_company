@@ -34,12 +34,10 @@ app.use(fileUpload({
 //app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(session({
   key: 'user_sid',
-  secret: 'som4eran4dpanelo6n9stuff0s',
+  secret: 'som4erduckan4dpanelo6n9stuff0s',
   resave: false,
   saveUninitialized: false,
-  cookie: {
-    expires: 3600000
-  }
+
 }));
 
 
