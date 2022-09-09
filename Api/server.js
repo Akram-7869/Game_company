@@ -174,7 +174,7 @@ io.on('connection', socket => {
 
 
   socket.on('sendToRoom', (d) => {
-    //console.log('sendToRoom');
+    console.log('sendToRoom');
 
     let { room, ev, data } = d;//JSON.parse(d);
     //console.log('sendToRoom', ev);
@@ -199,7 +199,7 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
 
     let { room, userId } = socket;
-    console.log('disconnect-', room, userId, socket?.lobbyId);
+    console.log('disconnect-');
     userLeave(socket);
     //console.log('disconnect-inputstring');
     let data = {
