@@ -582,8 +582,8 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.updateProfile = asyncHandler(async (req, res, next) => {
   //console.log('updatePlayer');
-  let { phone, firstName = '' } = req.body;
-  let fieldsToUpdate = { firstName };
+  let { phone, firstName } = req.body;
+  let fieldsToUpdate;
 
   if (!req.player || req.player.status !== 'active') {
     return next(
@@ -598,8 +598,15 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
   if (!req.player.phone) {
     fieldsToUpdate['phone'] = phone;
   }
-
-  player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
+  if (firstName) {
+    fieldsToUpdate['firstName'] = firstName;
+  }
+  if (!fieldsToUpdate) {
+    return next(
+      new ErrorResponse(`Provide details`)
+    );
+  }
+  let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
