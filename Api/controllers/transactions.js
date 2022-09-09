@@ -154,23 +154,23 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
 
   }
 
-  const notificationDb = await Notification.create(notification);
-  let updated = { read: false }
-  await PlayerNotifcation.findOneAndUpdate({ playerId: transaction.playerId, notificationId: notificationDb._id }, updated, {
-    new: false, upsert: true,
-    runValidators: true
-  });
-  //console.log('sending message');
+  // const notificationDb = await Notification.create(notification);
+  // let updated = { read: false }
+  // await PlayerNotifcation.findOneAndUpdate({ playerId: transaction.playerId, notificationId: notificationDb._id }, updated, {
+  //   new: false, upsert: true,
+  //   runValidators: true
+  // });
+  // //console.log('sending message');
 
-  let to_player = await Player.findById(transaction.playerId).select('+firebaseToken');
-  var message = {
-    notification: {
-      title: title,
-      body: req.body.note
-    },
-    // topic: "/topics/all",
-    // token: ''
-  };
+  // let to_player = await Player.findById(transaction.playerId).select('+firebaseToken');
+  // var message = {
+  //   notification: {
+  //     title: title,
+  //     body: req.body.note
+  //   },
+  //   // topic: "/topics/all",
+  //   // token: ''
+  // };
   // message['token'] = to_player.firebaseToken;
   // console.log('COnstructinmessage:', message);
   // await admin.messaging().send(message)
@@ -258,24 +258,24 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
 
 
 
-  const notificationDb = await Notification.create(notification);
-  let updated = { read: false }
-  await PlayerNotifcation.findOneAndUpdate({ playerId: req.params.id, notificationId: notificationDb._id }, updated, {
-    new: false, upsert: true,
-    runValidators: true
-  });
-  //console.log('sending message');
+  // const notificationDb = await Notification.create(notification);
+  // let updated = { read: false }
+  // await PlayerNotifcation.findOneAndUpdate({ playerId: req.params.id, notificationId: notificationDb._id }, updated, {
+  //   new: false, upsert: true,
+  //   runValidators: true
+  // });
+  // //console.log('sending message');
 
-  let to_player = await Player.findById(req.params.id).select('+firebaseToken');
-  var message = {
-    notification: {
-      title: title,
-      body: title
-    },
-    // topic: "/topics/all",
-    // token: ''
-  };
-  message['token'] = to_player.firebaseToken;
+  // let to_player = await Player.findById(req.params.id).select('+firebaseToken');
+  // var message = {
+  //   notification: {
+  //     title: title,
+  //     body: title
+  //   },
+  //   // topic: "/topics/all",
+  //   // token: ''
+  // };
+  // message['token'] = to_player.firebaseToken;
 
   // await admin.messaging().send(message)
   //   .then((response) => {

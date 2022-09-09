@@ -133,24 +133,24 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
 
 
 
-  const notificationDb = await Notification.create(notification);
-  let updated = { read: false }
-  await PlayerNotifcation.findOneAndUpdate({ playerId: req.player.id, notificationId: notificationDb._id }, updated, {
-    new: false, upsert: true,
-    runValidators: true
-  });
-  //console.log('sending message');
+  // const notificationDb = await Notification.create(notification);
+  // let updated = { read: false }
+  // await PlayerNotifcation.findOneAndUpdate({ playerId: req.player.id, notificationId: notificationDb._id }, updated, {
+  //   new: false, upsert: true,
+  //   runValidators: true
+  // });
+  // //console.log('sending message');
 
-  let to_player = await Player.findById(req.player.id).select('+firebaseToken');
-  var message = {
-    notification: {
-      title: title,
-      body: title
-    },
-    // topic: "/topics/all",
-    // token: ''
-  };
-  message['token'] = to_player.firebaseToken;
+  // let to_player = await Player.findById(req.player.id).select('+firebaseToken');
+  // var message = {
+  //   notification: {
+  //     title: title,
+  //     body: title
+  //   },
+  //   // topic: "/topics/all",
+  //   // token: ''
+  // };
+  // message['token'] = to_player.firebaseToken;
 
   // await admin.messaging().send(message)
   //   .then((response) => {
