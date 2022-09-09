@@ -583,7 +583,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
 exports.updateProfile = asyncHandler(async (req, res, next) => {
   //console.log('updatePlayer');
   let { phone, firstName } = req.body;
-  let fieldsToUpdate;
+  let fieldsToUpdate = {};
 
   if (!req.player || req.player.status !== 'active') {
     return next(
