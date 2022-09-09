@@ -43,7 +43,7 @@
                 </div> <!-- end col-->
 
                 <div class="col-md-6 col-xl-3">
-                    <div class="card" onclick="fetchData()">
+                    <div class="card">
                         <div class="card-body">
                             <div class="float-end mt-2">
                                 <div id="orders-chart"> </div>
@@ -106,7 +106,7 @@
                 </div> <!-- end col-->
             </div> <!-- end row-->
             <div class="row">
-                <!-- <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl-3">
                     <div class="card">
                         <div class="card-body">
                             <div class="float-end mt-2">
@@ -121,12 +121,11 @@
                                 </h4>
                                 <p class="text-muted mb-0">BalanceTotal</p>
                             </div>
-                            <p class="text-muted mt-3 mb-0"><span class="text-success me-1"><i
-                                        class="mdi mdi-arrow-up-bold me-1"></i>2.65%</span> since last week
-                            </p>
+                            <!-- <p class="text-muted mt-3 mb-0"><span class="text-success me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>2.65%</span> since last week
+                            </p> -->
                         </div>
                     </div>
-                </div>  end col-->
+                </div> <!-- end col-->
 
                 <div class="col-md-6 col-xl-3">
                     <div class="card">
@@ -136,8 +135,8 @@
                             </div>
                             <div>
                                 <h4 class="mb-1 mt-1">
-                                    <%=currency_symbol%> <span id="winTotal" data-plugin="counterup">
-                                            <%=parseInt(list.winAmount)%>
+                                    <%=currency_symbol%> <span data-plugin="counterup">
+                                            <%=parseInt(list.totals.winingsTotal)%>
                                         </span>
                                 </h4>
                                 <p class="text-muted mb-0">WinigsTotal</p>
@@ -157,11 +156,11 @@
                             </div>
                             <div>
                                 <h4 class="mb-1 mt-1">
-                                    <%=currency_symbol%> <span id="gameTotal" data-plugin="counterup">
-                                            <%=parseInt(list.betAmount)%>
+                                    <%=currency_symbol%> <span data-plugin="counterup">
+                                            <%=parseInt(list.totals.depositTotal)%>
                                         </span>
                                 </h4>
-                                <p class="text-muted mb-0">GameTotal</p>
+                                <p class="text-muted mb-0">DepositTotal</p>
                             </div>
                             <!-- <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
                                         class="mdi mdi-arrow-down-bold me-1"></i>6.24%</span> since last week
@@ -193,7 +192,7 @@
                 </div> <!-- end col-->
             </div> <!-- end row-->
             <div class="row">
-                <!-- <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl-3">
                     <div class="card">
                         <div class="card-body">
                             <div class="float-end mt-2">
@@ -208,13 +207,13 @@
                                 </h4>
                                 <p class="text-muted mb-0">Support</p>
                             </div>
-                            <p class="text-muted mt-3 mb-0"><span class="text-success me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>2.65%</span> since last week
+                            <!-- <p class="text-muted mt-3 mb-0"><span class="text-success me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>2.65%</span> since last week -->
                             </p>
                         </div>
                     </div>
-                </div>  end col-->
+                </div> <!-- end col-->
 
-                <!-- <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl-3">
                     <div class="card">
                         <div class="card-body">
                             <div class="float-end mt-2">
@@ -228,12 +227,12 @@
                                 </h4>
                                 <p class="text-muted mb-0">GameCount</p>
                             </div>
-                             <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
+                            <!-- <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
                                         class="mdi mdi-arrow-down-bold me-1"></i>0.82%</span> since last week
-                            </p> 
+                            </p> -->
                         </div>
                     </div>
-                </div>   end col-->
+                </div> <!--  end col-->
 
                 <!--<div class="col-md-6 col-xl-3">
                     <div class="card">
@@ -278,7 +277,7 @@
                     </div> -->
             </div> <!-- end col-->
             </div> <!-- end row-->
-            <!-- <div class="row">
+            <div class="row">
                 <div class="col-xl-8">
                     <div class="card">
                         <div class="card-body">
@@ -319,22 +318,22 @@
                                 <li class="list-inline-item chart-border-left me-0 border-0">
                                     <!-- <h3 class="text-primary"><span data-plugin="counterup">2,371</span><span
                                             class="text-muted d-inline-block font-size-15 ms-3"></span></h3> -->
-            </li>
-            <!-- <li class="list-inline-item chart-border-left me-0">
+                                </li>
+                                <!-- <li class="list-inline-item chart-border-left me-0">
                             <h3><span data-plugin="counterup">258</span><span class="text-muted d-inline-block font-size-15 ms-3">Player</span>
                             </h3>
                         </li>
                         <li class="list-inline-item chart-border-left me-0">
                             <h3><span data-plugin="counterup">3.6</span>%<span class="text-muted d-inline-block font-size-15 ms-3"></span></h3>
                         </li> -->
-            </ul>
-            </div>
+                            </ul>
+                        </div>
 
-            <!-- <div class="mt-3">
-                <div id="sales-analytics-chart" class="apex-charts" dir="ltr"></div>
-            </div> -->
-            </div>
-            </div>
+                        <div class="mt-3">
+                            <div id="sales-analytics-chart" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- 
     <div class="col-xl-4">
@@ -984,7 +983,7 @@
                             document.querySelector("#sales-analytics-chart"),
                             options
                         );
-                        // chart.render();
+                        chart.render();
                         function LineChart(data, lable) {
                             chart.updateOptions({ labels: lable });
                             chart.updateSeries([{
@@ -1001,22 +1000,4 @@
                         }
 
                         getChart();
-
-
-
-                        function fetchData() {
-                            $.ajax({
-                                type: 'GET',
-                                url: '<%=process.env.ADMIN_URL%>/admin/dashboard/total-income',
-
-                                success: (results) => {
-                                    $("#totalIncome").html(parseInt(results.data.balanceTotal));
-                                    $("#winTotal").html(parseInt(results.data.winTotal));
-                                    $("#gameTotal").html(parseInt(results.data.gameTotal));
-                                },
-                                error: (err) => {
-                                    alert('Error');
-                                }
-                            });
-                        }
                     </script>
