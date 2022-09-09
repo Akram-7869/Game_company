@@ -13,7 +13,7 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
         // select: { 'TournamentControle': 1, 'appLink': 1, 'createdAt': 1 },
         search: {
             value: req.body.search ? req.body.search.value : '',
-            fields: ['_id']
+            fields: ['name']
 
         },
         sort: {

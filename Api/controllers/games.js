@@ -15,7 +15,7 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
     find: {},
     search: {
       value: req.body.search ? req.body.search.value : '',
-      fields: ['playerId', 'email', 'gameId']
+      fields: ['opponentName', 'email', 'gameId', 'isbot']
     },
     columns: req.body.columns,
     populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, email: 1 } },
