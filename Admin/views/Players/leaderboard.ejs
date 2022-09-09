@@ -83,7 +83,7 @@
                                         <th>amount</th>
                                         <th>status</th>
                                         <th>opponent</th>
-
+                                        <th>Bot</th>
                                         <th>Note</th>
                                         <th>Played</th>
                                         <th>Players</th>
@@ -192,7 +192,11 @@
 
                                 { data: 'amountWon', "defaultContent": "0" },
                                 { data: 'gameStatus', "defaultContent": "WON" },
-                                { data: 'opponentName', "defaultContent": "" },
+                                {
+                                    data: null, render: function (data, type, full, meta) {
+                                        return full.opponentName + ' - ' + full.isBobot ? 'bot' : '';
+                                    }
+                                },
                                 { data: 'isBot', "defaultContent": true },
                                 { data: 'note', "defaultContent": "WON" },
                                 {
