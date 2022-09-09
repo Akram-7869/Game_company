@@ -181,13 +181,13 @@
                                     return d;
                                 }
                             },
-                            responsive: {
-                                details: {
-                                    display: $.fn.dataTable.Responsive.display.childRowImmediate,
-                                    type: 'none',
-                                    target: ''
-                                }
-                            },
+                            // responsive: {
+                            //     details: {
+                            //         display: $.fn.dataTable.Responsive.display.childRowImmediate,
+                            //         type: 'none',
+                            //         target: ''
+                            //     }
+                            // },
                             "columns": [
                                 {
                                     data: null, "render": function (data, type, full, meta) {
@@ -211,7 +211,7 @@
                                 },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return full.players ? JSON.stringify(full.players) : '';
+                                        return full.players ? format(JSON.parse(full.players)) : '';
                                     }
                                 },
                                 // {
@@ -222,4 +222,5 @@
                                 // },
                             ]
                         });
+
                     </script>

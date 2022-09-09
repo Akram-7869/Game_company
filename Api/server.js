@@ -136,11 +136,10 @@ const publicRoom = {};
 io.on('connection', socket => {
   // let data = { status: 'connected' };
   // socket.emit('res', { ev: 'connected', data });
-  console.log('contedt', socket?.lobbyId);
+  console.log('contedt');
   //socket.join('notification_channel');
 
   socket.on('join', (d) => {
-    console.log('join', socket?.lobbyId);
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4 } = dataParsed;
 
@@ -176,7 +175,7 @@ io.on('connection', socket => {
 
 
   socket.on('sendToRoom', (d) => {
-    console.log('sendToRoom');
+    //console.log('sendToRoom');
 
     let { room, ev, data } = d;//JSON.parse(d);
     //console.log('sendToRoom', ev);
@@ -185,9 +184,8 @@ io.on('connection', socket => {
   });
   //leave
   socket.on('leave', (d) => {
-    console.log('leave', socket?.lobbyId);
+    console.log('leave');
     let { room } = d;
-    console.log('leave-', room);
     userLeave(socket);
     socket.leave(room);
 
@@ -215,7 +213,7 @@ io.on('connection', socket => {
   });
   // Runs when client disconnects
   socket.on('gameStart', (d) => {
-    console.log('gameStart-', socket?.lobbyId);
+    console.log('gameStart-');
     let { room, lobbyId } = d;
 
     if (publicRoom[lobbyId]) {
