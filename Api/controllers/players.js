@@ -1175,66 +1175,38 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   const betAmout = parseFloat(tournament.betAmount) * 2;
   const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
   const commision = betAmout - winAmount;
-  amount = parseFloat(amount);
-  let playerAmount = winAmount;
-  let leaderboard = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId });
-
-  if (!leaderboard) {
-    if (amount < winAmount) {
-      playerAmount = amount;
-    }
-    let playerGame = {
-      'playerId': req.player._id,
-      'amountWon': winAmount,
-      'tournamentId': tournamentId,
-      'winner': winner,
-      'gameId': gameId,
-      'amountPaid': betAmout,
-      'gameStatus': 'won',
-      'note': note,
-      'isBot': false,
-      'amountGiven': playerAmount
-    }
-    leaderboard = await PlayerGame.create(playerGame);
-    let tranData = {
-      'playerId': player._id,
-      'amount': playerAmount,
-      'transactionType': "credit",
-      'note': note,
-      'prevBalance': player.balance,
-      'adminCommision': commision,
-      'gameId': gameId,
-      status: 'complete', paymentStatus: 'SUCCESS',
-      'logType': req.body.logType
-    }
-    let tran = await Transaction.create(tranData);
-    player = await tran.creditPlayerWinings(winAmount);
-    Dashboard.totalIncome(betAmout, winAmount, commision);
-  } else {
-    console.log(leaderboard.amountGiven, leaderboard.amountGiven)
-    if (amount < winAmount && leaderboard.amountGiven < winAmount) {
-      playerAmount = amount;
-      let tranData = {
-        'playerId': player._id,
-        'amount': playerAmount,
-        'transactionType': "credit",
-        'note': note,
-        'prevBalance': player.balance,
-        'adminCommision': 0,
-        'gameId': gameId,
-        status: 'complete', paymentStatus: 'SUCCESS',
-        'logType': req.body.logType
-      }
-      let tran = await Transaction.create(tranData);
-      player = await tran.creditPlayerWinings(winAmount);
-      let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { amountGiven: winAmount });
 
 
-    }
-
+  let playerGame = {
+    'playerId': req.player._id,
+    'amountWon': winAmount,
+    'tournamentId': tournamentId,
+    'winner': winner,
+    'gameId': gameId,
+    'amountPaid': betAmout,
+    'gameStatus': 'won',
+    'note': note,
+    'isBot': false,
   }
 
+  let leaderboard = await PlayerGame.create(playerGame);
+  let tranData = {
+    'playerId': player._id,
+    'amount': winAmount,
+    'transactionType': "credit",
+    'note': note,
+    'prevBalance': player.balance,
+    'adminCommision': commision,
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'logType': req.body.logType
+  }
 
+  tranData['gameId'] = gameId;
+
+
+  let tran = await Transaction.create(tranData);
+  player = await tran.creditPlayerWinings(winAmount);
+  Dashboard.totalIncome(betAmout, winAmount, commision);
   res.status(200).json({
     success: true,
     data: player
@@ -1328,8 +1300,8 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
   playersObj = JSON.parse(players);
   const winnerPlayer = playersObj.matchWinLeaderDatas.filter(x => x.userId === playerId)[0];
   const looserPlayer = playersObj.matchWinLeaderDatas.filter(x => x.userId !== playerId)[0];
+  let gameRec = await PlayerGame.find({ 'gameId': gameId, 'tournamentId': tournamentId });
   const tournament = await Tournament.findById(tournamentId);
-
   if (winnerPlayer.isBot) {
     console.log('isboat');
     const betAmout = parseFloat(tournament.betAmount) * 2;
@@ -1350,11 +1322,11 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
       "opponentName": winnerPlayer.userName
     }
 
-    leaderboard = await PlayerGame.create(playerGame);
+    let leaderboard = await PlayerGame.create(playerGame);
     Dashboard.totalIncome(betAmout, winAmount, commision);
   } else {
 
-    leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': players, "opponentName": looserPlayer.userName });
+    let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': players, "opponentName": looserPlayer.userName });
   }
   res.status(200).json({
     success: true,
