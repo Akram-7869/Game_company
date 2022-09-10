@@ -1683,7 +1683,7 @@ exports.checkUpi = asyncHandler(async (req, res, next) => {
   }
   if (upiRes.data.accountExists === 'YES') {
     let fieldsToUpdate = { upiId };
-    let player = await Player.findByIdAndUpdate(player.id, { upi: fieldsToUpdate }, {
+    let player = await Player.findByIdAndUpdate(req.player.id, { upi: fieldsToUpdate }, {
       new: true,
       runValidators: true
     });
