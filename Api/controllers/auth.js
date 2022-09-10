@@ -130,7 +130,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 // @access    Public
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   const { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
-  console.log('playerRegisterEmail');
+  console.log('playerRegisterEmail', req.body);
   if (!email || !deviceToken) {
     return next(
       new ErrorResponse(`select email`)

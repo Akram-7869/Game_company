@@ -21,7 +21,6 @@ const PlayerGameSchema = new mongoose.Schema({
   gameStatus: {
     type: String,
     default: 'lost',
-    enum: ['won', 'lost']
   },
   amountPaid: {
     type: Number,

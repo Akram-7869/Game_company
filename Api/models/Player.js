@@ -8,6 +8,7 @@ const PlayerSchema = new mongoose.Schema({
 
   firstName: {
     type: String,
+
   },
   lastName: {
     type: String,

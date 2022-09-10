@@ -703,7 +703,6 @@ exports.deletePlayerDataBIds = asyncHandler(async (req, res, next) => {
 exports.setPin = asyncHandler(async (req, res, next) => {
   const { pin } = req.body;
 
-
   if (!pin || !req.player || req.player.role !== 'player') {
     return next(new ErrorResponse('user not found'));
   }
@@ -1083,7 +1082,7 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
 exports.creditAmount = asyncHandler(async (req, res, next) => {
   console.log('creditAmount', req.body);
   let player = req.player;//await Player.findById(req.body.id);
-  let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1' } = req.body;
+  let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
   if (req.body.logType !== "won") {
     new ErrorResponse(`Invalid amount`);
   }
@@ -1234,14 +1233,12 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
-  console.log('saveLeaderBoard');
+  console.log('saveLeaderBoard', req.body);
   let { playerId, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players = [] } = req.body;
   let leaderboard;
   playersObj = JSON.parse(players);
   const winnerPlayer = playersObj.matchWinLeaderDatas.filter(x => x.userId === playerId)[0];
   const looserPlayer = playersObj.matchWinLeaderDatas.filter(x => x.userId !== playerId)[0];
-  console.log(winnerPlayer);
-  console.log(looserPlayer);
   let gameRec = await PlayerGame.find({ 'gameId': gameId, 'tournamentId': tournamentId });
   const tournament = await Tournament.findById(tournamentId);
   if (winnerPlayer.isBot) {
@@ -1267,7 +1264,7 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
     let leaderboard = await PlayerGame.create(playerGame);
     Dashboard.totalIncome(betAmout, winAmount, commision);
   } else {
-    console.log('update-oppppppppppppppppppppppppppppppppppppppppppp');
+
     let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': players, "opponentName": looserPlayer.userName });
   }
   res.status(200).json({
@@ -1701,12 +1698,3 @@ exports.checkUpi = asyncHandler(async (req, res, next) => {
 
 
 });
-
-
-
-
-
-
-
-
-
