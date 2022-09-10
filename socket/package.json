@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "socket.io": "^4.5.2"
+    "socket.io": "^2.4.1"
   },
   "name": "socket",
   "version": "1.0.0",
