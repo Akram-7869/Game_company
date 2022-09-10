@@ -26,7 +26,7 @@ router.post('/status/:id', protect, playerCtl.updateStatus);
 router.get('/page', protect, playerCtl.getPage);
 
 router.post('/playerold', protect, playerCtl.playerold);
-
+router.post('/playerold', protect, playerCtl.playerold);
 router.route('/profile').get(protect, playerCtl.getPlayer).post(protect, playerCtl.updateProfile);
 //router.route('/profile/image').post(protect, playerCtl.updatePlayerImage);
 router.post('/notification/clearall', protect, playerCtl.clearAllNotification);
@@ -61,6 +61,7 @@ router.route('/wallet').post(protect, playerCtl.addWallet);
 router.route('/couponlist/:type').get(protect, playerCtl.getCoupons);
 router.route('/giftlist').get(playerCtl.getGifts);
 router.route('/deleteplayerdata/:id').delete(protect, playerCtl.deletePlayerData);
+router.route('/deloldplayer/:id').delete(protect, playerCtl.deloldplayer);
 router.route('/deleteplayerdata-byids').post(protect, playerCtl.deletePlayerDataBIds);
 router
   .route('/:id')

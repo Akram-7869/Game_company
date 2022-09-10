@@ -704,6 +704,23 @@ exports.deletePlayerData = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.deloldplayer = asyncHandler(async (req, res, next) => {
+  // const player = await Player.findById(req.params.id);
+  //console.log('deleting', req.params.id);
+  const user = req.staff;
+
+  if (user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`Not Allowed`)
+    );
+  }
+  await PlayerOld.findByIdAndDelete(req.params.id);
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
+
 // @desc      Delete Player
 // @route     DELETE /api/v1/auth/Players/:id
 // @access    Private/Admin

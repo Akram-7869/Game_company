@@ -127,6 +127,7 @@ router.route('/chart/data').post(dashCtl.getChartData);
 
 router.route('/playerold').get(palyerCtrl.playerOld);
 router.route('/playerold/data').post(palyerCtrl.getPlayerOldList);
+router.route('/playerdelold/:id').delete(palyerCtrl.deleteOldPlayerData);
 
 router.route('/player/upi/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);
 router.route('/player/wallet/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);

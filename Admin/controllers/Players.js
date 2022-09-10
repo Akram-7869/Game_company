@@ -247,6 +247,17 @@ exports.deletePlayerData = asyncHandler(async (req, res, next) => {
             data: {}
       });
 });
+
+exports.deleteOldPlayerData = asyncHandler(async (req, res, next) => {
+      // console.log('deleteing->');
+      return callApi(req).delete(apiUrl + 'deloldplayer/' + req.params.id)
+            .then(r => {
+                  res.status(200).json(r.data);
+            })
+            .catch(error => {
+                  res.status(400).json(error);
+            })
+});
 // @desc      Delete Player
 // @route     DELETE /api/v1/auth/Players/:id
 // @access    Private/Admin

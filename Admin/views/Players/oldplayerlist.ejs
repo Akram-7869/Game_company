@@ -106,7 +106,7 @@
                                         <th>dep</th>
                                         <th>bon</th>
                                         <th>Status</th>
-                                        <!-- <th>Action</th> -->
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -150,33 +150,8 @@
                 <script src="/public/assets/libs/moment/moment.js"></script>
                 <%- contentFor('BottomJs') %>
                     <script>
-                        $('#btnSelectAll').click(function () {
-                            var favorite = [];
-                            $.each($("input[name='pids[]']:checked"), function () {
-                                favorite.push($(this).val());
-                            });
-                            if (favorite.length === 0) {
-                                alert("Select Player");
-                            } else {
-                                delePlayerByIds(favorite)
-                            }
 
-                        });
 
-                        function delePlayerByIds(ids) {
-                            return $.ajax({
-                                type: 'DELETE',
-                                url: '<%=process.env.ADMIN_URL%>/admin/player/delete-byids',
-                                data: { ids },
-                                success: (results) => {
-                                    alert('Record Delete');
-                                    location.reload();
-                                },
-                                error: (err) => {
-                                    alert('Error While Deleting');
-                                }
-                            });
-                        }
 
                         function delRec(id) {
                             let r = confirm('Want to delet?');
@@ -188,21 +163,11 @@
 
                         }
 
-                        function check_uncheck_checkbox(isChecked) {
-                            if (isChecked) {
-                                $('input[name="pids[]"]').each(function () {
-                                    this.checked = true;
-                                });
-                            } else {
-                                $('input[name="pids[]"]').each(function () {
-                                    this.checked = false;
-                                });
-                            }
-                        }
+
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '<%=process.env.ADMIN_URL%>/admin/player/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/playerdelold/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -213,28 +178,7 @@
                             });
                         }
 
-                        function delAllRec(id) {
-                            let r = confirm('Want to delet all data of user ?');
 
-                            if (r) {
-                                return $.ajax({
-                                    type: 'DELETE',
-                                    url: '<%=process.env.ADMIN_URL%>/admin/player/delete-data/' + id,
-                                    success: (results) => {
-                                        alert('Record Delete');
-                                        location.reload();
-                                    },
-                                    error: (err) => {
-                                        alert('Error While Deleting');
-                                    }
-                                });
-                            }
-                        }
-
-
-                        function view(id) {
-                            alert(id);
-                        }
                         var i = 1;
                         $('#list').DataTable({
 
@@ -291,13 +235,12 @@
                                 { data: 'bonus' },
                                 { data: 'status' },
 
-                                // {
-                                //     data: null, "render": function (data, type, full, meta) {
-                                //         return '<a class="px-3 text-primary" href="<%=process.env.ADMIN_URL%>/admin/player/'
-                                //             + full._id + '"><i class="uil uil-pen font-size-18"></i></a> <a class="px-3 text-danger" onclick="delAllRec(\''
-                                //             + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a> ';
-                                //     }
-                                // },
+                                {
+                                    data: null, "render": function (data, type, full, meta) {
+                                        return '<a class="px-3 text-danger" onclick="delRec(\''
+                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a> ';
+                                    }
+                                },
                             ]
                         });
                     </script>
