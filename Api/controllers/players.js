@@ -595,7 +595,7 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Provide details`)
     );
   }
-  if (!req.player.phone) {
+  if (phone && !req.player.phone) {
     fieldsToUpdate['phone'] = phone;
   }
   if (firstName) {
