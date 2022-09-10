@@ -125,6 +125,9 @@ router.route('/dashboard').get(dashCtl.dashBoardView);
 router.route('/dashboard/total-income').get(dashCtl.totalIncome);
 router.route('/chart/data').post(dashCtl.getChartData);
 
+router.route('/playerold').get(palyerCtrl.playerOld);
+router.route('/playerold/data').post(palyerCtrl.getPlayerOldList);
+
 router.route('/player/upi/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);
 router.route('/player/wallet/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);
 router.route('/player/bank/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);

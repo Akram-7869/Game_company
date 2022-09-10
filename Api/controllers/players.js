@@ -21,6 +21,8 @@ const PlayerGame = require('../models/PlayerGame');
 const Version = require('../models/Version');
 const moment = require('moment');
 const cashfreeCtrl = require('./paymentsCashfree');
+const PlayerOld = require('../models/PlayerOld');
+
 
 let axios = require('axios');
 const FormData = require('form-data');
@@ -468,6 +470,48 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
     filter['find']['status'] = req.body.status;
   }
   Player.dataTables(filter).then(function (table) {
+    res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
+  })
+  //res.status(200).json(res.advancedResults);
+});
+
+// @desc      Get all Players
+// @route     GET /api/v1/auth/Players
+// @access    Private/Admin
+exports.playerold = asyncHandler(async (req, res, next) => {
+  let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.body.draw }
+  //console.log(req.body);
+  let filter = {
+    limit: req.body.length,
+    skip: req.body.start,
+    find: req.query,
+    search: {
+
+    },
+    sort: {
+      _id: -1, email: 1, phone: 1
+    }
+  };
+  if (req.body.s_date && req.body.e_date) {
+    req.query['createdAt'] = {
+      $gte: req.body.s_date,
+      $lt: req.body.e_date
+    }
+
+  }
+
+
+  let key = req.body.search ? req.body.search.value : '';
+  if (key) {
+    filter['search'] = {
+      value: req.body.search.value,
+      fields: ['phone', 'email', 'firstName']
+    }
+  }
+  if (req.body.status) {
+    filter['find']['status'] = req.body.status;
+  }
+  PlayerOld.dataTables(filter).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })
   //res.status(200).json(res.advancedResults);

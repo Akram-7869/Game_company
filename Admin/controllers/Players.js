@@ -123,6 +123,12 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
       res.render('Players/list')
 });
 
+exports.playerOld = asyncHandler(async (req, res, next) => {
+      console.log('ffff');
+      res.locals = { title: 'OLDPlayer' };
+      res.render('Players/oldplayerlist')
+});
+
 // @desc      Get  Player
 // @route     GET /api/v1/Players
 // @access    Private/Admin
@@ -275,6 +281,35 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
 
 
       callApi(req).post(apiUrl, { ...req.body }, { params: req.query })
+            .then(r => {
+                  // Assign value in session
+
+
+                  res.status(200).json(r.data);
+
+
+
+            })
+            .catch(error => {
+
+
+                  //   req.flash('error', 'Incorrect email or password!');
+
+            })
+
+});
+
+exports.getPlayerOldList = asyncHandler(async (req, res, next) => {
+      //  console.log('qwwwwwe', req.session);
+      // const config = {
+      //       headers: { Authorization: `Bearer ${req.session.user.token}` }
+      //   };
+      //console.log('url', req.url);
+
+
+
+
+      callApi(req).post(apiUrl + '/playerold', { ...req.body }, { params: req.query })
             .then(r => {
                   // Assign value in session
 

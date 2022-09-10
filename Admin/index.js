@@ -24,7 +24,10 @@ var flash = require('connect-flash');
 var i18n = require("i18n-express");
 const { siteDate, siteData } = require('./middleware/auth');
 
-app.use(morgan('dev'));
+// Dev logging middleware
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 // enable files upload
 app.use(fileUpload({
   createParentPath: true
@@ -59,12 +62,6 @@ app.use(SettingController.getSiteData);
 // apply controller
 AuthController(app);
 
-
-app.use(function (req, res, next) {
-  console.log('req.session.user', req.session.user);
-
-  next();
-});
 //For set layouts of html view
 var expressLayouts = require('express-ejs-layouts');
 app.set('views', path.join(__dirname, './views'));
