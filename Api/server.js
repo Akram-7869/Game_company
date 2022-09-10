@@ -91,7 +91,6 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
-  console.log('93');
   req.io = io;
   if (!app.get('site_setting')) {
     // console.log('site setting');
