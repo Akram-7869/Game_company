@@ -8,7 +8,7 @@ const PlayerSchema = new mongoose.Schema({
 
   firstName: {
     type: String,
-    minLength: 3,
+    minLength: [3, 'try again'],
 
   },
   lastName: {
@@ -48,7 +48,7 @@ const PlayerSchema = new mongoose.Schema({
     required: [true, 'Please add an email'],
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Please add a valid email'
+      'try again'
     ],
 
   },
@@ -67,12 +67,12 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
     select: false,
     trim: true,
-    required: [true, 'Please provide device id']
+    required: [true, 'try again']
   },
   firebaseToken: {
     type: String,
     select: false,
-    minLength: 100,
+    minLength: [100, 'try again'],
 
     trim: true,
   },
