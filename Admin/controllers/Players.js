@@ -124,7 +124,6 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
 });
 
 exports.playerOld = asyncHandler(async (req, res, next) => {
-      console.log('ffff');
       res.locals = { title: 'OLDPlayer' };
       res.render('Players/oldplayerlist')
 });

@@ -56,6 +56,10 @@ const PlayerGameSchema = new mongoose.Schema({
     default: ''
 
   },
+  amountGiven: {
+    type: Number,
+    default: 0
+  },
 
   players: {
     type: String,

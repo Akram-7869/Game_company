@@ -1,11 +1,4 @@
-const { Server } = require('socket.io');
-
-const io = new Server(5000, {
-    // Socket.IO options
-});
-
-
-
+const io = require('socket.io')(5000);
 const state = {};
 const publicRoom = {};
 
