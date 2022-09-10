@@ -1270,7 +1270,6 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
     console.log('update-oppppppppppppppppppppppppppppppppppppppppppp');
     let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': players, "opponentName": looserPlayer.userName });
   }
-  console.log('savelead', req.body);
   res.status(200).json({
     success: true,
     data: leaderboard
@@ -1682,7 +1681,7 @@ exports.checkUpi = asyncHandler(async (req, res, next) => {
   if (upiRes['status'] != 'SUCCESS') {
     return next(new ErrorResponse('upi verification failed'));
   }
-  if (upiRes.data.accountExists === 'NO') {
+  if (upiRes.data.accountExists === 'YES') {
     res.status(200).json({
       success: true,
       data: upiRes
