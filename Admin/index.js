@@ -55,7 +55,7 @@ app.use(i18n({
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/public', express.static('public'));
+//app.use('/public', express.static('public'));
 
 
 app.use(SettingController.getSiteData);
