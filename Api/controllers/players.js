@@ -1682,6 +1682,14 @@ exports.checkUpi = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('upi verification failed'));
   }
   if (upiRes.data.accountExists === 'YES') {
+    let fieldsToUpdate = { upiId };
+    let player = await Player.findByIdAndUpdate(player.id, { upi: fieldsToUpdate }, {
+      new: true,
+      runValidators: true
+    });
+
+
+
     res.status(200).json({
       success: true,
       data: upiRes
