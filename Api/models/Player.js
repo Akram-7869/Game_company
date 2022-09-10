@@ -8,6 +8,7 @@ const PlayerSchema = new mongoose.Schema({
 
   firstName: {
     type: String,
+    minLength: 3,
 
   },
   lastName: {
@@ -71,6 +72,8 @@ const PlayerSchema = new mongoose.Schema({
   firebaseToken: {
     type: String,
     select: false,
+    minLength: 100,
+
     trim: true,
   },
   firebaseId: {
