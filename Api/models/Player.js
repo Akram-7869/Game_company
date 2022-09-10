@@ -45,7 +45,7 @@ const PlayerSchema = new mongoose.Schema({
   email: {
     type: String,
     trim: true,
-    required: [true, 'Please add an email'],
+    required: [true, 'try again'],
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'try again'
