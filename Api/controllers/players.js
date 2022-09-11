@@ -566,7 +566,7 @@ exports.createPlayer = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.updatePlayer = asyncHandler(async (req, res, next) => {
-  //console.log('updatePlayer');
+  console.log('updatePlayer');
   let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus, state } = req.body;
   let fieldsToUpdate = { firstName };
   let player;
@@ -625,7 +625,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.updateProfile = asyncHandler(async (req, res, next) => {
-  //console.log('updatePlayer');
+  console.log('updateProfile', req.body);
   let { phone, firstName } = req.body;
   let fieldsToUpdate = {};
 
@@ -643,7 +643,7 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
     fieldsToUpdate['phone'] = phone;
   }
   if (firstName) {
-    fieldsToUpdate['firstName'] = firstName;
+    // fieldsToUpdate['firstName'] = firstName;
   }
   if (!fieldsToUpdate) {
     return next(
@@ -1162,7 +1162,14 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player Not found`)
     );
   }
-  // amount = parseFloat(amount).toFixed(2);
+  let gameRec = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId });
+  if (!gameRec) {
+    return next(
+      new ErrorResponse(`Invalid tournament`)
+    );
+
+  }
+  amount = parseFloat(amount).toFixed(2);
   const tournament = await Tournament.findById(tournamentId);
 
   if (!tournament) {
@@ -1175,38 +1182,56 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   const betAmout = parseFloat(tournament.betAmount) * 2;
   const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
   const commision = betAmout - winAmount;
-
+  let PlayerAmount = winAmount;
+  let paymentStatus = 'paid';
+  if (amount < winAmount) {
+    PlayerAmount = winAmount * 0.5;
+    gameStatus = 'tie'
+    paymentStatus = 'tie'
+    if (gameRec.status === 'tie') {
+      paymentStatus = 'paid'
+    }
+  }
 
   let playerGame = {
     'playerId': req.player._id,
-    'amountWon': winAmount,
+    'amountWon': PlayerAmount,
     'tournamentId': tournamentId,
     'winner': winner,
     'gameId': gameId,
     'amountPaid': betAmout,
-    'gameStatus': 'won',
+    'gameStatus': gameStatus,
     'note': note,
     'isBot': false,
+    'status': paymentStatus
   }
 
-  let leaderboard = await PlayerGame.create(playerGame);
+
+  // let leaderboard = await PlayerGame.create(playerGame);
+
+
   let tranData = {
     'playerId': player._id,
-    'amount': winAmount,
+    'amount': PlayerAmount,
     'transactionType': "credit",
     'note': note,
     'prevBalance': player.balance,
     'adminCommision': commision,
     status: 'complete', paymentStatus: 'SUCCESS',
-    'logType': req.body.logType
+    'logType': req.body.logType,
+    'gameId': gameId
   }
 
-  tranData['gameId'] = gameId;
+  if (gameRec.status !== 'paid') {
+    console.log('firsttime');
+    let tran = await Transaction.create(tranData);
+    player = await tran.creditPlayerWinings(PlayerAmount);
+    if (gameRec.status === 'start') {
+      Dashboard.totalIncome(betAmout, winAmount, commision);
+    }
 
-
-  let tran = await Transaction.create(tranData);
-  player = await tran.creditPlayerWinings(winAmount);
-  Dashboard.totalIncome(betAmout, winAmount, commision);
+    let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
+  }
   res.status(200).json({
     success: true,
     data: player
@@ -1300,7 +1325,6 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
   playersObj = JSON.parse(players);
   const winnerPlayer = playersObj.matchWinLeaderDatas.filter(x => x.userId === playerId)[0];
   const looserPlayer = playersObj.matchWinLeaderDatas.filter(x => x.userId !== playerId)[0];
-  let gameRec = await PlayerGame.find({ 'gameId': gameId, 'tournamentId': tournamentId });
   const tournament = await Tournament.findById(tournamentId);
   if (winnerPlayer.isBot) {
     console.log('isboat');

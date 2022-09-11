@@ -13,7 +13,7 @@ router.get('/maintanance', maintenance_chk, authCtrl.maintanance);
 //router.get('/getbyphone', authCtrl.getByPhone);
 //router.get('/getbyemail', authCtrl.getByEmail);
 
-router.post('/player/login', maintenance_chk, authCtrl.playerLogin);
+//router.post('/player/login', maintenance_chk, authCtrl.playerLogin);
 router.post('/login', authCtrl.login);
 router.get('/logout', authCtrl.logout);
 

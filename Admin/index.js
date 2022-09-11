@@ -27,6 +27,8 @@ const { siteDate, siteData } = require('./middleware/auth');
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
+  app.use('/public', express.static('public'));
+
 }
 // enable files upload
 app.use(fileUpload({
@@ -55,7 +57,6 @@ app.use(i18n({
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-//app.use('/public', express.static('public'));
 
 
 app.use(SettingController.getSiteData);

@@ -45,7 +45,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 const Setting = require('./models/Setting');
-
+const PlayerGame = require('./models/PlayerGame');
 // Body parser
 app.use(express.json());
 
@@ -139,7 +139,7 @@ io.on('connection', socket => {
   console.log('contedt');
   //socket.join('notification_channel');
 
-  socket.on('join', (d) => {
+  socket.on('join', async (d) => {
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4 } = dataParsed;
 
@@ -212,9 +212,11 @@ io.on('connection', socket => {
 
   });
   // Runs when client disconnects
-  socket.on('gameStart', (d) => {
+  socket.on('gameStart', async (d) => {
     console.log('gameStart-');
     let { room, lobbyId } = d;
+
+    await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, {}, { upsert: true });
 
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];

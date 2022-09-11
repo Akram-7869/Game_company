@@ -63,6 +63,10 @@ const PlayerGameSchema = new mongoose.Schema({
 
   players: {
     type: String,
+  },
+  status: {
+    type: String
+
   }
 
 }, {
