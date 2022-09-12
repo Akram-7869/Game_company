@@ -1203,7 +1203,8 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'gameStatus': gameStatus,
     'note': note,
     'isBot': false,
-    'status': paymentStatus
+    'status': paymentStatus,
+    'gameStatus': 'won'
   }
 
 
@@ -1328,14 +1329,15 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
   const looserPlayer = playersObj.matchWinLeaderDatas.filter(x => x.userId !== playerId)[0];
   const tournament = await Tournament.findById(tournamentId);
   if (winnerPlayer.isBot) {
-    console.log('isboat');
+
     const betAmout = parseFloat(tournament.betAmount) * 2;
     const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
     const commision = betAmout - winAmount;
     Dashboard.totalIncome(betAmout, winAmount, commision);
-    updatedData['isBoat'] = true;
+    updatedData['isBot'] = true;
     updatedData['playerId'] = looserPlayer.userId;
     updatedData['gameStatus'] = 'lost';
+    updatedData['note'] = note
   }
 
   leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, { 'players': players, "opponentName": looserPlayer.userName });
