@@ -64,17 +64,15 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
   }
 
   if (key) {
-    if (key.length == 24) {
-      filter['find']['playerId'] = key;
-    } else {
 
-      let player = await Player.findOne({ $or: [{ 'email': { '$regex': key, '$options': 'i' } }, { phone: { '$regex': key, '$options': 'i' } }] });
-      if (!player) {
-        return res.json(empty);
-      }
-      filter['find']['playerId'] = player._id;
+
+    let player = await Player.findOne({ $or: [{ 'email': { '$regex': key, '$options': 'i' } }, { phone: { '$regex': key, '$options': 'i' } }] });
+    if (!player) {
+      return res.json(empty);
     }
+    filter['find']['playerId'] = player._id;
   }
+
   //plaerId filter
   if (req.body.playerId) {
     filter['find']['playerId'] = req.body.playerId;
