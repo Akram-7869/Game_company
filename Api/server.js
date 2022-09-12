@@ -178,7 +178,6 @@ io.on('connection', socket => {
 
 
   socket.on('sendToRoom', (d) => {
-    console.log('sendToRoom');
 
     let { room, ev, data } = d;//JSON.parse(d);
     //console.log('sendToRoom', ev);
@@ -203,7 +202,7 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
 
     let { room, userId } = socket;
-    console.log('disconnect-');
+    // console.log('disconnect-');
     userLeave(socket);
     //console.log('disconnect-inputstring');
     let data = {
@@ -216,7 +215,7 @@ io.on('connection', socket => {
   });
   // Runs when client disconnects
   socket.on('gameStart', async (d) => {
-    console.log('gameStart-');
+    console.log('gameStart-', d);
     let { room, lobbyId } = d;
 
     await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, {}, { upsert: true });
