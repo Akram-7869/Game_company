@@ -1334,7 +1334,7 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
     const commision = betAmout - winAmount;
     Dashboard.totalIncome(betAmout, winAmount, commision);
     updatedData['isBoat'] = true;
-    updatedData['plauerId'] = looserPlayer.plauerId;
+    updatedData['playerId'] = looserPlayer.userId;
     updatedData['gameStatus'] = 'lost';
   }
 
