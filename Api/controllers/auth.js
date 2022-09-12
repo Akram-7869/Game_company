@@ -134,7 +134,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
-  const { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
+  let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
   console.log('playerRegisterEmail');
   const CLIENT_ID = '60490012283-8fgnb9tk35j5bpeg6pq09vmk2notiehc.apps.googleusercontent.com';
   const client = new OAuth2Client(CLIENT_ID);
@@ -181,14 +181,14 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       );
     }
 
-    const payload = ticket.getPayload();
-    const userid = payload['sub'];
+    let payload = ticket.getPayload();
+    let userid = payload['sub'];
     email = payload['email'];
     firstName = payload['name'];
     picture = payload['picture'];
 
     // create new player
-    const addamount = 10;
+    let addamount = 10;
     let data = {
       firstName,
       'email': email,
