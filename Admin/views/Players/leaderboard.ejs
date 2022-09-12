@@ -87,7 +87,7 @@
                                         <th>Note</th>
                                         <th>Played</th>
                                         <th>Players</th>
-                                        <th>status</th>
+                                        <th>pstatus</th>
                                         <!-- <th>Action</th> -->
                                     </tr>
                                 </thead>
@@ -173,6 +173,7 @@
                             },
                             "processing": true,
                             "serverSide": true,
+                            "ordering": false,
                             "ajax": {
                                 url: "<%=process.env.ADMIN_URL%>/admin/game/data", type: "post",
                                 data: function (d) {
@@ -208,9 +209,10 @@
                                 },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        let o = '<div class="overflow-auto">';
-                                        o += full.players ? JSON.stringify(full.players, undefined, 2) : '';
-                                        o += "</div>";
+                                        let t = "{\"matchWinLeaderDatas\":[{\"userId\":\"631c76a22c827da0dba3efef\",\"userName\":\"Sajidul Alom\",\"lobbyId\":\"631c589b851e509d65ef7eb6\",\"roomName\":\"ym71z\",\"entryAmount\":10.0,\"winAmount\":14.0,\"isBot\":false,\"gameName\":\"Archery\"},{\"userId\":\"631c76a22c827da0dba3efeLudo\",\"userName\":\"Savaria\",\"lobbyId\":\"631c589b851e509d65ef7eb6\",\"roomName\":\"ym71z\",\"entryAmount\":10.0,\"winAmount\":0.0,\"isBot\":true,\"gameName\":\"Archery\"}]}";
+                                        let o = '<textarea cols=70 rows=25>';
+                                        o += t ? JSON.stringify(JSON.parse(t), undefined, 2) : '';
+                                        o += "</textarea>";
                                         return o;
                                     }
                                 },
