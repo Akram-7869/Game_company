@@ -63,6 +63,9 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     filter['find']['paymentStatus'] = req.body.paymentStatus;
   }
 
+  if (req.body.transactionType) {
+    filter['find']['transactionType'] = req.body.transactionType;
+  }
   if (key) {
 
 
@@ -74,10 +77,10 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
   }
 
   //plaerId filter
-  if (req.body.playerId) {
-    filter['find']['playerId'] = req.body.playerId;
+  if (req.body.rf && req.body.rfv) {
+    filter['find'][req.body.rf] = req.body.rfv;
   }
-  if (req.query.logType) {
+  if (req.body.logType) {
     filter['find']['logType'] = req.query.logType;
   }
   if (req.body._id) {
