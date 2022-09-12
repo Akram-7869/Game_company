@@ -20,6 +20,7 @@ const { OAuth2Client } = require('google-auth-library');
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.getByPhone = asyncHandler(async (req, res, next) => {
+  res.status(200).json({});
   console.log('getByPhone');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
   if (!phone) {
@@ -41,6 +42,7 @@ exports.getByPhone = asyncHandler(async (req, res, next) => {
 
 });
 exports.getByEmail = asyncHandler(async (req, res, next) => {
+  res.status(200).json({});
   console.log('getByEmail');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
   if (!email) {
@@ -66,6 +68,7 @@ exports.getByEmail = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegister = asyncHandler(async (req, res, next) => {
+  res.status(200).json({});
   console.log('playerRegister');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.body;
 
@@ -135,31 +138,12 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   console.log('playerRegisterEmail');
   const CLIENT_ID = '60490012283-8fgnb9tk35j5bpeg6pq09vmk2notiehc.apps.googleusercontent.com';
   const client = new OAuth2Client(CLIENT_ID);
-  const token = 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImNhYWJmNjkwODE5MTYxNmE5MDhhMTM4OTIyMGE5NzViM2MwZmJjYTEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI2MDQ5MDAxMjI4My1hMW1qYjk0djN2bW5sbzBmMXQzZDg2aWtxZDhqcG50bi5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjYwNDkwMDEyMjgzLThmZ25iOXRrMzVqNWJwZWc2cHEwOXZtazJub3RpZWhjLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA0NDMwMzgzNTU1NjcxOTUxMTI3IiwiZW1haWwiOiJrYW1sZXNocGF3YXJnQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiS2FtbGVzaCBQYXdhciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BSXRidm1uTHFPZmN3VzFmV1NUZmM5elNucURMMDVuSXBsbE0xdHQtdnhjMz1zOTYtYyIsImdpdmVuX25hbWUiOiJLYW1sZXNoIiwiZmFtaWx5X25hbWUiOiJQYXdhciIsImxvY2FsZSI6ImVuLUdCIiwiaWF0IjoxNjYyOTk4MjMzLCJleHAiOjE2NjMwMDE4MzN9.RHthhFJrSkTSi1MjILR4uhR_iBZKEu5j4gwIhB9IYN1DtwGcU96EL4FfhizUOF4M2LChCq3tSMqJEvD6yENgns2EU4Iy86aMdgg2O8f8yCI7e8go4IYwMMdhtOXOJTM_QLg0Mw3kIJVITn86UdkJPdJHW2HhAcUlc9LQtt04vhszLId63MOcrIeTH66xJNSs9W1XDBk_O29u1uARll5lGBlGRfs-fe7K34ON58eh__-8vbDYJn2bDKTifnivp-HWxzkws1ZcDfLLZY-9yc1-SMjFM1WkJhHhGnAT_HOhKUo_h9fC9Li3mKy_YVo9q6vj-y1D612a39OkT1sfH1SLDw';
+
   if (!email || !deviceToken) {
     return next(
       new ErrorResponse(`select email`)
     );
   }
-
-  try {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: CLIENT_ID,
-    });
-
-  } catch (error) {
-    console.log(error);
-    return next(
-      new ErrorResponse(`try again`)
-    );
-  }
-
-  const payload = ticket.getPayload();
-  const userid = payload['sub'];
-  email = payload['email'];
-  firstName = payload['name'];
-  picture = payload['picture'];
 
   let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] });
   if (player) {
@@ -183,6 +167,26 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     });
 
   } else {
+
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: firebaseToken,
+        audience: CLIENT_ID,
+      });
+
+    } catch (error) {
+      console.log(error);
+      return next(
+        new ErrorResponse(`try again`)
+      );
+    }
+
+    const payload = ticket.getPayload();
+    const userid = payload['sub'];
+    email = payload['email'];
+    firstName = payload['name'];
+    picture = payload['picture'];
+
     // create new player
     const addamount = 10;
     let data = {
