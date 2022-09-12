@@ -168,7 +168,7 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   row['totals'] = {}; //await calTotal();
 
   row['totalPlayers'] = await Player.estimatedDocumentCount();
-  row['payoutCount'] = await Transaction.countDocuments({ logType: 'withdraw', status: 'PROCESSING' });
+  row['payoutCount'] = await Transaction.countDocuments({ logType: 'withdraw', paymentStatus: 'PROCESSING' });
   res.status(200).json({
     success: true,
     data: { row, graph: [] }
