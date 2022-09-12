@@ -67,7 +67,7 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
     select: false,
     trim: true,
-    required: [true, 'try again']
+    minLength: [16, 'try again'],
   },
   firebaseToken: {
     type: String,
