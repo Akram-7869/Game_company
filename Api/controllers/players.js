@@ -686,16 +686,9 @@ exports.deletePlayerData = asyncHandler(async (req, res, next) => {
     );
   }
   await Transaction.deleteMany({ playerId: req.params.id });
-  await Ticket.deleteMany({ playerId: req.params.id });
+  //await Ticket.deleteMany({ playerId: req.params.id });
   await PlayerPoll.deleteMany({ playerId: req.params.id });
   await PlayerGame.deleteMany({ playerId: req.params.id });
-
-  let ids = await PlayerNotifcation.find({ playerId: req.params.id });
-  if (ids.length != 0) {
-    ids = ids.map(d => d._id)
-    await Notification.deleteMany({ _id: { $in: ids } });
-    await PlayerNotifcation.deleteMany({ playerId: req.params.id });
-  }
 
   await Player.findByIdAndDelete(req.params.id);
   res.status(200).json({
@@ -740,17 +733,10 @@ exports.deletePlayerDataBIds = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Not Allowed`)
     );
   }
-  //await Transaction.deleteMany({ playerId: { $in: ids } });
-  await Ticket.deleteMany({ playerId: { $in: ids } });
+  await Transaction.deleteMany({ playerId: { $in: ids } });
+  //await Ticket.deleteMany({ playerId: { $in: ids } });
   await PlayerPoll.deleteMany({ playerId: { $in: ids } });
   await PlayerGame.deleteMany({ playerId: { $in: ids } });
-
-  let nids = await PlayerNotifcation.find({ playerId: { $in: ids } });
-  if (nids.length != 0) {
-    nids = nids.map(d => d._id)
-    await Notification.deleteMany({ _id: { $in: nids } });
-    await PlayerNotifcation.deleteMany({ playerId: { $in: ids } });
-  }
 
   await Player.deleteMany({ _id: { $in: ids } });
   res.status(200).json({
