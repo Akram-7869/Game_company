@@ -167,9 +167,9 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     });
 
   } else {
-
+    let ticket;
     try {
-      const ticket = await client.verifyIdToken({
+      ticket = await client.verifyIdToken({
         idToken: firebaseToken,
         audience: CLIENT_ID,
       });
