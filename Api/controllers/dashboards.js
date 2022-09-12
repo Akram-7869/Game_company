@@ -167,7 +167,7 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
 
   row['totals'] = {}; //await calTotal();
 
-
+  row['totalPlayers'] = await Player.estimatedDocumentCount();
   res.status(200).json({
     success: true,
     data: { row, graph: [] }
