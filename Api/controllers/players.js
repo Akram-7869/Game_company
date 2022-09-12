@@ -1141,7 +1141,7 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.creditAmount = asyncHandler(async (req, res, next) => {
-  console.log('creditAmount', req.body);
+  console.log('creditAmount');
   let player = req.player;//await Player.findById(req.body.id);
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
   if (req.body.logType !== "won") {
@@ -1320,7 +1320,7 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
-  console.log('saveLeaderBoard', req.body);
+  console.log('saveLeaderBoard');
   let { playerId, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players = [] } = req.body;
   let leaderboard;
   let updatedData = { isBot: false, players }

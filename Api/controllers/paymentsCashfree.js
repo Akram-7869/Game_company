@@ -138,7 +138,7 @@ exports.getKey = asyncHandler(async (req, res, next) => {
 });
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {
-  console.log('casfree-notify-body', req.body);
+  console.log('casfree-notify-body');
 
   //const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
   //let ok = verifySignature(req.body, req.body.signature, row.one.SECRET_KEY);

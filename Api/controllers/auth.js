@@ -130,7 +130,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 // @access    Public
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   const { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
-  console.log('playerRegisterEmail', req.body);
+  console.log('playerRegisterEmail');
   if (!email || !deviceToken) {
     return next(
       new ErrorResponse(`select email`)
@@ -356,7 +356,7 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
     filename = '/img/profile-picture/';
     filePath = path.resolve(__dirname, '../../assets/' + filename);
     let pathurl = process.env.IMAGE_URL + filename;
-    console.log(filePath);
+    //console.log(filePath);
     fs.readdirSync(filePath).forEach(file => {
       // console.log(file);
       bot_profile.push(pathurl + file);

@@ -139,7 +139,7 @@ io.use(function (socket, next) {
 io.on('connection', socket => {
   // let data = { status: 'connected' };
   // socket.emit('res', { ev: 'connected', data });
-  console.log('contedt');
+  //console.log('contedt');
   //socket.join('notification_channel');
 
   socket.on('join', async (d) => {
@@ -215,7 +215,7 @@ io.on('connection', socket => {
   });
   // Runs when client disconnects
   socket.on('gameStart', async (d) => {
-    console.log('gameStart-', d);
+    console.log('gameStart-');
     let { room, lobbyId } = d;
 
     await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, {}, { upsert: true });
