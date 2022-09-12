@@ -131,7 +131,10 @@ const PORT = process.env.PORT || 3000;
 const { makeid } = require('./utils/utils');
 const state = {};
 const publicRoom = {};
-
+io.use(function (socket, next) {
+  // execute some code
+  next();
+})
 // Run when client connects
 io.on('connection', socket => {
   // let data = { status: 'connected' };
