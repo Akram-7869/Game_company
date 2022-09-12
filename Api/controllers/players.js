@@ -1333,7 +1333,7 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
     const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
     const commision = betAmout - winAmount;
     Dashboard.totalIncome(betAmout, winAmount, commision);
-    updatedData[isBoat] = true;
+    updatedData['isBoat'] = true;
     updatedData['gameStatus'] = 'lost';
   }
 
