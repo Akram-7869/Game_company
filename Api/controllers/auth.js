@@ -1,16 +1,19 @@
-const crypto = require('crypto');
+//const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const sendEmail = require('../utils/sendEmail');
+//const sendEmail = require('../utils/sendEmail');
 const Player = require('../models/Player');
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
 const Setting = require('../models/Setting');
 const Dashboard = require('../models/Dashboard');
-const axios = require('axios')
-const admin = require('../utils/fiebase')
+//const axios = require('axios')
+//const admin = require('../utils/fiebase')
 const fs = require('fs');
 var path = require('path');
+const { makeid } = require('../utils/utils');
+const { OAuth2Client } = require('google-auth-library');
+
 
 
 // @desc      Register user
@@ -59,7 +62,6 @@ exports.getByEmail = asyncHandler(async (req, res, next) => {
 
 });
 
-const { makeid } = require('../utils/utils');
 // @desc      Register user
 // @route     POST /api/v1/auth/register
 // @access    Public
@@ -131,15 +133,35 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   const { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
   console.log('playerRegisterEmail');
+  const CLIENT_ID = '60490012283-8fgnb9tk35j5bpeg6pq09vmk2notiehc.apps.googleusercontent.com';
+  const client = new OAuth2Client(CLIENT_ID);
+  const token = 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImNhYWJmNjkwODE5MTYxNmE5MDhhMTM4OTIyMGE5NzViM2MwZmJjYTEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI2MDQ5MDAxMjI4My1hMW1qYjk0djN2bW5sbzBmMXQzZDg2aWtxZDhqcG50bi5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjYwNDkwMDEyMjgzLThmZ25iOXRrMzVqNWJwZWc2cHEwOXZtazJub3RpZWhjLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA0NDMwMzgzNTU1NjcxOTUxMTI3IiwiZW1haWwiOiJrYW1sZXNocGF3YXJnQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiS2FtbGVzaCBQYXdhciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BSXRidm1uTHFPZmN3VzFmV1NUZmM5elNucURMMDVuSXBsbE0xdHQtdnhjMz1zOTYtYyIsImdpdmVuX25hbWUiOiJLYW1sZXNoIiwiZmFtaWx5X25hbWUiOiJQYXdhciIsImxvY2FsZSI6ImVuLUdCIiwiaWF0IjoxNjYyOTk4MjMzLCJleHAiOjE2NjMwMDE4MzN9.RHthhFJrSkTSi1MjILR4uhR_iBZKEu5j4gwIhB9IYN1DtwGcU96EL4FfhizUOF4M2LChCq3tSMqJEvD6yENgns2EU4Iy86aMdgg2O8f8yCI7e8go4IYwMMdhtOXOJTM_QLg0Mw3kIJVITn86UdkJPdJHW2HhAcUlc9LQtt04vhszLId63MOcrIeTH66xJNSs9W1XDBk_O29u1uARll5lGBlGRfs-fe7K34ON58eh__-8vbDYJn2bDKTifnivp-HWxzkws1ZcDfLLZY-9yc1-SMjFM1WkJhHhGnAT_HOhKUo_h9fC9Li3mKy_YVo9q6vj-y1D612a39OkT1sfH1SLDw';
   if (!email || !deviceToken) {
     return next(
       new ErrorResponse(`select email`)
     );
   }
 
-  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: CLIENT_ID,
+    });
 
+  } catch (error) {
+    console.log(error);
+    return next(
+      new ErrorResponse(`try again`)
+    );
+  }
 
+  const payload = ticket.getPayload();
+  const userid = payload['sub'];
+  email = payload['email'];
+  firstName = payload['name'];
+  picture = payload['picture'];
+
+  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] });
   if (player) {
     if (player.email !== email) {
       return next(
@@ -166,7 +188,6 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     let data = {
       firstName,
       'email': email,
-
       'picture': picture,
       'deviceToken': deviceToken,
       'firebaseToken': firebaseToken,
