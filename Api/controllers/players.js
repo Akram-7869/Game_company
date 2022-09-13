@@ -1325,7 +1325,8 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
     updatedData['note'] = note;
     updatedData['opponentName'] = winnerPlayer.userName;
   } else {
-    updatedData['opponentName'] = looserPlayer.userName
+    updatedData['opponentName'] = looserPlayer.userName;
+    updatedData['isBot'] = looserPlayer.isBot
   }
 
   leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, updatedData);
