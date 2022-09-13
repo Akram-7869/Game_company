@@ -209,9 +209,9 @@
                                 },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        let t = JSON.parse(full.players);
+                                        let t = full.players;
                                         let o = '<textarea cols=70 rows=25>';
-                                        o += t ? JSON.stringify(t, undefined, 2) : '';
+                                        o += t ? JSON.stringify(JSON.parse(t), undefined, 2) : '';
                                         o += "</textarea>";
                                         return o;
                                     }
