@@ -160,7 +160,6 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   email = payload['email'];
   firstName = payload['name'];
   picture = payload['picture'];
-
   let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] });
   if (player) {
     if (player.email !== email) {
