@@ -150,12 +150,16 @@ io.on('connection', socket => {
     let roomName = '';
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
-      
-    } else {
+      console.log('Existingjoin-');
+
+     } else {
       roomName = makeid(5);
     
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
       state[roomName] = { full: 0, players: [] };
+      await PlayerGame.findOneAndUpdate({ 'userId': userId, 'gameId': roomName, 'tournamentId': lobbyId }, {}, { upsert: true });
+      console.log('join-');
+
     }
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
@@ -173,7 +177,6 @@ io.on('connection', socket => {
     } else {
       delete publicRoom[lobbyId];
     }
-    console.log('join-',data);
     io.to(roomName).emit('res', { ev: 'join', data });
   });
 
@@ -202,7 +205,7 @@ io.on('connection', socket => {
       room: room,
       users: getRoomUsers(room)
     };
-    console.log('leave-',d , data);
+    console.log('leave-',d );
     io.to(room).emit('res', { ev: 'leave', data });
   });
 
@@ -226,8 +229,6 @@ io.on('connection', socket => {
   socket.on('gameStart', async (d) => {
    
     let { room, lobbyId } = d;
- 
-    await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, {}, { upsert: true });
 
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
