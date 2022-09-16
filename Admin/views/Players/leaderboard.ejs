@@ -85,6 +85,7 @@
                                         <th>opponent</th>
                                         <th>bot</th>
                                         <th>Note</th>
+                                        <th>p-Count</th>
                                         <th>Played</th>
                                         <th>Players</th>
                                         <th>pstatus</th>
@@ -202,6 +203,9 @@
                                     data: 'isBot', "defaultContent": ""
                                 },
                                 { data: 'note', "defaultContent": "WON" },
+                                {
+                                    data: 'playerCount', "defaultContent": "0"
+                                },
                                 {
                                     data: 'createdAt', render: function (data) {
                                         return moment(data).format('DD-MM-YYYY h:mm a');

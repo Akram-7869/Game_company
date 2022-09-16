@@ -227,9 +227,12 @@ io.on('connection', socket => {
   socket.on('gameStart', async (d) => {
    
     let { room, lobbyId ,userId} = d;
+    let playerCount=0;
  if(state[room]){
-  await PlayerGame.findOneAndUpdate({ 'playerId': userId, 'gameId': room, 'tournamentId': lobbyId }, {}, { upsert: true });
+  playerCount = state[room].players.length;
  }
+  await PlayerGame.findOneAndUpdate({ 'playerId': userId, 'gameId': room, 'tournamentId': lobbyId }, {playerCount}, { upsert: true });
+ 
    
 
     if (publicRoom[lobbyId]) {

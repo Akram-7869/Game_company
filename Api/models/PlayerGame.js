@@ -60,6 +60,10 @@ const PlayerGameSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  playerCount: {
+    type: Number,
+    default: 0
+  },
 
   players: {
     type: String,

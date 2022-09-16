@@ -1149,7 +1149,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player Not found`)
     );
   }
-  let gameRec = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId });
+  let gameRec = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId ,playerCount:{$gt:0}});
   if (!gameRec) {
     return next(
       new ErrorResponse(`Game not found`)

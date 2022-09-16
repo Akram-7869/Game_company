@@ -144,12 +144,24 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`select email`)
     );
   }
-
+  let ticket;
   let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] });
   if (player) {
     if (player.email !== email) {
       return next(
         new ErrorResponse(`This device is registered with another email ID`)
+      );
+    }
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: firebaseToken,
+        audience: CLIENT_ID,
+      });
+
+    } catch (error) {
+      console.log(error);
+      return next(
+        new ErrorResponse(`try again1`)
       );
     }
     // if (player.deviceToken !== deviceToken) {
@@ -167,7 +179,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     });
 
   } else {
-    let ticket;
+    
     try {
       ticket = await client.verifyIdToken({
         idToken: firebaseToken,
