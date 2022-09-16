@@ -192,7 +192,7 @@ io.on('connection', socket => {
     socket.leave(room);
      //remove empty 
      for (let r in state) {
-      if (state[r]['players'].length === 0) {
+      if (state[r]['players'].length === 1) {
         delete state[r];
       }
     }
