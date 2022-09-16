@@ -32,7 +32,7 @@ exports.getByPhone = asyncHandler(async (req, res, next) => {
   let player = await Player.findOne({ 'phone': phone, 'deviceToken': deviceToken });
   if (!player) {
     return next(
-      new ErrorResponse(`try again`)
+      new ErrorResponse(`try again1`)
     );
   }
   res.status(200).json({
@@ -141,7 +141,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
 
   if (!email || !deviceToken || !firebaseToken) {
     return next(
-      new ErrorResponse(`try again`)
+      new ErrorResponse(`try again1`)
     );
   }
 
@@ -149,12 +149,12 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   if (player) {
     if (player.email !== email) {
       return next(
-        new ErrorResponse(`try again`)
+        new ErrorResponse(`try again2`)
       );
     }
     if (player.deviceToken !== deviceToken) {
       return next(
-        new ErrorResponse(`try again`)
+        new ErrorResponse(`try again3`)
       );
     }
     let ticket;
@@ -166,7 +166,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
 
     } catch (error) {
        return next(
-        new ErrorResponse(`try again`)
+        new ErrorResponse(`try again4`)
       );
     }
 
@@ -189,7 +189,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
 
     } catch (error) {
        return next(
-        new ErrorResponse(`try again`)
+        new ErrorResponse(`try again5`)
       );
     }
 
