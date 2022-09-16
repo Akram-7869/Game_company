@@ -1218,7 +1218,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       Dashboard.totalIncome(betAmout, winAmount, commision);
     }
 
-    let leaderboard = await PlayerGame.findOneAndUpdate({'playerId':player._id, 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
+    let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
   }
   res.status(200).json({
     success: true,
