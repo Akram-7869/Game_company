@@ -67,7 +67,7 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
     select: false,
     trim: true,
-    minLength: [16, 'try again'],
+    minLength: [32, 'try again'],
   },
   firebaseToken: {
     type: String,
@@ -268,7 +268,7 @@ PlayerSchema.pre('save', async function (next) {
 
 // Sign JWT and return
 PlayerSchema.methods.getSignedJwtToken = function () {
-  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
+  return jwt.sign({ id: this._id, role: this.role, deviceToken: this.deviceToken }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
   });
 };

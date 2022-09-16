@@ -810,7 +810,7 @@ exports.chkPin = asyncHandler(async (req, res, next) => {
   if (!isMatch) {
     return next(new ErrorResponse('authentication faild'));
   }
-  sendTokenResponse(user, 200, res);
+ // sendTokenResponse(user, 200, res);
 
   // res.status(200).json({
   //   success: true,

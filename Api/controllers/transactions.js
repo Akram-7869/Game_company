@@ -73,12 +73,13 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     if (!player) {
       return res.json(empty);
     }
+    
     filter['find']['playerId'] = player._id;
   }
 
   //plaerId filter
   if (req.body.rf && req.body.rfv) {
-    filter['find'][req.body.rf] = req.body.rfv;
+    filter['find'][req.body.rf] = { '$regex': req.body.rfv, '$options': 'i' };
   }
   if (req.body.logType) {
     filter['find']['logType'] = req.query.logType;

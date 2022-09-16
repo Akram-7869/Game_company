@@ -104,7 +104,7 @@ exports.getLeaderBoard = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Leader Board' };
       res.render('Players/leaderboard')
 });
-exports.getLeaderBoardList = asyncHandler(async (req, res, next) => {
+exports.getLeaderBoardList = asyncHandler(async (req, res, next) => { 
       callApi(req).post(apiUrlGame, { ...req.body }, { params: req.query })
             .then(r => {
                   res.status(200).json(r.data);
