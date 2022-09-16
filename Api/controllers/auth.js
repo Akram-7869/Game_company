@@ -20,7 +20,6 @@ const { OAuth2Client } = require('google-auth-library');
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.getByPhone = asyncHandler(async (req, res, next) => {
-  res.status(200).json({});
   console.log('getByPhone');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
   if (!phone) {
@@ -32,7 +31,7 @@ exports.getByPhone = asyncHandler(async (req, res, next) => {
   let player = await Player.findOne({ 'phone': phone, 'deviceToken': deviceToken });
   if (!player) {
     return next(
-      new ErrorResponse(`try again1`)
+      new ErrorResponse(`Player not found`)
     );
   }
   res.status(200).json({
@@ -42,7 +41,6 @@ exports.getByPhone = asyncHandler(async (req, res, next) => {
 
 });
 exports.getByEmail = asyncHandler(async (req, res, next) => {
-  res.status(200).json({});
   console.log('getByEmail');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
   if (!email) {
@@ -68,7 +66,6 @@ exports.getByEmail = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegister = asyncHandler(async (req, res, next) => {
-  res.status(200).json({});
   console.log('playerRegister');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.body;
 
@@ -134,42 +131,48 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
-  let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
-  console.log('playerRegisterEmail',req.body);
+  const { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
+  console.log('playerRegisterEmail');
   const CLIENT_ID = '60490012283-8fgnb9tk35j5bpeg6pq09vmk2notiehc.apps.googleusercontent.com';
   const client = new OAuth2Client(CLIENT_ID);
-
-  if (!email || !deviceToken || !firebaseToken) {
+  const token = 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImNhYWJmNjkwODE5MTYxNmE5MDhhMTM4OTIyMGE5NzViM2MwZmJjYTEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI2MDQ5MDAxMjI4My1hMW1qYjk0djN2bW5sbzBmMXQzZDg2aWtxZDhqcG50bi5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjYwNDkwMDEyMjgzLThmZ25iOXRrMzVqNWJwZWc2cHEwOXZtazJub3RpZWhjLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA0NDMwMzgzNTU1NjcxOTUxMTI3IiwiZW1haWwiOiJrYW1sZXNocGF3YXJnQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiS2FtbGVzaCBQYXdhciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BSXRidm1uTHFPZmN3VzFmV1NUZmM5elNucURMMDVuSXBsbE0xdHQtdnhjMz1zOTYtYyIsImdpdmVuX25hbWUiOiJLYW1sZXNoIiwiZmFtaWx5X25hbWUiOiJQYXdhciIsImxvY2FsZSI6ImVuLUdCIiwiaWF0IjoxNjYyOTk4MjMzLCJleHAiOjE2NjMwMDE4MzN9.RHthhFJrSkTSi1MjILR4uhR_iBZKEu5j4gwIhB9IYN1DtwGcU96EL4FfhizUOF4M2LChCq3tSMqJEvD6yENgns2EU4Iy86aMdgg2O8f8yCI7e8go4IYwMMdhtOXOJTM_QLg0Mw3kIJVITn86UdkJPdJHW2HhAcUlc9LQtt04vhszLId63MOcrIeTH66xJNSs9W1XDBk_O29u1uARll5lGBlGRfs-fe7K34ON58eh__-8vbDYJn2bDKTifnivp-HWxzkws1ZcDfLLZY-9yc1-SMjFM1WkJhHhGnAT_HOhKUo_h9fC9Li3mKy_YVo9q6vj-y1D612a39OkT1sfH1SLDw';
+  if (!email || !deviceToken) {
     return next(
-      new ErrorResponse(`try again1`)
+      new ErrorResponse(`select email`)
     );
   }
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: CLIENT_ID,
+    });
+
+  } catch (error) {
+    console.log(error);
+    return next(
+      new ErrorResponse(`try again`)
+    );
+  }
+
+  const payload = ticket.getPayload();
+  const userid = payload['sub'];
+  email = payload['email'];
+  firstName = payload['name'];
+  picture = payload['picture'];
 
   let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] });
   if (player) {
     if (player.email !== email) {
       return next(
-        new ErrorResponse(`try again2`)
+        new ErrorResponse(`This device is registered with another email ID`)
       );
     }
     if (player.deviceToken !== deviceToken) {
       return next(
-        new ErrorResponse(`try again3`)
+        new ErrorResponse(`This device is registered with another email ID`)
       );
     }
-    let ticket;
-    // try {
-    //   ticket = await client.verifyIdToken({
-    //     idToken: firebaseToken,
-    //     audience: CLIENT_ID,
-    //   });
-
-    // } catch (error) {
-    //    return next(
-    //     new ErrorResponse(`try again4`)
-    //   );
-    // }
-
 
     let fieldsToUpdate = {
       'firebaseToken': firebaseToken,
@@ -180,27 +183,8 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     });
 
   } else {
-    let ticket;
-    try {
-      ticket = await client.verifyIdToken({
-        idToken: firebaseToken,
-        audience: CLIENT_ID,
-      });
-
-    } catch (error) {
-       return next(
-        new ErrorResponse(`try again5`)
-      );
-    }
-
-    let payload = ticket.getPayload();
-    let userid = payload['sub'];
-    email = payload['email'];
-    firstName = payload['name'];
-    picture = payload['picture'];
-
     // create new player
-    let addamount = 10;
+    const addamount = 10;
     let data = {
       firstName,
       'email': email,
