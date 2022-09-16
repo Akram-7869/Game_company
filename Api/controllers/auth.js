@@ -139,7 +139,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   const CLIENT_ID = '60490012283-8fgnb9tk35j5bpeg6pq09vmk2notiehc.apps.googleusercontent.com';
   const client = new OAuth2Client(CLIENT_ID);
 
-  if (!email || !deviceToken) {
+  if (!email || !deviceToken || !firebaseToken) {
     return next(
       new ErrorResponse(`select email`)
     );
@@ -157,6 +157,19 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`try again`)
       );
     }
+    let ticket;
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: firebaseToken,
+        audience: CLIENT_ID,
+      });
+
+    } catch (error) {
+       return next(
+        new ErrorResponse(`try again`)
+      );
+    }
+
 
     let fieldsToUpdate = {
       'firebaseToken': firebaseToken,
