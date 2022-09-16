@@ -226,7 +226,7 @@ io.on('connection', socket => {
   // Runs when client disconnects
   socket.on('gameStart', async (d) => {
    
-    let { room, lobbyId } = d;
+    let { room, lobbyId ,userId} = d;
  
     await PlayerGame.findOneAndUpdate({ 'playerId': userId, 'gameId': room, 'tournamentId': lobbyId }, {}, { upsert: true });
 
