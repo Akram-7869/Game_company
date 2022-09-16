@@ -981,7 +981,7 @@ exports.ticketReply = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.debiteAmount = asyncHandler(async (req, res, next) => {
   let { amount, note, gameId } = req.body;
-
+  console.log('debiteAmount =', gameId);
   if (!amount || amount < 0) {
     return next(
       new ErrorResponse(`Invalid amount`)
@@ -1127,9 +1127,10 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.creditAmount = asyncHandler(async (req, res, next) => {
-  console.log('creditAmount');
+ 
   let player = req.player;//await Player.findById(req.body.id);
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
+  console.log('creditAmount',gameId);
   if (req.body.logType !== "won") {
     new ErrorResponse(`Invalid amount`);
   }
