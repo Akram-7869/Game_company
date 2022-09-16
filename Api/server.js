@@ -157,7 +157,7 @@ io.on('connection', socket => {
     
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
       state[roomName] = { full: 0, players: [] };
-      await PlayerGame.findOneAndUpdate({ 'userId': userId, 'gameId': roomName, 'tournamentId': lobbyId }, {}, { upsert: true });
+      await PlayerGame.findOneAndUpdate({ 'playerId': userId, 'gameId': roomName, 'tournamentId': lobbyId }, {}, { upsert: true });
       console.log('join-');
 
     }
