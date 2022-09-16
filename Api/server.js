@@ -228,7 +228,7 @@ io.on('connection', socket => {
    
     let { room, lobbyId } = d;
  
-    await PlayerGame.findOneAndUpdate({ 'userId': userId, 'gameId': room, 'tournamentId': lobbyId }, {}, { upsert: true });
+    await PlayerGame.findOneAndUpdate({ 'playerId': userId, 'gameId': room, 'tournamentId': lobbyId }, {}, { upsert: true });
 
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
