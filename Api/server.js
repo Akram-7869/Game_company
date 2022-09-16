@@ -150,10 +150,10 @@ io.on('connection', socket => {
     let roomName = '';
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
-      console.log('existing-',roomName);
+      
     } else {
       roomName = makeid(5);
-      console.log('new-',roomName);
+    
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
       state[roomName] = { full: 0, players: [] };
     }
@@ -173,6 +173,7 @@ io.on('connection', socket => {
     } else {
       delete publicRoom[lobbyId];
     }
+    console.log('join-',data);
     io.to(roomName).emit('res', { ev: 'join', data });
   });
 
@@ -180,14 +181,14 @@ io.on('connection', socket => {
   socket.on('sendToRoom', (d) => {
 
     let { room, ev, data } = d;//JSON.parse(d);
-    //console.log('sendToRoom', ev);
+    console.log('sendToRoom',  room, ev, data);
     io.to(room).emit('res', { ev, data });
 
   });
   //leave
   socket.on('leave', (d) => {
     let { room } = d;
-    console.log('leave-',room);
+ 
     userLeave(socket);
     socket.leave(room);
      //remove empty 
@@ -201,14 +202,15 @@ io.on('connection', socket => {
       room: room,
       users: getRoomUsers(room)
     };
+    console.log('leave-',d , data);
     io.to(room).emit('res', { ev: 'leave', data });
   });
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
 
-    let { room, userId } = socket;
-    console.log('disconnect-',room);
+    let { room, userId , lobbyId } = socket;
+    
     userLeave(socket);
     //console.log('disconnect-inputstring');
     let data = {
@@ -216,6 +218,7 @@ io.on('connection', socket => {
       users: getRoomUsers(room),
       userId: userId
     };
+    console.log('disconnect-',room, userId , lobbyId, data);
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });
@@ -223,7 +226,7 @@ io.on('connection', socket => {
   socket.on('gameStart', async (d) => {
    
     let { room, lobbyId } = d;
-    console.log('gameStart-',room);
+ 
     await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, {}, { upsert: true });
 
     if (publicRoom[lobbyId]) {
@@ -255,6 +258,7 @@ io.on('connection', socket => {
     let data = {
       room: room
     };
+    console.log('gameStart-',d,state[room] );
     io.to(socket.room).emit('res', { ev: 'gameStart', data });
 
   });
