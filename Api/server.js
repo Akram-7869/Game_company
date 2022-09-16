@@ -190,7 +190,12 @@ io.on('connection', socket => {
     let { room } = d;
     userLeave(socket);
     socket.leave(room);
-
+     //remove empty 
+     for (let r in state) {
+      if (state[r]['players'].length === 0) {
+        delete state[r];
+      }
+    }
     let data = {
       room: room,
       users: getRoomUsers(room)
