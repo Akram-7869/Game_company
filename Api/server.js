@@ -181,7 +181,7 @@ io.on('connection', socket => {
   socket.on('sendToRoom', (d) => {
 
     let { room, ev, data } = d;//JSON.parse(d);
-    console.log('sendToRoom',  room, ev, data);
+    
     io.to(room).emit('res', { ev, data });
 
   });
