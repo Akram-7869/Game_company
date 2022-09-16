@@ -208,7 +208,7 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
 
     let { room, userId } = socket;
-    console.log('disconnect-',roomName);
+    console.log('disconnect-',room);
     userLeave(socket);
     //console.log('disconnect-inputstring');
     let data = {
