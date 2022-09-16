@@ -158,17 +158,17 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       );
     }
     let ticket;
-    try {
-      ticket = await client.verifyIdToken({
-        idToken: firebaseToken,
-        audience: CLIENT_ID,
-      });
+    // try {
+    //   ticket = await client.verifyIdToken({
+    //     idToken: firebaseToken,
+    //     audience: CLIENT_ID,
+    //   });
 
-    } catch (error) {
-       return next(
-        new ErrorResponse(`try again4`)
-      );
-    }
+    // } catch (error) {
+    //    return next(
+    //     new ErrorResponse(`try again4`)
+    //   );
+    // }
 
 
     let fieldsToUpdate = {
