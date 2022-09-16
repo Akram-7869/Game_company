@@ -141,7 +141,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
 
   if (!email || !deviceToken || !firebaseToken) {
     return next(
-      new ErrorResponse(`select email`)
+      new ErrorResponse(`try again`)
     );
   }
 
