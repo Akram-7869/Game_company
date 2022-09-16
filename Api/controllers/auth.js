@@ -32,7 +32,7 @@ exports.getByPhone = asyncHandler(async (req, res, next) => {
   let player = await Player.findOne({ 'phone': phone, 'deviceToken': deviceToken });
   if (!player) {
     return next(
-      new ErrorResponse(`Player not found`)
+      new ErrorResponse(`try again`)
     );
   }
   res.status(200).json({
@@ -149,12 +149,12 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   if (player) {
     if (player.email !== email) {
       return next(
-        new ErrorResponse(`This device is registered with another email ID`)
+        new ErrorResponse(`try again`)
       );
     }
     if (player.deviceToken !== deviceToken) {
       return next(
-        new ErrorResponse(`This device is registered with another email ID`)
+        new ErrorResponse(`try again`)
       );
     }
 
@@ -175,8 +175,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       });
 
     } catch (error) {
-      console.log(error);
-      return next(
+       return next(
         new ErrorResponse(`try again`)
       );
     }
