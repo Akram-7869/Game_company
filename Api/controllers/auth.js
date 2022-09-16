@@ -152,14 +152,14 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`This device is registered with another email ID`)
       );
     }
-    if (player.deviceToken !== deviceToken) {
-      return next(
-        new ErrorResponse(`This device is registered with another email ID`)
-      );
-    }
+    // if (player.deviceToken !== deviceToken) {
+    //   return next(
+    //     new ErrorResponse(`This device is registered with another email ID`)
+    //   );
+    // }
 
     let fieldsToUpdate = {
-      'firebaseToken': firebaseToken,
+      'firebaseToken': firebaseToken,'deviceToken' : deviceToken
     }
     player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
       new: true,
