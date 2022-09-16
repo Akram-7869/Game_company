@@ -231,7 +231,7 @@ io.on('connection', socket => {
  if(state[room]){
   playerCount = state[room].players.length;
  }
-  await PlayerGame.findOneAndUpdate({ 'playerId': userId, 'gameId': room, 'tournamentId': lobbyId }, {playerCount}, { upsert: true });
+  await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, {playerCount}, { upsert: true });
  
    
 
