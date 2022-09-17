@@ -228,7 +228,7 @@ io.on('connection', socket => {
     await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, { playerCount }, { upsert: true });
 
 
-
+    //start game Withb boat
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
       if (rn == room) {
@@ -258,7 +258,7 @@ io.on('connection', socket => {
     let data = {
       room: room
     };
-    console.log('gameStart-', d, state?.room.players.length);
+    console.log('gameStart-', d);
     io.to(socket.room).emit('res', { ev: 'gameStart', data });
 
   });
@@ -326,9 +326,20 @@ let userLeave = (s) => {
       state[s.room].players.splice(index, 1)[0];
     }
   }
+
   for (let r in state) {
-    if (state[r]['players'].length === 0) {
+    if (!state[r]['players']) {
       delete state[r];
+    }
+  }
+  //remove 
+  for (let l in publicRoom) {
+    if (publicRoom[l]['roomName']) {
+      let rn = publicRoom[l]['roomName'];
+
+      if (!state[rn] || !state[rn]['players']) {
+        delete publicRoom[l];
+      }
     }
   }
 
