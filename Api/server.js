@@ -122,7 +122,7 @@ app.use('/api/v1/coupon', coupon);
 app.use('/api/v1/polls', polls);
 
 app.get('/api/v1/so', function (req, res, next) {
-  // res.json({ state, publicRoom });
+  res.json({ state, publicRoom });
 })
 app.use(errorHandler);
 
@@ -213,7 +213,7 @@ io.on('connection', socket => {
       userId: userId
     };
 
-    console.log('disconnect-', room, userId, lobbyId, data);
+    console.log('disconnect-');
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });
@@ -328,7 +328,7 @@ let userLeave = (s) => {
   }
 
   for (let r in state) {
-    if (!state[r]['players']) {
+    if (state[r]['players'].length === 0) {
       delete state[r];
     }
   }
@@ -336,8 +336,7 @@ let userLeave = (s) => {
   for (let l in publicRoom) {
     if (publicRoom[l]['roomName']) {
       let rn = publicRoom[l]['roomName'];
-
-      if (!state[rn] || !state[rn]['players']) {
+      if (!state[rn] || state[rn]['players'].length === 0) {
         delete publicRoom[l];
       }
     }
