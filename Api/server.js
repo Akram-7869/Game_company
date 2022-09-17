@@ -192,13 +192,6 @@ io.on('connection', socket => {
  
     userLeave(socket);
     socket.leave(room);
-     //remove empty 
-     for (let r in state) {
-      if (state[r]['players'].length === 1) {
-        delete state[r];
-      }
-    }
-    
      let data = {
       room: room,
       users: getRoomUsers(room)
@@ -219,6 +212,7 @@ io.on('connection', socket => {
       users: getRoomUsers(room),
       userId: userId
     };
+    
     console.log('disconnect-',room, userId , lobbyId, data);
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
@@ -330,6 +324,11 @@ let userLeave = (s) => {
 
     if (index !== -1) {
       state[s.room].players.splice(index, 1)[0];
+    }
+  }
+  for (let r in state) {
+    if (state[r]['players'].length === 1) {
+      delete state[r];
     }
   }
 
