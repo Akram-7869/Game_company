@@ -196,7 +196,7 @@ io.on('connection', socket => {
       room: room,
       users: getRoomUsers(room)
     };
-    console.log('leave-', room);
+    console.log('leave-', d);
     io.to(room).emit('res', { ev: 'leave', data });
   });
 
@@ -213,7 +213,7 @@ io.on('connection', socket => {
       userId: userId
     };
 
-    console.log('disconnect-');
+    console.log('disconnect-', room, userId, lobbyId);
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });
