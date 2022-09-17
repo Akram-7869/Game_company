@@ -150,13 +150,13 @@ io.on('connection', socket => {
     let roomName = '';
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
-      console.log('Existjoin-',roomName);
+      console.log('Existjoin-', roomName);
     } else {
       roomName = makeid(5);
-    
+
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
       state[roomName] = { full: 0, players: [] };
-      console.log('join-',roomName);
+      console.log('join-', roomName);
     }
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
@@ -174,7 +174,7 @@ io.on('connection', socket => {
     } else {
       delete publicRoom[lobbyId];
     }
-    
+
     io.to(roomName).emit('res', { ev: 'join', data });
   });
 
@@ -182,36 +182,29 @@ io.on('connection', socket => {
   socket.on('sendToRoom', (d) => {
 
     let { room, ev, data } = d;//JSON.parse(d);
-    
+
     io.to(room).emit('res', { ev, data });
 
   });
   //leave
   socket.on('leave', (d) => {
     let { room } = d;
- 
+
     userLeave(socket);
     socket.leave(room);
-     //remove empty 
-     for (let r in state) {
-      if (state[r]['players'].length === 1) {
-        delete state[r];
-      }
-    }
-    
-     let data = {
+    let data = {
       room: room,
       users: getRoomUsers(room)
     };
-    console.log('leave-',room);
+    console.log('leave-', room);
     io.to(room).emit('res', { ev: 'leave', data });
   });
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
 
-    let { room, userId , lobbyId } = socket;
-    
+    let { room, userId, lobbyId } = socket;
+
     userLeave(socket);
     //console.log('disconnect-inputstring');
     let data = {
@@ -219,21 +212,22 @@ io.on('connection', socket => {
       users: getRoomUsers(room),
       userId: userId
     };
-    console.log('disconnect-',room, userId , lobbyId, data);
+
+    console.log('disconnect-', room, userId, lobbyId, data);
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });
   // Runs when client disconnects
   socket.on('gameStart', async (d) => {
-   
-    let { room, lobbyId ,userId} = d;
-    let playerCount=0;
- if(state[room]){
-  playerCount = state[room].players.length;
- }
-  await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, {playerCount}, { upsert: true });
- 
-   
+
+    let { room, lobbyId, userId } = d;
+    let playerCount = 0;
+    if (state[room]) {
+      playerCount = state[room].players.length;
+    }
+    await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, { playerCount }, { upsert: true });
+
+
 
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
@@ -264,7 +258,7 @@ io.on('connection', socket => {
     let data = {
       room: room
     };
-    console.log('gameStart-',d,state[room] );
+    console.log('gameStart-', d, state[room]);
     io.to(socket.room).emit('res', { ev: 'gameStart', data });
 
   });
@@ -330,6 +324,11 @@ let userLeave = (s) => {
 
     if (index !== -1) {
       state[s.room].players.splice(index, 1)[0];
+    }
+  }
+  for (let r in state) {
+    if (state[r]['players'].length === 0) {
+      delete state[r];
     }
   }
 
