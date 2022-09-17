@@ -258,7 +258,7 @@ io.on('connection', socket => {
     let data = {
       room: room
     };
-    console.log('gameStart-', d, state[room]);
+    console.log('gameStart-', d, state?.room.players.length);
     io.to(socket.room).emit('res', { ev: 'gameStart', data });
 
   });
