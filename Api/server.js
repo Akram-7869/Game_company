@@ -256,7 +256,10 @@ io.on('connection', socket => {
     //   publicRoom[socket['lobbyId']]['playerCount'] = 0;
     // }
     let data = {
-      room: room
+      room: room,
+      users: getRoomUsers(room),
+      lobbyId,
+      userId: userId
     };
     console.log('gameStart-', d);
     io.to(socket.room).emit('res', { ev: 'gameStart', data });
