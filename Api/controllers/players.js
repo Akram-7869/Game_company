@@ -1690,15 +1690,27 @@ exports.sendotp = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player not found`)
     );
   }
+  console.log(req.player.verifyPhoneExpire, req.player.verifyPhoneExpire > Date.now())
+
   if (req.player.phoneStatus !== 'verified') {
-    if (req.player.verifyPhoneExpire < Date.now()) {
-      return next(
-        new ErrorResponse(`Try after 10 min`)
-      );
-    }
+    // if (req.player.verifyPhoneExpire > Date.now()) {
+    //   return next(
+    //     new ErrorResponse(`Try after 10 min`)
+    //   );
+    // }
+
     let vcode = Math.floor(1000 + Math.random() * 9000);
     const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
-    let x = await smsOtp(phone, vcode, sms.one.TEMPLATE_ADMIN_PASS, sms.one.AUTHKEY);
+    let fieldsToUpdate = {
+      'verifyPhone': vcode,
+      'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
+
+    }
+    player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+    //   let x = await smsOtp(phone, vcode, sms.one.TEMPLATE_ADMIN_PASS, sms.one.AUTHKEY);
 
   }
 
@@ -1708,7 +1720,7 @@ exports.sendotp = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.smsOtp = async (mobile, otp, template_id, authkey) => {
+let smsOtp = async (mobile, otp, template_id, authkey) => {
 
   var params = {
     template_id,

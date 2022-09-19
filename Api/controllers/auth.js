@@ -247,7 +247,7 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   // await verifyOtp(req.body.phone, req.body.code).then(r=>{
   //   r.data.type
   // })
-  let user = await Player.findOne({ _id: req.player._id, verifyPhone: code, resetPasswordExpire: { $gt: Date.now() } });
+  let user = await Player.findOne({ _id: req.player._id, verifyPhone: code, verifyPhoneExpire: { $gt: Date.now() } });
   // console.log('verifyPhone', user)
 
   if (!user) {
@@ -255,7 +255,7 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Invalid Code`)
     );
   }
-  let player = await Player.findByIdAndUpdate(req.player.id, { 'phoneStatus': 'verifieds', phone }, {
+  let player = await Player.findByIdAndUpdate(req.player.id, { 'phoneStatus': 'verified', phone }, {
     new: true,
     runValidators: true
   });

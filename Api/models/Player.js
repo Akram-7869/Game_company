@@ -111,7 +111,6 @@ const PlayerSchema = new mongoose.Schema({
   verifyPhoneExpire: {
     type: Date,
     minlength: 6,
-    select: false
   },
   balance: {
     type: Number,
