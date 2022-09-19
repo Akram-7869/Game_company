@@ -1691,7 +1691,7 @@ exports.sendotp = asyncHandler(async (req, res, next) => {
     );
   }
   if (req.player.phoneStatus !== 'verified') {
-    if (player.verifyPhoneExpire < Date.now()) {
+    if (req.player.verifyPhoneExpire < Date.now()) {
       return next(
         new ErrorResponse(`Try after 10 min`)
       );
@@ -1701,7 +1701,6 @@ exports.sendotp = asyncHandler(async (req, res, next) => {
     let x = await smsOtp(phone, vcode, sms.one.TEMPLATE_ADMIN_PASS, sms.one.AUTHKEY);
 
   }
-
 
   res.status(200).json({
     success: true,
