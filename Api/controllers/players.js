@@ -1672,7 +1672,7 @@ exports.sendAppUrl = asyncHandler(async (req, res, next) => {
   // Get reset token
   let vcode = "1234";
   if (sms.one.TEMPLATE_APP_LINK_ID) {
-    let x = await smsOtp('91' + mobile, vcode, sms);
+    //let x = await smsOtp('91' + mobile, vcode, sms);
   }
 
   res.status(200).json({
@@ -1708,16 +1708,15 @@ exports.sendotp = asyncHandler(async (req, res, next) => {
   });
 });
 
-
-let smsOtp = async (phone, otp, sms) => {
+exports.smsOtp = async (mobile, otp, template_id, authkey) => {
 
   var params = {
-    "template_id": sms.one.TEMPLATE_APP_LINK_ID,
-    "mobile": phone,
-    "authkey": sms.one.AUTHKEY,
-    "URL": 'https://www.dukeplay.com/assets/DukePlay.apk'
+    template_id,
+    mobile,
+    authkey,
+    otp
   };
-  console.error('sendingotp', otp, phone)
+  // console.error('sendingotp', otp, phone)
   return axios.get('https://api.msg91.com/api/v5/otp', { params }).catch(error => { console.error(error) });
 
 }
