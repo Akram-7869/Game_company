@@ -1698,7 +1698,7 @@ exports.sendotp = asyncHandler(async (req, res, next) => {
     }
     let vcode = Math.floor(1000 + Math.random() * 9000);
     const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
-    await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
+    let x = await smsOtp(phone, vcode, sms.one.TEMPLATE_ADMIN_PASS, sms.one.AUTHKEY);
 
   }
 
