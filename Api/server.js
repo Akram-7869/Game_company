@@ -148,7 +148,10 @@ io.on('connection', socket => {
 
 
     let roomName = '';
-    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
+    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && publicRoom[lobbyId]['played'] === false) {
+
+      console.log('f');
+
       roomName = publicRoom[lobbyId]['roomName'];
       console.log('Existjoin-', roomName);
     } else {
