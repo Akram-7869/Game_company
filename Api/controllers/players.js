@@ -72,11 +72,11 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (req.player.phoneStatus !== 'verified') {
-    return next(
-      new ErrorResponse(`Please Verify Phone`)
-    );
-  }
+  // if (req.player.phoneStatus !== 'verified') {
+  //   return next(
+  //     new ErrorResponse(`Please Verify Phone`)
+  //   );
+  // }
   let player = await Player.findById(req.player.id).select('+bank +wallet +upi');
 
   let tranData = {
