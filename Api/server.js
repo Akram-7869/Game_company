@@ -175,16 +175,13 @@ io.on('connection', socket => {
       delete publicRoom[lobbyId];
     }
 
-    io.to(roomName).emit('res', { ev: 'join', data });
+    socket.to(roomName).emit('res', { ev: 'join', data });
   });
 
 
   socket.on('sendToRoom', (d) => {
-
     let { room, ev, data } = d;//JSON.parse(d);
-
-    io.to(room).emit('res', { ev, data });
-
+    socket.to(room).emit('res', { ev, data });
   });
   //leave
   socket.on('leave', (d) => {
@@ -197,7 +194,7 @@ io.on('connection', socket => {
       users: getRoomUsers(room)
     };
     console.log('leave-', d);
-    io.to(room).emit('res', { ev: 'leave', data });
+    socket.to(room).emit('res', { ev: 'leave', data });
   });
 
   // Runs when client disconnects
@@ -214,7 +211,7 @@ io.on('connection', socket => {
     };
 
     console.log('disconnect-', room, userId, lobbyId);
-    io.to(socket.room).emit('res', { ev: 'disconnect', data });
+    socket.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });
   // Runs when client disconnects
@@ -251,10 +248,7 @@ io.on('connection', socket => {
         }
       }
     }
-    // if (publicRoom[socket['lobbyId']]['roomName'] == room) {
-    //   publicRoom[socket['lobbyId']]['roomName'] = '';
-    //   publicRoom[socket['lobbyId']]['playerCount'] = 0;
-    // }
+
     let data = {
       room: room,
       users: getRoomUsers(room),
@@ -262,7 +256,7 @@ io.on('connection', socket => {
       userId: userId
     };
     console.log('gameStart-', d);
-    io.to(socket.room).emit('res', { ev: 'gameStart', data });
+    socket.to(room).emit('res', { ev: 'gameStart', data });
 
   });
   //move user
@@ -288,7 +282,15 @@ io.on('connection', socket => {
       room: room,
       users: getRoomUsers(room)
     };
-    io.to(room).emit('res', { ev: 'moveuser', data });
+    socket.to(room).emit('res', { ev: 'moveuser', data });
+  });
+  socket.on('error', (error) => {
+    console.log('error', error)
+  });
+  socket.on('disconnecting', (reason) => {
+    let rooms = Object.keys(socket.rooms);
+    console.log(rooms);
+    // ...
   });
 });
 
@@ -322,19 +324,14 @@ let getRoomUsers = (room) => {
 }
 let userLeave = (s) => {
   if (state[s.room] && state[s.room].players.length !== 0) {
-    //delete state[s.room].players[s.userId];
-    const index = state[s.room].players.findIndex(user => user.userId === s.userId);
+    delete state[s.room];
+    // const index = state[s.room].players.findIndex(user => user.userId === s.userId);
 
-    if (index !== -1) {
-      state[s.room].players.splice(index, 1)[0];
-    }
+    // if (index !== -1) {
+    //   state[s.room].players.splice(index, 1)[0];
+    // }
   }
 
-  for (let r in state) {
-    if (state[r]['players'].length === 0) {
-      delete state[r];
-    }
-  }
   //remove 
   for (let l in publicRoom) {
     if (publicRoom[l]['roomName']) {

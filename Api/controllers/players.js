@@ -72,6 +72,11 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     );
   }
 
+  if (req.player.phoneStatus !== 'verified') {
+    return next(
+      new ErrorResponse(`Please Verify Phone`)
+    );
+  }
   let player = await Player.findById(req.player.id).select('+bank +wallet +upi');
 
   let tranData = {
@@ -634,30 +639,25 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
-  if (!phone && !firstName) {
+  if (!phone) {
     return next(
       new ErrorResponse(`Provide details`)
     );
   }
-  if (phone && !req.player.phone) {
+  if (player.phoneStatus !== 'verified') {
     fieldsToUpdate['phone'] = phone;
   }
-  if (firstName) {
-    // fieldsToUpdate['firstName'] = firstName;
-  }
-  if (!fieldsToUpdate) {
-    return next(
-      new ErrorResponse(`Provide details`)
-    );
-  }
-  let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
-    new: true,
-    runValidators: true
-  });
+
+
+  // let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
+  //   new: true,
+  //   runValidators: true
+  // });
 
   res.status(200).json({
     success: true,
-    data: player
+    data: player,
+
   });
 });
 // @desc      Delete Player
@@ -810,7 +810,7 @@ exports.chkPin = asyncHandler(async (req, res, next) => {
   if (!isMatch) {
     return next(new ErrorResponse('authentication faild'));
   }
- // sendTokenResponse(user, 200, res);
+  // sendTokenResponse(user, 200, res);
 
   // res.status(200).json({
   //   success: true,
@@ -1127,10 +1127,10 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.creditAmount = asyncHandler(async (req, res, next) => {
- 
+
   let player = req.player;//await Player.findById(req.body.id);
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
-  console.log('creditAmount',gameId);
+  console.log('creditAmount', gameId);
   if (req.body.logType !== "won") {
     new ErrorResponse(`Invalid amount`);
   }
@@ -1149,7 +1149,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player Not found`)
     );
   }
-  let gameRec = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId ,playerCount:{$gt:0}});
+  let gameRec = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId, playerCount: { $gt: 0 } });
   if (!gameRec) {
     return next(
       new ErrorResponse(`Game not found`)
@@ -1680,6 +1680,32 @@ exports.sendAppUrl = asyncHandler(async (req, res, next) => {
     data: []
   });
 });
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.sendotp = asyncHandler(async (req, res, next) => {
+  let { mobile } = req.body;
+  const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
+  let message = ""
+  if (req.player.phoneStatus !== 'verified') {
+    if (player.verifyPhoneExpire < Date.now()) {
+      return next(
+        new ErrorResponse(`Try after 10 min`)
+      );
+    }
+    let vcode = Math.floor(1000 + Math.random() * 9000);
+    const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
+    await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
+
+  }
+
+
+  res.status(200).json({
+    success: true,
+    data: []
+  });
+});
+
 
 let smsOtp = async (phone, otp, sms) => {
 

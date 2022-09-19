@@ -23,7 +23,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
   // Make sure token exists
   if (!token) {
-    return next(new ErrorResponse('try again'));
+    return next(new ErrorResponse('Not authorized to access this route'));
   }
 
   try {
@@ -36,7 +36,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
       }
       req.player = await Player.findById(decoded.id);
       if (req.player.status === 'banned') {
-        return next(new ErrorResponse('try again'));
+        return next(new ErrorResponse('Account is banned'));
       }
     } else {
       req.staff = await User.findById(decoded.id);
@@ -49,7 +49,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
     next();
   } catch (err) {
-    return next(new ErrorResponse('try again'));
+    return next(new ErrorResponse('Not authorized to access this route'));
   }
 });
 

@@ -159,9 +159,9 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       });
 
     } catch (error) {
-      console.log(error);
+
       return next(
-        new ErrorResponse(`try again1`)
+        new ErrorResponse(`Unable to Rgister`)
       );
     }
     // if (player.deviceToken !== deviceToken) {
@@ -171,7 +171,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     // }
 
     let fieldsToUpdate = {
-      'firebaseToken': firebaseToken,'deviceToken' : deviceToken
+      'firebaseToken': firebaseToken, 'deviceToken': deviceToken
     }
     player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
       new: true,
@@ -179,7 +179,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     });
 
   } else {
-    
+
     try {
       ticket = await client.verifyIdToken({
         idToken: firebaseToken,
@@ -187,9 +187,9 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       });
 
     } catch (error) {
-      console.log(error);
+
       return next(
-        new ErrorResponse(`try again`)
+        new ErrorResponse(`Unable to Rgister`)
       );
     }
 
@@ -234,7 +234,10 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
-  if (!req.body.deviceToken || !req.body.deviceType || !req.body.code || !req.body.phone) {
+  let { phone, code } = req.body;
+
+
+  if (!req.player || !code || !phone || req.player.status !== 'active') {
     return next(
       new ErrorResponse(`Please provide all required data`)
     );
@@ -244,49 +247,22 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   // await verifyOtp(req.body.phone, req.body.code).then(r=>{
   //   r.data.type
   // })
-  let user = await Player.findOne({ phone: req.body.phone, verifyPhone: req.body.code });
+  let user = await Player.findOne({ _id: req.player._id, verifyPhone: code, resetPasswordExpire: { $gt: Date.now() } });
   // console.log('verifyPhone', user)
-  const addamount = 10;
+
   if (!user) {
     return next(
       new ErrorResponse(`Invalid Code`)
     );
   }
-
-  if (user.status === 'notverified') {
-    //all ok new user 
-    let fieldsToUpdate = {
-      deviceType: req.body.deviceType,
-      deviceToken: req.body.deviceToken,
-      verifyPhone: undefined,
-      verifyPhoneExpire: undefined,
-      status: 'active',
-      $inc: { balance: addamount, deposit: addamount },
-    }
-
-    let tranData = {
-      playerId: user._id,
-      amount: addamount,
-      transactionType: 'credit',
-      note: 'player register',
-      prevBalance: user.balance,
-      status: 'complete', paymentStatus: 'SUCCESS'
-    }
-    let tran = await Transaction.create(tranData);
-    user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
-      new: true,
-      runValidators: true
-    });
-    let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, { $inc: { totalPlayers: 1 } });
-    sendTokenResponse(user, 200, res);
-
-  } else if (user.status === 'active') {
-    // console.log('coustomer',s);
-    sendTokenResponse(user, 200, res);
-
-  } else {
-    return next(new ErrorResponse(`User is inactive`));
-  }
+  let player = await Player.findByIdAndUpdate(req.player.id, { 'phoneStatus': 'verifieds', phone }, {
+    new: true,
+    runValidators: true
+  });
+  res.status(200).json({
+    success: true,
+    data: player
+  });
 
 });
 exports.playerLogin = asyncHandler(async (req, res, next) => {
@@ -405,7 +381,7 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
     data: { bot_profile }
   });
 });
-let smsOtp = async (mobile, otp, template_id, authkey) => {
+exports.smsOtp = async (mobile, otp, template_id, authkey) => {
 
   var params = {
     template_id,
