@@ -644,15 +644,15 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Provide details`)
     );
   }
-  if (player.phoneStatus !== 'verified') {
+  if (phone && !req.player.phone) {
     fieldsToUpdate['phone'] = phone;
   }
 
 
-  // let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
-  //   new: true,
-  //   runValidators: true
-  // });
+  let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
 
   res.status(200).json({
     success: true,
