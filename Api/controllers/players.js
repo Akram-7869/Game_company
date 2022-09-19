@@ -1684,9 +1684,12 @@ exports.sendAppUrl = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/me
 // @access    Private
 exports.sendotp = asyncHandler(async (req, res, next) => {
-  let { mobile } = req.body;
-  const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
-  let message = ""
+  let { phone } = req.body;
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player not found`)
+    );
+  }
   if (req.player.phoneStatus !== 'verified') {
     if (player.verifyPhoneExpire < Date.now()) {
       return next(
