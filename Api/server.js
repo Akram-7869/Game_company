@@ -141,158 +141,158 @@ io.on('connection', socket => {
   // socket.emit('res', { ev: 'connected', data });
   //console.log('contedt');
   //socket.join('notification_channel');
+  try {
+    socket.on('join', async (d) => {
+      let dataParsed = d;// JSON.parse(d);
+      let { userId, lobbyId, maxp = 4 } = dataParsed;
 
-  socket.on('join', async (d) => {
-    let dataParsed = d;// JSON.parse(d);
-    let { userId, lobbyId, maxp = 4 } = dataParsed;
 
+      let roomName = '';
+      if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
+        roomName = publicRoom[lobbyId]['roomName'];
+        console.log('Existjoin-', roomName);
+      } else {
+        roomName = makeid(5);
 
-    let roomName = '';
-    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && publicRoom[lobbyId]['played'] === false) {
+        publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
+        state[roomName] = { full: 0, players: [] };
+        console.log('join-', roomName);
+      }
+      // console.log('room', roomName);
+      joinRoom(socket, userId, roomName, dataParsed);
+      socket.join(roomName);
 
-      console.log('f');
-
-      roomName = publicRoom[lobbyId]['roomName'];
-      console.log('Existjoin-', roomName);
-    } else {
-      roomName = makeid(5);
-
-      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
-      state[roomName] = { full: 0, players: [] };
-      console.log('join-', roomName);
-    }
-    // console.log('room', roomName);
-    joinRoom(socket, userId, roomName, dataParsed);
-    socket.join(roomName);
-
-    let data = {
-      roomName, users: getRoomUsers(roomName),
-      userId: userId
-    }
-    if (state[roomName]) {
-      publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
-      if (data.users.length == maxp || data.users.length == 0) {
+      let data = {
+        roomName, users: getRoomUsers(roomName),
+        userId: userId
+      }
+      if (state[roomName]) {
+        publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
+        if (data.users.length == maxp || data.users.length == 0) {
+          delete publicRoom[lobbyId];
+        }
+      } else {
         delete publicRoom[lobbyId];
       }
-    } else {
-      delete publicRoom[lobbyId];
-    }
 
-    io.to(roomName).emit('res', { ev: 'join', data });
-  });
+      io.to(roomName).emit('res', { ev: 'join', data });
+    });
 
 
-  socket.on('sendToRoom', (d) => {
+    socket.on('sendToRoom', (d) => {
 
-    let { room, ev, data } = d;//JSON.parse(d);
+      let { room, ev, data } = d;//JSON.parse(d);
 
-    io.to(room).emit('res', { ev, data });
+      io.to(room).emit('res', { ev, data });
 
-  });
-  //leave
-  socket.on('leave', (d) => {
-    let { room } = d;
+    });
+    //leave
+    socket.on('leave', (d) => {
+      let { room } = d;
 
-    userLeave(socket);
-    socket.leave(room);
-    let data = {
-      room: room,
-      users: getRoomUsers(room)
-    };
-    console.log('leave-', d);
-    io.to(room).emit('res', { ev: 'leave', data });
-  });
+      userLeave(socket);
+      socket.leave(room);
+      let data = {
+        room: room,
+        users: getRoomUsers(room)
+      };
+      console.log('leave-', d);
+      io.to(room).emit('res', { ev: 'leave', data });
+    });
 
-  // Runs when client disconnects
-  socket.on('disconnect', () => {
+    // Runs when client disconnects
+    socket.on('disconnect', () => {
 
-    let { room, userId, lobbyId } = socket;
+      let { room, userId, lobbyId } = socket;
 
-    userLeave(socket);
-    //console.log('disconnect-inputstring');
-    let data = {
-      room: room,
-      users: getRoomUsers(room),
-      userId: userId
-    };
+      userLeave(socket);
+      //console.log('disconnect-inputstring');
+      let data = {
+        room: room,
+        users: getRoomUsers(room),
+        userId: userId
+      };
 
-    console.log('disconnect-', room, userId, lobbyId);
-    io.to(socket.room).emit('res', { ev: 'disconnect', data });
+      console.log('disconnect-', room, userId, lobbyId);
+      io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
-  });
-  // Runs when client disconnects
-  socket.on('gameStart', async (d) => {
+    });
+    // Runs when client disconnects
+    socket.on('gameStart', async (d) => {
 
-    let { room, lobbyId, userId } = d;
-    let playerCount = 0;
-    if (state[room]) {
-      playerCount = state[room].players.length;
-    }
-    await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, { playerCount }, { upsert: true });
-
-
-    //start game Withb boat
-    if (publicRoom[lobbyId]) {
-      let rn = publicRoom[lobbyId]['roomName'];
-      if (rn == room) {
-        publicRoom[lobbyId]['played'] = true;
+      let { room, lobbyId, userId } = d;
+      let playerCount = 0;
+      if (state[room]) {
+        playerCount = state[room].players.length;
       }
+      await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, { playerCount }, { upsert: true });
 
-    }
-    //remove empty 
-    for (let r in state) {
-      if (state[r]['players'].length === 0) {
-        delete state[r];
+
+      //start game Withb boat
+      if (publicRoom[lobbyId]) {
+        let rn = publicRoom[lobbyId]['roomName'];
+        if (rn == room) {
+          publicRoom[lobbyId]['played'] = true;
+        }
+
       }
-    }
-    //remove 
-    for (let l in publicRoom) {
-      if (publicRoom[l]['roomName']) {
-        let rn = publicRoom[l]['roomName'];
-        if (!state[rn] || state[rn]['players'].length === 0) {
-          delete publicRoom[l];
+      //remove empty 
+      for (let r in state) {
+        if (state[r]['players'].length === 0) {
+          delete state[r];
         }
       }
-    }
-    // if (publicRoom[socket['lobbyId']]['roomName'] == room) {
-    //   publicRoom[socket['lobbyId']]['roomName'] = '';
-    //   publicRoom[socket['lobbyId']]['playerCount'] = 0;
-    // }
-    let data = {
-      room: room,
-      users: getRoomUsers(room),
-      lobbyId,
-      userId: userId
-    };
-    console.log('gameStart-', d);
-    io.to(socket.room).emit('res', { ev: 'gameStart', data });
-
-  });
-  //move user
-  socket.on('moveuser', (d) => {
-
-    let { room, userId, action } = d; //JSON.parse(d);
-    if (state[room]) {
-
-      const index = state[room].players.findIndex(user => user.userId === userId);
-      let toIndex
-      if (action === 'win') {
-        toIndex = index - 1;
-      } else {
-        toIndex = index + 1
+      //remove 
+      for (let l in publicRoom) {
+        if (publicRoom[l]['roomName']) {
+          let rn = publicRoom[l]['roomName'];
+          if (!state[rn] || state[rn]['players'].length === 0) {
+            delete publicRoom[l];
+          }
+        }
       }
-      arraymove(state[room].players, index, 1);
+      // if (publicRoom[socket['lobbyId']]['roomName'] == room) {
+      //   publicRoom[socket['lobbyId']]['roomName'] = '';
+      //   publicRoom[socket['lobbyId']]['playerCount'] = 0;
+      // }
+      let data = {
+        room: room,
+        users: getRoomUsers(room),
+        lobbyId,
+        userId: userId
+      };
+      console.log('gameStart-', d);
+      io.to(room).emit('res', { ev: 'gameStart', data });
 
-    }
+    });
+    //move user
+    socket.on('moveuser', (d) => {
+
+      let { room, userId, action } = d; //JSON.parse(d);
+      if (state[room]) {
+
+        const index = state[room].players.findIndex(user => user.userId === userId);
+        let toIndex
+        if (action === 'win') {
+          toIndex = index - 1;
+        } else {
+          toIndex = index + 1
+        }
+        arraymove(state[room].players, index, 1);
+
+      }
 
 
 
-    let data = {
-      room: room,
-      users: getRoomUsers(room)
-    };
-    io.to(room).emit('res', { ev: 'moveuser', data });
-  });
+      let data = {
+        room: room,
+        users: getRoomUsers(room)
+      };
+      io.to(room).emit('res', { ev: 'moveuser', data });
+    });
+  } catch (error) {
+
+  }
 });
 
 function arraymove(arr, fromIndex, toIndex) {
