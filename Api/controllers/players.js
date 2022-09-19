@@ -1693,11 +1693,11 @@ exports.sendotp = asyncHandler(async (req, res, next) => {
   console.log(req.player.verifyPhoneExpire, req.player.verifyPhoneExpire > Date.now())
 
   if (req.player.phoneStatus !== 'verified') {
-    // if (req.player.verifyPhoneExpire > Date.now()) {
-    //   return next(
-    //     new ErrorResponse(`Try after 10 min`)
-    //   );
-    // }
+    if (req.player.verifyPhoneExpire > Date.now()) {
+      return next(
+        new ErrorResponse(`Try after 10 min`)
+      );
+    }
 
     let vcode = Math.floor(1000 + Math.random() * 9000);
     const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
@@ -1710,7 +1710,7 @@ exports.sendotp = asyncHandler(async (req, res, next) => {
       new: true,
       runValidators: true
     });
-    //   let x = await smsOtp(phone, vcode, sms.one.TEMPLATE_ADMIN_PASS, sms.one.AUTHKEY);
+    let x = await smsOtp(phone, vcode, sms.one.TEMPLATE_ADMIN_PASS, sms.one.AUTHKEY);
 
   }
 
