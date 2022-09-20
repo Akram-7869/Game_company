@@ -145,10 +145,10 @@ io.on('connection', socket => {
   socket.on('join', async (d) => {
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4 } = dataParsed;
-    console.log('socket.lobbyId', socket.lobbyId)
-    if (socket.lobbyId && socket.lobbyId !== lobbyId) {
-      socket.leave(roomName);
-    }
+    // console.log('socket.lobbyId', socket.lobbyId)
+    // if (socket.lobbyId && socket.lobbyId !== lobbyId) {
+    //   socket.leave(roomName);
+    // }
     let roomName = '';
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
