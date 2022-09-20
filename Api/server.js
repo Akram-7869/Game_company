@@ -177,7 +177,7 @@ io.on('connection', socket => {
       delete publicRoom[lobbyId];
     }
 
-    socket.to(roomName).emit('res', { ev: 'join', data });
+    io.to(roomName).emit('res', { ev: 'join', data });
   });
 
 
