@@ -997,7 +997,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Game id requied`)
     );
   }
-  if (req.player.balance < amount) {
+  if (req.player.deposit < amount) {
     return next(
       new ErrorResponse(`Insufficent balance`)
     );
@@ -1009,6 +1009,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'transactionType': "debit",
     'note': note,
     'prevBalance': req.player.balance,
+    'logType': req.body.logType,
     status: 'complete', paymentStatus: 'SUCCESS'
   }
 
@@ -1226,7 +1227,84 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
+  let player = req.player;//await Player.findById(req.body.id);
+  let { amount, gameId, note } = req.body;
+  console.log('creditAmount', gameId);
+  if (req.body.logType !== "reverse") {
+    new ErrorResponse(`Invalid amount`);
+  }
+  if (!note) {
+    return next(
+      new ErrorResponse(`Note is required`)
+    );
+  }
+  if (!req.player || req.player.status !== 'active') {
+    return next(
+      new ErrorResponse(`Player Not Found`)
+    );
+  }
+
+  if (amount < 0 || !gameId) {
+    return next(
+      new ErrorResponse(`Invalid amount`)
+    );
+  }
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player Not found`)
+    );
+  }
+  let leaderboard = await PlayerGame.findOne({ 'gameId': gameId, paymentStatus: 'paid' });
+  if (leaderboard) {
+    return next(
+      new ErrorResponse(`Game Paid`)
+    );
+
+  }
+  let tranReverse = await Transaction.findOne({ 'gameId': gameId, logType: 'reverse', playerId: player._id });
+  if (tranReverse) {
+    return next(
+      new ErrorResponse(`Transaction not found`)
+    );
+
+  }
+  //let gameRec = await PlayerGame.findOne({ 'gameId': gameId, playerCount: { $gt: 0 } });
+  let tranJoin = await Transaction.findOne({ 'gameId': gameId, logType: 'join', playerId: player._id });
+
+  if (!tranJoin) {
+    return next(
+      new ErrorResponse(`Transaction not found`)
+    );
+
+  }
+  let commision = 0;
+  let tranData = {
+    'playerId': player._id,
+    'amount': tranJoin.amount,
+    'transactionType': "credit",
+    'note': note,
+    'prevBalance': player.balance,
+    'adminCommision': commision,
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'logType': 'reverse',
+    'gameId': gameId
+  }
+
+
+  console.log('reseved');
+  let tran = await Transaction.create(tranData);
+  player = await tran.creditPlayerDeposit(tranJoin.amount);
+
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});
 
 // @desc      Get current logged in user
 // @route     POST /api/v1/auth/me
