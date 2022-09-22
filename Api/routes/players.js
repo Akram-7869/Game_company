@@ -46,6 +46,8 @@ router.post('/savefbtoken', protect, playerCtl.savefbtoken);
 router.post('/withdraw/request', protect, playerCtl.withDrawRequest);
 router.post('/debit', protect, playerCtl.debiteAmount);
 router.post('/credit/', protect, playerCtl.creditAmount);
+router.post('/reverse/', protect, playerCtl.reverseAmount);
+
 router.post('/debitBonus/', protect, playerCtl.debitBonus);
 router.post('/creditBonus/', protect, playerCtl.creditBonus);
 
