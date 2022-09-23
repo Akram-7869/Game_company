@@ -1399,10 +1399,11 @@ exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
     const commision = betAmout - winAmount;
     Dashboard.totalIncome(betAmout, winAmount, commision);
     updatedData['isBot'] = true;
-    updatedData['playerId'] = looserPlayer.userId;
+    //updatedData['playerId'] = looserPlayer.userId;
     updatedData['gameStatus'] = 'lost';
     updatedData['note'] = note;
     updatedData['opponentName'] = winnerPlayer.userName;
+    updatedData['opponentId'] = winnerPlayer.userId;
   } else {
     updatedData['opponentName'] = looserPlayer.userName;
     updatedData['isBot'] = looserPlayer.isBot

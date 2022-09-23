@@ -129,6 +129,8 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
 
 const { makeid } = require('./utils/utils');
+const Tournament = require('./models/Tournament');
+const Player = require('./models/Player');
 const state = {};
 const publicRoom = {};
 io.use(function (socket, next) {
@@ -145,37 +147,45 @@ io.on('connection', socket => {
   socket.on('join', async (d) => {
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4 } = dataParsed;
-    // console.log('socket.lobbyId', socket.lobbyId)
-    // if (socket.lobbyId && socket.lobbyId !== lobbyId) {
-    //   socket.leave(roomName);
-    // }
+    let lobby = await Tournament.findById(lobbyId);
+    if (!lobby) {
+      console.log('looby-not-found');
+      return;
+    }
+
+    let player = await Player.findOne({ _id: userId, 'status': 'active', 'deposit': { $gte: lobby.betAmount } });
+    if (!player) {
+      console.log('player-not-found');
+      return;
+    }
     let roomName = '';
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
-      console.log('Existjoin-', roomName);
+      await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
+      console.log('join-exisitng', roomName);
     } else {
       roomName = makeid(5);
-
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
-      state[roomName] = { full: 0, players: [] };
-      console.log('join-', roomName);
+      state[roomName] = { 'created': Date.now() + 600000, players: [] };
+      console.log('create-room-', roomName);
+      await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1 });
     }
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
     socket.join(roomName);
 
     let data = {
-      roomName, users: getRoomUsers(roomName),
+      roomName, users: getRoomLobbyUsers(roomName, lobbyId),
       userId: userId
     }
-    if (state[roomName]) {
-      publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
-      if (data.users.length == maxp || data.users.length == 0) {
-        delete publicRoom[lobbyId];
-      }
-    } else {
-      delete publicRoom[lobbyId];
-    }
+    // if (state[roomName]) {
+    //   publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
+    //   if (data.users.length == maxp || data.users.length == 0) {
+    //     delete publicRoom[lobbyId];
+    //   }
+    // } else {
+    //   delete publicRoom[lobbyId];
+    // }
 
     io.to(roomName).emit('res', { ev: 'join', data });
   });
@@ -223,24 +233,7 @@ io.on('connection', socket => {
   socket.on('gameStart', async (d) => {
 
     let { room, lobbyId, userId } = d;
-    let playerCount = 0;
-    if (state[room]) {
-      playerCount = state[room].players.length;
-    }
-    await PlayerGame.findOneAndUpdate({ 'gameId': room, 'tournamentId': lobbyId }, { playerCount }, { upsert: true });
 
-    const sroom = io.sockets.adapter.rooms[room];
-
-    let allUsers;
-    if (sroom) {
-      allUsers = sroom.sockets;
-    }
-
-    let numClients = 0;
-
-    if (allUsers) {
-      numClients = Object.keys(allUsers).length;
-    }
     //start game Withb boat
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
@@ -249,28 +242,10 @@ io.on('connection', socket => {
       }
 
     }
-    //remove empty 
-    for (let r in state) {
-      if (state[r]['players'].length === 0) {
-        delete state[r];
-      }
-    }
-    //remove 
-    for (let l in publicRoom) {
-      if (publicRoom[l]['roomName']) {
-        let rn = publicRoom[l]['roomName'];
-        if (!state[rn] || state[rn]['players'].length === 0) {
-          delete publicRoom[l];
-        }
-      }
-    }
-    // if (publicRoom[socket['lobbyId']]['roomName'] == room) {
-    //   publicRoom[socket['lobbyId']]['roomName'] = '';
-    //   publicRoom[socket['lobbyId']]['playerCount'] = 0;
-    // }
+
     let data = {
       room: room,
-      users: getRoomUsers(room),
+      users: getRoomLobbyUsers(room, lobbyId),
       lobbyId,
       userId: userId
     };
@@ -312,16 +287,16 @@ function arraymove(arr, fromIndex, toIndex) {
 
 
 
-let joinRoom = (socket, palyerId, room, d = {}) => {
-  //console.log('join room', socket.id, palyerId, room);
+let joinRoom = (socket, playerId, room, d = {}) => {
+  //console.log('join room', socket.id, playerId, room);
   socket['room'] = room;
-  socket['userId'] = palyerId;
+  socket['userId'] = playerId;
   socket['lobbyId'] = d.lobbyId;
   let index = -1;
   if (state[room]) {
-    index = state[room].players.findIndex(user => user.userId === palyerId);
+    index = state[room].players.findIndex(user => user.userId === playerId);
     //console.log('i-', index);
-    if (index === -1) {
+    if (index === -1 && d.lobbyId === d.lobbyId) {
       state[room].players.push(d);
     }
   }
@@ -333,7 +308,22 @@ let getRoomUsers = (room) => {
   }
   return [];
 }
+let getRoomLobbyUsers = (room, lobbyId) => {
+
+  if (state[room]) {
+
+    for (let x of state[room].players) {
+      if (x.lobbyId != lobbyId) {
+        return [];
+      }
+    }
+
+    return state[room].players;
+  }
+  return [];
+}
 let userLeave = (s) => {
+  console.log('leav-func')
   if (state[s.room] && state[s.room].players.length !== 0) {
     //delete state[s.room].players[s.userId];
     const index = state[s.room].players.findIndex(user => user.userId === s.userId);
@@ -344,15 +334,16 @@ let userLeave = (s) => {
   }
 
   for (let r in state) {
-    if (state[r]['players'].length === 0) {
+    if (state[r]['created'] < Date.now()) {
+      console.log('del-old');
       delete state[r];
     }
   }
-  //remove 
+  //remove lobby 
   for (let l in publicRoom) {
     if (publicRoom[l]['roomName']) {
       let rn = publicRoom[l]['roomName'];
-      if (!state[rn] || state[rn]['players'].length === 0) {
+      if (!state[rn]) {
         delete publicRoom[l];
       }
     }
@@ -363,7 +354,7 @@ server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
-  console.log(`uError: ${err.message}`.red);
+  console.log(err);
   // Close server & exit process
   // server.close(() => process.exit(1));
 });

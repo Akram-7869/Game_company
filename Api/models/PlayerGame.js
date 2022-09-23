@@ -5,6 +5,10 @@ const PlayerGameSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Players'
   },
+  opponentId: {
+    type: mongoose.Schema.ObjectId,
+
+  },
   gameId: {
     type: String
 
@@ -61,6 +65,10 @@ const PlayerGameSchema = new mongoose.Schema({
     default: 0
   },
   playerCount: {
+    type: Number,
+    default: 0
+  },
+  refundCount: {
     type: Number,
     default: 0
   },
