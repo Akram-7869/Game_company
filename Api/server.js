@@ -159,7 +159,7 @@ io.on('connection', socket => {
       return;
     }
     let roomName = '';
-    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
+    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] <= maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
       await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
       console.log('join-exisitng', roomName);
@@ -178,14 +178,14 @@ io.on('connection', socket => {
       roomName, users: getRoomLobbyUsers(roomName, lobbyId),
       userId: userId
     }
-    // if (state[roomName]) {
-    //   publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
-    //   if (data.users.length == maxp || data.users.length == 0) {
-    //     delete publicRoom[lobbyId];
-    //   }
-    // } else {
-    //   delete publicRoom[lobbyId];
-    // }
+    if (state[roomName]) {
+      publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
+      // if (data.users.length == maxp || data.users.length == 0) {
+      //   delete publicRoom[lobbyId];
+      // }
+    } else {
+      // delete publicRoom[lobbyId];
+    }
     io.to(roomName).emit('res', { ev: 'join', data });
   });
 
@@ -232,22 +232,20 @@ io.on('connection', socket => {
   socket.on('gameStart', async (d) => {
 
     let { room, lobbyId, userId } = d;
-
-    //start game Withb boat
-    if (publicRoom[lobbyId]) {
-      let rn = publicRoom[lobbyId]['roomName'];
-      if (rn == room) {
-        publicRoom[lobbyId]['played'] = true;
-      }
-
-    }
-
     let data = {
       room: room,
       users: getRoomLobbyUsers(room, lobbyId),
       lobbyId,
       userId: userId
     };
+    //start game Withb boat
+    if (publicRoom[lobbyId]) {
+      let rn = publicRoom[lobbyId]['roomName'];
+      if (rn == room || data.users.length == 2) {
+        publicRoom[lobbyId]['played'] = true;
+      }
+
+    }
     console.log('gameStart-', d);
     io.to(socket.room).emit('res', { ev: 'gameStart', data });
 
