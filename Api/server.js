@@ -249,7 +249,7 @@ io.on('connection', socket => {
       lobbyId,
       userId: userId
     };
-    console.log('gameStart-', d, numClients);
+    console.log('gameStart-', d);
     io.to(socket.room).emit('res', { ev: 'gameStart', data });
 
   });
