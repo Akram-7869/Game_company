@@ -159,7 +159,7 @@ io.on('connection', socket => {
       return;
     }
     let roomName = '';
-    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] <= maxp && !publicRoom[lobbyId]['played']) {
+    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
       await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
       console.log('join-exisitng', roomName);
