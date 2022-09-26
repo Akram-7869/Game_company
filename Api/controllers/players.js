@@ -1321,23 +1321,13 @@ exports.playerInfo = asyncHandler(async (req, res, next) => {
 // @desc      Get current logged in user
 // @route     POST /api/v1/auth/me
 // @access    Private
-exports.getOnlinePlayers = asyncHandler(async (req, res, next) => {
-  // const user = await User.findById(req.user.id);
+exports.gameStatus = asyncHandler(async (req, res, next) => {
+  let { gameId } = req.body;
+  let gameRec = await PlayerGame.findOne({ 'gameId': gameId });
 
   res.status(200).json({
     success: true,
-    data: { count: 5 }
-  });
-});
-// @desc      Get current logged in user
-// @route     POST /api/v1/auth/me
-// @access    Private
-exports.editOnlinePlayers = asyncHandler(async (req, res, next) => {
-  // const user = await User.findById(req.user.id);
-
-  res.status(200).json({
-    success: true,
-    data: { count: 5 }
+    data: gameRec
   });
 });
 
