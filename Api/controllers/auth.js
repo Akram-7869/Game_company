@@ -349,3 +349,106 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     data: user
   });
 });
+// @desc      Register user
+// @route     POST /api/v1/auth/register
+// @access    Public
+exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
+  let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
+
+  const CLIENT_ID = '60490012283-8fgnb9tk35j5bpeg6pq09vmk2notiehc.apps.googleusercontent.com';
+  const client = new OAuth2Client(CLIENT_ID);
+
+  if (!email || !deviceToken) {
+    return next(
+      new ErrorResponse(`select email`)
+    );
+  }
+  let ticket;
+  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] });
+  if (player) {
+    if (player.email !== email) {
+      return next(
+        new ErrorResponse(`This device is registered with another email ID`)
+      );
+    }
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: firebaseToken,
+        audience: CLIENT_ID,
+      });
+
+    } catch (error) {
+
+      return next(
+        new ErrorResponse(`Unable to Rgister`)
+      );
+    }
+
+    console.log('playerRegisterEmail-existing');
+
+    // if (player.deviceToken !== deviceToken) {
+    //   return next(
+    //     new ErrorResponse(`This device is registered with another email ID`)
+    //   );
+    // }
+
+    let fieldsToUpdate = {
+      'firebaseToken': firebaseToken, 'deviceToken': deviceToken
+    }
+    player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+
+  } else {
+    console.log('playerRegisterEmail-new');
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: firebaseToken,
+        audience: CLIENT_ID,
+      });
+
+    } catch (error) {
+
+      return next(
+        new ErrorResponse(`Unable to Rgister`)
+      );
+    }
+
+    let payload = ticket.getPayload();
+    let userid = payload['sub'];
+    email = payload['email'];
+    firstName = payload['name'];
+    picture = payload['picture'];
+
+    // create new player
+    let addamount = 10;
+    let data = {
+      firstName,
+      'email': email,
+      'picture': picture,
+      'deviceToken': deviceToken,
+      'firebaseToken': firebaseToken,
+      'status': 'active',
+      'countryCode': countryCode,
+      'refer_code': makeid(6),
+      'balance': addamount,
+      'deposit': addamount,
+    };
+    // Create user
+    player = await Player.create(data);
+    let tranData = {
+      playerId: player._id,
+      amount: addamount,
+      transactionType: 'credit',
+      note: 'player register',
+      prevBalance: 0, logType: 'deposit',
+      status: 'complete', paymentStatus: 'SUCCESS'
+    }
+    let tran = await Transaction.create(tranData);
+
+  }
+  //await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
+  //subscribeToTopic(firebaseToken);
+  sendTokenResponse(player, 200, res);
+});

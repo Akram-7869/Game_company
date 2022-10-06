@@ -838,7 +838,8 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
-  player = await tran.debitPlayerDeposit(amount);
+  //player = await tran.debitPlayerDeposit(amount);
+  player = await tran.debitPlayer(amount);
 
   let dashUpdate = {};
   if (req.body.logType === 'join') {
@@ -1003,7 +1004,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     // let tran1 = await Transaction.create(tranData);
     // player = await tran1.debitPlayer(commision);
 
-    player = await tran.creditPlayerWinings(amount);
+    player = await tran.creditPlayer(amount);
     let playerGame = {
       'playerId': req.player._id,
       'amountWon': amount,
@@ -1016,7 +1017,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     await PlayerGame.create(playerGame);
 
   } else if (req.body.logType = "bonus") {
-    player = await tran.creditPlayerBonus(amount);
+    player = await tran.creditPlayer(amount);
   }
 
   //console.log('debit', player.balance);
