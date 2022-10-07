@@ -3,6 +3,7 @@ var app = require('express')();
 var express = require('express');
 var path = require('path');
 var http = require('http').Server(app);
+const morgan = require('morgan');
 var validator = require('express-validator');
 
 const dotenv = require('dotenv');
@@ -23,7 +24,12 @@ var flash = require('connect-flash');
 var i18n = require("i18n-express");
 const { siteDate, siteData } = require('./middleware/auth');
 
+// Dev logging middleware
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+  app.use('/public', express.static('public'));
 
+}
 // enable files upload
 app.use(fileUpload({
   createParentPath: true
@@ -34,12 +40,10 @@ app.use(fileUpload({
 //app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(session({
   key: 'user_sid',
-  secret: 'som4eran4dpanelo6n9stuff0s',
+  secret: 'som4erduckan4dpanelo6n9stuff0s',
   resave: false,
   saveUninitialized: false,
-  cookie: {
-    expires: 3600000
-  }
+
 }));
 
 
@@ -53,7 +57,6 @@ app.use(i18n({
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/public', express.static('public'));
 
 
 app.use(SettingController.getSiteData);
@@ -62,12 +65,7 @@ AuthController(app);
 
 //For set layouts of html view
 var expressLayouts = require('express-ejs-layouts');
-app.use(function (req, res, next) {
-  req.app.locals['user'] = req.session.user;
-
-  next();
-});
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
 // Define All Route 

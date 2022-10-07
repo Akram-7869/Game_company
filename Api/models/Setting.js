@@ -10,12 +10,11 @@ const SettingSchema = new mongoose.Schema({
         type: Array,
     },
     siteLogo: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'File',
+        type: String,
+
     },
     favicon: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'File',
+        type: String,
     },
     one: {},
     commission: {

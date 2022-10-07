@@ -79,11 +79,16 @@
                                 <thead>
                                     <tr>
                                         <th>Srno</th>
-                                        <th>Name</th>
-                                        <th>Mobile</th>
-                                        <th>Won</th>
+                                        <th>Email</th>
+                                        <th>amount</th>
+                                        <th>status</th>
+                                        <th>opponent</th>
+                                        <th>bot</th>
                                         <th>Note</th>
+                                        <th>p-Count</th>
                                         <th>Played</th>
+                                        <th>Players</th>
+                                        <th>pstatus</th>
                                         <!-- <th>Action</th> -->
                                     </tr>
                                 </thead>
@@ -157,7 +162,7 @@
                                         .text('search')
                                         .click(function () {
                                             // self.column(1).search('ccccccccccccccc').draw();
-                                            //   self.search(input.val()).draw();
+                                              self.search(input.val()).draw();
                                         }),
                                     $clearButton = $('<button>')
                                         .text('clear')
@@ -169,6 +174,7 @@
                             },
                             "processing": true,
                             "serverSide": true,
+                            "ordering": false,
                             "ajax": {
                                 url: "<%=process.env.ADMIN_URL%>/admin/game/data", type: "post",
                                 data: function (d) {
@@ -179,22 +185,42 @@
                                     return d;
                                 }
                             },
+
                             "columns": [
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return meta.row + 1;
                                     }
                                 },
-                                { data: 'playerId.firstName', "defaultContent": "" },
+                                { data: 'playerId.email', "defaultContent": "" },
 
-                                { data: 'playerId.phone', "defaultContent": "" },
                                 { data: 'amountWon', "defaultContent": "0" },
+                                { data: 'gameStatus', "defaultContent": "WON" },
+                                {
+                                    data: 'opponentName', "defaultContent": ""
+                                },
+                                {
+                                    data: 'isBot', "defaultContent": ""
+                                },
                                 { data: 'note', "defaultContent": "WON" },
+                                {
+                                    data: 'playerCount', "defaultContent": "0"
+                                },
                                 {
                                     data: 'createdAt', render: function (data) {
                                         return moment(data).format('DD-MM-YYYY h:mm a');
                                     }
                                 },
+                                {
+                                    data: null, "render": function (data, type, full, meta) {
+                                        let t = full.players;
+                                        let o = '<textarea cols=70 rows=25>';
+                                        o += t ? JSON.stringify(JSON.parse(t), undefined, 2) : '';
+                                        o += "</textarea>";
+                                        return o;
+                                    }
+                                },
+                                { data: 'staus', "defaultContent": "" },
                                 // {
                                 //     data: null, "render": function (data, type, full, meta) {
                                 //         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/playerhistory/'

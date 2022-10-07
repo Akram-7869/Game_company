@@ -43,6 +43,7 @@ exports.getDashboard = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Dashboards/:id
 // @access    Private/Admin
 const getGraphData = async (req) => {
+  return [];
   if (req.period === 'year') {
     return getGraphMonth(req)
   }
@@ -143,6 +144,7 @@ const getGraphMonth = async (req) => {
 };
 
 const adminCommision = async () => {
+  return 0;
   const row = await Transaction.aggregate([
     {
       '$group': {
@@ -165,39 +167,46 @@ const adminCommision = async () => {
 exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   const row = await Dashboard.findOne({ 'type': req.params.type }).lean();
   row['livePlayers'] = req.io.engine.clientsCount;
-  let payout = await payoutTotal();
-  //console.log('payoutTotal', payout);
-  row['withdrawRequest'] = payout['totalCount'];
-  row['withdrawTotal'] = payout['totalWithdraw'];
-
-  row['supportRequest'] = await Ticket.countDocuments();
-  row['gameCount'] = await PlayerGame.countDocuments();
-  row['totalIncome'] = await adminCommision();
-  const graph = await getGraphData(req);
-  row['totals'] = await calTotal();
 
 
+  row['totals'] = {}; //await calTotal();
+
+  row['totalPlayers'] = await Player.estimatedDocumentCount();
+  row['payoutCount'] = await Transaction.countDocuments({ logType: 'withdraw', paymentStatus: 'PROCESSING' });
   res.status(200).json({
     success: true,
-    data: { row, graph }
+    data: { row, graph: [] }
   });
 });
 let calTotal = async () => {
+  const row = await Transaction.aggregate([
+    {
+      '$match': {
+        'transactionType': 'debit',
+        'logType': 'game',
+        'status': 'complete'
+      }
+    }, {
+      '$group': {
+        '_id': '$logType',
+        'gameTotal': {
+          '$sum': '$amount'
+        }
+      }
+    }
+  ]);
 
-  const total = await Player.aggregate([{
-    $group: {
-      _id: null,
-      bonusTotal: {
-        $sum: "$bonus"
-      },
-      balanceTotal: {
-        $sum: "$balance"
-      },
-      depositTotal: {
-        $sum: "$deposit"
-      },
-      winingsTotal: {
-        $sum: "$winings"
+  const total = await Transaction.aggregate([{
+    '$match': {
+      'transactionType': 'credit',
+      'logType': 'won',
+      'status': 'complete'
+    }
+  }, {
+    '$group': {
+      '_id': '$logType',
+      'winTotal': {
+        '$sum': '$amount'
       }
     }
   }]);
@@ -209,6 +218,14 @@ let calTotal = async () => {
       winingsTotal: 0
     };
   }
+  if (row && total) {
+    total[0]['balanceTotal'] = row[0]['gameTotal'] - total[0]['winTotal'];
+    total[0]['gameTotal'] = row[0]['gameTotal'];
+  } else {
+    total[0]['balanceTotal'] = 0;
+    total[0]['gameTotal'] = 0;
+  }
+
   return total[0];
 
 }
@@ -244,6 +261,18 @@ exports.getGraphData = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: { graph }
+  });
+});
+// @desc      Get single Dashboard
+// @route     GET /api/v1/auth/Dashboards/filter/:id
+// @access    Private/Admin
+exports.totalIncome = asyncHandler(async (req, res, next) => {
+  let c = await calTotal();
+
+  //console.log('graph', graph, req.body)
+  res.status(200).json({
+    success: true,
+    data: c
   });
 });
 

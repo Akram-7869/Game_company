@@ -1,22 +1,75 @@
-const crypto = require('crypto');
+//const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const sendEmail = require('../utils/sendEmail');
+//const sendEmail = require('../utils/sendEmail');
 const Player = require('../models/Player');
 const User = require('../models/User');
-const Transactions = require('../models/Transaction');
+const Transaction = require('../models/Transaction');
 const Setting = require('../models/Setting');
 const Dashboard = require('../models/Dashboard');
-const axios = require('axios')
-const admin = require('../utils/fiebase')
-
-
-
+//const axios = require('axios')
+//const admin = require('../utils/fiebase')
+const fs = require('fs');
+var path = require('path');
 const { makeid } = require('../utils/utils');
+const { OAuth2Client } = require('google-auth-library');
+
+
+
+// @desc      Register user
+// @route     POST /api/v1/auth/register
+// @access    Public
+exports.getByPhone = asyncHandler(async (req, res, next) => {
+  res.status(200).json({});
+  console.log('getByPhone');
+  const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
+  if (!phone) {
+    return next(
+      new ErrorResponse(`select phone`)
+    );
+  }
+
+  let player = await Player.findOne({ 'phone': phone, 'deviceToken': deviceToken });
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player not found`)
+    );
+  }
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+
+});
+exports.getByEmail = asyncHandler(async (req, res, next) => {
+  res.status(200).json({});
+  console.log('getByEmail');
+  const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.query;
+  if (!email) {
+    return next(
+      new ErrorResponse(`select email`)
+    );
+  }
+
+  let player = await Player.findOne({ 'email': email, 'deviceToken': deviceToken });
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player not found`)
+    );
+  }
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+
+});
+
 // @desc      Register user
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegister = asyncHandler(async (req, res, next) => {
+  res.status(200).json({});
+  console.log('playerRegister');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.body;
 
   if (!phone) {
@@ -77,12 +130,117 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 
 });
 
+// @desc      Register user
+// @route     POST /api/v1/auth/register
+// @access    Public
+exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
+  let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
 
+  const CLIENT_ID = '60490012283-8fgnb9tk35j5bpeg6pq09vmk2notiehc.apps.googleusercontent.com';
+  const client = new OAuth2Client(CLIENT_ID);
+
+  if (!email || !deviceToken) {
+    return next(
+      new ErrorResponse(`select email`)
+    );
+  }
+  let ticket;
+  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] });
+  if (player) {
+    if (player.email !== email) {
+      return next(
+        new ErrorResponse(`This device is registered with another email ID`)
+      );
+    }
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: firebaseToken,
+        audience: CLIENT_ID,
+      });
+
+    } catch (error) {
+
+      return next(
+        new ErrorResponse(`Unable to Rgister`)
+      );
+    }
+
+    console.log('playerRegisterEmail-existing');
+
+    // if (player.deviceToken !== deviceToken) {
+    //   return next(
+    //     new ErrorResponse(`This device is registered with another email ID`)
+    //   );
+    // }
+
+    let fieldsToUpdate = {
+      'firebaseToken': firebaseToken, 'deviceToken': deviceToken
+    }
+    player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+
+  } else {
+    console.log('playerRegisterEmail-new');
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: firebaseToken,
+        audience: CLIENT_ID,
+      });
+
+    } catch (error) {
+
+      return next(
+        new ErrorResponse(`Unable to Rgister`)
+      );
+    }
+
+    let payload = ticket.getPayload();
+    let userid = payload['sub'];
+    email = payload['email'];
+    firstName = payload['name'];
+    picture = payload['picture'];
+
+    // create new player
+    let addamount = 10;
+    let data = {
+      firstName,
+      'email': email,
+      'picture': picture,
+      'deviceToken': deviceToken,
+      'firebaseToken': firebaseToken,
+      'status': 'active',
+      'countryCode': countryCode,
+      'refer_code': makeid(6),
+      'balance': addamount,
+      'deposit': addamount,
+    };
+    // Create user
+    player = await Player.create(data);
+    let tranData = {
+      playerId: player._id,
+      amount: addamount,
+      transactionType: 'credit',
+      note: 'player register',
+      prevBalance: 0, logType: 'deposit',
+      status: 'complete', paymentStatus: 'SUCCESS'
+    }
+    let tran = await Transaction.create(tranData);
+
+  }
+  //await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
+  //subscribeToTopic(firebaseToken);
+  sendTokenResponse(player, 200, res);
+});
 // @desc      Verify phone
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
-  if (!req.body.deviceToken || !req.body.deviceType || !req.body.code || !req.body.phone) {
+  let { phone, code } = req.body;
+
+
+  if (!req.player || !code || !phone || req.player.status !== 'active') {
     return next(
       new ErrorResponse(`Please provide all required data`)
     );
@@ -92,49 +250,22 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   // await verifyOtp(req.body.phone, req.body.code).then(r=>{
   //   r.data.type
   // })
-  let user = await Player.findOne({ phone: req.body.phone, verifyPhone: req.body.code });
+  let user = await Player.findOne({ _id: req.player._id, verifyPhone: code, verifyPhoneExpire: { $gt: Date.now() } });
   // console.log('verifyPhone', user)
-  const addamount = 10;
+
   if (!user) {
     return next(
       new ErrorResponse(`Invalid Code`)
     );
   }
-
-  if (user.status === 'notverified') {
-    //all ok new user 
-    let fieldsToUpdate = {
-      deviceType: req.body.deviceType,
-      deviceToken: req.body.deviceToken,
-      verifyPhone: undefined,
-      verifyPhoneExpire: undefined,
-      status: 'active',
-      $inc: { balance: addamount, deposit: addamount },
-    }
-
-    let tranData = {
-      playerId: user._id,
-      amount: addamount,
-      transactionType: 'credit',
-      note: 'player register',
-      prevBalance: user.balance,
-      status: 'complete', paymentStatus: 'SUCCESS'
-    }
-    let tran = await Transactions.create(tranData);
-    user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
-      new: true,
-      runValidators: true
-    });
-    let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, { $inc: { totalPlayers: 1 } });
-    sendTokenResponse(user, 200, res);
-
-  } else if (user.status === 'active') {
-    // console.log('coustomer',s);
-    sendTokenResponse(user, 200, res);
-
-  } else {
-    return next(new ErrorResponse(`User is inactive`));
-  }
+  let player = await Player.findByIdAndUpdate(req.player.id, { 'phoneStatus': 'verified', phone }, {
+    new: true,
+    runValidators: true
+  });
+  res.status(200).json({
+    success: true,
+    data: player
+  });
 
 });
 exports.playerLogin = asyncHandler(async (req, res, next) => {
@@ -231,8 +362,29 @@ exports.logout = asyncHandler(async (req, res, next) => {
     data: {}
   });
 });
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.maintanance = asyncHandler(async (req, res, next) => {
+  let bot_profile = [];
 
-let smsOtp = async (mobile, otp, template_id, authkey) => {
+  if (!req.app.get('bot_profile')) {
+    filename = '/img/profile-picture/';
+    filePath = path.resolve(__dirname, '../../assets/' + filename);
+    let pathurl = process.env.IMAGE_URL + filename;
+    //console.log(filePath);
+    fs.readdirSync(filePath).forEach(file => {
+      // console.log(file);
+      bot_profile.push(pathurl + file);
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    data: { bot_profile }
+  });
+});
+exports.smsOtp = async (mobile, otp, template_id, authkey) => {
 
   var params = {
     template_id,

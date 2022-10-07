@@ -8,6 +8,7 @@ router.use(protect);
 
 router.route('/add').post(game.createPlayerGame);
 router.route('/').post(game.getPlayerGames);
+router.route('/leaderboard').get(game.getPlayerLeaderBoard);
 
 router
   .route('/:id')

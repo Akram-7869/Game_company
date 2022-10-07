@@ -353,7 +353,7 @@ exports.getSiteData = asyncHandler(async (req, res, next) => {
                   .then(r => {
                         req.app.locals['sitename'] = r.data.data.one.site_name;
                         req.app.locals['currency_symbol'] = r.data.data.one.currency_symbol;
-                        req.app.locals['siteLogoUrl'] = api_url + '/settings/image/' + r.data.data.siteLogo;
+                        req.app.locals['siteLogoUrl'] = '/assets' + r.data.data.siteLogo;
                         //console.log('', r.data.data);
                         // res.redirect(process.env.ADMIN_URL + '/login');
                         next();

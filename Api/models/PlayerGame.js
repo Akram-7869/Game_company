@@ -5,6 +5,9 @@ const PlayerGameSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Players'
   },
+  opponentId: {
+    type: String
+  },
   gameId: {
     type: String
 
@@ -21,7 +24,6 @@ const PlayerGameSchema = new mongoose.Schema({
   gameStatus: {
     type: String,
     default: 'lost',
-    enum: ['won', 'lost']
   },
   amountPaid: {
     type: Number,
@@ -47,6 +49,35 @@ const PlayerGameSchema = new mongoose.Schema({
   gameOnline: {
     type: Boolean,
     default: true
+  },
+  isBot: {
+    type: Boolean,
+    default: false
+  },
+  opponentName: {
+    type: String,
+    default: ''
+
+  },
+  amountGiven: {
+    type: Number,
+    default: 0
+  },
+  playerCount: {
+    type: Number,
+    default: 0
+  },
+  refundCount: {
+    type: Number,
+    default: 0
+  },
+
+  players: {
+    type: String,
+  },
+  status: {
+    type: String
+
   }
 
 }, {

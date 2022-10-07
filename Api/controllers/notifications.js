@@ -13,75 +13,75 @@ const admin = require('../utils/fiebase');
 // @access    Private/Admin
 exports.getPlayerNotifications = asyncHandler(async (req, res, next) => {
 
-  if (!req.player) {
-    return next(
-      new ErrorResponse(`player  not found`)
-    );
-  }
-  let query = [
-    {
-      '$match': {
-        'status': 'active',
-        // 'createdAt': {
-        //   '$gt': req.player.notificationRead
-        // }
-      }
-    }, {
-      '$lookup': {
-        'from': 'playernotications',
-        'let': {
-          'notificationId': '$_id',
-          'playerId': req.player._id
-        },
-        'pipeline': [
-          {
-            '$match': {
-              '$expr': {
-                '$and': [
-                  {
-                    '$eq': [
-                      '$notificationId', '$$notificationId'
-                    ]
-                  }, {
-                    '$eq': [
-                      '$playerId', '$$playerId'
-                    ]
-                  }, {
-                    '$eq': [
-                      '$read', false
-                    ]
-                  }
-                ]
-              }
-            }
-          }
-        ],
-        'as': 'player_not'
-      }
-    }, {
-      '$match': {
-        '$or': [
-          {
-            'player_not.0': {
-              '$exists': true
-            }
-          }, {
-            'sendTo': 'all'
-          }
-        ]
-      }
-    }, { $sort: { _id: -1 } }
-  ];
+  // if (!req.player) {
+  //   return next(
+  //     new ErrorResponse(`player  not found`)
+  //   );
+  // }
+  // let query = [
+  //   {
+  //     '$match': {
+  //       'status': 'active',
+  //       // 'createdAt': {
+  //       //   '$gt': req.player.notificationRead
+  //       // }
+  //     }
+  //   }, {
+  //     '$lookup': {
+  //       'from': 'playernotications',
+  //       'let': {
+  //         'notificationId': '$_id',
+  //         'playerId': req.player._id
+  //       },
+  //       'pipeline': [
+  //         {
+  //           '$match': {
+  //             '$expr': {
+  //               '$and': [
+  //                 {
+  //                   '$eq': [
+  //                     '$notificationId', '$$notificationId'
+  //                   ]
+  //                 }, {
+  //                   '$eq': [
+  //                     '$playerId', '$$playerId'
+  //                   ]
+  //                 }, {
+  //                   '$eq': [
+  //                     '$read', false
+  //                   ]
+  //                 }
+  //               ]
+  //             }
+  //           }
+  //         }
+  //       ],
+  //       'as': 'player_not'
+  //     }
+  //   }, {
+  //     '$match': {
+  //       '$or': [
+  //         {
+  //           'player_not.0': {
+  //             '$exists': true
+  //           }
+  //         }, {
+  //           'sendTo': 'all'
+  //         }
+  //       ]
+  //     }
+  //   }, { $sort: { _id: -1 } }
+  // ];
 
-  if (req.player.notificationRead) {
-    query[0]['$match']['createdAt'] = { $gt: req.player.notificationRead };
-  }
-  let rows = await Notification.aggregate(query);
-  rows = rows.map(d => {
-    d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
-    return d;
-  });
-  res.status(200).json(rows);
+  // if (req.player.notificationRead) {
+  //   query[0]['$match']['createdAt'] = { $gt: req.player.notificationRead };
+  // }
+  // let rows = await Notification.aggregate(query);
+  // rows = rows.map(d => {
+  //   d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
+  //   return d;
+  // });
+  res.status(200).json([]);
 });
 // @desc      Get all Notifications
 // @route     GET /api/v1/auth/Notifications
@@ -268,7 +268,7 @@ exports.addPlayerList = asyncHandler(async (req, res, next) => {
     //   .catch((error) => {
     //     console.log('Error sending message:', error);
     //   });
-    req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.params.id } });
+    //req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.params.id } });
 
   }
   // else if (row.sendTo === 'all') {
@@ -347,7 +347,7 @@ exports.notifiyAll = asyncHandler(async (req, res, next) => {
     //     console.log('Error sending message:', error);
     //   });
 
-    req.io.to('notification_channel').emit('res', { ev: 'notification_all', data: {} });
+    //req.io.to('notification_channel').emit('res', { ev: 'notification_all', data: {} });
 
 
   }

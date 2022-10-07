@@ -19,8 +19,8 @@ exports.getTickets = asyncHandler(async (req, res, next) => {
       _id: -1
     },
     populate: {
-      path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1 }, options: { sort: { 'membership': -1 } }
-    }
+      path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, profilePic: 1, phone: 1 }, options: { sort: { 'membership': -1 } }
+    },
   }).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })
@@ -99,6 +99,31 @@ exports.updateTicket = asyncHandler(async (req, res, next) => {
 exports.deleteTicket = asyncHandler(async (req, res, next) => {
   const row = await Ticket.findByIdAndDelete(req.params.id);
   await File.findByIdAndDelete(row.ticketImage);
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
+
+// @desc      Delete Ticket
+// @route     DELETE /api/v1/auth/Tickets/:id
+// @access    Private/Admin
+exports.deleteTicketBbIds = asyncHandler(async (req, res, next) => {
+  let { ids } = req.body;
+
+  if (!ids || ids.length === 0) {
+    return next(
+      new ErrorResponse(`Select Players`)
+    );
+  }
+  ids.map(async d => {
+    let row = await Ticket.findByIdAndDelete(d);
+    if (row.ticketImage) {
+      await File.findByIdAndDelete(row.ticketImage);
+    }
+
+  });
+
   res.status(200).json({
     success: true,
     data: {}

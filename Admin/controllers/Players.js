@@ -104,7 +104,7 @@ exports.getLeaderBoard = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Leader Board' };
       res.render('Players/leaderboard')
 });
-exports.getLeaderBoardList = asyncHandler(async (req, res, next) => {
+exports.getLeaderBoardList = asyncHandler(async (req, res, next) => { 
       callApi(req).post(apiUrlGame, { ...req.body }, { params: req.query })
             .then(r => {
                   res.status(200).json(r.data);
@@ -121,6 +121,11 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'Player' };
       res.render('Players/list')
+});
+
+exports.playerOld = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'OLDPlayer' };
+      res.render('Players/oldplayerlist')
 });
 
 // @desc      Get  Player
@@ -203,8 +208,26 @@ exports.creditPlayer = asyncHandler(async (req, res, next) => {
 // @route     DELETE /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.deletePlayer = asyncHandler(async (req, res, next) => {
+      // res.locals = { title: 'Player-edit' };
 
-      callApi(req).delete(apiUrl + req.params.id, req.body)
+      // return callApi(req).delete(apiUrl + req.params.id, req.body)
+      //       .then(r => {
+      //             // Assign value in session
+      //             req.flash('success', 'Deleted');
+      //             // res.render('Players/List',{row:r.data.data}); 
+      //       })
+      //       .catch(error => {
+      //             req.flash('error', 'Data not updated');
+      //       })
+
+});
+
+// @desc      Delete Player
+// @route     DELETE /api/v1/auth/Players/:id
+// @access    Private/Admin
+exports.deletePlayerData = asyncHandler(async (req, res, next) => {
+      // console.log('deleteing->');
+      return callApi(req).delete(apiUrl + 'deleteplayerdata/' + req.params.id)
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Player-edit' };
@@ -224,29 +247,33 @@ exports.deletePlayer = asyncHandler(async (req, res, next) => {
       });
 });
 
+exports.deleteOldPlayerData = asyncHandler(async (req, res, next) => {
+      // console.log('deleteing->');
+      return callApi(req).delete(apiUrl + 'deloldplayer/' + req.params.id)
+            .then(r => {
+                  res.status(200).json(r.data);
+            })
+            .catch(error => {
+                  res.status(400).json(error);
+            })
+});
 // @desc      Delete Player
 // @route     DELETE /api/v1/auth/Players/:id
 // @access    Private/Admin
-exports.deletePlayerData = asyncHandler(async (req, res, next) => {
-      console.log('deleteing->');
-      callApi(req).delete(apiUrl + 'deleteplayerdata/' + req.params.id)
+exports.deletePlayerDataByIds = asyncHandler(async (req, res, next) => {
+      console.log('deleteing->', req.body);
+
+      return callApi(req).post(apiUrl + 'deleteplayerdata-byids', req.body)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Player-edit' };
-                  req.flash('success', 'Deleted');
+                  res.status(200).json(r.data);
                   // res.render('Players/List',{row:r.data.data}); 
-
             })
             .catch(error => {
-
-
-                  req.flash('error', 'Data not updated');
+                  res.status(400).json(r.data);
 
             })
-      res.status(200).json({
-            success: true,
-            data: {}
-      });
+
 });
 
 
@@ -264,6 +291,35 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
 
 
       callApi(req).post(apiUrl, { ...req.body }, { params: req.query })
+            .then(r => {
+                  // Assign value in session
+
+
+                  res.status(200).json(r.data);
+
+
+
+            })
+            .catch(error => {
+
+
+                  //   req.flash('error', 'Incorrect email or password!');
+
+            })
+
+});
+
+exports.getPlayerOldList = asyncHandler(async (req, res, next) => {
+      //  console.log('qwwwwwe', req.session);
+      // const config = {
+      //       headers: { Authorization: `Bearer ${req.session.user.token}` }
+      //   };
+      //console.log('url', req.url);
+
+
+
+
+      callApi(req).post(apiUrl + '/playerold', { ...req.body }, { params: req.query })
             .then(r => {
                   // Assign value in session
 

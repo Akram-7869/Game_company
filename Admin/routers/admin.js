@@ -51,6 +51,7 @@ router.route('/page').get(settingCtrl.pageList); router.route('/page/data').post
 router.route('/page/add').get(settingCtrl.pageAdd).post(settingCtrl.createPage);
 router.route('/page/:id').get(settingCtrl.getPage).post(settingCtrl.updatePage).delete(settingCtrl.deletePage);
 
+router.route('/ticket/delete-byids').delete(ticketCtrl.deleteTicketBbIds);
 router.route('/ticket').get(ticketCtrl.listTicket); router.route('/ticket/data').post(ticketCtrl.getTickets);
 router.route('/ticket/add').get(ticketCtrl.addTicket).post(ticketCtrl.createTickets);
 router.route('/ticket/:id').get(ticketCtrl.getTicket).post(ticketCtrl.updateTicket).delete(ticketCtrl.deleteTicket);
@@ -121,7 +122,12 @@ router.route('/game/data').post(palyerCtrl.getLeaderBoardList);
 router.route('/playerhistory/:id').get(palyerCtrl.getPlayerHistory);
 
 router.route('/dashboard').get(dashCtl.dashBoardView);
+router.route('/dashboard/total-income').get(dashCtl.totalIncome);
 router.route('/chart/data').post(dashCtl.getChartData);
+
+router.route('/playerold').get(palyerCtrl.playerOld);
+router.route('/playerold/data').post(palyerCtrl.getPlayerOldList);
+router.route('/playerdelold/:id').delete(palyerCtrl.deleteOldPlayerData);
 
 router.route('/player/upi/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);
 router.route('/player/wallet/:id').get(palyerCtrl.getProfile).post(palyerCtrl.updateProfile);
@@ -137,6 +143,7 @@ router.route('/player/add').get(palyerCtrl.getAddForm).post(palyerCtrl.createPla
 router.route('/player/data').post(palyerCtrl.getPlayerList);
 
 router.route('/player/delete-data/:id').delete(palyerCtrl.deletePlayerData);
+router.route('/player/delete-byids').delete(palyerCtrl.deletePlayerDataByIds);
 router.route('/player/membership').get(palyerCtrl.getPlayerMembership);
 router.route('/player/kyc').get(palyerCtrl.getPlayerKyc);
 router.route('/player/banned').get(palyerCtrl.getPlayerBanned);

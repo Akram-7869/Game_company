@@ -38,6 +38,65 @@
                     <div class="card">
                         <div class="card-body">
 
+                            <div class="row">
+                                <!-- <div class="col-md-4">
+                                    <div>
+                                        <form class="d-inline-flex mb-3">
+                                            <label class="form-check-label my-2 me-2"
+                                                for="order-selectinput">Status</label>
+                                            <select class="form-select" id="status-filter">
+                                                <option selected>All</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Unpaid</option>
+                                            </select>
+                                        </form>
+                                    </div>
+                                </div> -->
+
+                                <div class="float-end">
+                                    <div class="row">
+
+
+                                        <div class="col-lg-2">
+
+                                            <div class="mb-3">
+
+
+                                                <button type="button" class="btn-sm btn-danger" id="btnSelectAll"><i
+                                                        class="fas fa-trash"></i></button>
+                                                Select All <input type="checkbox" name="checkall" id="checkall"
+                                                    onClick="check_uncheck_checkbox(this.checked);" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-3">
+
+                                                <div class="input-daterange input-group" id="datepicker6"
+                                                    data-date-format="yyyy-mm-dd" data-date-autoclose="true"
+                                                    data-provide="datepicker" data-date-container='#datepicker6'>
+                                                    <input type="text" id="s_date" class="form-control text-start"
+                                                        placeholder="From" name="From" />
+                                                    <input type="text" id="e_date" class="form-control text-start"
+                                                        placeholder="To" name="To" data-date-format="yyyy-mm-dd" />
+
+                                                    <!-- <button type="button" id="filter" class="btn btn-primary"><i
+                                                            class="mdi mdi-filter-variant"></i></button> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2">
+
+                                            <select class="form-select" id="status-filter">
+                                                <option value="active" selected>active</option>
+                                                <option value="notverified">notverified</option>
+                                                <option value="banned">banned</option>
+
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <!--  <h4 class="card-title">Buttons example</h4>
                 <p class="card-title-desc">The Buttons extension for DataTables
                     provides a common set of options, API methods and styling to display
@@ -45,16 +104,20 @@
                     provides the based framework upon which plug-ins can built.
                 </p> -->
 
+
                             <table id="list" class="table table-striped table-bordered dt-responsive nowrap"
                                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th>Sr.No</th>
-                                        <th>PlayerId</th>
+                                        <th> Srno</th>
+
                                         <th>Player Name</th>
                                         <th>Email</th>
-                                        <th>Mobile</th>
+                                        <!-- <th>Mobile</th> -->
                                         <th>Joing Date</th>
+                                        <th>win</th>
+                                        <th>dep</th>
+                                        <th>bon</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -86,6 +149,7 @@
                 <script src="/public/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
                 <script src="/public/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
                 <script src="/public/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+                <script src="/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
                 <!-- Responsive examples -->
                 <script src="/public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
@@ -99,6 +163,34 @@
                 <script src="/public/assets/libs/moment/moment.js"></script>
                 <%- contentFor('BottomJs') %>
                     <script>
+                        $('#btnSelectAll').click(function () {
+                            var favorite = [];
+                            $.each($("input[name='pids[]']:checked"), function () {
+                                favorite.push($(this).val());
+                            });
+                            if (favorite.length === 0) {
+                                alert("Select Player");
+                            } else {
+                                delePlayerByIds(favorite)
+                            }
+
+                        });
+
+                        function delePlayerByIds(ids) {
+                            return $.ajax({
+                                type: 'DELETE',
+                                url: '<%=process.env.ADMIN_URL%>/admin/player/delete-byids',
+                                data: { ids },
+                                success: (results) => {
+                                    alert('Record Delete');
+                                    location.reload();
+                                },
+                                error: (err) => {
+                                    alert('Error While Deleting');
+                                }
+                            });
+                        }
+
                         function delRec(id) {
                             let r = confirm('Want to delet?');
 
@@ -109,7 +201,17 @@
 
                         }
 
-
+                        function check_uncheck_checkbox(isChecked) {
+                            if (isChecked) {
+                                $('input[name="pids[]"]').each(function () {
+                                    this.checked = true;
+                                });
+                            } else {
+                                $('input[name="pids[]"]').each(function () {
+                                    this.checked = false;
+                                });
+                            }
+                        }
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
@@ -125,7 +227,7 @@
                         }
 
                         function delAllRec(id) {
-                            let r = confirm('Want to delet all data?');
+                            let r = confirm('Want to delet all data of user ?');
 
                             if (r) {
                                 return $.ajax({
@@ -156,28 +258,57 @@
                                 "search": "Player:",
                                 searchPlaceholder: "Player Id / phone"
                             },
+                            initComplete: function () {
+                                var input = $('.dataTables_filter input').unbind(),
+                                    self = this.api(),
+                                    $searchButton = $('<button>')
+                                        .text('search')
+                                        .click(function () {
+                                            //self.column(1).search('ccccccccccccccc');
+                                            self.search(input.val()).draw();
+                                        }),
+                                    $clearButton = $('<button>')
+                                        .text('clear')
+                                        .click(function () {
+                                            input.val('');
+                                            $searchButton.click();
+                                        })
+                                $('.dataTables_filter').append($searchButton, $clearButton);
+                            },
                             "ajax": {
-                                url: '<%=process.env.ADMIN_URL%>/admin/player/data', type: "post"
+                                url: '<%=process.env.ADMIN_URL%>/admin/player/data', type: "post",
+                                data: function (d) {
+
+                                    d['s_date'] = $('#s_date').val();
+                                    d['e_date'] = $('#e_date').val();
+                                    // d['id'] =status-filter;
+                                    d['status'] = $('#status-filter').val();
+                                    d[$('#id-field').val()] = $('#id-value').val();
+                                    return d;
+                                }
                             },
                             "columns": [
-                                { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
-                                { data: '_id' },
+                                { data: null, "render": function (data, type, full, meta) { return '<input name="pids[]" value="' + full._id + '" type="checkbox">'; } },
+
                                 { data: 'firstName', "defaultContent": "" },
                                 { data: 'email', "defaultContent": "" },
-                                { data: 'phone', "defaultContent": "" },
+                                // { data: 'phone', "defaultContent": "" },
                                 {
                                     data: 'createdAt', render: function (data) {
                                         return moment(data).format('DD-MM-YYYY');
                                     }
                                 },
+
+                                { data: 'winings' },
+                                { data: 'deposit' },
+                                { data: 'bonus' },
                                 { data: 'status' },
 
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-3 text-primary" href="<%=process.env.ADMIN_URL%>/admin/player/'
-                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a> <a class="px-3 text-danger" onclick="delRec(\''
-                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a><a class="px-3 text-danger" onclick="delAllRec(\''
-                                            + full._id + '\')">Delete ALL Data</i></a> ';
+                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a> <a class="px-3 text-danger" onclick="delAllRec(\''
+                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a> ';
                                     }
                                 },
                             ]

@@ -5,9 +5,18 @@ const DashboardSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    default: 'admin'
+    unique: true,
+    default: 'dashboard'
   },
   totalPlayers: {
+    type: Number,
+    default: 0,
+  },
+  winAmount: {
+    type: Number,
+    default: 0,
+  },
+  betAmount: {
     type: Number,
     default: 0,
   },
@@ -53,18 +62,13 @@ const DashboardSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-DashboardSchema.statics.join = async function () {
-  return await this.findOneAndUpdate({ type: 'dashboard' }, { $inc: { livePlayers: 1 } }, {
+DashboardSchema.statics.totalIncome = async function (betAmount, winAmount, commision) {
+  return await this.findOneAndUpdate({ type: 'dashboard' }, { $inc: { totalIncome: commision, winAmount, betAmount } }, {
     new: true,
     runValidators: true
   });
 };
-DashboardSchema.statics.won = async function () {
-  return await this.findOneAndUpdate({ type: 'dashboard', livePlayers: { $gt: 0 } }, { $inc: { livePlayers: -1 } }, {
-    new: true,
-    runValidators: true
-  });
-};
+
 DashboardSchema.plugin(dataTables);
 
 module.exports = mongoose.model('Dashboards', DashboardSchema);

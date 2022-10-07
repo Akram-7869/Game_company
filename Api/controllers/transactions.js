@@ -20,11 +20,11 @@ exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
   Transaction.dataTables({
     limit: 1000,
     skip: 0,
-    select: { 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, logType: 1, paymentStatus: '1' },
+    select: { 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, logType: 1, paymentStatus: 1 },
     search: {
 
     },
-    find: { 'playerId': req.player._id, status: 'complete' },
+    find: { 'playerId': req.player._id },
     sort: {
       updatedAt: -1
     }
@@ -49,7 +49,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     },
 
     populate: {
-      path: 'playerId', select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1 }, options: { sort: { 'membership': -1 } }
+      path: 'playerId', select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1, email: 1 }, options: { sort: { 'membership': -1 } }
     },
     sort: {
       _id: -1
@@ -63,27 +63,25 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     filter['find']['paymentStatus'] = req.body.paymentStatus;
   }
 
+  if (req.body.transactionType) {
+    filter['find']['transactionType'] = req.body.transactionType;
+  }
   if (key) {
-    if (isNaN(key)) {
-      console.log('key.length', key.length);
-      if (key.length != 24) {
-        return res.json(empty);
-      }
-      filter['find']['playerId'] = key;
-    } else {
 
-      let player = await Player.findOne({ phone: { '$regex': key, '$options': 'i' } });
-      if (!player) {
-        return res.json(empty);
-      }
-      filter['find']['playerId'] = player._id;
+
+    let player = await Player.findOne({ $or: [{ 'email': { '$regex': key, '$options': 'i' } }, { phone: { '$regex': key, '$options': 'i' } }] });
+    if (!player) {
+      return res.json(empty);
     }
+    
+    filter['find']['playerId'] = player._id;
   }
+
   //plaerId filter
-  if (req.body.playerId) {
-    filter['find']['playerId'] = req.body.playerId;
+  if (req.body.rf && req.body.rfv) {
+    filter['find'][req.body.rf] = { '$regex': req.body.rfv, '$options': 'i' };
   }
-  if (req.query.logType) {
+  if (req.body.logType) {
     filter['find']['logType'] = req.query.logType;
   }
   if (req.body._id) {
@@ -145,13 +143,7 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
   });
 
   if (req.body.paymentStatus === 'DECLINED') {
-    fieldsToUpdate = {
-      $inc: { balance: amount }
-    }
-    player = await Player.findByIdAndUpdate(playerId, fieldsToUpdate, {
-      new: true,
-      runValidators: true
-    });
+    player = await transaction.creditPlayerWinings(amount);
   }
 
 
@@ -164,23 +156,23 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
 
   }
 
-  const notificationDb = await Notification.create(notification);
-  let updated = { read: false }
-  await PlayerNotifcation.findOneAndUpdate({ playerId: transaction.playerId, notificationId: notificationDb._id }, updated, {
-    new: false, upsert: true,
-    runValidators: true
-  });
-  //console.log('sending message');
+  // const notificationDb = await Notification.create(notification);
+  // let updated = { read: false }
+  // await PlayerNotifcation.findOneAndUpdate({ playerId: transaction.playerId, notificationId: notificationDb._id }, updated, {
+  //   new: false, upsert: true,
+  //   runValidators: true
+  // });
+  // //console.log('sending message');
 
-  let to_player = await Player.findById(transaction.playerId).select('+firebaseToken');
-  var message = {
-    notification: {
-      title: title,
-      body: req.body.note
-    },
-    // topic: "/topics/all",
-    // token: ''
-  };
+  // let to_player = await Player.findById(transaction.playerId).select('+firebaseToken');
+  // var message = {
+  //   notification: {
+  //     title: title,
+  //     body: req.body.note
+  //   },
+  //   // topic: "/topics/all",
+  //   // token: ''
+  // };
   // message['token'] = to_player.firebaseToken;
   // console.log('COnstructinmessage:', message);
   // await admin.messaging().send(message)
@@ -193,7 +185,7 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
   //     console.log('Error sending message:', error);
   //   });
 
-  req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": transaction.playerId } });
+  //req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": transaction.playerId } });
 
 
 
@@ -268,24 +260,24 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
 
 
 
-  const notificationDb = await Notification.create(notification);
-  let updated = { read: false }
-  await PlayerNotifcation.findOneAndUpdate({ playerId: req.params.id, notificationId: notificationDb._id }, updated, {
-    new: false, upsert: true,
-    runValidators: true
-  });
-  //console.log('sending message');
+  // const notificationDb = await Notification.create(notification);
+  // let updated = { read: false }
+  // await PlayerNotifcation.findOneAndUpdate({ playerId: req.params.id, notificationId: notificationDb._id }, updated, {
+  //   new: false, upsert: true,
+  //   runValidators: true
+  // });
+  // //console.log('sending message');
 
-  let to_player = await Player.findById(req.params.id).select('+firebaseToken');
-  var message = {
-    notification: {
-      title: title,
-      body: title
-    },
-    // topic: "/topics/all",
-    // token: ''
-  };
-  message['token'] = to_player.firebaseToken;
+  // let to_player = await Player.findById(req.params.id).select('+firebaseToken');
+  // var message = {
+  //   notification: {
+  //     title: title,
+  //     body: title
+  //   },
+  //   // topic: "/topics/all",
+  //   // token: ''
+  // };
+  // message['token'] = to_player.firebaseToken;
 
   // await admin.messaging().send(message)
   //   .then((response) => {
@@ -296,7 +288,7 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
   //   .catch((error) => {
   //     console.log('Error sending message:', error);
   //   });
-  req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.params.id } });
+  //req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.params.id } });
 
   res.status(200).json({
     success: true,

@@ -8,16 +8,21 @@ const PlayerSchema = new mongoose.Schema({
 
   firstName: {
     type: String,
+    minLength: [3, 'try again'],
+
   },
   lastName: {
     type: String,
   },
   gender: {
     type: String,
-    enum: ['male', 'female', 'other']
+
   },
   profilePic: {
     type: mongoose.Schema.ObjectId,
+  },
+  picture: {
+    type: String,
   },
   countryCode: {
     type: String,
@@ -29,21 +34,21 @@ const PlayerSchema = new mongoose.Schema({
   },
   registeredWith: {
     type: String,
-    default: 'phone'
+    default: 'email'
   },
   phone: {
     type: String,
     minLength: 8,
     trim: true,
-    required: true,
 
   },
   email: {
     type: String,
     trim: true,
+    required: [true, 'try again'],
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Please add a valid email'
+      'try again'
     ],
 
   },
@@ -62,11 +67,13 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
     select: false,
     trim: true,
-    required: [true, 'Please provide device id']
+    minLength: [32, 'try again'],
   },
   firebaseToken: {
     type: String,
     select: false,
+    minLength: [100, 'try again'],
+
     trim: true,
   },
   firebaseId: {
@@ -104,7 +111,6 @@ const PlayerSchema = new mongoose.Schema({
   verifyPhoneExpire: {
     type: Date,
     minlength: 6,
-    select: false
   },
   balance: {
     type: Number,
@@ -143,6 +149,11 @@ const PlayerSchema = new mongoose.Schema({
     enum: ['verified', 'notverified'],
     default: 'notverified'
   },
+  phoneStatus: {
+    type: String,
+    enum: ['verified', 'notverified'],
+    default: 'notverified'
+  },
   wallet: {
     select: false,
     type: Map,
@@ -171,7 +182,8 @@ const PlayerSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
   },
   refer_code: {
-    type: String
+    type: String,
+    select: false
   },
   level_1: {
     type: String
@@ -260,7 +272,7 @@ PlayerSchema.pre('save', async function (next) {
 
 // Sign JWT and return
 PlayerSchema.methods.getSignedJwtToken = function () {
-  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
+  return jwt.sign({ id: this._id, role: this.role, deviceToken: this.deviceToken }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
   });
 };

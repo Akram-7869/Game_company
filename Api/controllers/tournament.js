@@ -13,7 +13,7 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
         // select: { 'TournamentControle': 1, 'appLink': 1, 'createdAt': 1 },
         search: {
             value: req.body.search ? req.body.search.value : '',
-            fields: ['_id']
+            fields: ['name']
 
         },
         sort: {
@@ -41,7 +41,7 @@ exports.getTournament = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Tournaments
 // @access    Private/Admin
 exports.createTournament = asyncHandler(async (req, res, next) => {
-    console.log('req.body', req.body);
+    //console.log('req.body', req.body);
     const row = await Tournament.create(req.body);
 
     res.status(201).json({

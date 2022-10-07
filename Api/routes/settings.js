@@ -21,7 +21,8 @@ const { protect, authorize, init } = require('../middleware/auth');
 const Setting = require('../models/Setting');
 //router.use(protect);
 router.route('/upload/:id').post(uploadeImage);
-router.route('/image/:id').get(getFile);
+
+//router.route('/image/:id').get(getFile);
 
 
 router.route('/add').post(protect, createSetting);

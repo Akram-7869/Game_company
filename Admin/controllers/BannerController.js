@@ -4,11 +4,11 @@ const { callApi, api_url } = require('../helper/common');
 let apiUrl = api_url + '/banners/';
 
 exports.bannerList = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Banner', apiUrl };
+      res.locals = { title: 'Banner', apiUrl, image_url: process.env.IMAGE_URL };
       res.render('Ads/list')
 });
 exports.getBanner = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Banner', apiUrl };
+      res.locals = { title: 'Banner', apiUrl, image_url: process.env.IMAGE_URL };
       axios.get(apiUrl + req.params.id)
             .then(r => {
                   res.locals = { title: 'Banner' };
@@ -85,7 +85,7 @@ exports.getBanners = asyncHandler(async (req, res, next) => {
 
 
 exports.bannerAdd = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Banner', 'apiUrl': apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/banner' };
+      res.locals = { title: 'Banner', 'apiUrl': apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/banner', image_url: process.env.IMAGE_URL };
 
       res.render('Ads/add', { row: {} });
 });

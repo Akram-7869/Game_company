@@ -32,9 +32,9 @@ const payments = require('./routes/payments');
 const managers = require('./routes/users');
 const bots = require('./routes/bots');
 const versions = require('./routes/versions');
-const files = require('./routes/files');
+//const files = require('./routes/files');
 const banners = require('./routes/banners');
-const tickets = require('./routes/tickets');
+//const tickets = require('./routes/tickets');
 const notifications = require('./routes/notifications');
 const game = require('./routes/game');
 const dashboards = require('./routes/dashboard');
@@ -45,7 +45,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 const Setting = require('./models/Setting');
-
+const PlayerGame = require('./models/PlayerGame');
 // Body parser
 app.use(express.json());
 
@@ -62,7 +62,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // File uploading
-app.use(fileupload());
+app.use(fileupload({
+  createParentPath: true
+}));
 
 // Sanitize data
 app.use(mongoSanitize());
@@ -71,7 +73,7 @@ app.use(mongoSanitize());
 app.use(helmet());
 
 // Prevent XSS attacks
-//app.use(xss());
+app.use(xss());
 
 // Rate limiting
 const limiter = rateLimit({
@@ -87,8 +89,8 @@ app.use(hpp());
 app.use(cors());
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(async (req, res, next) => {
 
+app.use(async (req, res, next) => {
   req.io = io;
   if (!app.get('site_setting')) {
     // console.log('site setting');
@@ -97,8 +99,6 @@ app.use(async (req, res, next) => {
     });
     app.set('site_setting', setting);
   }
-
-
   return next();
 });
 
@@ -110,9 +110,9 @@ app.use('/api/v1/transactions', transactions);
 app.use('/api/v1/managers', managers);
 app.use('/api/v1/versions', versions);
 app.use('/api/v1/bots', bots);
-app.use('/api/v1/tickets', tickets);
+//app.use('/api/v1/tickets', tickets);
 app.use('/api/v1/payments', payments);
-app.use('/api/v1/files', files);
+//app.use('/api/v1/files', files);
 app.use('/api/v1/notifications', notifications);
 app.use('/api/v1/banners', banners);
 app.use('/api/v1/games', game);
@@ -128,80 +128,69 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
-// const server = app.listen(
-//   PORT,
-//   console.log(
-//     `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
-//   )
-// );
-
-
 const { makeid } = require('./utils/utils');
+const Tournament = require('./models/Tournament');
+const Player = require('./models/Player');
 const state = {};
 const publicRoom = {};
-
+io.use(function (socket, next) {
+  // execute some code
+  next();
+})
 // Run when client connects
 io.on('connection', socket => {
-  let data = { status: 'connected' };
-  socket.emit('res', { ev: 'connected', data });
-  console.log('contedt');
-  socket.join('notification_channel');
+  // let data = { status: 'connected' };
+  // socket.emit('res', { ev: 'connected', data });
+  //console.log('contedt');
+  //socket.join('notification_channel');
 
-  socket.on('join', (d) => {
-    console.log('inputstring');
+  socket.on('join', async (d) => {
     let dataParsed = d;// JSON.parse(d);
-    let { userId, lobbyId, maxp = 4, betAmount = 0 } = dataParsed;
+    let { userId, lobbyId, maxp = 4 } = dataParsed;
+    let lobby = await Tournament.findById(lobbyId);
+    if (!lobby) {
+      console.log('looby-not-found');
+      return;
+    }
 
-
+    let player = await Player.findOne({ _id: userId, 'status': 'active', 'deposit': { $gte: lobby.betAmount } });
+    if (!player) {
+      console.log('player-not-found');
+      return;
+    }
     let roomName = '';
-    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp) {
+    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
-      publicRoom[lobbyId]['count'] += 1;
-      publicRoom[lobbyId]['total'] += betAmount;
-      console.log('existing-');
+      await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
+      console.log('join-exisitng', roomName);
     } else {
       roomName = makeid(5);
-      console.log('new-');
-      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false, count: 1, total: betAmount }
-      state[roomName] = { lobbyId, full: 0, players: [], gameData: {} };
+      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
+      state[roomName] = { 'created': Date.now() + 600000, players: [] };
+      console.log('create-room-', roomName);
+      await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1 });
     }
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
     socket.join(roomName);
 
     let data = {
-      roomName, users: getRoomUsers(roomName),
+      roomName, users: getRoomLobbyUsers(roomName, lobbyId),
       userId: userId
     }
     if (state[roomName]) {
       publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
-      if (data.users.length == maxp || data.users.length == 0) {
-        delete publicRoom[lobbyId];
-      }
+      // if (data.users.length == maxp || data.users.length == 0) {
+      //   delete publicRoom[lobbyId];
+      // }
     } else {
-      delete publicRoom[lobbyId];
+      // delete publicRoom[lobbyId];
     }
-
-    // console.dir(data, { depth: null });
-    //console.dir(socket.userId);
     io.to(roomName).emit('res', { ev: 'join', data });
     io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
 
   });
 
-  // socket.on('joinFriend', (d) => {
-  //   let dataParsed = d;//JSON.parse(d);
-  //   let { userId, room } = dataParsed;
-
-  //   joinRoom(socket, userId, room, dataParsed);
-  //   socket.join(room);
-  //   let data = {
-  //     room: room,
-  //     users: getRoomUsers(room)
-  //   };
-  //   // Send users and room info
-  //   io.to(room).emit('res', { ev: 'joinFriend', data });
-  // });
 
   socket.on('lobbyStat', (d) => {
     let { userId, lobbyId } = d;//JSON.parse(d);
@@ -222,75 +211,61 @@ io.on('connection', socket => {
   });
   socket.on('sendToRoom', (d) => {
 
-
     let { room, ev, data } = d;//JSON.parse(d);
-    console.log('sendToRoom', ev);
+
     io.to(room).emit('res', { ev, data });
 
   });
   //leave
   socket.on('leave', (d) => {
+    let { room } = d;
 
-    let { room } = d; //JSON.parse(d);
     userLeave(socket);
     socket.leave(room);
-    console.log('leav-inputstring');
-    //console.dir(state);
-    //console.dir(io.sockets.adapter.rooms);
     let data = {
       room: room,
       users: getRoomUsers(room)
     };
+    console.log('leave-', d);
     io.to(room).emit('res', { ev: 'leave', data });
   });
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
-    let { room, userId } = socket;
+
+    let { room, userId, lobbyId } = socket;
+
     userLeave(socket);
-    console.log('disconnect-inputstring');
+    //console.log('disconnect-inputstring');
     let data = {
       room: room,
       users: getRoomUsers(room),
       userId: userId
     };
+
+    console.log('disconnect-', room, userId, lobbyId);
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });
-  // Runs when game start  disconnects
-  socket.on('gameStart', (d) => {
-    console.log('start-');
-    let { room, lobbyId } = d;
+  // Runs when client disconnects
+  socket.on('gameStart', async (d) => {
 
+    let { room, lobbyId, userId } = d;
+    let data = {
+      room: room,
+      users: getRoomLobbyUsers(room, lobbyId),
+      lobbyId,
+      userId: userId
+    };
+    //start game Withb boat
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
-      if (rn == room) {
+      if (rn == room || data.users.length == 2) {
         publicRoom[lobbyId]['played'] = true;
       }
 
     }
-    //remove empty 
-    for (let r in state) {
-      if (state[r]['players'].length === 0) {
-        delete state[r];
-      }
-    }
-    //remove 
-    for (let l in publicRoom) {
-      if (publicRoom[l]['roomName']) {
-        let rn = publicRoom[l]['roomName'];
-        if (!state[rn] || state[rn]['players'].length === 0) {
-          delete publicRoom[l];
-        }
-      }
-    }
-    // if (publicRoom[socket['lobbyId']]['roomName'] == room) {
-    //   publicRoom[socket['lobbyId']]['roomName'] = '';
-    //   publicRoom[socket['lobbyId']]['playerCount'] = 0;
-    // }
-    let data = {
-      room: room
-    };
+    console.log('gameStart-', d);
     io.to(socket.room).emit('res', { ev: 'gameStart', data });
 
   });
@@ -339,37 +314,21 @@ io.on('connection', socket => {
 
 function arraymove(arr, fromIndex, toIndex) {
   arr.unshift(arr.pop());
-  // var element = arr[fromIndex];
-  // arr.splice(fromIndex, 1);
-  // /// console.log("::" + arr);
-  // arr.push(element);
-  // // console.log("::" + arr);
-}
-// function arraymove(array, oldIndex, newIndex) {
-//   if (newIndex >= array.length) {
-//     newIndex = array.length - 1;
-//   }
-//   array.splice(newIndex, 0, array.splice(oldIndex, 1)[0]);
-//   return array;
-// }
-let initRoom = () => {
-  const t = {
-    full: 0,
-    players: []
-  }
-  return t;
+
 }
 
-let joinRoom = (socket, palyerId, room, d = {}) => {
-  //console.log('join room', socket.id, palyerId, room);
+
+
+let joinRoom = (socket, playerId, room, d = {}) => {
+  //console.log('join room', socket.id, playerId, room);
   socket['room'] = room;
-  socket['userId'] = palyerId;
-  // socket['lobbyId'] = d.lobbyId;
+  socket['userId'] = playerId;
+  socket['lobbyId'] = d.lobbyId;
   let index = -1;
   if (state[room]) {
-    index = state[room].players.findIndex(user => user.userId === palyerId);
-    console.log('i-', index);
-    if (index === -1) {
+    index = state[room].players.findIndex(user => user.userId === playerId);
+    //console.log('i-', index);
+    if (index === -1 && d.lobbyId === d.lobbyId) {
       state[room].players.push(d);
     }
   }
@@ -381,7 +340,22 @@ let getRoomUsers = (room) => {
   }
   return [];
 }
+let getRoomLobbyUsers = (room, lobbyId) => {
+
+  if (state[room]) {
+
+    for (let x of state[room].players) {
+      if (x.lobbyId != lobbyId) {
+        return [];
+      }
+    }
+
+    return state[room].players;
+  }
+  return [];
+}
 let userLeave = (s) => {
+  console.log('leav-func')
   if (state[s.room] && state[s.room].players.length !== 0) {
     //delete state[s.room].players[s.userId];
     const index = state[s.room].players.findIndex(user => user.userId === s.userId);
@@ -391,12 +365,28 @@ let userLeave = (s) => {
     }
   }
 
+  for (let r in state) {
+    if (state[r]['created'] < Date.now()) {
+      console.log('del-old');
+      delete state[r];
+    }
+  }
+  //remove lobby 
+  for (let l in publicRoom) {
+    if (publicRoom[l]['roomName']) {
+      let rn = publicRoom[l]['roomName'];
+      if (!state[rn]) {
+        delete publicRoom[l];
+      }
+    }
+  }
+
 }
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
-  console.log(`Error: ${err.message}`.red);
+  console.log(err);
   // Close server & exit process
   // server.close(() => process.exit(1));
 });

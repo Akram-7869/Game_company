@@ -130,6 +130,7 @@ module.exports = function (app) {
 					return;
 				}
 				req.session.user = r.data;
+				//req.app.locals['user'] = r.data;
 				res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
 
 			})
@@ -140,9 +141,7 @@ module.exports = function (app) {
 
 	});
 
-	app.get('/login', function (req, res) {
-		res.render('Auth/auth-login', { 'message': req.flash('message'), 'error': req.flash('error') });
-	});
+
 
 	// app.post('/post-login', urlencodeParser, function (req, res) {
 	// 	console.log(apiUrl + '/auth/login')

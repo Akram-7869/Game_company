@@ -43,9 +43,43 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   //create a transaction ;
   if (!req.player) {
     return next(
-      new ErrorResponse(`Invalid Code`)
+      new ErrorResponse(`Player not found`)
     );
   }
+  if (coupon_id.length === 24) {
+    let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true, _id: coupon_id });
+    if (!couponRec) {
+      return next(
+        new ErrorResponse(`Invalid Coupon`)
+      );
+    }
+    if (couponRec.expiryDate) {
+      let today = new Date();
+      if (couponRec.expiryDate < today) {
+        await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
+        return next(
+          new ErrorResponse(`Code Expired`)
+        );
+
+      }
+    }
+    if (couponRec.useOnlyOnce === true) {
+      let used = await Transaction.findOne({ 'playerId': req.player._id, 'couponId': couponRec._id, 'status': 'complete' });
+      if (used) {
+        return next(new ErrorResponse(`Code Used`));
+      }
+    }
+    if (couponRec.usageLimit > 1) {
+      let useCount = await Transaction.find({ 'couponId': couponRec._id });
+      if (useCount > couponRec.usageLimit) {
+        await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
+        return next(new ErrorResponse(`Code Limit reached`));
+
+      }
+    }
+
+  }
+
 
 
   let tranData = {
@@ -53,7 +87,6 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     'amount': amount,
     'couponId': coupon_id,
     'membershipId': membership_id,
-
     'transactionType': "credit",
     'note': req.body.note,
     'paymentGateway': 'Cash Free',
@@ -67,7 +100,6 @@ exports.getToken = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Provide all required fields`)
     );
   }
-
   let config = await paymentConfig(amount, tran._id);
 
   axios(config)
@@ -106,7 +138,7 @@ exports.getKey = asyncHandler(async (req, res, next) => {
 });
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {
-  console.log('casfree-notify-body', req.body);
+  console.log('casfree-notify-body');
 
   //const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
   //let ok = verifySignature(req.body, req.body.signature, row.one.SECRET_KEY);
@@ -163,17 +195,17 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   let player;
 
   if (tran.membershipId) {
-    player = await tran.memberShip(amount);
+    // player = await tran.memberShip(amount);
 
-    await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', 'paymentStatus': 'SUCCESS' });
-    if (player && player.refrer_player_id) {
-      playerStat = { $inc: { refer_vip_count: 1 } };
-      await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
-        new: true,
-        runValidators: true
-      });
-    }
-    console.log('Membership added');
+    // await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', 'paymentStatus': 'SUCCESS' });
+    // if (player && player.refrer_player_id) {
+    //   playerStat = { $inc: { refer_vip_count: 1 } };
+    //   await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
+    //     new: true,
+    //     runValidators: true
+    //   });
+    // }
+    // console.log('Membership added');
   } else {
 
     //  player = await tran.creditPlayerDeposit(amount);
@@ -188,19 +220,19 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
       });
     }
 
-    //if (tran.couponId) {
-    let bonusAmount = 0;
-    let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true });
-    if (!couponRec) {
-      console.log('Coupon not found');
-      res.status(200);
-      return;
-    }
-    if (couponRec.couponType == 'percentage') {
-      bonusAmount = amount * (couponRec.couponAmount * 0.01);
-    } else {
-      bonusAmount = couponRec.couponAmount;
-    }
+    if (tran.couponId) {
+      let bonusAmount = 0;
+      let couponRec = await Coupon.findOne({ 'minAmount': { $lte: amount }, 'maxAmount': { $gte: amount }, '_id': tran.couponId });
+      if (!couponRec) {
+        console.log('Coupon not found');
+        res.status(200);
+        return;
+      }
+      if (couponRec.couponType == 'percentage') {
+        bonusAmount = amount * (couponRec.couponAmount * 0.01);
+      } else {
+        bonusAmount = couponRec.couponAmount;
+      }
 
     let tranBonusData = {
       'playerId': tran.playerId,
@@ -219,7 +251,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
     bonusTran.creditPlayer(bonusAmount);
     console.log('bonus added');
 
-    //}
+    }
   }
 
   res.status(200).json({
@@ -264,9 +296,10 @@ exports.payout = asyncHandler(async (req, res, next) => {
   }
   let bene = {};
   let transferMode = '';
+
   bene['phone'] = player.phone;
   bene['name'] = player.firstName;
-  bene['email'] = 'dummy@dukeplay.com';
+  bene['email'] = player.email;
   bene['address1'] = 'India' + player.state;
   if (tran.withdrawTo === 'bank') {
     transferMode = 'banktransfer';
@@ -274,8 +307,8 @@ exports.payout = asyncHandler(async (req, res, next) => {
       "bankAccount": tran.withdraw.get('bankAccount'),
       "ifsc": tran.withdraw.get('bankIfc'),
       "name": tran.withdraw.get('bankAccountHolder'),
-      "email": 'dummy@dukeplay.com',
-      "phone": player.phone,
+      "email": player.email,
+      "phone": phone,
       "address1": tran.withdraw.get('bankAddress')
     };
   } else if (tran.withdrawTo === 'wallet') {
@@ -353,12 +386,12 @@ exports.payout = asyncHandler(async (req, res, next) => {
 });
 exports.upiValidate = async (req, res, next) => {
   //disalbe it
-  return { 'status': 'SUCCESS' };
+  //return { 'status': 'SUCCESS' };
   //asyncHandler(async (req, res, next) => {
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
   let { upiId } = req.body;
 
-  console.log('req.query', upiId);
+  //console.log('req.query', upiId);
 
   let config = {
     method: 'post',
@@ -392,14 +425,13 @@ exports.upiValidate = async (req, res, next) => {
     }
 
   });
+  // console.log('upi-verify', upiId, resPayout['data']);
+  // if (resPayout['data']['status'] === 'ERROR') {
 
-  if (resPayout['data']['status'] === 'ERROR') {
+  //   return resPayout['data'];
 
-    return resPayout['data'];
+  // }
 
-  }
-
-  return { 'status': 'SUCCESS' };
-
-
+  return resPayout['data'];
 };
+

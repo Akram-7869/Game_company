@@ -14,7 +14,7 @@ const {
 
 
 const router = express.Router({ mergeParams: true });
-const { protect} = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 
 //router.use(protect);
 
@@ -34,7 +34,7 @@ router.route('/').post(getNotifications);
 router
     .route('/:id')
     .get(getNotification)
-    .post( updateNotification)
-    .delete( deleteNotification);
+    .post(updateNotification)
+    .delete(deleteNotification);
 
 module.exports = router;

@@ -21,6 +21,8 @@ const PlayerGame = require('../models/PlayerGame');
 const Version = require('../models/Version');
 const moment = require('moment');
 const cashfreeCtrl = require('./paymentsCashfree');
+const PlayerOld = require('../models/PlayerOld');
+
 
 let axios = require('axios');
 const FormData = require('form-data');
@@ -70,6 +72,11 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     );
   }
 
+  // if (req.player.phoneStatus !== 'verified') {
+  //   return next(
+  //     new ErrorResponse(`Please Verify Phone`)
+  //   );
+  // }
   let player = await Player.findById(req.player.id).select('+bank +wallet +upi');
 
   let tranData = {
@@ -104,6 +111,12 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
       new ErrorResponse(upiStatus['message'])
     );
   }
+  if (upiStatus.data.accountExists === 'NO') {
+    return next(
+      new ErrorResponse('Invalid Upi')
+    );
+  }
+
 
   let tran = await Transaction.create(tranData);
   player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount, winings: -amount } }, {
@@ -127,24 +140,24 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
 
 
 
-  const notificationDb = await Notification.create(notification);
-  let updated = { read: false }
-  await PlayerNotifcation.findOneAndUpdate({ playerId: req.player.id, notificationId: notificationDb._id }, updated, {
-    new: false, upsert: true,
-    runValidators: true
-  });
-  //console.log('sending message');
+  // const notificationDb = await Notification.create(notification);
+  // let updated = { read: false }
+  // await PlayerNotifcation.findOneAndUpdate({ playerId: req.player.id, notificationId: notificationDb._id }, updated, {
+  //   new: false, upsert: true,
+  //   runValidators: true
+  // });
+  // //console.log('sending message');
 
-  let to_player = await Player.findById(req.player.id).select('+firebaseToken');
-  var message = {
-    notification: {
-      title: title,
-      body: title
-    },
-    // topic: "/topics/all",
-    // token: ''
-  };
-  message['token'] = to_player.firebaseToken;
+  // let to_player = await Player.findById(req.player.id).select('+firebaseToken');
+  // var message = {
+  //   notification: {
+  //     title: title,
+  //     body: title
+  //   },
+  //   // topic: "/topics/all",
+  //   // token: ''
+  // };
+  // message['token'] = to_player.firebaseToken;
 
   // await admin.messaging().send(message)
   //   .then((response) => {
@@ -156,7 +169,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   //     console.log('Error sending message:', error);
   //   });
 
-  req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.player.id } });
+  //req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.player.id } });
 
 
   res.status(200).json({
@@ -180,7 +193,7 @@ exports.addBank = asyncHandler(async (req, res, next) => {
 
     player = req.player;
   }
-  console.log('req.player'.red, req.player);
+  //console.log('req.player'.red, req.player);
   if (!player) {
     return next(
       new ErrorResponse(`Player  not found`)
@@ -225,8 +238,6 @@ exports.addWallet = asyncHandler(async (req, res, next) => {
     runValidators: true
   });
 
-  //Player.isNew = false;
-  // await Player.save();
   res.status(200).json({
     success: true,
     data: player
@@ -247,12 +258,12 @@ exports.addUpi = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
-  if (upiStatus['status'] !== 'SUCCESS') {
-    return next(
-      new ErrorResponse(upiStatus['message'])
-    );
-  }
+  // const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
+  // if (upiStatus['status'] !== 'SUCCESS') {
+  //   return next(
+  //     new ErrorResponse(upiStatus['message'])
+  //   );
+  // }
 
   player = await Player.findByIdAndUpdate(player.id, { upi: fieldsToUpdate }, {
     new: true,
@@ -424,7 +435,7 @@ exports.membership = asyncHandler(async (req, res, next) => {
     success: true,
     data: player
   });
-  console.log('player/membership');
+  //console.log('player/membership');
 });
 
 // @desc      Get all Players
@@ -432,7 +443,7 @@ exports.membership = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.getPlayers = asyncHandler(async (req, res, next) => {
   let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.body.draw }
-
+  //console.log(req.body);
   let filter = {
     limit: req.body.length,
     skip: req.body.start,
@@ -441,7 +452,7 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
 
     },
     sort: {
-      _id: -1, username: 1
+      _id: -1, email: 1, phone: 1
     }
   };
   if (req.body.s_date && req.body.e_date) {
@@ -451,23 +462,61 @@ exports.getPlayers = asyncHandler(async (req, res, next) => {
     }
 
   }
+
+
   let key = req.body.search ? req.body.search.value : '';
   if (key) {
-    if (isNaN(key)) {
-      if (key.length != 24) {
-        return res.json(empty);
-      }
-      filter['find']['_id'] = key;
-    }
-    else {
-      filter['search'] = {
-        value: req.body.search.value,
-        fields: ['phone', 'email', 'firstName', 'lastName']
-
-      }
+    filter['search'] = {
+      value: req.body.search.value,
+      fields: ['phone', 'email', 'firstName']
     }
   }
+  if (req.body.status) {
+    filter['find']['status'] = req.body.status;
+  }
   Player.dataTables(filter).then(function (table) {
+    res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
+  })
+  //res.status(200).json(res.advancedResults);
+});
+
+// @desc      Get all Players
+// @route     GET /api/v1/auth/Players
+// @access    Private/Admin
+exports.playerold = asyncHandler(async (req, res, next) => {
+  let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.body.draw }
+  //console.log(req.body);
+  let filter = {
+    limit: req.body.length,
+    skip: req.body.start,
+    find: req.query,
+    search: {
+
+    },
+    sort: {
+      _id: -1, email: 1, phone: 1
+    }
+  };
+  if (req.body.s_date && req.body.e_date) {
+    req.query['createdAt'] = {
+      $gte: req.body.s_date,
+      $lt: req.body.e_date
+    }
+
+  }
+
+
+  let key = req.body.search ? req.body.search.value : '';
+  if (key) {
+    filter['search'] = {
+      value: req.body.search.value,
+      fields: ['phone', 'email', 'firstName']
+    }
+  }
+  if (req.body.status) {
+    filter['find']['status'] = req.body.status;
+  }
+  PlayerOld.dataTables(filter).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })
   //res.status(200).json(res.advancedResults);
@@ -483,7 +532,12 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
     player = await Player.findById(req.params.id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken');
   } else {
     //player = req.player;
-    player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken');
+    if (req.player.status === 'active') {
+      player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken +refer_code');
+    } else {
+      player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken ');
+    }
+
   }
 
   if (!player) {
@@ -491,6 +545,7 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
+
 
   player['profileUrl'] = 'dfdfdfdf';
 
@@ -516,28 +571,47 @@ exports.createPlayer = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.updatePlayer = asyncHandler(async (req, res, next) => {
+  console.log('updatePlayer');
   let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus, state } = req.body;
-  let fieldsToUpdate = { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, state };
+  let fieldsToUpdate = { firstName };
   let player;
-  if (!firstName) {
-    return next(
-      new ErrorResponse(`Name is requied`)
-    );
-  }
+
 
   if (req.staff) {
     player = await Player.findById(req.params.id);
     fieldsToUpdate['kycStatus'] = kycStatus;
   } else if (req.player) {
 
-    player = req.player;
-  }
-
-  if (!player) {
     return next(
       new ErrorResponse(`Player  not found`)
     );
   }
+
+  if (!player || player.status !== 'active') {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+
+  if (!firstName && !player.firstName) {
+    return next(
+      new ErrorResponse(`firstName is requied`)
+    );
+  }
+  if (firstName) { fieldsToUpdate['firstName'] = firstName; }
+  if (lastName) { fieldsToUpdate['lastName'] = lastName; }
+
+  if (gender) { fieldsToUpdate['gender'] = gender; }
+  if (country) { fieldsToUpdate['country'] = country; }
+  if (aadharNumber) { fieldsToUpdate['aadharNumber'] = aadharNumber; }
+  if (panNumber) { fieldsToUpdate['panNumber'] = panNumber; }
+  if (dob) { fieldsToUpdate['dob'] = dob; }
+  if (state) { fieldsToUpdate['state'] = state; }
+  if (!player.email) {
+    if (email) { fieldsToUpdate['email'] = email; }
+  }
+
+
 
 
   player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
@@ -552,13 +626,46 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+// @desc      Update Player
+// @route     PUT /api/v1/auth/Players/:id
+// @access    Private/Admin
+exports.updateProfile = asyncHandler(async (req, res, next) => {
+  console.log('updateProfile', req.body);
+  let { phone, firstName } = req.body;
+  let fieldsToUpdate = {};
 
+  if (!req.player || req.player.status !== 'active') {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  if (!phone) {
+    return next(
+      new ErrorResponse(`Provide details`)
+    );
+  }
+  if (phone && !req.player.phone) {
+    fieldsToUpdate['phone'] = phone;
+  }
+
+
+  let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+
+  res.status(200).json({
+    success: true,
+    data: player,
+
+  });
+});
 // @desc      Delete Player
 // @route     DELETE /api/v1/auth/Players/:id
 // @access    Private/Admin
 exports.deletePlayer = asyncHandler(async (req, res, next) => {
   const player = await Player.findById(req.params.id);
-  await Player.findByIdAndDelete(req.params.id);
+  //await Player.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
     success: true,
@@ -570,17 +677,18 @@ exports.deletePlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deletePlayerData = asyncHandler(async (req, res, next) => {
   // const player = await Player.findById(req.params.id);
-  console.log('deleting', req.params.id);
-  await Transaction.deleteMany({ playerId: req.params.id });
-  await Ticket.deleteMany({ playerId: req.params.id });
-  await PlayerPoll.deleteMany({ playerId: req.params.id });
+  //console.log('deleting', req.params.id);
+  const user = req.staff;
 
-  let ids = await PlayerNotifcation.find({ playerId: req.params.id });
-  if (ids.length != 0) {
-    ids = ids.map(d => d._id)
-    await Notification.deleteMany({ _id: { $in: ids } });
-    await PlayerNotifcation.deleteMany({ playerId: req.params.id });
+  if (user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`Not Allowed`)
+    );
   }
+  await Transaction.deleteMany({ playerId: req.params.id });
+  //await Ticket.deleteMany({ playerId: req.params.id });
+  await PlayerPoll.deleteMany({ playerId: req.params.id });
+  await PlayerGame.deleteMany({ playerId: req.params.id });
 
   await Player.findByIdAndDelete(req.params.id);
   res.status(200).json({
@@ -589,13 +697,58 @@ exports.deletePlayerData = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.deloldplayer = asyncHandler(async (req, res, next) => {
+  // const player = await Player.findById(req.params.id);
+  //console.log('deleting', req.params.id);
+  const user = req.staff;
 
+  if (user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`Not Allowed`)
+    );
+  }
+  await PlayerOld.findByIdAndDelete(req.params.id);
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
+
+// @desc      Delete Player
+// @route     DELETE /api/v1/auth/Players/:id
+// @access    Private/Admin
+exports.deletePlayerDataBIds = asyncHandler(async (req, res, next) => {
+  // const player = await Player.findById(req.params.id);
+  // console.log('deletePlayerDataBIds', req.body);
+  let { ids } = req.body;
+  if (!ids || ids.length === 0) {
+    return next(
+      new ErrorResponse(`Select Players`)
+    );
+  }
+  const user = req.staff;
+
+  if (!ids || user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`Not Allowed`)
+    );
+  }
+  await Transaction.deleteMany({ playerId: { $in: ids } });
+  //await Ticket.deleteMany({ playerId: { $in: ids } });
+  await PlayerPoll.deleteMany({ playerId: { $in: ids } });
+  await PlayerGame.deleteMany({ playerId: { $in: ids } });
+
+  await Player.deleteMany({ _id: { $in: ids } });
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
 // @desc      Login user
 // @route     POST /api/v1/auth/login
 // @access    Public
 exports.setPin = asyncHandler(async (req, res, next) => {
   const { pin } = req.body;
-
 
   if (!pin || !req.player || req.player.role !== 'player') {
     return next(new ErrorResponse('user not found'));
@@ -607,6 +760,29 @@ exports.setPin = asyncHandler(async (req, res, next) => {
     new: true,
     runValidators: true
   });
+  if (req.player.status === 'notverified') {
+    console.log('bonus-adding');
+    const addamount = 10;
+    //all ok new user 
+    let fieldsToUpdate = {
+      status: 'active',
+      $inc: { balance: addamount, deposit: addamount },
+    }
+
+    let tranData = {
+      playerId: user._id,
+      amount: addamount,
+      transactionType: 'credit',
+      note: 'player register',
+      prevBalance: user.balance,
+      status: 'complete', paymentStatus: 'SUCCESS'
+    }
+    let tran = await Transaction.create(tranData);
+    user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+  }
 
   res.status(200).json({ success: true, data: {} });
 
@@ -627,13 +803,14 @@ exports.chkPin = asyncHandler(async (req, res, next) => {
   if (!user) {
     return next(new ErrorResponse('user not found'));
   }
+  //console.log('lllllllllllllllllllllllllllllllllllllll', user.password, req.body.pin, user.id)
   // Check if password matches
   const isMatch = user.password === req.body.pin;
   // Check for user
   if (!isMatch) {
     return next(new ErrorResponse('authentication faild'));
   }
-  sendTokenResponse(user, 200, res);
+  // sendTokenResponse(user, 200, res);
 
   // res.status(200).json({
   //   success: true,
@@ -758,7 +935,7 @@ exports.getLobbys = asyncHandler(async (req, res, next) => {
 
   let rows = await Lobby.find({ 'active': true }).lean();
   let x = rows.map(d => {
-    d['imageUrl'] = process.env.API_URI + '/files/' + d.lobbyImage;
+    d['imageUrl'] = process.env.IMAGE_URL + d.lobbyImage;
     return d;
   });
   // console.log('dsdsdsdsdsd', x);
@@ -804,7 +981,7 @@ exports.ticketReply = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.debiteAmount = asyncHandler(async (req, res, next) => {
   let { amount, note, gameId } = req.body;
-
+  console.log('debiteAmount =', gameId);
   if (!amount || amount < 0) {
     return next(
       new ErrorResponse(`Invalid amount`)
@@ -820,7 +997,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Game id requied`)
     );
   }
-  if (req.player.balance < amount) {
+  if (req.player.deposit < amount) {
     return next(
       new ErrorResponse(`Insufficent balance`)
     );
@@ -832,6 +1009,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'transactionType': "debit",
     'note': note,
     'prevBalance': req.player.balance,
+    'logType': req.body.logType,
     status: 'complete', paymentStatus: 'SUCCESS'
   }
 
@@ -843,15 +1021,12 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
 
   let dashUpdate = {};
   if (req.body.logType === 'join') {
-    Dashboard.join();
+    //Dashboard.join();
     player = await Player.findByIdAndUpdate(req.player.id, { $inc: { joinCount: 1 } }, {
       new: true,
       runValidators: true
     });
   }
-
-
-
   res.status(200).json({
     success: true,
     data: player
@@ -891,6 +1066,7 @@ exports.debitBonus = asyncHandler(async (req, res, next) => {
     'transactionType': "debit",
     'note': note,
     'prevBalance': req.player.balance,
+    'logType': 'deposit',
     status: 'complete', paymentStatus: 'SUCCESS'
   }
 
@@ -936,7 +1112,7 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
     'amount': amount,
     'transactionType': "credit",
     'note': note,
-    'prevBalance': req.player.balance,
+    'prevBalance': req.player.balance, 'logType': 'deposit',
     status: 'complete', paymentStatus: 'SUCCESS'
   }
 
@@ -955,10 +1131,19 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.creditAmount = asyncHandler(async (req, res, next) => {
-  let player = req.player;//await Player.findById(req.body.id);
-  let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1' } = req.body;
 
-  if (amount < 0) {
+  let player = req.player;//await Player.findById(req.body.id);
+  let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
+  console.log('creditAmount', gameId);
+  if (req.body.logType !== "won") {
+    new ErrorResponse(`Invalid amount`);
+  }
+  if (!tournamentId) {
+    return next(
+      new ErrorResponse(`Invalid tournament`)
+    );
+  }
+  if (amount < 0 || !gameId) {
     return next(
       new ErrorResponse(`Invalid amount`)
     );
@@ -968,41 +1153,36 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player Not found`)
     );
   }
+  let gameRec = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId, playerCount: { $gt: 0 } });
+  if (!gameRec) {
+    return next(
+      new ErrorResponse(`Game not found`)
+    );
+
+  }
   amount = parseFloat(amount).toFixed(2);
+  const tournament = await Tournament.findById(tournamentId);
 
-  let commision = adminCommision;
-  let tranData = {
-    'playerId': player._id,
-    'amount': amount,
-    'transactionType': "credit",
-    'note': note,
-    'prevBalance': player.balance,
-    'adminCommision': commision,
-    status: 'complete', paymentStatus: 'SUCCESS',
-    'logType': req.body.logType
+  if (!tournament) {
+    return next(
+      new ErrorResponse(`Tournament Not found`)
+    );
   }
-  if (gameId) {
-    tranData['gameId'] = gameId;
+
+
+  const betAmout = parseFloat(tournament.betAmount) * 2;
+  const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
+  const commision = betAmout - winAmount;
+  let PlayerAmount = winAmount;
+  let paymentStatus = 'paid';
+  if (amount < winAmount) {
+    PlayerAmount = winAmount * 0.5;
+    gameStatus = 'tie'
+    paymentStatus = 'tie'
+    if (gameRec.status === 'tie') {
+      paymentStatus = 'paid'
+    }
   }
-  let tran = await Transaction.create(tranData);
-
-  // await Transaction.findByIdAndUpdate(tran._id, { status: 'complete' });
-  let dashUpdate = {};
-  if (req.body.logType = "won") {
-    //  const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
-    // console.log(row.commission);
-    //  commision = (row.commission / 100) * amount;
-    // let tranData = {
-    //   'playerId': player._id,
-    //   'amount': commision,
-    //   'transactionType': "debit",
-    //   'note': 'Service Charge',
-    //   'prevBalance': player.balance,
-    //   status: 'complete', paymentStatus: 'SUCCESS'
-
-    // }
-    // let tran1 = await Transaction.create(tranData);
-    // player = await tran1.debitPlayer(commision);
 
     player = await tran.creditPlayer(amount);
     let playerGame = {
@@ -1016,29 +1196,117 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     }
     await PlayerGame.create(playerGame);
 
-  } else if (req.body.logType = "bonus") {
-    player = await tran.creditPlayer(amount);
+
+  // let leaderboard = await PlayerGame.create(playerGame);
+
+
+  let tranData = {
+    'playerId': player._id,
+    'amount': PlayerAmount,
+    'transactionType': "credit",
+    'note': note,
+    'prevBalance': player.balance,
+    'adminCommision': commision,
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'logType': req.body.logType,
+    'gameId': gameId
   }
 
-  //console.log('debit', player.balance);
+  if (gameRec.status !== 'paid') {
+    console.log('firsttime');
+    let tran = await Transaction.create(tranData);
+    player = await tran.creditPlayerWinings(PlayerAmount);
+    if (gameRec.status === 'start') {
+      Dashboard.totalIncome(betAmout, winAmount, commision);
+    }
 
-  //await updateDashboradStat(amount, commision)
+    let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
+  }
   res.status(200).json({
     success: true,
     data: player
   });
 });
 
-const updateDashboradStat = async (amount, commision) => {
-  let dash = await Dashboard.findOne({ type: 'dashboard' });
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
-  if (commision > 0) {
-    dash['totalIncome'] = dash['totalIncome'] + parseFloat(commision).toFixed(2);
+  let player = req.player;//await Player.findById(req.body.id);
+  let { amount, gameId, note } = req.body;
+  console.log('creditAmount', gameId);
+  if (req.body.logType !== "reverse") {
+    new ErrorResponse(`Invalid amount`);
   }
-  dash['grossIncome'] = dash['grossIncome'] + parseFloat(amount).toFixed(2);
+  if (!note) {
+    return next(
+      new ErrorResponse(`Note is required`)
+    );
+  }
+  if (!req.player || req.player.status !== 'active') {
+    return next(
+      new ErrorResponse(`Player Not Found`)
+    );
+  }
 
-  dash.save();
-}
+  if (amount < 0 || !gameId) {
+    return next(
+      new ErrorResponse(`Invalid amount`)
+    );
+  }
+  if (!player) {
+    return next(
+      new ErrorResponse(`Player Not found`)
+    );
+  }
+  let leaderboard = await PlayerGame.findOne({ 'gameId': gameId, paymentStatus: 'paid' });
+  if (leaderboard) {
+    return next(
+      new ErrorResponse(`Game Paid`)
+    );
+
+  }
+  let tranReverse = await Transaction.findOne({ 'gameId': gameId, logType: 'reverse', playerId: player._id });
+  if (tranReverse) {
+    return next(
+      new ErrorResponse(`Transaction not found`)
+    );
+
+  }
+  //let gameRec = await PlayerGame.findOne({ 'gameId': gameId, playerCount: { $gt: 0 } });
+  let tranJoin = await Transaction.findOne({ 'gameId': gameId, logType: 'join', playerId: player._id });
+
+  if (!tranJoin) {
+    return next(
+      new ErrorResponse(`Transaction not found`)
+    );
+
+  }
+  let commision = 0;
+  let tranData = {
+    'playerId': player._id,
+    'amount': tranJoin.amount,
+    'transactionType': "credit",
+    'note': note,
+    'prevBalance': player.balance,
+    'adminCommision': commision,
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'logType': 'reverse',
+    'gameId': gameId
+  }
+
+
+  console.log('reseved');
+  let tran = await Transaction.create(tranData);
+  player = await tran.creditPlayerDeposit(tranJoin.amount);
+
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+});
+
 // @desc      Get current logged in user
 // @route     POST /api/v1/auth/me
 // @access    Private
@@ -1054,23 +1322,13 @@ exports.playerInfo = asyncHandler(async (req, res, next) => {
 // @desc      Get current logged in user
 // @route     POST /api/v1/auth/me
 // @access    Private
-exports.getOnlinePlayers = asyncHandler(async (req, res, next) => {
-  // const user = await User.findById(req.user.id);
+exports.gameStatus = asyncHandler(async (req, res, next) => {
+  let { gameId } = req.body;
+  let gameRec = await PlayerGame.findOne({ 'gameId': gameId });
 
   res.status(200).json({
     success: true,
-    data: { count: 5 }
-  });
-});
-// @desc      Get current logged in user
-// @route     POST /api/v1/auth/me
-// @access    Private
-exports.editOnlinePlayers = asyncHandler(async (req, res, next) => {
-  // const user = await User.findById(req.user.id);
-
-  res.status(200).json({
-    success: true,
-    data: { count: 5 }
+    data: gameRec
   });
 });
 
@@ -1114,7 +1372,41 @@ exports.updateStatus = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.saveLeaderBoard = asyncHandler(async (req, res, next) => {
+  console.log('saveLeaderBoard');
+  let { playerId, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', players = [] } = req.body;
+  let leaderboard;
+  let updatedData = { isBot: false, players }
+  playersObj = JSON.parse(players);
+  const winnerPlayer = playersObj.matchWinLeaderDatas.filter(x => x.userId === playerId)[0];
+  const looserPlayer = playersObj.matchWinLeaderDatas.filter(x => x.userId !== playerId)[0];
+  const tournament = await Tournament.findById(tournamentId);
+  if (winnerPlayer.isBot) {
+    const betAmout = parseFloat(tournament.betAmount) * 2;
+    const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
+    const commision = betAmout - winAmount;
+    Dashboard.totalIncome(betAmout, winAmount, commision);
+    updatedData['isBot'] = true;
+    //updatedData['playerId'] = looserPlayer.userId;
+    updatedData['gameStatus'] = 'lost';
+    updatedData['note'] = note;
+    updatedData['opponentName'] = winnerPlayer.userName;
+    updatedData['opponentId'] = winnerPlayer.userId;
+  } else {
+    updatedData['opponentName'] = looserPlayer.userName;
+    updatedData['isBot'] = looserPlayer.isBot
+  }
 
+  leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, updatedData);
+
+  res.status(200).json({
+    success: true,
+    data: leaderboard
+  });
+});
 // @desc      Get current logged in user
 // @route     POST /api/v1/auth/me
 // @access    Private
@@ -1183,7 +1475,7 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
 let buildProfileUrl = (player) => {
   if (player.profilePic) {
     // console.log('image'.green);
-    return process.env.API_URI + '/files/' + player.profilePic
+    return process.env.IMAGE_URL + player.profilePic
   } else {
     // console.log('image'.red);
 
@@ -1206,7 +1498,7 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
 exports.getCoupons = asyncHandler(async (req, res, next) => {
   const coupon = await Coupon.find({ 'couponType': req.params.type, 'active': true }).lean();;
   let x = coupon.map(d => {
-    d['imageUrl'] = process.env.API_URI + '/files/' + d.couponImage;
+    d['imageUrl'] = process.env.IMAGE_URL + d.couponImage;
     return d;
   });
   res.status(200).json({
@@ -1224,7 +1516,7 @@ exports.getBanners = asyncHandler(async (req, res, next) => {
   const banner = await Banner.find({ 'status': 'active' }).lean();
   // console.log(banner);
   let x = banner.map(d => {
-    d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
+    d['imageUrl'] = process.env.IMAGE_URL + d.imageId;
 
     return d;
   });
@@ -1236,7 +1528,7 @@ exports.getBanners = asyncHandler(async (req, res, next) => {
 exports.getGifts = asyncHandler(async (req, res, next) => {
   const gift = await Gift.find({ 'active': true }).lean();;
   let x = gift.map(d => {
-    d['imageUrl'] = process.env.API_URI + '/files/' + d.giftImage;
+    d['imageUrl'] = process.env.IMAGE_URL + d.giftImage;
     return d;
   });
   res.status(200).json({
@@ -1332,7 +1624,7 @@ exports.poll = asyncHandler(async (req, res, next) => {
 exports.pollList = asyncHandler(async (req, res, next) => {
   const list = await Poll.find({ 'status': 'active' }).lean();
   let x = list.map(d => {
-    d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
+    d['imageUrl'] = process.env.IMAGE_URL + d.imageId;
 
     return d;
   });
@@ -1346,8 +1638,9 @@ exports.pollList = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/savefbtoken/:id
 // @access    Private/player
 exports.updateRefer = asyncHandler(async (req, res, next) => {
+  console.log('updateRefer');
   let { referId } = req.body;
-  if (!req.player) {
+  if (!req.player || req.player.status !== 'active') {
     return next(
       new ErrorResponse(`Player  not found`)
     );
@@ -1389,14 +1682,14 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     playerStat['refrer_level'] = 1;
   }
   await Player.findByIdAndUpdate(codeGiver._id, playerStat, {
-    new: false,
+    new: true,
     runValidators: true
   });
   console.log('refrer level - 1');
-  if (codeGiver.refrer_player_id) {
-    await referCommision(codeGiver.refrer_player_id, row.lvl2_commission, 'refer bonus level 2')
+  // if (codeGiver.refrer_player_id) {
+  //   await referCommision(codeGiver.refrer_player_id, row.lvl2_commission, 'refer bonus level 2')
 
-  }
+  // }
   res.status(200).json({
     success: true,
     data: player
@@ -1431,7 +1724,7 @@ exports.getVersion = asyncHandler(async (req, res, next) => {
   const list = await Version.find();
   // console.log(banner);
   // let x = banner.map(d => {
-  //   d['imageUrl'] = process.env.API_URI + '/files/' + d.imageId;
+  //   d['imageUrl'] = process.env.IMAGE_URL + d.imageId;
   //   return d;
   // });
   res.status(200).json({
@@ -1449,7 +1742,7 @@ exports.sendAppUrl = asyncHandler(async (req, res, next) => {
   // Get reset token
   let vcode = "1234";
   if (sms.one.TEMPLATE_APP_LINK_ID) {
-    let x = await smsOtp('91' + mobile, vcode, sms);
+    //let x = await smsOtp('91' + mobile, vcode, sms);
   }
 
   res.status(200).json({
@@ -1457,16 +1750,55 @@ exports.sendAppUrl = asyncHandler(async (req, res, next) => {
     data: []
   });
 });
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
+exports.sendotp = asyncHandler(async (req, res, next) => {
+  let { phone } = req.body;
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player not found`)
+    );
+  }
+  console.log(req.player.verifyPhoneExpire, req.player.verifyPhoneExpire > Date.now())
 
-let smsOtp = async (phone, otp, sms) => {
+  // if (req.player.phoneStatus !== 'verified') {
+  //   if (req.player.verifyPhoneExpire > Date.now()) {
+  //     return next(
+  //       new ErrorResponse(`Try after 10 min`)
+  //     );
+  //   }
+
+  let vcode = Math.floor(1000 + Math.random() * 9000);
+  const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
+  let fieldsToUpdate = {
+    'verifyPhone': vcode,
+    'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
+
+  }
+  player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+  let x = await smsOtp(phone, vcode, sms.one.TEMPLATE_ADMIN_PASS, sms.one.AUTHKEY);
+
+
+
+  res.status(200).json({
+    success: true,
+    data: []
+  });
+});
+
+let smsOtp = async (mobile, otp, template_id, authkey) => {
 
   var params = {
-    "template_id": sms.one.TEMPLATE_APP_LINK_ID,
-    "mobile": phone,
-    "authkey": sms.one.AUTHKEY,
-    "URL": 'https://www.dukeplay.com/assets/DukePlay.apk'
+    template_id,
+    mobile,
+    authkey,
+    otp
   };
-  console.error('sendingotp', otp, phone)
+  // console.error('sendingotp', otp, phone)
   return axios.get('https://api.msg91.com/api/v5/otp', { params }).catch(error => { console.error(error) });
 
 }
@@ -1501,3 +1833,42 @@ let referCommision = async (player_id, amount, note) => {
   console.log('refrer level - 2');
 
 }
+
+exports.checkUpi = asyncHandler(async (req, res, next) => {
+  const { upiId } = req.body;
+  if (!req.player || req.player.status !== 'active') {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  if (!upiId) {
+    return next(new ErrorResponse('Please Provide Upi Id'));
+  }
+
+  // Check if password matches
+  const upiRes = await cashfreeCtrl.upiValidate(req, res, next);
+  console.log(upiRes);
+  // Check for user
+  if (upiRes['status'] != 'SUCCESS') {
+    return next(new ErrorResponse('upi verification failed'));
+  }
+  if (upiRes.data.accountExists === 'YES') {
+    let fieldsToUpdate = { upiId };
+    let player = await Player.findByIdAndUpdate(req.player.id, { upi: fieldsToUpdate }, {
+      new: true,
+      runValidators: true
+    });
+
+
+
+    res.status(200).json({
+      success: true,
+      data: upiRes
+    });
+
+  } else {
+    return next(new ErrorResponse('upi verification failed'));
+  }
+
+
+});
