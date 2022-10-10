@@ -136,7 +136,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
 
-  const CLIENT_ID = '60490012283-8fgnb9tk35j5bpeg6pq09vmk2notiehc.apps.googleusercontent.com';
+  const CLIENT_ID = '849014505977-n6dfn73ekc6c7i3fftgtvv2ruvj2sh6o.apps.googleusercontent.com';
   const client = new OAuth2Client(CLIENT_ID);
 
   if (!email || !deviceToken) {
