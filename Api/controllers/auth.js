@@ -161,7 +161,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     } catch (error) {
 
       return next(
-        new ErrorResponse(`Unable to Rgister`)
+        new ErrorResponse(`Unable to Rgister----` + CLIENT_ID + 'firebaseToken --' + firebaseToken)
       );
     }
 
