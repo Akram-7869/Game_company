@@ -73,7 +73,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     if (!player) {
       return res.json(empty);
     }
-    
+
     filter['find']['playerId'] = player._id;
   }
 
@@ -232,21 +232,24 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
 
   const transaction = await Transaction.create(tranData);
   if (transactionType === 'credit') {
-    if (logType === 'won') {
-      player = await transaction.creditPlayerWinings(amount);
-    } else if (logType === 'bonus') {
-      player = await transaction.creditPlayerBonus(amount);
-    } else if (logType === 'deposit') {
-      player = await transaction.creditPlayerDeposit(amount);
-    }
+    player = await transaction.creditPlayer(amount);
+    // if (logType === 'won') {
+    //   player = await transaction.creditPlayerWinings(amount);
+    // } else if (logType === 'bonus') {
+    //   player = await transaction.creditPlayerBonus(amount);
+    // } else if (logType === 'deposit') {
+    //   player = await transaction.creditPlayerDeposit(amount);
+    // }
   } else if (transactionType === 'debit') {
-    if (logType === 'won') {
-      player = await transaction.debitPlayerWinings(amount);
-    } else if (logType === 'bonus') {
-      player = await transaction.debitPlayerBonus(amount);
-    } else if (logType === 'deposit') {
-      player = await transaction.debitPlayerDeposit(amount);
-    }
+    player = await transaction.debitPlayer(amount);
+
+    // if (logType === 'won') {
+    //   player = await transaction.debitPlayerWinings(amount);
+    // } else if (logType === 'bonus') {
+    //   player = await transaction.debitPlayerBonus(amount);
+    // } else if (logType === 'deposit') {
+    //   player = await transaction.debitPlayerDeposit(amount);
+    // }
   }
 
   let title = `Rs. ${amount} ${transactionType} `;
