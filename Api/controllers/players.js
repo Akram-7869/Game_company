@@ -60,13 +60,13 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Invalid amount`)
     );
   }
-  if (amount > req.player.winings) {
+  if (amount > req.player.balance) {
     return next(
       new ErrorResponse(`Insufficent wining Balance`)
     );
   }
 
-  if (req.player.winings < 100) {
+  if (req.player.balance < 100) {
     return next(
       new ErrorResponse(`Wining Balance less than 100`)
     );
@@ -997,7 +997,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Game id requied`)
     );
   }
-  if (req.player.deposit < amount) {
+  if (req.player.balance < amount) {
     return next(
       new ErrorResponse(`Insufficent balance`)
     );
@@ -1184,17 +1184,17 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     }
   }
 
-    player = await tran.creditPlayer(amount);
-    let playerGame = {
-      'playerId': req.player._id,
-      'amountWon': amount,
-      'tournamentId': tournamentId,
-      'winner': winner,
-      'gameId': gameId,
-      'gameStatus': 'won',
-      'note': note
-    }
-    await PlayerGame.create(playerGame);
+  player = await tran.creditPlayer(amount);
+  let playerGame = {
+    'playerId': req.player._id,
+    'amountWon': amount,
+    'tournamentId': tournamentId,
+    'winner': winner,
+    'gameId': gameId,
+    'gameStatus': 'won',
+    'note': note
+  }
+  await PlayerGame.create(playerGame);
 
 
   // let leaderboard = await PlayerGame.create(playerGame);

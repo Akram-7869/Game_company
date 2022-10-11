@@ -234,22 +234,22 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
         bonusAmount = couponRec.couponAmount;
       }
 
-    let tranBonusData = {
-      'playerId': tran.playerId,
-      'amount': bonusAmount,
-      'transactionType': "credit",
-      'note': 'Bonus amount',
-      'paymentGateway': 'Cashfree Pay',
-      'logType': 'bonus',
-      'prevBalance': player.balance,
-      'paymentStatus': 'SUCCESS',
-      'status': 'complete',
-      'paymentId': tran._id
-    }
-    bonusTran = await Transaction.create(tranBonusData);
-    //  bonusTran.creditPlayerBonus(bonusAmount);
-    bonusTran.creditPlayer(bonusAmount);
-    console.log('bonus added');
+      let tranBonusData = {
+        'playerId': tran.playerId,
+        'amount': bonusAmount,
+        'transactionType': "credit",
+        'note': 'Bonus amount',
+        'paymentGateway': 'Cashfree Pay',
+        'logType': 'bonus',
+        'prevBalance': player.balance,
+        'paymentStatus': 'SUCCESS',
+        'status': 'complete',
+        'paymentId': tran._id
+      }
+      bonusTran = await Transaction.create(tranBonusData);
+      //  bonusTran.creditPlayerBonus(bonusAmount);
+      bonusTran.creditPlayer(bonusAmount);
+      console.log('bonus added');
 
     }
   }
