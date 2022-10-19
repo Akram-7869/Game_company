@@ -1184,7 +1184,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     }
   }
 
-  player = await tran.creditPlayer(amount);
+  // player = await tran.creditPlayer(amount);
   let playerGame = {
     'playerId': req.player._id,
     'amountWon': amount,
@@ -1215,7 +1215,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   if (gameRec.status !== 'paid') {
     console.log('firsttime');
     let tran = await Transaction.create(tranData);
-    player = await tran.creditPlayerWinings(PlayerAmount);
+    player = await tran.creditPlayer(PlayerAmount);
     if (gameRec.status === 'start') {
       Dashboard.totalIncome(betAmout, winAmount, commision);
     }
