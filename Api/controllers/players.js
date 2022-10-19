@@ -1143,7 +1143,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Invalid tournament`)
     );
   }
-  if (amount < 0 || !gameId) {
+  if (amount < 0.00 || !gameId) {
     return next(
       new ErrorResponse(`Invalid amount`)
     );
