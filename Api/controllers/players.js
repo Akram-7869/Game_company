@@ -1708,8 +1708,8 @@ exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
     if (d.playerId && d.playerId.firstName) {
       name = d.playerId.firstName;
     }
-
-    return name + ' Won ' + d.amountWon + ' ' + res.app.get('site_setting').one.currency_symbol;
+d['name']=name;
+    return d;
   });
   res.status(200).json({
     success: true,
