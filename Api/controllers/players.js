@@ -1704,16 +1704,18 @@ exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
   const winners = await PlayerGame.find().sort({ "_id": -1 }).limit(20).select({ 'amountWon': 1 }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
 
   let x = winners.map(d => {
-    let name = 'DUCKE'
+    let name = 'starx'
     if (d.playerId && d.playerId.firstName) {
       name = d.playerId.firstName;
     }
-d['name']=name;
-    return d;
+     return {
+      'amountWon':d.amountWon,
+      'firstName':name
+    };
   });
   res.status(200).json({
     success: true,
-    data: winners
+    data: x
   });
 });
 
