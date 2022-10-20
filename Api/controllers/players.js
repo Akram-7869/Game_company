@@ -105,17 +105,17 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
       new ErrorResponse('please add upi id')
     );
   }
-  const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
-  if (upiStatus['status'] !== 'SUCCESS') {
-    return next(
-      new ErrorResponse(upiStatus['message'])
-    );
-  }
-  if (upiStatus.data.accountExists === 'NO') {
-    return next(
-      new ErrorResponse('Invalid Upi')
-    );
-  }
+  // const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
+  // if (upiStatus['status'] !== 'SUCCESS') {
+  //   return next(
+  //     new ErrorResponse(upiStatus['message'])
+  //   );
+  // }
+  // if (upiStatus.data.accountExists === 'NO') {
+  //   return next(
+  //     new ErrorResponse('Invalid Upi')
+  //   );
+  // }
 
 
   let tran = await Transaction.create(tranData);
