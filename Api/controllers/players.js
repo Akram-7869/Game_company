@@ -96,7 +96,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     tranData['withdraw'] = player.wallet;
     req.body['upiId'] = player.wallet.get('walletAddress');
   } else if (req.body.to === 'upi') {
-    tranData['withdraw'] = player.upi;
+    tranData['withdraw'] = upi;
     req.body['upiId'] = upi;
   }
   //tranData['gameId'] = gameId;
