@@ -1175,14 +1175,14 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   const commision = betAmout - winAmount;
   let PlayerAmount = winAmount;
   let paymentStatus = 'paid';
-  if (amount < winAmount) {
-    PlayerAmount = winAmount * 0.5;
-    gameStatus = 'tie'
-    paymentStatus = 'tie'
-    if (gameRec.status === 'tie') {
-      paymentStatus = 'paid'
-    }
-  }
+  // if (amount < winAmount) {
+  //   PlayerAmount = winAmount * 0.5;
+  //   gameStatus = 'tie'
+  //   paymentStatus = 'tie'
+  //   if (gameRec.status === 'tie') {
+  //     paymentStatus = 'paid'
+  //   }
+  // }
 
   // player = await tran.creditPlayer(amount);
   let playerGame = {
@@ -1192,9 +1192,10 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'winner': winner,
     'gameId': gameId,
     'gameStatus': 'won',
-    'note': note
+    'note': note,
+    'status':'paid'
   }
-  await PlayerGame.create(playerGame);
+ // await PlayerGame.create(playerGame);
 
 
   // let leaderboard = await PlayerGame.create(playerGame);
@@ -1202,12 +1203,12 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
 
   let tranData = {
     'playerId': player._id,
-    'amount': PlayerAmount,
+    'amount': amount,
     'transactionType': "credit",
     'note': note,
     'prevBalance': player.balance,
     'adminCommision': commision,
-    status: 'complete', paymentStatus: 'SUCCESS',
+    status: 'complete', 'paymentStatus': 'SUCCESS',
     'logType': req.body.logType,
     'gameId': gameId
   }
@@ -1217,9 +1218,9 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     let tran = await Transaction.create(tranData);
     player = await tran.creditPlayer(PlayerAmount);
     if (gameRec.status === 'start') {
-      Dashboard.totalIncome(betAmout, winAmount, commision);
+      Dashboard.totalIncome(betAmout, amount, commision);
     }
-
+    playerGame['status']='paid';
     let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
   }
   res.status(200).json({
