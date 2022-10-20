@@ -47,7 +47,7 @@ const checkOrderStatus = async (trxId) => {
 
 }
 exports.withDrawRequest = asyncHandler(async (req, res, next) => {
-  let { amount, note, gameId, to } = req.body;
+  let { amount, note, gameId, to, upi } = req.body;
 
   if (!req.player) {
     return next(
