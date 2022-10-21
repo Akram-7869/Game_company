@@ -1303,7 +1303,7 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
     let rn = req.publicRoom[lobbyId]['roomName'];
     if (rn == gameId) {
       console.log('gameId', gameId);
-      publicRoom[lobbyId] = '';
+      req.publicRoom[lobbyId] = '';
     }
 
   }
