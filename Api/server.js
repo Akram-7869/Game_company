@@ -92,6 +92,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
   req.io = io;
+  req.publicRoom = publicRoom;
   if (!app.get('site_setting')) {
     // console.log('site setting');
     const setting = await Setting.findOne({

@@ -1259,8 +1259,8 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player Not found`)
     );
   }
-  let leaderboard = await PlayerGame.findOne({ 'gameId': gameId, paymentStatus: 'paid' });
-  if (leaderboard) {
+  let leaderboard = await PlayerGame.findOne({ 'gameId': gameId });
+  if (!leaderboard || leaderboard.status === 'paid') {
     return next(
       new ErrorResponse(`Game Paid`)
     );
@@ -1269,7 +1269,7 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
   let tranReverse = await Transaction.findOne({ 'gameId': gameId, logType: 'reverse', playerId: player._id });
   if (tranReverse) {
     return next(
-      new ErrorResponse(`Transaction not found`)
+      new ErrorResponse(`refund given`)
     );
 
   }
@@ -1297,6 +1297,17 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
 
   console.log('reseved');
+
+  let lobbyId = leaderboard.tournamentId;
+  if (req.publicRoom[lobbyId]) {
+    let rn = req.publicRoom[lobbyId]['roomName'];
+    if (rn == room) {
+      console.log(restting-- - room);
+      publicRoom[lobbyId] = '';
+    }
+
+  }
+
   let tran = await Transaction.create(tranData);
   player = await tran.creditPlayerDeposit(tranJoin.amount);
 
