@@ -1301,8 +1301,8 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
   let lobbyId = leaderboard.tournamentId;
   if (req.publicRoom[lobbyId]) {
     let rn = req.publicRoom[lobbyId]['roomName'];
-    if (rn == room) {
-      console.log(restting-- - room);
+    if (rn == gameId) {
+      console.log('gameId', gameId);
       publicRoom[lobbyId] = '';
     }
 
