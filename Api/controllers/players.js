@@ -47,7 +47,7 @@ const checkOrderStatus = async (trxId) => {
 
 }
 exports.withDrawRequest = asyncHandler(async (req, res, next) => {
-  let { amount, note, gameId, to } = req.body;
+  let { amount, note, gameId, to, upiId } = req.body;
 
   if (!req.player) {
     return next(
@@ -96,8 +96,8 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     tranData['withdraw'] = player.wallet;
     req.body['upiId'] = player.wallet.get('walletAddress');
   } else if (req.body.to === 'upi') {
-    tranData['withdraw'] = player.upi;
-    req.body['upiId'] = player.upi.get('upiId');
+    tranData['withdraw'] = { 'upiId': upiId };
+    req.body['upiId'] = upiId;
   }
   //tranData['gameId'] = gameId;
   if (!req.body['upiId']) {
