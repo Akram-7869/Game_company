@@ -24,7 +24,7 @@ exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
     search: {
 
     },
-    find: { 'playerId': req.player._id },
+    find: { 'playerId': req.player._id, status: 'complete' },
     sort: {
       updatedAt: -1
     }
@@ -73,7 +73,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     if (!player) {
       return res.json(empty);
     }
-    
+
     filter['find']['playerId'] = player._id;
   }
 
