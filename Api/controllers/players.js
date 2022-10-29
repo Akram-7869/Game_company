@@ -282,7 +282,6 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
     success: true,
     data: player
   });
-  return;
   let player = req.player;
   // if (!amount || amount < 0) {
   //   return next(

@@ -24,7 +24,7 @@ exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
     search: {
 
     },
-    find: { 'playerId': req.player._id, status: 'complete' },
+    find: { 'playerId': req.player._id },
     sort: {
       updatedAt: -1
     }
