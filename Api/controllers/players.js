@@ -278,10 +278,6 @@ exports.addUpi = asyncHandler(async (req, res, next) => {
 });
 exports.addMoney = asyncHandler(async (req, res, next) => {
   let { amount, note, orderId } = req.body;
-  res.status(200).json({
-    success: true,
-    data: player
-  });
   let player = req.player;
   // if (!amount || amount < 0) {
   //   return next(
