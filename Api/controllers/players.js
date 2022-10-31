@@ -1105,6 +1105,7 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
     'amount': amount,
     'transactionType': "credit",
     'note': note,
+    'gameId': !gameId ? '' : gameId,
     'prevBalance': req.player.balance, 'logType': 'deposit',
     status: 'complete', paymentStatus: 'SUCCESS'
   }
