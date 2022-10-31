@@ -100,11 +100,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     req.body['upiId'] = upiId;
   }
   //tranData['gameId'] = gameId;
-  if (!req.body['upiId']) {
-    return next(
-      new ErrorResponse('please add upi id')
-    );
-  }
+
   // const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
   // if (upiStatus['status'] !== 'SUCCESS') {
   //   return next(
