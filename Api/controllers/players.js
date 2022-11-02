@@ -66,9 +66,9 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (req.player.winings < 100) {
+  if (req.player.winings < 25) {
     return next(
-      new ErrorResponse(`Wining Balance less than 100`)
+      new ErrorResponse(`Wining Balance less than 25`)
     );
   }
 
