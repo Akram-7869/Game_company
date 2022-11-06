@@ -292,6 +292,11 @@ exports.payout = asyncHandler(async (req, res, next) => {
       new ErrorResponse('Account is banned')
     );
   }
+  if (!player.phone) {
+    return next(
+      new ErrorResponse('Phone no is required')
+    );
+  }
   let bene = {};
   let transferMode = '';
 
@@ -306,7 +311,7 @@ exports.payout = asyncHandler(async (req, res, next) => {
       "ifsc": tran.withdraw.get('bankIfc'),
       "name": tran.withdraw.get('bankAccountHolder'),
       "email": player.email,
-      "phone": phone,
+      "phone": player.phone,
       "address1": tran.withdraw.get('bankAddress')
     };
   } else if (tran.withdrawTo === 'wallet') {
