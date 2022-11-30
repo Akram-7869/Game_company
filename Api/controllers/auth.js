@@ -136,7 +136,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
 
-  const CLIENT_ID = '849014505977-n6dfn73ekc6c7i3fftgtvv2ruvj2sh6o.apps.googleusercontent.com';
+  const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
   const client = new OAuth2Client(CLIENT_ID);
 
   if (!email || !deviceToken) {
@@ -152,18 +152,18 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`This device is registered with another email ID`)
       );
     }
-    try {
-      ticket = await client.verifyIdToken({
-        idToken: firebaseToken,
-        audience: CLIENT_ID,
-      });
+    // try {
+    //   ticket = await client.verifyIdToken({
+    //     idToken: firebaseToken,
+    //     audience: CLIENT_ID,
+    //   });
 
-    } catch (error) {
+    // } catch (error) {
 
-      return next(
-        new ErrorResponse(`Unable to Rgister----` + CLIENT_ID + 'firebaseToken --' + firebaseToken)
-      );
-    }
+    //   return next(
+    //     new ErrorResponse(`Unable to Rgister----` + CLIENT_ID + 'firebaseToken --' + firebaseToken)
+    //   );
+    // }
 
     console.log('playerRegisterEmail-existing');
 
@@ -192,7 +192,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     } catch (error) {
 
       return next(
-        new ErrorResponse(`Unable to Rgister----` + CLIENT_ID + 'firebaseToken --' + firebaseToken)
+        new ErrorResponse(`Unable to Rgister----` + error)
       );
     }
 
