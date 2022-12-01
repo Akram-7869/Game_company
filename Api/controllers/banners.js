@@ -61,6 +61,7 @@ exports.createBanner = asyncHandler(async (req, res, next) => {
     status: 'active',
     imageId: filename,
     url: req.body.url,
+    bannerType: req.body.bannerType
   }
 
   const row = await Banner.create(banner);
