@@ -86,7 +86,7 @@ exports.updateBanner = asyncHandler(async (req, res, next) => {
 
 
   let filename;
-  let fieldsToUpdate = { url: req.body.url, location: req.body.location, status: req.body.status };
+  let fieldsToUpdate = { url: req.body.url, location: req.body.location, status: req.body.status, bannerType: req.body.bannerType };
   if (req.files) {
     filename = '/img/banner/' + req.files.file.name;
     let filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
