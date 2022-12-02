@@ -156,19 +156,19 @@ io.on('connection', socket => {
 
     let player = await Player.findOne({ _id: userId, 'status': 'active', 'deposit': { $gte: lobby.betAmount } });
     if (!player) {
-      console.log('player-not-found');
+      // console.log('player-not-found');
       return;
     }
     let roomName = '';
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
       await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
-      console.log('join-exisitng', roomName);
+      // console.log('join-exisitng', roomName);
     } else {
       roomName = makeid(5);
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
       state[roomName] = { 'created': Date.now() + 600000, players: [] };
-      console.log('create-room-', roomName);
+      // console.log('create-room-', roomName);
       await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1 });
     }
     // console.log('room', roomName);
