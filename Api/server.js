@@ -208,7 +208,7 @@ io.on('connection', socket => {
       room: room,
       users: getRoomUsers(room)
     };
-    console.log('leave-', d);
+    //console.log('leave-', d);
     io.to(room).emit('res', { ev: 'leave', data });
   });
 
@@ -247,7 +247,7 @@ io.on('connection', socket => {
       }
 
     }
-    console.log('gameStart-', d);
+    //console.log('gameStart-', d);
     io.to(socket.room).emit('res', { ev: 'gameStart', data });
 
   });
@@ -321,7 +321,7 @@ let getRoomLobbyUsers = (room, lobbyId) => {
   return [];
 }
 let userLeave = (s) => {
-  console.log('leav-func')
+  //console.log('leav-func')
   if (state[s.room] && state[s.room].players.length !== 0) {
     //delete state[s.room].players[s.userId];
     const index = state[s.room].players.findIndex(user => user.userId === s.userId);
@@ -333,7 +333,7 @@ let userLeave = (s) => {
 
   for (let r in state) {
     if (state[r]['created'] < Date.now()) {
-      console.log('del-old');
+      // console.log('del-old');
       delete state[r];
     }
   }
