@@ -1161,8 +1161,8 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   }
 
 
-  const betAmout = amount + adminCommision;
-
+  let betAmout = parseFloat(amount) + parseFloat(adminCommision);
+  betAmout = parseFloat(amount).toFixed(2);
   let playerGame = {
     'playerId': req.player._id,
     'amountWon': amount,
