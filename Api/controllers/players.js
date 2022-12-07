@@ -96,7 +96,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     tranData['withdraw'] = player.wallet;
     req.body['upiId'] = player.wallet.get('walletAddress');
   } else if (req.body.to === 'upi') {
-    tranData['withdraw'] = {'upiId':upi};
+    tranData['withdraw'] = { 'upiId': upi };
     req.body['upiId'] = upi;
   }
   //tranData['gameId'] = gameId;
@@ -1134,31 +1134,22 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
 
   let player = req.player;//await Player.findById(req.body.id);
   let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
-  console.log('creditAmount', gameId);
+  //console.log('creditAmount', gameId, req.body);
   if (req.body.logType !== "won") {
-    new ErrorResponse(`Invalid amount`);
+    return next(new ErrorResponse(`Invalid amount`));
   }
   if (!tournamentId) {
-    return next(
-      new ErrorResponse(`Invalid tournament`)
-    );
+    return next(new ErrorResponse(`Invalid tournament`));
   }
   if (amount < 0.00 || !gameId) {
-    return next(
-      new ErrorResponse(`Invalid amount`)
-    );
+    return next(new ErrorResponse(`Invalid amount`));
   }
   if (!player) {
-    return next(
-      new ErrorResponse(`Player Not found`)
-    );
+    return next(new ErrorResponse(`Player Not found`));
   }
   let gameRec = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId, playerCount: { $gt: 0 } });
   if (!gameRec) {
-    return next(
-      new ErrorResponse(`Game not found`)
-    );
-
+    return next(new ErrorResponse(`Game not found`));
   }
   amount = parseFloat(amount).toFixed(2);
   const tournament = await Tournament.findById(tournamentId);
@@ -1170,21 +1161,8 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   }
 
 
-  const betAmout = parseFloat(tournament.betAmount) * 2;
-  const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
-  const commision = betAmout - winAmount;
-  let PlayerAmount = winAmount;
-  let paymentStatus = 'paid';
-  // if (amount < winAmount) {
-  //   PlayerAmount = winAmount * 0.5;
-  //   gameStatus = 'tie'
-  //   paymentStatus = 'tie'
-  //   if (gameRec.status === 'tie') {
-  //     paymentStatus = 'paid'
-  //   }
-  // }
+  const betAmout = amount + adminCommision;
 
-  // player = await tran.creditPlayer(amount);
   let playerGame = {
     'playerId': req.player._id,
     'amountWon': amount,
@@ -1193,36 +1171,27 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'gameId': gameId,
     'gameStatus': 'won',
     'note': note,
-    'status':'paid'
+    'status': 'paid'
   }
- // await PlayerGame.create(playerGame);
-
-
-  // let leaderboard = await PlayerGame.create(playerGame);
-
-
   let tranData = {
     'playerId': player._id,
     'amount': amount,
     'transactionType': "credit",
     'note': note,
     'prevBalance': player.balance,
-    'adminCommision': commision,
+    'adminCommision': adminCommision,
     status: 'complete', 'paymentStatus': 'SUCCESS',
     'logType': req.body.logType,
     'gameId': gameId
   }
 
-  if (gameRec.status !== 'paid') {
-    console.log('firsttime');
-    let tran = await Transaction.create(tranData);
-    player = await tran.creditPlayer(PlayerAmount);
-    if (gameRec.status === 'start') {
-      Dashboard.totalIncome(betAmout, amount, commision);
-    }
-    playerGame['status']='paid';
-    let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
-  }
+
+  let tran = await Transaction.create(tranData);
+  player = await tran.creditPlayer(amount);
+
+  Dashboard.totalIncome(betAmout, amount, adminCommision);
+  await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
+
   res.status(200).json({
     success: true,
     data: player
@@ -1709,9 +1678,9 @@ exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
     if (d.playerId && d.playerId.firstName) {
       name = d.playerId.firstName;
     }
-     return {
-      'amountWon':d.amountWon,
-      'firstName':name
+    return {
+      'amountWon': d.amountWon,
+      'firstName': name
     };
   });
   res.status(200).json({
