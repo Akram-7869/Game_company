@@ -1671,7 +1671,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
 
-  const winners = await PlayerGame.find().sort({ "_id": -1 }).limit(20).select({ 'amountWon': 1 }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
+  const winners = await PlayerGame.find().sort({ "_id": -1 }).limit(20).select({ 'amountWon': 1 ,'tournamentId' :1}).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
 
   let x = winners.map(d => {
     let name = 'starx'
@@ -1680,9 +1680,20 @@ exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
     }
     return {
       'amountWon': d.amountWon,
-      'firstName': name
+      'firstName': name,
+      'tournamentId':d.tournamentId
     };
   });
+  res.status(200).json({
+    success: true,
+    data: x
+  });
+});
+exports.getWinnertop = asyncHandler(async (req, res, next) => {
+
+  const winners = await Player.find({status:'active'}).sort({ "_id": -1 }).limit(6).select({ '_id': 0, 'firstName': 1,'picture':1,'balance':1});
+
+  let x = winners ;
   res.status(200).json({
     success: true,
     data: x

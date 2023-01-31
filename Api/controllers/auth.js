@@ -183,24 +183,24 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
 
   } else {
     console.log('playerRegisterEmail-new');
-    try {
-      ticket = await client.verifyIdToken({
-        idToken: firebaseToken,
-        audience: CLIENT_ID,
-      });
+    // try {
+    //   ticket = await client.verifyIdToken({
+    //     idToken: firebaseToken,
+    //     audience: CLIENT_ID,
+    //   });
 
-    } catch (error) {
+    // } catch (error) {
 
-      return next(
-        new ErrorResponse(`Unable to Rgister----` + error)
-      );
-    }
+    //   return next(
+    //     new ErrorResponse(`Unable to Rgister----` + error)
+    //   );
+    // }
 
-    let payload = ticket.getPayload();
-    let userid = payload['sub'];
-    email = payload['email'];
-    firstName = payload['name'];
-    picture = payload['picture'];
+    // let payload = ticket.getPayload();
+    // let userid = payload['sub'];
+    // email = payload['email'];
+    // firstName = payload['name'];
+    // picture = payload['picture'];
 
     // create new player
     let addamount = 10;
