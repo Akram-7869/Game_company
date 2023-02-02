@@ -379,7 +379,7 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
     });
     res.app.set('bot_profile', bot_profile);
   }
-  setting = res.app.set('site_setting', setting);
+  setting = res.app.get('site_setting', setting);
 
   if (!setting) {
     // console.log('site setting');
