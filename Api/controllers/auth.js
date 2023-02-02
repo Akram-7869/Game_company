@@ -367,8 +367,8 @@ exports.logout = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.maintanance = asyncHandler(async (req, res, next) => {
   let bot_profile = [];
-
-  if (!req.app.get('bot_profile')) {
+  let setting = {};
+  if (!res.app.get('bot_profile')) {
     filename = '/img/profile-picture/';
     filePath = path.resolve(__dirname, '../../assets/' + filename);
     let pathurl = process.env.IMAGE_URL + filename;
@@ -377,11 +377,21 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
       // console.log(file);
       bot_profile.push(pathurl + file);
     });
+    res.app.set('bot_profile', bot_profile);
+  }
+  setting = res.app.set('site_setting', setting);
+
+  if (!setting) {
+    // console.log('site setting');
+    setting = await Setting.findOne({
+      type: 'SITE',
+    });
+    res.app.set('site_setting', setting);
   }
 
   res.status(200).json({
     success: true,
-    data: { bot_profile, adminCommision: 10 }
+    data: { bot_profile, adminCommision: setting.adminCommision }
   });
 });
 exports.smsOtp = async (mobile, otp, template_id, authkey) => {
