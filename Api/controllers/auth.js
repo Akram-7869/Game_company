@@ -381,7 +381,7 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: { bot_profile }
+    data: { bot_profile, adminCommision: 10 }
   });
 });
 exports.smsOtp = async (mobile, otp, template_id, authkey) => {
