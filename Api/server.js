@@ -226,7 +226,7 @@ io.on('connection', socket => {
     userLeave(socket);
     socket.leave(room);
     let data = {
-      room: room,
+      room: room, userId,
       users: getRoomUsers(room)
     };
     console.log('leave-', d);
