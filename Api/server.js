@@ -168,7 +168,7 @@ io.on('connection', socket => {
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
       state[roomName] = { 'created': Date.now() + 600000, players: [] };
       console.log('create-room-', roomName);
-      await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1 ,gameData:{},WinList:{}});
+      await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1, gameData: {}, WinList: {} });
     }
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
@@ -177,8 +177,8 @@ io.on('connection', socket => {
     let data = {
       roomName, users: getRoomLobbyUsers(roomName, lobbyId),
       userId: userId,
-      gameData:state[roomName]['gameData'],
-      WinList:state[roomName]['WinList'],
+      gameData: state[roomName]['gameData'],
+      WinList: state[roomName]['WinList'],
     }
     if (state[roomName]) {
       publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
@@ -215,13 +215,13 @@ io.on('connection', socket => {
   socket.on('sendToRoom', (d) => {
 
     let { room, ev, data } = d;//JSON.parse(d);
-console.log('sendToRoom',data)
+    console.log('sendToRoom', data)
     io.to(room).emit('res', { ev, data });
 
   });
   //leave
   socket.on('leave', (d) => {
-    let { room } = d;
+    let { room, userId } = d;
 
     userLeave(socket);
     socket.leave(room);
@@ -301,27 +301,28 @@ console.log('sendToRoom',data)
   socket.on('setGameData', (d) => {
 
     let { room, gameData } = d; //JSON.parse(d);
-     let data = {
-      room: room,gameData:{}}
+    let data = {
+      room: room, gameData: {}
+    }
     if (state[room]) {
 
       state[room]['gameData'] = gameData;
-data['gameData']=gameData;
+      data['gameData'] = gameData;
     }
-    
-    console.log('setGameData',data);
+
+    console.log('setGameData', data);
     io.to(room).emit('res', { ev: 'setGameData', data });
   });
   socket.on('setWinListData', (d) => {
 
     let { room, WinList } = d; //JSON.parse(d);
-     let data = {room: room,WinList:{}}
+    let data = { room: room, WinList: {} }
     if (state[room]) {
       state[room]['WinList'] = WinList;
-      data['WinList']=d;
+      data['WinList'] = d;
     }
-    
-    console.log('setWinListData',data);
+
+    console.log('setWinListData', data);
     io.to(room).emit('res', { ev: 'setWinListData', data });
   });
 });
