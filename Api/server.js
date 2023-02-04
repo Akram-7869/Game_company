@@ -223,13 +223,13 @@ io.on('connection', socket => {
   socket.on('leave', (d) => {
     let { room, userId } = d;
 
-    userLeave(socket);
+    userLeave(socket, userId);
     socket.leave(room);
     let data = {
       room: room, userId,
       users: getRoomUsers(room)
     };
-    console.log('leave-', d);
+    console.log('leave-', d, data);
     io.to(room).emit('res', { ev: 'leave', data });
   });
 
