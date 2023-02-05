@@ -23,7 +23,7 @@ router.route('/player/:nid/:id').post(addPlayerList).delete(removePlayerList);
 router.route('/player/:id').get(getPlayerList);
 
 //player api
-router.route('/player').get(protect, getPlayerNotifications);
+//router.route('/player').get(protect, getPlayerNotifications);
 
 
 router.route('/add').post(createNotification);
