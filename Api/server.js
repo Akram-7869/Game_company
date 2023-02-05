@@ -264,7 +264,7 @@ io.on('connection', socket => {
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
       if (rn == room || data.users.length == 2) {
-        publicRoom[lobbyId]['played'] = true;
+        // publicRoom[lobbyId]['played'] = true;
       }
 
     }
@@ -388,14 +388,14 @@ let userLeave = (s) => {
   //   }
   // }
   //remove lobby 
-  for (let l in publicRoom) {
-    if (publicRoom[l]['roomName']) {
-      let rn = publicRoom[l]['roomName'];
-      if (!state[rn]) {
-        delete publicRoom[l];
-      }
-    }
-  }
+  // for (let l in publicRoom) {
+  //   if (publicRoom[l]['roomName']) {
+  //     let rn = publicRoom[l]['roomName'];
+  //     if (!state[rn]) {
+  //       delete publicRoom[l];
+  //     }
+  //   }
+  // }
 
 }
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
