@@ -26,7 +26,7 @@ router.post('/playerold', protect, playerCtl.playerold);
 router.route('/profile').get(protect, playerCtl.getPlayer).post(protect, playerCtl.updateProfile);
 router.route('/sendotp').post(protect, playerCtl.sendotp);
 router.post('/notification/clearall', protect, playerCtl.clearAllNotification);
-router.get('/notification', protect, playerCtl.getNotication);
+//router.get('/notification', protect, playerCtl.getNotication);
 router.post('/poll', protect, playerCtl.poll);
 router.get('/pollList', protect, playerCtl.pollList);
 router.post('/checkupi', protect, playerCtl.checkUpi);
