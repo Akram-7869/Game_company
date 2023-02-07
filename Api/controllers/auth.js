@@ -387,13 +387,13 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
   //console.log(setting );
   setting = res.app.get('site_setting');
   // console.log('site setting');
-  if (!setting) {
+  //if (!setting) {
 
-    setting = await Setting.findOne({
-      type: 'SITE',
-    });
-    res.app.set('site_setting', setting);
-  }
+  setting = await Setting.findOne({
+    type: 'SITE',
+  });
+  res.app.set('site_setting', setting);
+  // }
 
   res.status(200).json({
     success: true,
