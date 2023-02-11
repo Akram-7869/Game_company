@@ -871,28 +871,71 @@ exports.join = asyncHandler(async (req, res, next) => {
 });
 
 exports.won = asyncHandler(async (req, res, next) => {
-  //dahboard online +  
-  // player game update  
-  // play stat
 
-  // let fieldsToUpdate = { playerId: req.player._id, logType: 'won', amountWon: req.body.amountWon };
-  // let tran = await Transactions.findOneAndUpdate({ playerId: req.player.id, gameId: req.body.gameId }, fieldsToUpdate, {
-  //   new: true, upsert: false,
-  //   runValidators: true
-  // });
+  let player = req.player;//await Player.findById(req.body.id);
+  let { betOn = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
+  //console.log('creditAmount', gameId, req.body);
+  if (req.body.logType !== "won") {
+    return next(new ErrorResponse(`Invalid amount`));
+  }
+  if (!tournamentId) {
+    return next(new ErrorResponse(`Invalid tournament`));
+  }
+  if (amount < 0.00 || !gameId) {
+    return next(new ErrorResponse(`Invalid amount`));
+  }
+  if (!player) {
+    return next(new ErrorResponse(`Player Not found`));
+  }
+  // let gameRec = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId, playerCount: { $gt: 0 } });
+  // if (!gameRec) {
+  //   return next(new ErrorResponse(`Game not found`));
+  // }
+  amount = parseFloat(amount).toFixed(2);
+  const tournament = await Tournament.findById(tournamentId);
+
+  if (!tournament) {
+    return next(
+      new ErrorResponse(`Tournament Not found`)
+    );
+  }
 
 
+  let betAmout = parseFloat(amount) + parseFloat(adminCommision);
+  betAmout = parseFloat(amount).toFixed(2);
+  let playerGame = {
+    'playerId': req.player._id,
+    'amountWon': amount,
+    'tournamentId': tournamentId,
+    'winner': winner,
+    'gameId': gameId,
+    'gameStatus': 'won',
+    'note': note,
+    'status': 'paid'
+  }
+  let tranData = {
+    'playerId': player._id,
+    'amount': amount,
+    'transactionType': "credit",
+    'note': note,
+    'prevBalance': player.balance,
+    'adminCommision': adminCommision,
+    status: 'complete', 'paymentStatus': 'SUCCESS',
+    'logType': req.body.logType,
+    'gameId': gameId,
+    betOn,
+  }
 
-  // //let addamount = req.body.amountWon * 0.20;
-  // let dashUpdate = { $inc: { livePlayer: -1 } }
-  // let dash = await Dashboard.findAndUpdate({ type: 'dashboard' }, dashUpdate, {
-  //   new: true, upsert: true,
-  //   runValidators: true
-  // });
+
+  let tran = await Transaction.create(tranData);
+  player = await tran.creditPlayer(amount);
+
+  Dashboard.totalIncome(betAmout, amount, adminCommision);
+  await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
 
   res.status(200).json({
     success: true,
-    data: {}
+    data: player
   });
 });
 
@@ -980,7 +1023,7 @@ exports.ticketReply = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.debiteAmount = asyncHandler(async (req, res, next) => {
-  let { amount, note, gameId } = req.body;
+  let { amount, note, gameId, betOn = 0 } = req.body;
   console.log('debiteAmount =', gameId);
   if (!amount || amount < 0) {
     return next(
@@ -1010,18 +1053,17 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': req.player.balance,
     'logType': req.body.logType,
+    betOn,
     status: 'complete', paymentStatus: 'SUCCESS'
   }
 
   tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
-  //player = await tran.debitPlayerDeposit(amount);
-  player = await tran.debitPlayer(amount);
+  player = await tran.debitPlayerDeposit(amount);
+  //player = await tran.debitPlayer(amount);
 
-  let dashUpdate = {};
   if (req.body.logType === 'join') {
-    //Dashboard.join();
     player = await Player.findByIdAndUpdate(req.player.id, { $inc: { joinCount: 1 } }, {
       new: true,
       runValidators: true
@@ -1133,7 +1175,7 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
 exports.creditAmount = asyncHandler(async (req, res, next) => {
 
   let player = req.player;//await Player.findById(req.body.id);
-  let { amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
+  let { betOn = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
   //console.log('creditAmount', gameId, req.body);
   if (req.body.logType !== "won") {
     return next(new ErrorResponse(`Invalid amount`));
@@ -1204,8 +1246,8 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
 exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
   let player = req.player;//await Player.findById(req.body.id);
-  let { amount, gameId, note } = req.body;
-  console.log('creditAmount', gameId);
+  let { betOn = 0, amount, gameId, note } = req.body;
+  console.log('reverseAmount', gameId);
   if (req.body.logType !== "reverse") {
     new ErrorResponse(`Invalid amount`);
   }
@@ -1230,33 +1272,33 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player Not found`)
     );
   }
-  let leaderboard = await PlayerGame.findOne({ 'gameId': gameId, paymentStatus: 'paid' });
-  if (leaderboard) {
-    return next(
-      new ErrorResponse(`Game Paid`)
-    );
+  // let leaderboard = await PlayerGame.findOne({ 'gameId': gameId, paymentStatus: 'paid' });
+  // if (leaderboard) {
+  //   return next(
+  //     new ErrorResponse(`Game Paid`)
+  //   );
 
-  }
-  let tranReverse = await Transaction.findOne({ 'gameId': gameId, logType: 'reverse', playerId: player._id });
-  if (tranReverse) {
-    return next(
-      new ErrorResponse(`Transaction not found`)
-    );
+  // }
+  // let tranReverse = await Transaction.findOne({ 'gameId': gameId, logType: 'reverse', playerId: player._id });
+  // if (tranReverse) {
+  //   return next(
+  //     new ErrorResponse(`Transaction not found`)
+  //   );
 
-  }
-  //let gameRec = await PlayerGame.findOne({ 'gameId': gameId, playerCount: { $gt: 0 } });
-  let tranJoin = await Transaction.findOne({ 'gameId': gameId, logType: 'join', playerId: player._id });
+  // }
+  // //let gameRec = await PlayerGame.findOne({ 'gameId': gameId, playerCount: { $gt: 0 } });
+  let tranJoin = await Transaction.findOne({ 'gameId': gameId, logType: 'credit', 'betOn': betOn, playerId: player._id });
 
-  if (!tranJoin) {
-    return next(
-      new ErrorResponse(`Transaction not found`)
-    );
+  // if (!tranJoin) {
+  //   return next(
+  //     new ErrorResponse(`Transaction not found`)
+  //   );
 
-  }
+  // }
   let commision = 0;
   let tranData = {
     'playerId': player._id,
-    'amount': tranJoin.amount,
+    'amount': amount,
     'transactionType': "credit",
     'note': note,
     'prevBalance': player.balance,
@@ -1269,7 +1311,7 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
   console.log('reseved');
   let tran = await Transaction.create(tranData);
-  player = await tran.creditPlayerDeposit(tranJoin.amount);
+  player = await tran.creditPlayerDeposit(amount);
 
   res.status(200).json({
     success: true,

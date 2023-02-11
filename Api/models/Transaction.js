@@ -66,6 +66,11 @@ const TransactionsSchema = new mongoose.Schema({
     adminCommision: {
         type: Number,
     },
+    betOn: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     gateWayCommision: {
         type: Number,
     },
