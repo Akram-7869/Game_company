@@ -51,7 +51,7 @@ io.on('connection', socket => {
             gameId: makeid(5),
             lobbyId
         }
-        //console.log('sendToRoom', ev);
+        console.log('setGameId', data);
         io.in(room).emit('setGameId', { ev: 'setGameId', data });
 
     });
