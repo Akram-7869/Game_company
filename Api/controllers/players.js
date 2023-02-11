@@ -1147,10 +1147,10 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   if (!player) {
     return next(new ErrorResponse(`Player Not found`));
   }
-  let gameRec = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId, playerCount: { $gt: 0 } });
-  if (!gameRec) {
-    return next(new ErrorResponse(`Game not found`));
-  }
+  // let gameRec = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId, playerCount: { $gt: 0 } });
+  // if (!gameRec) {
+  //   return next(new ErrorResponse(`Game not found`));
+  // }
   amount = parseFloat(amount).toFixed(2);
   const tournament = await Tournament.findById(tournamentId);
 
@@ -1671,7 +1671,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
 
-  const winners = await PlayerGame.find().sort({ "_id": -1 }).limit(20).select({ 'amountWon': 1 ,'tournamentId' :1}).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
+  const winners = await PlayerGame.find().sort({ "_id": -1 }).limit(20).select({ 'amountWon': 1, 'tournamentId': 1 }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1 } });
 
   let x = winners.map(d => {
     let name = 'starx'
@@ -1681,7 +1681,7 @@ exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
     return {
       'amountWon': d.amountWon,
       'firstName': name,
-      'tournamentId':d.tournamentId
+      'tournamentId': d.tournamentId
     };
   });
   res.status(200).json({
@@ -1691,9 +1691,9 @@ exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
 });
 exports.getWinnertop = asyncHandler(async (req, res, next) => {
 
-  const winners = await Player.find({status:'active'}).sort({ "_id": -1 }).limit(6).select({ '_id': 0, 'firstName': 1,'picture':1,'balance':1});
+  const winners = await Player.find({ status: 'active' }).sort({ "_id": -1 }).limit(6).select({ '_id': 0, 'firstName': 1, 'picture': 1, 'balance': 1 });
 
-  let x = winners ;
+  let x = winners;
   res.status(200).json({
     success: true,
     data: x
