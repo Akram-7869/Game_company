@@ -64,7 +64,7 @@ module.exports = router;
 //router.post('/pin', protect, playerCtl.setPin);
 //router.post('/checkpin', playerCtl.chkPin);
 // router.post('/game/join', protect, join);
-router.post('/game/won', protect, won);
+router.post('/game/won', protect, playerCtl.won);
 //router.post('/ticket/add', protect, playerCtl.ticketAdd);
 //router.post('/ticket/reply', protect, playerCtl.ticketReply);
 //router.get('/ticket/', protect, playerCtl.ticketList);
