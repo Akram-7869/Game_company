@@ -52,7 +52,7 @@ io.on('connection', socket => {
             lobbyId
         }
         //console.log('sendToRoom', ev);
-        io.in(room).emit('setGameId', { ev, data });
+        io.in(room).emit('setGameId', { ev: 'setGameId', data });
 
     });
 
