@@ -38,6 +38,10 @@ const SettingSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    admin_referral_commission: {
+        type: Number,
+        default: 0
+    },
     lvl1_commission: {
         type: Number,
         default: 0
