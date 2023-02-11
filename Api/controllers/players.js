@@ -1287,32 +1287,25 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
   // }
   // //let gameRec = await PlayerGame.findOne({ 'gameId': gameId, playerCount: { $gt: 0 } });
-  let tranJoin = await Transaction.findOne({ 'gameId': gameId, logType: 'credit', 'betOn': betOn, playerId: player._id });
-
-  // if (!tranJoin) {
-  //   return next(
-  //     new ErrorResponse(`Transaction not found`)
-  //   );
-
-  // }
+  let tranJoin = await Transaction.findOneAndUpdate({ amount, 'gameId': gameId, logType: 'debit', 'betOn': betOn, playerId: player._id }, { logType: 'reverse' });
   let commision = 0;
-  let tranData = {
-    'playerId': player._id,
-    'amount': amount,
-    'transactionType': "credit",
-    'note': note,
-    'prevBalance': player.balance,
-    'adminCommision': commision,
-    status: 'complete', paymentStatus: 'SUCCESS',
-    'logType': 'reverse',
-    'gameId': gameId
-  }
+  // let tranData = {
+  //   'playerId': player._id,
+  //   'amount': amount,
+  //   'transactionType': "credit",
+  //   'note': note,
+  //   'prevBalance': player.balance,
+  //   'adminCommision': commision,
+  //   status: 'complete', paymentStatus: 'SUCCESS',
+  //   'logType': 'reverse',
+  //   'gameId': gameId
+  // }
 
 
-  console.log('reseved');
-  let tran = await Transaction.create(tranData);
+
+  // let tran = await Transaction.create(tranData);
   player = await tran.creditPlayerDeposit(amount);
-
+  console.log('reseved');
   res.status(200).json({
     success: true,
     data: player
