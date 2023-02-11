@@ -873,7 +873,7 @@ exports.join = asyncHandler(async (req, res, next) => {
 exports.won = asyncHandler(async (req, res, next) => {
 
   let player = req.player;//await Player.findById(req.body.id);
-  let { betOn = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
+  let { betNo = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
   //console.log('creditAmount', gameId, req.body);
   if (req.body.logType !== "won") {
     return next(new ErrorResponse(`Invalid amount`));
@@ -923,7 +923,7 @@ exports.won = asyncHandler(async (req, res, next) => {
     status: 'complete', 'paymentStatus': 'SUCCESS',
     'logType': req.body.logType,
     'gameId': gameId,
-    betOn,
+    betNo,
   }
 
 
@@ -1023,7 +1023,7 @@ exports.ticketReply = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.debiteAmount = asyncHandler(async (req, res, next) => {
-  let { amount, note, gameId, betOn = 0 } = req.body;
+  let { amount, note, gameId, betNo = 0 } = req.body;
   console.log('debiteAmount =', gameId);
   if (!amount || amount < 0) {
     return next(
@@ -1053,7 +1053,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': req.player.balance,
     'logType': req.body.logType,
-    betOn,
+    betNo,
     status: 'complete', paymentStatus: 'SUCCESS'
   }
 
@@ -1175,7 +1175,7 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
 exports.creditAmount = asyncHandler(async (req, res, next) => {
 
   let player = req.player;//await Player.findById(req.body.id);
-  let { betOn = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
+  let { betNo = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
   //console.log('creditAmount', gameId, req.body);
   if (req.body.logType !== "won") {
     return next(new ErrorResponse(`Invalid amount`));
@@ -1246,7 +1246,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
 exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
   let player = req.player;//await Player.findById(req.body.id);
-  let { betOn = 0, amount, gameId, note } = req.body;
+  let { betNo = 0, amount, gameId, note } = req.body;
   console.log('reverseAmount', gameId);
   if (req.body.logType !== "reverse") {
     new ErrorResponse(`Invalid amount`);
@@ -1287,7 +1287,7 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
   // }
   // //let gameRec = await PlayerGame.findOne({ 'gameId': gameId, playerCount: { $gt: 0 } });
-  let tranJoin = await Transaction.findOneAndUpdate({ amount, 'gameId': gameId, logType: 'debit', 'betOn': betOn, playerId: player._id }, { logType: 'reverse' });
+  let tranJoin = await Transaction.findOneAndUpdate({ amount, 'gameId': gameId, logType: 'debit', 'betNo': betNo, playerId: player._id }, { logType: 'reverse' });
   let commision = 0;
   // let tranData = {
   //   'playerId': player._id,
