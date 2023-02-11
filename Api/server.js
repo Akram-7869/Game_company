@@ -219,6 +219,17 @@ io.on('connection', socket => {
     io.to(room).emit('res', { ev, data });
 
   });
+  socket.on('setGameId', (d) => {
+    let { room, lobbyId } = d;//JSON.parse(d);
+    console.log('setGameId-in', d);
+    let data = {
+      gameId: makeid(5),
+      lobbyId
+    }
+    console.log('setGameId', data);
+    io.in(room).emit('res', { ev: 'setGameId', data });
+
+  });
   //leave
   socket.on('leave', (d) => {
     let { room, userId } = d;
