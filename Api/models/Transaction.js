@@ -66,7 +66,7 @@ const TransactionsSchema = new mongoose.Schema({
     adminCommision: {
         type: Number,
     },
-    betOn: {
+    betNo: {
         type: Number,
         required: true,
         default: 0
