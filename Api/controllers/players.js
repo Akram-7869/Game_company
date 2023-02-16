@@ -1301,7 +1301,7 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Insufficent Balance`)
     );
   }
-  let gametran = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, playerId: player._id, amountBet: { $gte: amount } }, { $inc: { betAmount: -amount } });
+  let gametran = await PlayerGame.findByIdAndUpdate(okBal._id, { $inc: { betAmount: -amount } });
 
 
   let commision = 0;
@@ -1320,7 +1320,7 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
 
   let tran = await Transaction.create(tranData);
-  player = await tran.createPlayer(amount);
+  player = await tran.debitPlayer(amount);
   console.log('reseved');
   res.status(200).json({
     success: true,
