@@ -1914,12 +1914,15 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
   let filter = { commissionStatus: 'processing', gameStatus: 'lost' };
   const winners = await PlayerGame.find(filter).select({ 'amountBet': 1, 'tournamentId': 1, gameStatus: 'lost' }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1, refrer_player_id: 1 }, match: { refrer_player_id: { $exists: true } } });
   console.log(winners);
-  return;
+
   const setting = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
 
   const refrealComission = setting.admin_referral_commission * 0.01;
   for await (const game of gamePlayed) {
-    let amount = game.betAmount * refrealComission;
+    if (game.amountBet <= 0) {
+      continue;
+    }
+    let amount = game.amountBet * refrealComission;
     let tranData = {
       'playerId': game.playerId,
       'amount': amount,
