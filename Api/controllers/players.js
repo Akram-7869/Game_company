@@ -931,7 +931,7 @@ exports.won = asyncHandler(async (req, res, next) => {
   player = await tran.creditPlayer(amount);
 
   Dashboard.totalIncome(betAmout, amount, adminCommision);
-  await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
+  await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'playerId': req.player._id }, playerGame);
 
   res.status(200).json({
     success: true,
