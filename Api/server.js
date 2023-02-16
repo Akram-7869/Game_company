@@ -227,7 +227,6 @@ io.on('connection', socket => {
       lobbyId
     }
     console.log('setGameId', data);
-
     io.in(room).emit('res', { ev: 'setGameId', data });
 
   });
