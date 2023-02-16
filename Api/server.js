@@ -227,7 +227,6 @@ io.on('connection', socket => {
       lobbyId
     }
     console.log('setGameId', data);
-    await PlayerGame.create({ playerId: userId, 'gameId': data.gameId, 'tournamentId': lobbyId, status: 'created' });
 
     io.in(room).emit('res', { ev: 'setGameId', data });
 
