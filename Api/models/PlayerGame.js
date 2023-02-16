@@ -24,7 +24,7 @@ const PlayerGameSchema = new mongoose.Schema({
   commissionStatus: {
     type: String,
     default: 'processing',
-    enum: ['processing', 'given']
+    enum: ['processing', 'processed']
   },
   gameStatus: {
     type: String,

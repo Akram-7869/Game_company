@@ -1913,40 +1913,36 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
   // }
   const winners = await PlayerGame.find({ commissionStatus: 'processing', gameStatus: 'lost' }).select({ 'amountBet': 1, 'tournamentId': 1, gameStatus: 'lost' }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1, refrer_player_id: 1 }, match: { refrer_player_id: { $exists: true } } });
   console.log(winners);
-  // for await (const results of gamePlayed) {
-  //   await longRunningTask()
-  // }
-  // console.log('I will wait')
+  return;
+  const setting = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
+
+  const refrealComission = setting.admin_referral_commission * 0.01;
+  for await (const game of gamePlayed) {
+    let amount = game.betAmount * refrealComission;
+    let tranData = {
+      'playerId': game.playerId,
+      'amount': amount,
+      'transactionType': "credit",
+      'note': 'Admin Refreal Bonus',
+      'prevBalance': 0,
+      'adminCommision': 0,
+      status: 'complete', 'paymentStatus': 'SUCCESS',
+      'logType': 'bonus',
+      'gameId': game.gameId
+    }
+
+
+    let tran = await Transaction.create(tranData);
+    await tran.creditPlayer(amount);
+
+  }
+  console.log('I Cron excuted')
 
   // let betAmout = parseFloat(amount) + parseFloat(adminCommision);
   // betAmout = parseFloat(amount).toFixed(2);
-  // let playerGame = {
-  //   'playerId': req.player._id,
-  //   'amountWon': amount,
-  //   'tournamentId': tournamentId,
-  //   'winner': winner,
-  //   'gameId': gameId,
-  //   'gameStatus': 'won',
-  //   'note': note,
-  //   'status': 'paid'
-  // }
-  // let tranData = {
-  //   'playerId': player._id,
-  //   'amount': amount,
-  //   'transactionType': "credit",
-  //   'note': note,
-  //   'prevBalance': player.balance,
-  //   'adminCommision': adminCommision,
-  //   status: 'complete', 'paymentStatus': 'SUCCESS',
-  //   'logType': req.body.logType,
-  //   'gameId': gameId
-  // }
 
 
-  // let tran = await Transaction.create(tranData);
-  // player = await tran.creditPlayer(amount);
-
-  // await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
+  await PlayerGame.updateMany({ commissionStatus: 'processing', gameStatus: 'lost' }, { commissionStatus: 'processed' });
 
   res.status(200).json({
     success: true,
