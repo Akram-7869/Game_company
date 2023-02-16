@@ -1060,8 +1060,13 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
+  let exist = await PlayerGame.countDocuments({ playerId: req.player.id, gameId });
+  if (exist) {
+    await PlayerGame.findOneAndUpdate({ playerId: req.player.id, gameId }, { $inc: { amountBet: amount } });
+  } else {
+    await PlayerGame.create({ playerId: req.player.id, gameId, amountBet: amount });
+  }
 
-  await PlayerGame.findOneAndUpdate({ playerId: req.player.id, gameId }, { $inc: { amountBet: amount } }, { upsert: true });
 
 
   player = await tran.debitPlayer(amount);
