@@ -1910,42 +1910,42 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
   if (!player) {
     return next(new ErrorResponse(`Player Not found`));
   }
-  let gamePlayed = await PlayerGame.find({ 'gameId': gameId });
+  const winners = await PlayerGame.find().select({ 'amountBet': 1, 'tournamentId': 1, gameStatus: 'lost' }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1, refrer_player_id: 1 }, match: { refrer_player_id: { $exists: true } } });
+  console.log(winners);
+  // for await (const results of gamePlayed) {
+  //   await longRunningTask()
+  // }
+  // console.log('I will wait')
 
-  for await (const results of gamePlayed) {
-    await longRunningTask()
-  }
-  console.log('I will wait')
-
-  let betAmout = parseFloat(amount) + parseFloat(adminCommision);
-  betAmout = parseFloat(amount).toFixed(2);
-  let playerGame = {
-    'playerId': req.player._id,
-    'amountWon': amount,
-    'tournamentId': tournamentId,
-    'winner': winner,
-    'gameId': gameId,
-    'gameStatus': 'won',
-    'note': note,
-    'status': 'paid'
-  }
-  let tranData = {
-    'playerId': player._id,
-    'amount': amount,
-    'transactionType': "credit",
-    'note': note,
-    'prevBalance': player.balance,
-    'adminCommision': adminCommision,
-    status: 'complete', 'paymentStatus': 'SUCCESS',
-    'logType': req.body.logType,
-    'gameId': gameId
-  }
+  // let betAmout = parseFloat(amount) + parseFloat(adminCommision);
+  // betAmout = parseFloat(amount).toFixed(2);
+  // let playerGame = {
+  //   'playerId': req.player._id,
+  //   'amountWon': amount,
+  //   'tournamentId': tournamentId,
+  //   'winner': winner,
+  //   'gameId': gameId,
+  //   'gameStatus': 'won',
+  //   'note': note,
+  //   'status': 'paid'
+  // }
+  // let tranData = {
+  //   'playerId': player._id,
+  //   'amount': amount,
+  //   'transactionType': "credit",
+  //   'note': note,
+  //   'prevBalance': player.balance,
+  //   'adminCommision': adminCommision,
+  //   status: 'complete', 'paymentStatus': 'SUCCESS',
+  //   'logType': req.body.logType,
+  //   'gameId': gameId
+  // }
 
 
-  let tran = await Transaction.create(tranData);
-  player = await tran.creditPlayer(amount);
+  // let tran = await Transaction.create(tranData);
+  // player = await tran.creditPlayer(amount);
 
-  await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
+  // await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
 
   res.status(200).json({
     success: true,
