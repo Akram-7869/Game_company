@@ -219,7 +219,7 @@ io.on('connection', socket => {
     io.to(room).emit('res', { ev, data });
 
   });
-  socket.on('setGameId', (d) => {
+  socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
     console.log('setGameId-in', d);
     let data = {
@@ -227,6 +227,8 @@ io.on('connection', socket => {
       lobbyId
     }
     console.log('setGameId', data);
+    await PlayerGame.create({ playerId: userId, 'gameId': data.gameId, 'tournamentId': lobbyId, status: 'created' });
+
     io.in(room).emit('res', { ev: 'setGameId', data });
 
   });

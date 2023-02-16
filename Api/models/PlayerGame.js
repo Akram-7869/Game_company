@@ -25,13 +25,17 @@ const PlayerGameSchema = new mongoose.Schema({
     type: String,
     default: 'lost',
   },
-  amountPaid: {
+  amountBet: {
     type: Number,
     default: 0,
   },
   amountWon: {
     type: Number,
     default: 0,
+  },
+  amountReverse: {
+    type: Number,
+    default: 0
   },
   rank: {
     type: Number,
@@ -67,10 +71,7 @@ const PlayerGameSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  refundCount: {
-    type: Number,
-    default: 0
-  },
+
 
   players: {
     type: String,
