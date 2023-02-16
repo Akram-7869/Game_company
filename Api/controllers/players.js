@@ -1911,17 +1911,17 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
   // if (!player) {
   //   return next(new ErrorResponse(`Player Not found`));
   // }
-  let filter = { commissionStatus: 'processing', gameStatus: 'lost' };
+  let filter = { commissionStatus: 'processing', gameStatus: 'lost', amountBet: { $gt: 0 } };
   const gamePlayed = await PlayerGame.find(filter).select({ 'amountBet': 1, 'tournamentId': 1, gameStatus: 'lost' }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1, refrer_player_id: 1 }, match: { refrer_player_id: { $exists: true } } });
 
 
   const setting = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
 
   const refrealComission = setting.admin_referral_commission * 0.01;
+  if (refrealComission <= 0) {
+    return;
+  }
   for await (const game of gamePlayed) {
-    if (game.amountBet <= 0) {
-      continue;
-    }
     let amount = game.amountBet * refrealComission;
     let tranData = {
       'playerId': game.playerId.refrer_player_id,
