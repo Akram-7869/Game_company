@@ -1912,8 +1912,8 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
   //   return next(new ErrorResponse(`Player Not found`));
   // }
   let filter = { commissionStatus: 'processing', gameStatus: 'lost' };
-  const winners = await PlayerGame.find(filter).select({ 'amountBet': 1, 'tournamentId': 1, gameStatus: 'lost' }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1, refrer_player_id: 1 }, match: { refrer_player_id: { $exists: true } } });
-  console.log(winners);
+  const gamePlayed = await PlayerGame.find(filter).select({ 'amountBet': 1, 'tournamentId': 1, gameStatus: 'lost' }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1, refrer_player_id: 1 }, match: { refrer_player_id: { $exists: true } } });
+
 
   const setting = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
 
@@ -1938,6 +1938,7 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
 
     let tran = await Transaction.create(tranData);
     await tran.creditPlayer(amount);
+    console.log(game);
 
   }
   console.log('I Cron excuted')
