@@ -1061,7 +1061,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
 
   let tran = await Transaction.create(tranData);
 
-  await PlayerGame.findOneAndUpdate({ playerId: req.player.id, gameId }, { $inc: { amountBet: amount } });
+  await PlayerGame.findOneAndUpdate({ playerId: req.player.id, gameId }, { $inc: { amountBet: amount } }, { upsert: true });
 
 
   player = await tran.debitPlayer(amount);
