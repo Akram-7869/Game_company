@@ -1924,7 +1924,7 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
     }
     let amount = game.amountBet * refrealComission;
     let tranData = {
-      'playerId': game.playerId,
+      'playerId': game.playerId.refrer_player_id,
       'amount': amount,
       'transactionType': "credit",
       'note': 'Admin Refreal Bonus',
