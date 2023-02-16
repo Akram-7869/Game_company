@@ -1290,13 +1290,13 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
   // }
   // //let gameRec = await PlayerGame.findOne({ 'gameId': gameId, playerCount: { $gt: 0 } });
-  let okBal = await PlayerGame.findOne({ 'gameId': gameId, playerId: player._id, betAmount: { $gte: amount } });
+  let okBal = await PlayerGame.findOne({ 'gameId': gameId, playerId: player._id, amountBet: { $gte: amount } });
   if (!okBal) {
     return next(
       new ErrorResponse(`Insufficent Balance`)
     );
   }
-  let gametran = await PlayerGame.findOne({ 'gameId': gameId, playerId: player._id, betAmount: { $gte: amount } }, { $inc: { betAmount: -amount } });
+  let gametran = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, playerId: player._id, amountBet: { $gte: amount } }, { $inc: { betAmount: -amount } });
 
 
   let commision = 0;
@@ -1907,12 +1907,11 @@ exports.checkUpi = asyncHandler(async (req, res, next) => {
 exports.creditReferalComission = asyncHandler(async (req, res, next) => {
   let player = req.player;
   let { betNo = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
-
   let commision = 0.05;
-  if (!player) {
-    return next(new ErrorResponse(`Player Not found`));
-  }
-  const winners = await PlayerGame.find().select({ 'amountBet': 1, 'tournamentId': 1, gameStatus: 'lost' }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1, refrer_player_id: 1 }, match: { refrer_player_id: { $exists: true } } });
+  // if (!player) {
+  //   return next(new ErrorResponse(`Player Not found`));
+  // }
+  const winners = await PlayerGame.find({ commissionStatus: 'processing', gameStatus: 'lost' }).select({ 'amountBet': 1, 'tournamentId': 1, gameStatus: 'lost' }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1, refrer_player_id: 1 }, match: { refrer_player_id: { $exists: true } } });
   console.log(winners);
   // for await (const results of gamePlayed) {
   //   await longRunningTask()
@@ -1951,13 +1950,6 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: player
+    data: winners
   });
 });
-
-let longRunningTask = async (game) => {
-
-  await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
-
-
-}

@@ -5,6 +5,7 @@ const router = express.Router({ mergeParams: true });
 const { protect, authorize } = require('../middleware/auth');
 //router.use(protect);
 //router.use(authorize('admin','Player'));
+router.get('/commission', playerCtl.creditReferalComission);
 router.get('/winnerfeed', playerCtl.getWinnerfeed);
 router.get('/winnertop/:id', playerCtl.getWinnertop);
 router.post('/sendAppUrl', playerCtl.sendAppUrl);

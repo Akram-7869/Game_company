@@ -221,7 +221,6 @@ io.on('connection', socket => {
   });
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
-    console.log('setGameId-in', d);
     let data = {
       gameId: makeid(5),
       lobbyId
