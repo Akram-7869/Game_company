@@ -1301,7 +1301,7 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Insufficent Balance`)
     );
   }
-  let gametran = await PlayerGame.findByIdAndUpdate(okBal._id, { $inc: { betAmount: -amount } });
+  let gametran = await PlayerGame.findByIdAndUpdate(okBal._id, { $inc: { amountBet: -amount } });
 
 
   let commision = 0;
