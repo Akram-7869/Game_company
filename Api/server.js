@@ -153,7 +153,7 @@ io.on('connection', socket => {
       return;
     }
 
-    let player = await Player.findOne({ _id: userId, 'status': 'active', 'deposit': { $gte: lobby.betAmount } });
+    let player = await Player.findOne({ _id: userId, 'status': 'active', 'balance': { $gte: lobby.betAmount } });
     if (!player) {
       console.log('player-not-found');
       return;
