@@ -1071,7 +1071,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   }
   res.status(200).json({
     success: true,
-    data: player
+    data: { player, tran }
   });
 });
 
@@ -1119,7 +1119,7 @@ exports.debitBonus = asyncHandler(async (req, res, next) => {
   player = await tran.debitPlayerBonus(amount);
   res.status(200).json({
     success: true,
-    data: player
+    data: { player, tran }
   });
 });
 // @desc      Log user out / clear cookie
@@ -1287,7 +1287,12 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
   // }
   // //let gameRec = await PlayerGame.findOne({ 'gameId': gameId, playerCount: { $gt: 0 } });
-  let tranJoin = await Transaction.findOneAndUpdate({ amount, 'gameId': gameId, logType: 'debit', 'betNo': betNo, playerId: player._id }, { logType: 'reverse' });
+  let tran = await Transaction.findOne({ amount, 'gameId': gameId, logType: 'debit', 'betNo': betNo, playerId: player._id }, { logType: 'reverse' });
+  if (!tran) {
+    return next(
+      new ErrorResponse(`transaction Not found`)
+    );
+  }
   let commision = 0;
   // let tranData = {
   //   'playerId': player._id,
@@ -1889,4 +1894,75 @@ exports.checkUpi = asyncHandler(async (req, res, next) => {
   }
 
 
+});
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.creditReferalComission = asyncHandler(async (req, res, next) => {
+
+  let player = req.player;//await Player.findById(req.body.id);
+  let { betNo = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
+  //console.log('creditAmount', gameId, req.body);
+  // if (req.body.logType !== "won") {
+  //   return next(new ErrorResponse(`Invalid amount`));
+  // }
+  let tranJoin = await Transaction.find({ logType: 'debit', 'betNo': betNo, playerId: player._id });
+
+  if (!tournamentId) {
+    return next(new ErrorResponse(`Invalid tournament`));
+  }
+  if (amount < 0.00 || !gameId) {
+    return next(new ErrorResponse(`Invalid amount`));
+  }
+  if (!player) {
+    return next(new ErrorResponse(`Player Not found`));
+  }
+  // let gameRec = await PlayerGame.findOne({ 'gameId': gameId, 'tournamentId': tournamentId, playerCount: { $gt: 0 } });
+  // if (!gameRec) {
+  //   return next(new ErrorResponse(`Game not found`));
+  // }
+  amount = parseFloat(amount).toFixed(2);
+  const tournament = await Tournament.findById(tournamentId);
+
+  if (!tournament) {
+    return next(
+      new ErrorResponse(`Tournament Not found`)
+    );
+  }
+
+
+  let betAmout = parseFloat(amount) + parseFloat(adminCommision);
+  betAmout = parseFloat(amount).toFixed(2);
+  let playerGame = {
+    'playerId': req.player._id,
+    'amountWon': amount,
+    'tournamentId': tournamentId,
+    'winner': winner,
+    'gameId': gameId,
+    'gameStatus': 'won',
+    'note': note,
+    'status': 'paid'
+  }
+  let tranData = {
+    'playerId': player._id,
+    'amount': amount,
+    'transactionType': "credit",
+    'note': note,
+    'prevBalance': player.balance,
+    'adminCommision': adminCommision,
+    status: 'complete', 'paymentStatus': 'SUCCESS',
+    'logType': req.body.logType,
+    'gameId': gameId
+  }
+
+
+  let tran = await Transaction.create(tranData);
+  player = await tran.creditPlayer(amount);
+
+  await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
+
+  res.status(200).json({
+    success: true,
+    data: player
+  });
 });
