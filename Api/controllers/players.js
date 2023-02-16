@@ -1911,7 +1911,8 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
   // if (!player) {
   //   return next(new ErrorResponse(`Player Not found`));
   // }
-  const winners = await PlayerGame.find({ commissionStatus: 'processing', gameStatus: 'lost' }).select({ 'amountBet': 1, 'tournamentId': 1, gameStatus: 'lost' }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1, refrer_player_id: 1 }, match: { refrer_player_id: { $exists: true } } });
+  let filter = { commissionStatus: 'processing', gameStatus: 'lost' };
+  const winners = await PlayerGame.find(filter).select({ 'amountBet': 1, 'tournamentId': 1, gameStatus: 'lost' }).populate({ path: 'playerId', select: { '_id': 0, 'firstName': 1, refrer_player_id: 1 }, match: { refrer_player_id: { $exists: true } } });
   console.log(winners);
   return;
   const setting = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
@@ -1942,7 +1943,7 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
   // betAmout = parseFloat(amount).toFixed(2);
 
 
-  await PlayerGame.updateMany({ commissionStatus: 'processing', gameStatus: 'lost' }, { commissionStatus: 'processed' });
+  await PlayerGame.updateMany(filter, { commissionStatus: 'processed' });
 
   res.status(200).json({
     success: true,
