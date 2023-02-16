@@ -1921,6 +1921,7 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
   if (refrealComission <= 0) {
     return;
   }
+  console.log('gamePlayed', gamePlayed);
   for await (const game of gamePlayed) {
     let amount = game.amountBet * refrealComission;
     let tranData = {
@@ -1938,7 +1939,7 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
 
     let tran = await Transaction.create(tranData);
     await tran.creditPlayer(amount);
-    console.log(game);
+
 
   }
   console.log('I Cron excuted')
