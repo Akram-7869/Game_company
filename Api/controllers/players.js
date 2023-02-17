@@ -1929,6 +1929,9 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
   console.log('gamePlayed', gamePlayed);
   for await (const game of gamePlayed) {
     let amount = game.amountBet * refrealComission;
+    if (!game.playerId) {
+      continue;
+    }
     let tranData = {
       'playerId': game.playerId.refrer_player_id,
       'amount': amount,
