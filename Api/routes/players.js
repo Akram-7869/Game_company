@@ -16,7 +16,7 @@ router.post('/saveleaderboard', protect, playerCtl.saveLeaderBoard);
 
 router.get('/tournaments', protect, playerCtl.getTournaments);
 router.get('/banners', protect, playerCtl.getBanners);
-//router.post('/refer', protect, playerCtl.updateRefer);
+router.post('/refer', protect, playerCtl.updateRefer);
 
 router.post('/status/:id', protect, playerCtl.updateStatus);
 

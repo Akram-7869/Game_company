@@ -1682,18 +1682,18 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
   const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
   let note = "Refrer bonus";
   let amount = row.lvl1_commission;
-  let tranData = {
-    'playerId': codeGiver._id,
-    'amount': amount,
-    'transactionType': "credit",
-    'note': note,
-    'prevBalance': codeGiver.balance,
-    'logType': 'bonus',
-    status: 'complete', paymentStatus: 'SUCCESS'
-  }
+  // let tranData = {
+  //   'playerId': codeGiver._id,
+  //   'amount': amount,
+  //   'transactionType': "credit",
+  //   'note': note,
+  //   'prevBalance': codeGiver.balance,
+  //   'logType': 'bonus',
+  //   status: 'complete', paymentStatus: 'SUCCESS'
+  // }
 
-  let tran = await Transaction.create(tranData);
-  await tran.creditPlayerDeposit(amount);
+  // let tran = await Transaction.create(tranData);
+  // await tran.creditPlayerDeposit(amount);
   let player = await Player.findByIdAndUpdate(req.player._id, { 'refrer_player_id': codeGiver._id }, {
     new: true,
     runValidators: true
@@ -1703,7 +1703,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     playerStat['refrer_level'] = 1;
   }
   await Player.findByIdAndUpdate(codeGiver._id, playerStat, {
-    new: true,
+    new: false,
     runValidators: true
   });
   console.log('refrer level - 1');
