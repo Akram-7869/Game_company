@@ -1320,7 +1320,7 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
 
   let tran = await Transaction.create(tranData);
-  player = await tran.debitPlayer(amount);
+  player = await tran.creditPlayer(amount);
   console.log('reseved');
   res.status(200).json({
     success: true,
