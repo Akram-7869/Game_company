@@ -221,7 +221,7 @@ io.on('connection', socket => {
   });
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
-    state[room]['betList'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    state[room]['betList'] = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
     let data = {
       gameId: makeid(5),
       lobbyId
@@ -348,9 +348,9 @@ io.on('connection', socket => {
 
     let { room } = d; //JSON.parse(d);
 
-    let index = 0;
+    let index = -1;
     let temp = state[room]['betList'];
-    let value = temp[0];
+    let value = temp[-1];
     for (let i = 1; i < temp.length; i++) {
       if (temp[i] < value) {
         value = temp[i];
@@ -410,12 +410,12 @@ let getRoomLobbyUsers = (room, lobbyId) => {
 
 let userLeave = (s) => {
   console.log('leav-func')
-  if (state[s.room] && state[s.room].players.length !== 0) {
+  if (state[s.room] && state[s.room].players.length !== -1) {
     //delete state[s.room].players[s.userId];
     const index = state[s.room].players.findIndex(user => user.userId === s.userId);
 
     if (index !== -1) {
-      state[s.room].players.splice(index, 1)[0];
+      state[s.room].players.splice(index, 1)[-1];
     }
   }
 
