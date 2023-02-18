@@ -221,6 +221,7 @@ io.on('connection', socket => {
   });
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
+    state[room]['betList'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     let data = {
       gameId: makeid(5),
       lobbyId
@@ -335,6 +336,31 @@ io.on('connection', socket => {
     console.log('setWinListData', data);
     io.to(room).emit('res', { ev: 'setWinListData', data });
   });
+  socket.on('setBetData', (d) => {
+
+    let { room, betNo, amount } = d; //JSON.parse(d);
+    let data = { room: room, betList: {} }
+    if (state[room]) {
+      state[room]['betList'][betNo] = state[room]['betList'][betNo] + amount;
+    }
+  });
+  socket.on('getBetData', (d) => {
+
+    let { room } = d; //JSON.parse(d);
+
+    let index = 0;
+    let temp = state[room]['betList'];
+    let value = temp[0];
+    for (let i = 1; i < temp.length; i++) {
+      if (temp[i] < value) {
+        value = temp[i];
+        index = i;
+      }
+    }
+    let data = { room: room, betWin: index }
+    console.log('getBetData', data);
+    io.in(room).emit('res', { ev: 'getBetData', data });
+  });
 });
 
 
@@ -380,6 +406,8 @@ let getRoomLobbyUsers = (room, lobbyId) => {
   }
   return [];
 }
+
+
 let userLeave = (s) => {
   console.log('leav-func')
   if (state[s.room] && state[s.room].players.length !== 0) {
