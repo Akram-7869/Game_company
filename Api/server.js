@@ -346,7 +346,7 @@ io.on('connection', socket => {
   socket.on('setBetData', (d) => {
 
     let { room, betNo, amount } = d; //JSON.parse(d);
-    let data = { room: room, betList: {} }
+    console.log('setBetData', d);
     if (state[room]) {
       state[room]['betList'][betNo] = state[room]['betList'][betNo] + amount;
     }
@@ -354,16 +354,17 @@ io.on('connection', socket => {
   socket.on('getBetData', (d) => {
 
     let { room } = d; //JSON.parse(d);
-
+    console.log('getBetData', room);
     let index = -1;
     let temp = state[room]['betList'];
     let value = temp[-1];
-    for (let i = 1; i < temp.length; i++) {
-      if (temp[i] < value) {
-        value = temp[i];
-        index = i;
+    if ()
+      for (let i = 1; i < temp.length; i++) {
+        if (temp[i] < value) {
+          value = temp[i];
+          index = i;
+        }
       }
-    }
     let data = { room: room, betWin: index }
     console.log('getBetData', data);
     io.in(room).emit('res', { ev: 'getBetData', data });
