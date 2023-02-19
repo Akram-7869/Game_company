@@ -222,11 +222,14 @@ io.on('connection', socket => {
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
     if (state[room]) {
-      state[room]['betList'] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1];
+      let bets = [];
+
+
+      for (let i = 0; i <= 36; i = i + 1) {
+        bets.push({ id: i, amount: -1 })
+      }
+
+      state[room]['betList'] = bets;
     }
 
     let data = {
@@ -348,12 +351,14 @@ io.on('connection', socket => {
     let { room, betNo, amount } = d; //JSON.parse(d);
     console.log('setBetData', d);
     if (state[room]) {
-      state[room]['betList'][betNo] = parseInt(amount) + parseInt(state[room]['betList'][betNo]);
+      var foundIndex = state[room]['betList'].findIndex(x => x.id == betNo);
+      state[room]['betList'][foundIndex]['amount'] = parseInt(amount) + parseInt(state[room]['betList'][foundIndex]['amount']);
     }
   });
   socket.on('getBetData', (d) => {
 
     let { room } = d; //JSON.parse(d);
+    let winObject = {};
     console.log('getBetData', room);
     if (state[room]) {
       let index = 0;
@@ -361,14 +366,17 @@ io.on('connection', socket => {
       let value = temp[index];
 
 
+      let notBetArray = state[room]['betList'].filter(x => x.amount == -1);
+      if (notBetArray.length === 0) {
+        temp.sort((a, b) => a.amount - b.amount);
+        winObject = temp[0];
+      } else {
+        let win = Math.floor(Math.random() * notBetArray.length);
+        winObject = state[room]['betList'][win];
 
-      for (let i = 1; i < temp.length; i++) {
-        if (temp[i] < value) {
-          value = temp[i];
-          index = i;
-        }
       }
-      let data = { room: room, betWin: index }
+
+      let data = { room: room, betWin: winObject.id }
       console.log('getBetData', data);
       io.in(room).emit('res', { ev: 'getBetData', data });
     }
