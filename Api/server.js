@@ -348,10 +348,11 @@ io.on('connection', socket => {
 
     let { room, betNo, amount } = d; //JSON.parse(d);
     console.log('setBetData', d);
+    console.log('a----old', amount, '---', state[room]['betList'][foundIndex]['amount'])
+
     if (state[room]) {
       var foundIndex = state[room]['betList'].findIndex(x => x.id == betNo);
       state[room]['betList'][foundIndex]['amount'] = parseInt(amount) + parseInt(state[room]['betList'][foundIndex]['amount']);
-      console.log('a----old', parseInt(amount), '---', parseInt(state[room]['betList'][foundIndex]['amount']))
     }
   });
   socket.on('getBetData', (d) => {
