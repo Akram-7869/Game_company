@@ -348,7 +348,7 @@ io.on('connection', socket => {
     let { room, betNo, amount } = d; //JSON.parse(d);
     console.log('setBetData', d);
     if (state[room]) {
-      state[room]['betList'][betNo] = amount + parseInt(state[room]['betList'][betNo]);
+      state[room]['betList'][betNo] = parseInt(amount) + parseInt(state[room]['betList'][betNo]);
     }
   });
   socket.on('getBetData', (d) => {
