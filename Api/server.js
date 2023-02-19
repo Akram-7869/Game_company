@@ -351,6 +351,7 @@ io.on('connection', socket => {
     if (state[room]) {
       var foundIndex = state[room]['betList'].findIndex(x => x.id == betNo);
       state[room]['betList'][foundIndex]['amount'] = parseInt(amount) + parseInt(state[room]['betList'][foundIndex]['amount']);
+      console.log('a----old', parseInt(amount), '---', parseInt(state[room]['betList'][foundIndex]['amount']))
     }
   });
   socket.on('getBetData', (d) => {
@@ -368,7 +369,7 @@ io.on('connection', socket => {
         winObject = temp[0];
       } else {
         let win = Math.floor(Math.random() * notBetArray.length);
-        winObject = state[room]['betList'][win];
+        winObject = notBetArray[win];
 
       }
 
