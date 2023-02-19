@@ -221,11 +221,14 @@ io.on('connection', socket => {
   });
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
-    state[room]['betList'] = [
-      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      -1, -1, -1, -1, -1, -1]
+    if (state[room]) {
+      state[room]['betList'] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1];
+    }
+
     let data = {
       gameId: makeid(5),
       lobbyId
