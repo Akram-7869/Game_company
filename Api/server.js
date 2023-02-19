@@ -223,8 +223,6 @@ io.on('connection', socket => {
     let { room, lobbyId } = d;//JSON.parse(d);
     if (state[room]) {
       let bets = [];
-
-
       for (let i = 0; i <= 36; i = i + 1) {
         bets.push({ id: i, amount: -1 })
       }
@@ -361,12 +359,10 @@ io.on('connection', socket => {
     let winObject = {};
     console.log('getBetData', room);
     if (state[room]) {
-      let index = 0;
       let temp = state[room]['betList'];
-      let value = temp[index];
 
 
-      let notBetArray = state[room]['betList'].filter(x => x.amount == -1);
+      let notBetArray = state[room]['betList'].filter(x => x.amount === -1);
       if (notBetArray.length === 0) {
         temp.sort((a, b) => a.amount - b.amount);
         winObject = temp[0];
