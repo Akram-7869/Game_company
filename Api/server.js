@@ -350,9 +350,10 @@ io.on('connection', socket => {
     console.log('setBetData', d);
 
 
-    if (state[room]) {
+    if (state[room] && betNo <= 36) {
       var foundIndex = state[room]['betList'].findIndex(x => x.id == betNo);
-      console.log('a----old', foundIndex, '===', amount, '---', state[room]['betList'][foundIndex]['amount'])
+      console.log('a----old', foundIndex, '===', amount, '---', state[room]['betList'][foundIndex]['amount']);
+
       state[room]['betList'][foundIndex]['amount'] = parseInt(amount) + parseInt(state[room]['betList'][foundIndex]['amount']);
     }
   });
