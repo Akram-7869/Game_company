@@ -356,9 +356,9 @@ io.on('connection', socket => {
     let { room } = d; //JSON.parse(d);
     console.log('getBetData', room);
     if (state[room]) {
-      let index = -1;
+      let index = 0;
       let temp = state[room]['betList'];
-      let value = temp[-1];
+      let value = temp[index];
 
 
 
