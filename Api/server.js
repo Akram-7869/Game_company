@@ -166,7 +166,7 @@ io.on('connection', socket => {
     } else {
       roomName = makeid(5);
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
-      state[roomName] = { 'created': Date.now() + 600000, players: [], 'betList': [], gameData: {}, WinList: [] };
+      state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [], gameData: {}, WinList: [] };
       console.log('create-room-', roomName);
       //   await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1, gameData: {}, WinList: {} });
     }
