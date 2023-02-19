@@ -358,16 +358,19 @@ io.on('connection', socket => {
     let index = -1;
     let temp = state[room]['betList'];
     let value = temp[-1];
-    if ()
+    if (state[room]) {
+
+
       for (let i = 1; i < temp.length; i++) {
         if (temp[i] < value) {
           value = temp[i];
           index = i;
         }
       }
-    let data = { room: room, betWin: index }
-    console.log('getBetData', data);
-    io.in(room).emit('res', { ev: 'getBetData', data });
+      let data = { room: room, betWin: index }
+      console.log('getBetData', data);
+      io.in(room).emit('res', { ev: 'getBetData', data });
+    }
   });
 });
 
