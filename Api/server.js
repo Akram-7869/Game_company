@@ -435,7 +435,7 @@ let userLeave = (s) => {
     const index = state[s.room].players.findIndex(user => user.userId === s.userId);
 
     if (index !== -1) {
-      state[s.room].players.splice(index, 1)[-1];
+      state[s.room].players.splice(index, 1);
     }
   }
 
