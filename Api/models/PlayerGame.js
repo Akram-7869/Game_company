@@ -21,17 +21,26 @@ const PlayerGameSchema = new mongoose.Schema({
     default: 'paid',
     enum: ['free', 'paid']
   },
+  commissionStatus: {
+    type: String,
+    default: 'processing',
+    enum: ['processing', 'processed']
+  },
   gameStatus: {
     type: String,
     default: 'lost',
   },
-  amountPaid: {
+  amountBet: {
     type: Number,
     default: 0,
   },
   amountWon: {
     type: Number,
     default: 0,
+  },
+  amountReverse: {
+    type: Number,
+    default: 0
   },
   rank: {
     type: Number,
@@ -45,7 +54,6 @@ const PlayerGameSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-
   gameOnline: {
     type: Boolean,
     default: true
@@ -57,7 +65,6 @@ const PlayerGameSchema = new mongoose.Schema({
   opponentName: {
     type: String,
     default: ''
-
   },
   amountGiven: {
     type: Number,
@@ -67,11 +74,6 @@ const PlayerGameSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  refundCount: {
-    type: Number,
-    default: 0
-  },
-
   players: {
     type: String,
   },

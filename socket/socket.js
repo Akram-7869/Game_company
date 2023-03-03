@@ -42,7 +42,17 @@ io.on('connection', socket => {
         }
         io.to(roomName).emit('res', { ev: 'join', data });
     });
+    socket.on('setGameId', (d) => {
+        let { room, lobbyId } = d;//JSON.parse(d);
+        console.log('setGameId-in', d);
+        let data = {
+            gameId: makeid(5),
+            lobbyId
+        }
+        console.log('setGameId', data);
+        io.in(room).emit('res', { ev: 'setGameId', data });
 
+    });
 
     socket.on('sendToRoom', (d) => {
         console.log('sendToRoom');

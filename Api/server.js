@@ -153,7 +153,7 @@ io.on('connection', socket => {
       return;
     }
 
-    let player = await Player.findOne({ _id: userId, 'status': 'active', 'deposit': { $gte: lobby.betAmount } });
+    let player = await Player.findOne({ _id: userId, 'status': 'active', 'balance': { $gte: lobby.betAmount } });
     if (!player) {
       console.log('player-not-found');
       return;
@@ -161,14 +161,14 @@ io.on('connection', socket => {
     let roomName = '';
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
-      await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
+      //  await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
       console.log('join-exisitng', roomName);
     } else {
       roomName = makeid(5);
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
-      state[roomName] = { 'created': Date.now() + 600000, players: [] };
+      state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [] };
       console.log('create-room-', roomName);
-      await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1, gameData: {}, WinList: {} });
+      //   await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1, gameData: {}, WinList: {} });
     }
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
@@ -217,6 +217,25 @@ io.on('connection', socket => {
     let { room, ev, data } = d;//JSON.parse(d);
     console.log('sendToRoom', data)
     io.to(room).emit('res', { ev, data });
+
+  });
+  socket.on('setGameId', async (d) => {
+    let { room, lobbyId } = d;//JSON.parse(d);
+    if (state[room]) {
+      let bets = [];
+      for (let i = 0; i <= 36; i = i + 1) {
+        bets.push({ id: i, amount: -1 })
+      }
+
+      state[room]['betList'] = bets;
+    }
+
+    let data = {
+      gameId: makeid(5),
+      lobbyId
+    }
+    console.log('setGameId', data);
+    io.in(room).emit('res', { ev: 'setGameId', data });
 
   });
   //leave
@@ -325,6 +344,43 @@ io.on('connection', socket => {
     console.log('setWinListData', data);
     io.to(room).emit('res', { ev: 'setWinListData', data });
   });
+  socket.on('setBetData', (d) => {
+
+    let { room, betNo, amount } = d; //JSON.parse(d);
+    console.log('setBetData', d);
+
+
+    if (state[room] && betNo <= 36) {
+      var foundIndex = state[room]['betList'].findIndex(x => x.id == betNo);
+      console.log('a----old', foundIndex, '===', amount, '---', state[room]['betList'][foundIndex]['amount']);
+
+      state[room]['betList'][foundIndex]['amount'] = parseInt(amount) + parseInt(state[room]['betList'][foundIndex]['amount']);
+    }
+  });
+  socket.on('getBetData', (d) => {
+
+    let { room } = d; //JSON.parse(d);
+    let winObject = {};
+    console.log('getBetData', room);
+    if (state[room]) {
+      let temp = state[room]['betList'];
+
+
+      let notBetArray = state[room]['betList'].filter(x => x.amount === -1);
+      if (notBetArray.length === 0) {
+        temp.sort((a, b) => a.amount - b.amount);
+        winObject = temp[0];
+      } else {
+        let win = Math.floor(Math.random() * notBetArray.length);
+        winObject = notBetArray[win];
+
+      }
+
+      let data = { room: room, betWin: winObject.id }
+      console.log('getBetData', data);
+      io.in(room).emit('res', { ev: 'getBetData', data });
+    }
+  });
 });
 
 
@@ -370,14 +426,16 @@ let getRoomLobbyUsers = (room, lobbyId) => {
   }
   return [];
 }
+
+
 let userLeave = (s) => {
   console.log('leav-func')
-  if (state[s.room] && state[s.room].players.length !== 0) {
+  if (state[s.room] && state[s.room].players.length !== -1) {
     //delete state[s.room].players[s.userId];
     const index = state[s.room].players.findIndex(user => user.userId === s.userId);
 
     if (index !== -1) {
-      state[s.room].players.splice(index, 1)[0];
+      state[s.room].players.splice(index, 1);
     }
   }
 

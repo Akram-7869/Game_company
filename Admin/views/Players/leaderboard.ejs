@@ -80,7 +80,8 @@
                                     <tr>
                                         <th>Srno</th>
                                         <th>Email</th>
-                                        <th>amount</th>
+                                        <th>won</th>
+                                        <th>bet</th>
                                         <th>status</th>
                                         <th>opponent</th>
                                         <th>bot</th>
@@ -162,7 +163,7 @@
                                         .text('search')
                                         .click(function () {
                                             // self.column(1).search('ccccccccccccccc').draw();
-                                              self.search(input.val()).draw();
+                                            self.search(input.val()).draw();
                                         }),
                                     $clearButton = $('<button>')
                                         .text('clear')
@@ -193,9 +194,9 @@
                                     }
                                 },
                                 { data: 'playerId.email', "defaultContent": "" },
-
                                 { data: 'amountWon', "defaultContent": "0" },
-                                { data: 'gameStatus', "defaultContent": "WON" },
+                                { data: 'amountBet', "defaultContent": "0" },
+                                { data: 'gameStatus', "defaultContent": "lost" },
                                 {
                                     data: 'opponentName', "defaultContent": ""
                                 },
