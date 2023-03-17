@@ -147,11 +147,11 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   let ticket;
   let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] });
   if (player) {
-    if (player.email !== email) {
-      return next(
-        new ErrorResponse(`This device is registered with another email ID`)
-      );
-    }
+    // if (player.email !== email) {
+    //   return next(
+    //     new ErrorResponse(`This device is registered with another email ID`)
+    //   );
+    // }
     // try {
     //   ticket = await client.verifyIdToken({
     //     idToken: firebaseToken,
