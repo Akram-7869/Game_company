@@ -145,7 +145,8 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     );
   }
   let ticket;
-  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] });
+  //, { 'deviceToken': deviceToken }
+  let player = await Player.findOne({ $or: [{ 'email': email }] });
   if (player) {
     // if (player.email !== email) {
     //   return next(
