@@ -1,49 +1,55 @@
 const mongoose = require('mongoose');
-const PaymentsSchema = new mongoose.Schema({ 
-    orderCurrency:{
-         type: String,
-                enum: ['INR'],
-         default:'gettoken'
+const PaymentsSchema = new mongoose.Schema({
+    orderCurrency: {
+        type: String,
+        enum: ['INR'],
+        default: 'gettoken'
     },
-    token:{
-           type: String
+    token: {
+        type: String
     },
     playerId: {
         type: String,
-         required:true
+        required: true
     },
     orderAmount: {
         type: Number,
-         required:true
+        required: true
     },
 
     createdBy: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-      
+
     },
-    gatewayStatus:{
+    gatewayStatus: {
         type: String,
-        enum: ['gettoken','debit'],
-        default:'gettoken'
-   },
-    status:{
-         type: String,
-         enum: ['gettoken','debit'],
-         default:'gettoken'
+        enum: ['gettoken', 'debit'],
+        default: 'gettoken'
+    },
+    status: {
+        type: String,
+        enum: ['gettoken', 'debit'],
+        default: 'gettoken'
     },
     createdByName: {
         type: String
     },
     note: {
         type: String,
-        required:true
+        required: true
     },
-     
+    mode: {
+        type: String,
+        default: 'test',
+        required: true
+
+    },
+
 }, {
     timestamps: true,
 });
 
- 
+
 PaymentsSchema.plugin(dataTables);
 module.exports = mongoose.model('Payments', PaymentsSchema);
