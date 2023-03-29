@@ -39,12 +39,7 @@ const PaymentsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    mode: {
-        type: String,
-        default: 'test',
-        required: true
 
-    },
 
 }, {
     timestamps: true,

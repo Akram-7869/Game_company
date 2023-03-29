@@ -19,7 +19,7 @@ const paymentConfig = async (amount, trxId) => {
     "orderCurrency": "INR"
   });
   let gatewayurl = 'https://test.cashfree.com/api/v2/cftoken/order';
-  if (row.mode === 'production') {
+  if (row.one.mode === 'production') {
     gatewayurl = 'https://api.cashfree.com/api/v2/cftoken/order';
   }
   let config = {
