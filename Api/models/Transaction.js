@@ -39,6 +39,12 @@ const TransactionsSchema = new mongoose.Schema({
         enum: ['credit', 'debit'],
         required: true,
     },
+    tds: {
+        type: Number
+    },
+    stateCode: {
+        type: String
+    },
     createdByName: {
         type: String
     },
