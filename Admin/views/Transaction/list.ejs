@@ -105,11 +105,11 @@
                                             <label class="form-check-label" for="order-selectinput">state</label>
                                             <select class="form-select" id="stateCode">
                                                 <option value=''>All</option>
-                                                <% stateList.forEach(item=> {%>
+                                                <% stateList.forEach(item=> { %>
                                                     <option value="<%=item.code%>">
                                                         <%=item.name%>
                                                     </option>
-                                                    <% }%>
+                                                    <% })%>
                                             </select>
                                         </div>
                                     </div>
