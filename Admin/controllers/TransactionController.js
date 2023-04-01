@@ -1,10 +1,10 @@
 const asyncHandler = require('../middleware/async');
-const { callApi, api_url, redirect } = require('../helper/common');
+const { callApi, api_url, redirect, stateList } = require('../helper/common');
 var apiUrl = api_url + '/transactions/';
 
 
 exports.transcationList = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Datatables', stateList };
       res.render('Transaction/list');
 });
 
