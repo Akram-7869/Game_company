@@ -134,7 +134,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
-  let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
+  let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode } = req.body;
 
   // const CLIENT_ID = '60490012283-8fgnb9tk35j5bpeg6pq09vmk2notiehc.apps.googleusercontent.com';
   //const client = new OAuth2Client(CLIENT_ID);
@@ -174,7 +174,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     // }
 
     let fieldsToUpdate = {
-      'firebaseToken': firebaseToken, 'deviceToken': deviceToken
+      'firebaseToken': firebaseToken, 'deviceToken': deviceToken, 'stateCode': stateCode
     }
     player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
       new: true,
@@ -215,6 +215,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       'refer_code': makeid(6),
       'balance': addamount,
       'deposit': addamount,
+      'stateCode': stateCode
     };
     // Create user
     player = await Player.create(data);

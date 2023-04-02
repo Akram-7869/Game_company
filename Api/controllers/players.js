@@ -1167,6 +1167,12 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   const betAmout = parseFloat(tournament.betAmount) * 2;
   const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
   const commision = betAmout - winAmount;
+  let win = winAmount - parseFloat(tournament.betAmount);
+  let tds = win * 0.30;
+  let winAfterTax = win - tds;
+  let gst = 0;
+  let sateCode = '';
+
   let PlayerAmount = winAmount;
   let paymentStatus = 'paid';
   if (amount < winAmount) {
@@ -1203,9 +1209,12 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': player.balance,
     'adminCommision': commision,
-    status: 'complete', paymentStatus: 'SUCCESS',
+    'status': 'complete', 'paymentStatus': 'SUCCESS',
     'logType': req.body.logType,
-    'gameId': gameId
+    'gameId': gameId,
+    'tds': tds,
+    'gst': gst,
+    'stateCode': sateCode
   }
 
   if (gameRec.status !== 'paid') {
