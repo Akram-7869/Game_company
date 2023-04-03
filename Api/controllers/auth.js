@@ -134,18 +134,18 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
-  let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode } = req.body;
-  console.log(req.body);
-  // const CLIENT_ID = '60490012283-8fgnb9tk35j5bpeg6pq09vmk2notiehc.apps.googleusercontent.com';
-  //const client = new OAuth2Client(CLIENT_ID);
+  let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode = '', stateName = '', latitude = 0, longitude = 0 } = req.body;
+  //console.log(req.body);
+  const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+  const client = new OAuth2Client(CLIENT_ID);
 
-  if (!email || !deviceToken || !firebaseToken) {
+  if (!email || !deviceToken || !firebaseToken || !stateCode) {
     return next(
       new ErrorResponse(`select email`)
     );
   }
   let ticket;
-  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] });
+  let player = await Player.findOne({ 'email': email });
   if (player) {
     if (player.email !== email) {
       return next(
@@ -174,7 +174,10 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     // }
 
     let fieldsToUpdate = {
-      'firebaseToken': firebaseToken, 'deviceToken': deviceToken, 'stateCode': stateCode
+      'firebaseToken': firebaseToken, 'deviceToken': deviceToken, stateCode,
+      stateName,
+      longitude,
+      latitude
     }
     player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
       new: true,
@@ -183,24 +186,24 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
 
   } else {
     console.log('playerRegisterEmail-new');
-    // try {
-    //   ticket = await client.verifyIdToken({
-    //     idToken: firebaseToken,
-    //     audience: CLIENT_ID,
-    //   });
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: firebaseToken,
+        audience: CLIENT_ID,
+      });
 
-    // } catch (error) {
+    } catch (error) {
 
-    //   return next(
-    //     new ErrorResponse(`Unable to Rgister`)
-    //   );
-    // }
+      return next(
+        new ErrorResponse(`Unable to Rgister`)
+      );
+    }
 
-    // let payload = ticket.getPayload();
-    // let userid = payload['sub'];
-    // email = payload['email'];
-    // firstName = payload['name'];
-    // picture = payload['picture'];
+    let payload = ticket.getPayload();
+    let userid = payload['sub'];
+    email = payload['email'];
+    firstName = payload['name'];
+    picture = payload['picture'];
 
     // create new player
     let addamount = 10;
@@ -215,7 +218,10 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       'refer_code': makeid(6),
       'balance': addamount,
       'deposit': addamount,
-      'stateCode': stateCode
+      stateCode,
+      stateName,
+      longitude,
+      latitude
     };
     // Create user
     player = await Player.create(data);
