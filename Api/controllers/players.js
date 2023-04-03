@@ -896,16 +896,13 @@ exports.won = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.ticketAdd = asyncHandler(async (req, res, next) => {
+  let filename;
 
   if (req.files) {
-    let dataSave = {
-      // createdBy: req.user.id,
-      data: req.files.file.data,
-      contentType: req.files.file.mimetype,
-      size: req.files.file.size,
-    }
-    const newfile = await File.create(dataSave);
-    req.body['ticketImage'] = newfile._id;
+
+    filename = '/img/ticket/' + req.player._id + '/' + req.files.file.name;
+    uploadFile(req, filename, res);
+    req.body['ticketImage'] = filename;
 
   }
   req.body['playerId'] = req.player._id

@@ -53,7 +53,7 @@ exports.createTicket = asyncHandler(async (req, res, next) => {
     req.body['ticketImage'] = filename;
   }
 
-  const row = await Ticket.create(req.body);
+  //const row = await Ticket.create(req.body);
 
   res.status(201).json({
     success: true,
