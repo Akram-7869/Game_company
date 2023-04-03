@@ -1189,7 +1189,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   let gst = 0;
   let sateCode = '';
 
-  let PlayerAmount = winAmount;
+  let PlayerAmount = winAfterTax;
   let paymentStatus = 'paid';
   if (amount < winAmount) {
     PlayerAmount = winAmount * 0.5;
