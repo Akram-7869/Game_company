@@ -22,6 +22,8 @@ const Version = require('../models/Version');
 const moment = require('moment');
 const cashfreeCtrl = require('./paymentsCashfree');
 const PlayerOld = require('../models/PlayerOld');
+var path = require('path');
+const { uploadFile, deletDiskFile } = require('../utils/utils');
 
 
 let axios = require('axios');

@@ -2,6 +2,8 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Ticket = require('../models/Ticket');
 const File = require('../models/File');
+var path = require('path');
+const { uploadFile, deletDiskFile } = require('../utils/utils');
 
 // @desc      Get all Tickets
 // @route     GET /api/v1/auth/Tickets
