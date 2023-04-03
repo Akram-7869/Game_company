@@ -78,7 +78,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
     );
   }
 
-  let player = await Player.findOne({ $or: [{ 'phone': phone }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  let player = await Player.findOne({ 'phone': phone }).select('+deviceToken');
   let vcode = Math.floor(1000 + Math.random() * 9000);
   const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
 

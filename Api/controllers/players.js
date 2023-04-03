@@ -629,7 +629,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.updateProfile = asyncHandler(async (req, res, next) => {
   console.log('updateProfile', req.body);
-  let { phone, firstName } = req.body;
+  let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus, state } = req.body;
   let fieldsToUpdate = {};
 
   if (!req.player || req.player.status !== 'active') {
@@ -637,14 +637,31 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
-  if (!phone) {
-    return next(
-      new ErrorResponse(`Provide details`)
-    );
+  if (phone) {
+    let checkPhone = await Player.findOne({ 'phone': phone, playerId: { $neq: req.player._id } }).select({ 'phone': 1 });
+    if (checkPhone) {
+      return next(
+        new ErrorResponse(`Phone Register With other Player`)
+      );
+    }
+
+    if (phone && !req.player.phone) {
+      fieldsToUpdate['phone'] = phone;
+    }
   }
-  if (phone && !req.player.phone) {
-    fieldsToUpdate['phone'] = phone;
-  }
+
+  if (firstName) { fieldsToUpdate['firstName'] = firstName; }
+  if (lastName) { fieldsToUpdate['lastName'] = lastName; }
+
+  if (gender) { fieldsToUpdate['gender'] = gender; }
+  if (country) { fieldsToUpdate['country'] = country; }
+  if (aadharNumber) { fieldsToUpdate['aadharNumber'] = aadharNumber; }
+  if (panNumber) { fieldsToUpdate['panNumber'] = panNumber; }
+  if (dob) { fieldsToUpdate['dob'] = dob; }
+  //if (state) { fieldsToUpdate['state'] = state; }
+  // if (!player.email) {
+  //   if (email) { fieldsToUpdate['email'] = email; }
+  // }
 
 
   let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
