@@ -52,6 +52,12 @@ router.route('/giftlist').get(playerCtl.getGifts);
 router.route('/deleteplayerdata/:id').delete(protect, playerCtl.deletePlayerData);
 router.route('/deloldplayer/:id').delete(protect, playerCtl.deloldplayer);
 router.route('/deleteplayerdata-byids').post(protect, playerCtl.deletePlayerDataBIds);
+router.post('/ticket/add', protect, playerCtl.ticketAdd);
+router.get('/ticket/', protect, playerCtl.ticketList);
+router.post('/ticket/reply', protect, playerCtl.ticketReply);
+
+
+
 router
   .route('/:id')
   .get(protect, playerCtl.getPlayer)
@@ -64,9 +70,6 @@ module.exports = router;
 //router.post('/checkpin', playerCtl.chkPin);
 // router.post('/game/join', protect, join);
 // router.post('/game/won', protect, won);
-//router.post('/ticket/add', protect, playerCtl.ticketAdd);
-//router.post('/ticket/reply', protect, playerCtl.ticketReply);
-//router.get('/ticket/', protect, playerCtl.ticketList);
 //router.get('/info', protect, playerCtl.playerInfo);
 //router.route('/lobbys').get(protect, playerCtl.getLobbys);
 //router.post('/membership', protect, playerCtl.membership);
