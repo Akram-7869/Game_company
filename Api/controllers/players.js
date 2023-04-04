@@ -629,7 +629,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.updateProfile = asyncHandler(async (req, res, next) => {
   console.log('updateProfile', req.body);
-  let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus, state } = req.body;
+  let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus, state, phone = '' } = req.body;
   let fieldsToUpdate = {};
 
   if (!req.player || req.player.status !== 'active') {
