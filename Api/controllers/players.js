@@ -1356,7 +1356,7 @@ exports.playerInfo = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.gameStatus = asyncHandler(async (req, res, next) => {
   let { gameId } = req.body;
-  let gameRec = await PlayerGame.findOne({ 'gameId': gameId }).populate('tournamentId');
+  let gameRec = await PlayerGame.findOne({ 'gameId': gameId });
 
   res.status(200).json({
     success: true,
