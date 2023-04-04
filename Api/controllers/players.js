@@ -1187,7 +1187,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   let tds = win * 0.30;
   let winAfterTax = win - tds;
   let gst = 0;
-  let sateCode = '';
+  let sateCode = player.stateCode;
 
   let PlayerAmount = winAfterTax;
   let paymentStatus = 'paid';
@@ -1356,7 +1356,7 @@ exports.playerInfo = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.gameStatus = asyncHandler(async (req, res, next) => {
   let { gameId } = req.body;
-  let gameRec = await PlayerGame.findOne({ 'gameId': gameId });
+  let gameRec = await PlayerGame.findOne({ 'gameId': gameId }).populate('tournamentId');
 
   res.status(200).json({
     success: true,
