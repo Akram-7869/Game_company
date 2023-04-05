@@ -90,7 +90,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     'status': 'log',
     'logType': 'withdraw',
     'withdrawTo': req.body.to,
-    'sateCode': req.player.stateCode
+    'stateCode': req.player.stateCode
 
 
   }
@@ -347,7 +347,7 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
           'prevBalance': req.player.balance,
           'status': 'complete',
           'logType': 'bonus',
-          'sateCode': req.player.stateCode
+          'stateCode': req.player.stateCode
 
         }
         let tranb = await Transaction.create(tranData);
@@ -795,7 +795,7 @@ exports.setPin = asyncHandler(async (req, res, next) => {
       note: 'player register',
       prevBalance: user.balance,
       status: 'complete', paymentStatus: 'SUCCESS',
-      'sateCode': req.player.stateCode
+      'stateCode': req.player.stateCode
 
     }
     let tran = await Transaction.create(tranData);
@@ -1029,7 +1029,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'prevBalance': req.player.balance,
     'logType': req.body.logType,
     status: 'complete', paymentStatus: 'SUCCESS',
-    'sateCode': req.player.stateCode
+    'stateCode': req.player.stateCode
 
   }
   console.log(tranData, req.player);
@@ -1085,7 +1085,7 @@ exports.debitBonus = asyncHandler(async (req, res, next) => {
     'prevBalance': req.player.balance,
     'logType': 'deposit',
     status: 'complete', paymentStatus: 'SUCCESS',
-    'sateCode': req.player.stateCode
+    'stateCode': req.player.stateCode
   }
 
   tranData['gameId'] = gameId;
@@ -1133,7 +1133,7 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
     'gameId': !gameId ? '' : gameId,
     'prevBalance': req.player.balance, 'logType': 'deposit',
     status: 'complete', paymentStatus: 'SUCCESS',
-    'sateCode': req.player.stateCode
+    'stateCode': req.player.stateCode
 
   }
 
@@ -1198,7 +1198,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   let tds = win * 0.30;
   let winAfterTax = winAmount - tds;
   let gst = 0;
-  let sateCode = player.stateCode;
+  let stateCode = player.stateCode;
 
   let PlayerAmount = winAfterTax;
   let paymentStatus = 'paid';
@@ -1241,7 +1241,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'gameId': gameId,
     'tds': tds,
     'gst': gst,
-    'stateCode': sateCode
+    'stateCode': stateCode
   }
 
   if (gameRec.status !== 'paid') {
@@ -1326,7 +1326,7 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
     status: 'complete', paymentStatus: 'SUCCESS',
     'logType': 'reverse',
     'gameId': gameId,
-    'sateCode': player.stateCode
+    'stateCode': player.stateCode
 
   }
 
@@ -1714,7 +1714,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     'prevBalance': codeGiver.balance,
     'logType': 'bonus',
     status: 'complete', paymentStatus: 'SUCCESS',
-    'sateCode': req.player.stateCode
+    'stateCode': req.player.stateCode
 
   }
 
@@ -1864,7 +1864,7 @@ let referCommision = async (player_id, amount, note) => {
     'prevBalance': parentPlayer1.balance,
     'logType': 'bonus',
     status: 'complete', paymentStatus: 'SUCCESS',
-    'sateCode': parentPlayer1.stateCode
+    'stateCode': parentPlayer1.stateCode
 
   }
 
