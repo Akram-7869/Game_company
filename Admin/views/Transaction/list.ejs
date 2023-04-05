@@ -92,7 +92,7 @@
                                                 <option value="All">All</option>
                                             </select>
                                         </div>
-                                        <div class="col-lg-2">
+                                        <div class="col-lg-1">
                                             <label class="form-check-label"
                                                 for="order-selectinput">transactionType</label>
                                             <select class="form-select" id="transactionType">
@@ -101,7 +101,7 @@
                                                 <option value="debit">debit</option>
                                             </select>
                                         </div>
-                                        <div class="col-lg-2">
+                                        <div class="col-lg-1">
                                             <label class="form-check-label" for="order-selectinput">state</label>
                                             <select class="form-select" id="stateCode">
                                                 <option value=''>All</option>
@@ -233,6 +233,8 @@
                                     // d['id'] =status-filter;
                                     d['status'] = $('#status-filter').val();
                                     d['transactionType'] = $('#transactionType').val();
+                                    d['stateCode'] = $('#stateCode').val();
+
                                     d['rfv'] = $('#id-value').val();
                                     d['rf'] = $('#id-field').val();
                                     return d;
