@@ -1185,14 +1185,14 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   const commision = betAmout - winAmount;
   let win = winAmount - parseFloat(tournament.betAmount);
   let tds = win * 0.30;
-  let winAfterTax = win - tds;
+  let winAfterTax = winAmount - tds;
   let gst = 0;
   let sateCode = player.stateCode;
 
   let PlayerAmount = winAfterTax;
   let paymentStatus = 'paid';
-  if (amount < winAmount) {
-    PlayerAmount = winAmount * 0.5;
+  if (gameStatus === 'tie') {
+    PlayerAmount = amount;
     gameStatus = 'tie'
     paymentStatus = 'tie'
     if (gameRec.status === 'tie') {
