@@ -1032,7 +1032,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'sateCode': req.player.stateCode
 
   }
-
+  console.log(tranData, req.player);
   tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
