@@ -43,7 +43,17 @@
 
                                 <div class="float-end">
                                     <div class="row">
-
+                                        <div class="col-lg-1">
+                                            <label class="form-check-label" for="order-selectinput">state</label>
+                                            <select class="form-select" id="stateCode">
+                                                <option value=''>All</option>
+                                                <% stateList.forEach(item=> { %>
+                                                    <option value="<%=item.code%>">
+                                                        <%=item.name%>
+                                                    </option>
+                                                    <% })%>
+                                            </select>
+                                        </div>
                                         <div class="col-lg-2">
 
                                             <div class="mb-3">
@@ -101,17 +111,7 @@
                                                 <option value="debit">debit</option>
                                             </select>
                                         </div>
-                                        <div class="col-lg-1">
-                                            <label class="form-check-label" for="order-selectinput">state</label>
-                                            <select class="form-select" id="stateCode">
-                                                <option value=''>All</option>
-                                                <% stateList.forEach(item=> { %>
-                                                    <option value="<%=item.code%>">
-                                                        <%=item.name%>
-                                                    </option>
-                                                    <% })%>
-                                            </select>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
