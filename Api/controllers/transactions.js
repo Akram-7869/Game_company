@@ -229,7 +229,7 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
     'prevBalance': player.balance,
     status: 'complete', paymentStatus: 'SUCCESS',
     'logType': logType,
-    'sateCode': player.stateCode
+    'stateCode': player.stateCode
 
 
   }

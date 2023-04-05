@@ -232,7 +232,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       note: 'player register',
       prevBalance: 0, logType: 'deposit',
       status: 'complete', paymentStatus: 'SUCCESS',
-      'sateCode': stateCode
+      'stateCode': stateCode
 
     }
     let tran = await Transaction.create(tranData);
