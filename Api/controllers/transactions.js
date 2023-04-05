@@ -43,7 +43,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     limit: req.body.length,
     skip: req.body.start,
     find: req.query,
-    select: { 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
+    select: { 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1, stateCode: 1 },
     search: {
 
     },
@@ -228,7 +228,9 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': player.balance,
     status: 'complete', paymentStatus: 'SUCCESS',
-    'logType': logType
+    'logType': logType,
+    'sateCode': player.stateCode
+
 
   }
 
