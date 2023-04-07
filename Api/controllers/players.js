@@ -1706,6 +1706,9 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
   const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
   let note = "Refrer bonus";
   let amount = row.lvl1_commission;
+  if (amount <= 0) {
+    return;
+  }
   let tranData = {
     'playerId': codeGiver._id,
     'amount': amount,
