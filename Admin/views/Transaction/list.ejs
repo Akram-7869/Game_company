@@ -43,7 +43,17 @@
 
                                 <div class="float-end">
                                     <div class="row">
-
+                                        <div class="col-lg-1">
+                                            <label class="form-check-label" for="order-selectinput">state</label>
+                                            <select class="form-select" id="stateCode">
+                                                <option value=''>All</option>
+                                                <% stateList.forEach(item=> { %>
+                                                    <option value="<%=item.code%>">
+                                                        <%=item.name%>
+                                                    </option>
+                                                    <% })%>
+                                            </select>
+                                        </div>
                                         <div class="col-lg-2">
 
                                             <div class="mb-3">
@@ -92,7 +102,7 @@
                                                 <option value="All">All</option>
                                             </select>
                                         </div>
-                                        <div class="col-lg-2">
+                                        <div class="col-lg-1">
                                             <label class="form-check-label"
                                                 for="order-selectinput">transactionType</label>
                                             <select class="form-select" id="transactionType">
@@ -101,17 +111,7 @@
                                                 <option value="debit">debit</option>
                                             </select>
                                         </div>
-                                        <div class="col-lg-2">
-                                            <label class="form-check-label" for="order-selectinput">state</label>
-                                            <select class="form-select" id="stateCode">
-                                                <option value=''>All</option>
-                                                <% stateList.forEach(item=> { %>
-                                                    <option value="<%=item.code%>">
-                                                        <%=item.name%>
-                                                    </option>
-                                                    <% })%>
-                                            </select>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -121,7 +121,7 @@
                                 <thead>
                                     <tr>
                                         <th>Srno</th>
-                                        <!-- <th>Phone</th> -->
+                                        <th>State</th>
                                         <th>Email</th>
                                         <th>Type</th>
                                         <th>Amount</th>
@@ -233,6 +233,8 @@
                                     // d['id'] =status-filter;
                                     d['status'] = $('#status-filter').val();
                                     d['transactionType'] = $('#transactionType').val();
+                                    d['stateCode'] = $('#stateCode').val();
+
                                     d['rfv'] = $('#id-value').val();
                                     d['rf'] = $('#id-field').val();
                                     return d;
@@ -240,7 +242,7 @@
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
-                                // { data: 'playerId.phone', "defaultContent": "" },
+                                { data: 'stateCode', "defaultContent": "" },
                                 { data: 'playerId.email', "defaultContent": "" },
                                 { data: 'transactionType', "defaultContent": "" },
                                 { data: 'amount', "defaultContent": "" },

@@ -96,7 +96,9 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
 
   }
 
-
+  if (req.body.stateCode) {
+    filter['find']['stateCode'] = req.body.stateCode;
+  }
 
   Transaction.dataTables(filter).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
@@ -229,7 +231,9 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': player.balance,
     status: 'complete', paymentStatus: 'SUCCESS',
-    'logType': logType
+    'logType': logType,
+    'stateCode': player.stateCode
+
 
   }
 

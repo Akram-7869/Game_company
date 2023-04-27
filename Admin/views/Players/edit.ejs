@@ -222,6 +222,13 @@
                                                 class="form-control" required placeholder="Country" />
                                         </div>
                                         <div class="mb-3">
+                                            <label class="form-label">State</label>
+                                            <p>
+                                                <%=row.stateCode?row.stateCode:'' %>-<%=row.stateName?row.stateName:''
+                                                        %>
+                                            </p>
+                                        </div>
+                                        <div class="mb-3">
                                             <label class="form-label">Pan Card</label>
                                             <input type="text" name="panNumber"
                                                 value="<%=row.panNumber?row.panNumber:'' %>" class="form-control"

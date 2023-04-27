@@ -28,7 +28,7 @@ const TicketSchema = new mongoose.Schema({
         enum: ['close', 'open', 'pending']
     },
     ticketImage: {
-        type: mongoose.Schema.ObjectId,
+        type: String,
     },
     createdBy: {
         type: mongoose.Schema.ObjectId,

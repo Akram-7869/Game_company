@@ -138,11 +138,17 @@ const PlayerSchema = new mongoose.Schema({
   dob: {
     type: String
   },
-  lat: {
+  stateCode: {
     type: String
   },
-  long: {
+  stateName: {
     type: String
+  },
+  latitude: {
+    type: Number
+  },
+  longitude: {
+    type: Number
   },
   kycStatus: {
     type: String,

@@ -23,6 +23,8 @@ const moment = require('moment');
 const cashfreeCtrl = require('./paymentsCashfree');
 const PlayerOld = require('../models/PlayerOld');
 var mongoose = require('mongoose');
+var path = require('path');
+const { uploadFile, deletDiskFile } = require('../utils/utils');
 
 
 let axios = require('axios');
@@ -88,7 +90,9 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     'prevBalance': req.player.balance,
     'status': 'log',
     'logType': 'withdraw',
-    'withdrawTo': req.body.to
+    'withdrawTo': req.body.to,
+    'stateCode': req.player.stateCode
+
 
   }
   if (req.body.to === 'bank') {
@@ -356,7 +360,9 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
           'note': 'coupon bonus',
           'prevBalance': req.player.balance,
           'status': 'complete',
-          'logType': 'bonus'
+          'logType': 'bonus',
+          'stateCode': req.player.stateCode
+
         }
         let tranb = await Transaction.create(tranData);
         //
@@ -641,7 +647,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.updateProfile = asyncHandler(async (req, res, next) => {
   console.log('updateProfile', req.body);
-  let { phone, firstName } = req.body;
+  let { firstName, lastName, email, gender, country, aadharNumber, panNumber, dob, kycStatus, state, phone = '' } = req.body;
   let fieldsToUpdate = {};
 
   if (!req.player || req.player.status !== 'active') {
@@ -649,14 +655,31 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
-  if (!phone) {
-    return next(
-      new ErrorResponse(`Provide details`)
-    );
+  if (phone) {
+    let checkPhone = await Player.findOne({ 'phone': phone, playerId: { $neq: req.player._id } }).select({ 'phone': 1 });
+    if (checkPhone) {
+      return next(
+        new ErrorResponse(`Phone Register With other Player`)
+      );
+    }
+
+    if (phone && !req.player.phone) {
+      fieldsToUpdate['phone'] = phone;
+    }
   }
-  if (phone && !req.player.phone) {
-    fieldsToUpdate['phone'] = phone;
-  }
+
+  if (firstName) { fieldsToUpdate['firstName'] = firstName; }
+  if (lastName) { fieldsToUpdate['lastName'] = lastName; }
+
+  if (gender) { fieldsToUpdate['gender'] = gender; }
+  if (country) { fieldsToUpdate['country'] = country; }
+  if (aadharNumber) { fieldsToUpdate['aadharNumber'] = aadharNumber; }
+  if (panNumber) { fieldsToUpdate['panNumber'] = panNumber; }
+  if (dob) { fieldsToUpdate['dob'] = dob; }
+  //if (state) { fieldsToUpdate['state'] = state; }
+  // if (!player.email) {
+  //   if (email) { fieldsToUpdate['email'] = email; }
+  // }
 
 
   let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
@@ -785,7 +808,9 @@ exports.setPin = asyncHandler(async (req, res, next) => {
       transactionType: 'credit',
       note: 'player register',
       prevBalance: user.balance,
-      status: 'complete', paymentStatus: 'SUCCESS'
+      status: 'complete', paymentStatus: 'SUCCESS',
+      'stateCode': req.player.stateCode
+
     }
     let tran = await Transaction.create(tranData);
     user = await Player.findByIdAndUpdate(user.id, fieldsToUpdate, {
@@ -910,16 +935,13 @@ exports.won = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.ticketAdd = asyncHandler(async (req, res, next) => {
+  let filename;
 
   if (req.files) {
-    let dataSave = {
-      // createdBy: req.user.id,
-      data: req.files.file.data,
-      contentType: req.files.file.mimetype,
-      size: req.files.file.size,
-    }
-    const newfile = await File.create(dataSave);
-    req.body['ticketImage'] = newfile._id;
+
+    filename = '/img/ticket/' + req.player._id + '/' + req.files.file.name;
+    uploadFile(req, filename, res);
+    req.body['ticketImage'] = filename;
 
   }
   req.body['playerId'] = req.player._id
@@ -1020,9 +1042,11 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': req.player.balance,
     'logType': req.body.logType,
-    status: 'complete', paymentStatus: 'SUCCESS'
-  }
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'stateCode': req.player.stateCode
 
+  }
+  console.log(tranData, req.player);
   tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
@@ -1074,7 +1098,8 @@ exports.debitBonus = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': req.player.balance,
     'logType': 'deposit',
-    status: 'complete', paymentStatus: 'SUCCESS'
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'stateCode': req.player.stateCode
   }
 
   tranData['gameId'] = gameId;
@@ -1121,7 +1146,9 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
     'note': note,
     'gameId': !gameId ? '' : gameId,
     'prevBalance': req.player.balance, 'logType': 'deposit',
-    status: 'complete', paymentStatus: 'SUCCESS'
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'stateCode': req.player.stateCode
+
   }
 
   //tranData['gameId'] = gameId;
@@ -1185,12 +1212,12 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   let tds = 0;
   //let winAfterTax = win - tds;
   let gst = 0;
-  let sateCode = '';
+  let stateCode = player.stateCode;
 
-  let PlayerAmount = winAmount;
+  let PlayerAmount = winAfterTax;
   let paymentStatus = 'paid';
-  if (amount < winAmount) {
-    PlayerAmount = winAmount * 0.5;
+  if (gameStatus === 'tie') {
+    PlayerAmount = amount;
     gameStatus = 'tie'
     paymentStatus = 'tie'
     if (gameRec.status === 'tie') {
@@ -1228,7 +1255,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'gameId': gameId,
     'tds': tds,
     'gst': gst,
-    'stateCode': sateCode
+    'stateCode': stateCode
   }
 
   if (gameRec.status !== 'paid') {
@@ -1312,7 +1339,9 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
     'adminCommision': commision,
     status: 'complete', paymentStatus: 'SUCCESS',
     'logType': 'reverse',
-    'gameId': gameId
+    'gameId': gameId,
+    'stateCode': player.stateCode
+
   }
 
 
@@ -1691,6 +1720,9 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
   const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
   let note = "Refrer bonus";
   let amount = row.lvl1_commission;
+  if (amount <= 0) {
+    return;
+  }
   let tranData = {
     'playerId': codeGiver._id,
     'amount': amount,
@@ -1698,7 +1730,9 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': codeGiver.balance,
     'logType': 'bonus',
-    status: 'complete', paymentStatus: 'SUCCESS'
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'stateCode': req.player.stateCode
+
   }
 
   let tran = await Transaction.create(tranData);
@@ -1846,7 +1880,9 @@ let referCommision = async (player_id, amount, note) => {
     'note': note,
     'prevBalance': parentPlayer1.balance,
     'logType': 'bonus',
-    status: 'complete', paymentStatus: 'SUCCESS'
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'stateCode': parentPlayer1.stateCode
+
   }
 
   let tran = await Transaction.create(tranData);

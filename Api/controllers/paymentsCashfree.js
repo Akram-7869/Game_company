@@ -98,6 +98,8 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     'paymentGateway': 'Cash Free',
     'logType': 'payment',
     'prevBalance': 0,
+    'stateCode': req.player.stateCode
+
 
   }
   let tran = await Transaction.create(tranData);
@@ -249,7 +251,9 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
         'prevBalance': player.balance,
         'paymentStatus': 'SUCCESS',
         'status': 'complete',
-        'paymentId': tran._id
+        'paymentId': tran._id,
+        'stateCode': player.stateCode
+
       }
       bonusTran = await Transaction.create(tranBonusData);
       bonusTran.creditPlayerBonus(bonusAmount);
