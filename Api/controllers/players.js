@@ -22,6 +22,7 @@ const Version = require('../models/Version');
 const moment = require('moment');
 const cashfreeCtrl = require('./paymentsCashfree');
 const PlayerOld = require('../models/PlayerOld');
+var mongoose = require('mongoose');
 
 
 let axios = require('axios');
@@ -113,9 +114,21 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   //   );
   // }
 
+  let taxableAmount = (player.totalWithdraw + parseFloat(amount)) - player.totalDeposit - player.totalTaxableAmount - player.openingBalance;
+  let tds = 0;
+  let totalAmount = 0;
+  if (taxableAmount > 0) {
+    tds = taxableAmount * 0.30;
+  }
 
+  totalAmount = amount - tds;
+  totalAmount = parseFloat(totalAmount).toFixed(2)
+  tranData['taxableAmount'] = taxableAmount;
+  tranData['tds'] = tds;
+  tranData['totalAmount'] = totalAmount;
+  console.log(player.totalWithdraw, amount, player.totalDeposit, player.totalTaxableAmount, player.openingBalance, tranData);
   let tran = await Transaction.create(tranData);
-  player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount, winings: -amount } }, {
+  player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount, winings: -amount, 'totalTaxableAmount': taxableAmount, 'totalTds': tds, 'totalWithdraw': tran.amount } }, {
     new: true,
     runValidators: true
   });
@@ -173,6 +186,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
+
 exports.addBank = asyncHandler(async (req, res, next) => {
   let { bankName, bankAccount, bankIfc, bankAddress, bankAccountHolder } = req.body;
   let fieldsToUpdate = { bankName, bankAccount, bankIfc, bankAddress, bankAccountHolder };
@@ -1167,9 +1181,9 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   const betAmout = parseFloat(tournament.betAmount) * 2;
   const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
   const commision = betAmout - winAmount;
-  let win = winAmount - parseFloat(tournament.betAmount);
-  let tds = win * 0.30;
-  let winAfterTax = win - tds;
+  //let win = winAmount - parseFloat(tournament.betAmount);
+  let tds = 0;
+  //let winAfterTax = win - tds;
   let gst = 0;
   let sateCode = '';
 

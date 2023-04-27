@@ -258,6 +258,39 @@ const PlayerSchema = new mongoose.Schema({
   refrer_amount_total: { type: Number, default: 0, min: 0 },
   refer_deposit_count: { type: Number, default: 0, min: 0 },
   refer_vip_count: { type: Number, default: 0, min: 0 },
+  totalWithdraw: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  totalDeposit: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  totalTaxableAmount: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  totalTds: {
+    type: Number,
+    required: true,
+
+    default: 0
+  },
+  openingBalance: {
+    type: Number,
+    required: true,
+
+    default: 0
+  },
+  closingBalance: {
+    type: Number,
+    required: true,
+
+    default: 0
+  }
 });
 
 // Encrypt password usinsg bcrypt

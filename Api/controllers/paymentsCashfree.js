@@ -6,6 +6,8 @@ const crypto = require('crypto');
 const Transaction = require('../models/Transaction');
 const Coupon = require('../models/Coupon');
 const Player = require('../models/Player');
+const PlayerCtrl = require('./players');
+
 let axios = require('axios');
 
 
@@ -326,9 +328,8 @@ exports.payout = asyncHandler(async (req, res, next) => {
     bene['vpa'] = tran.withdraw.get('upiId');
   }
 
-
   let data = JSON.stringify({
-    "amount": tran.amount,
+    "amount": tran.totalAmount,
     "transferId": tran._id,
     "transferMode": transferMode,
     "remarks": "withdraw request",

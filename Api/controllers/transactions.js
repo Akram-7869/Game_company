@@ -20,7 +20,7 @@ exports.getPlayerTransaction = asyncHandler(async (req, res, next) => {
   Transaction.dataTables({
     limit: 1000,
     skip: 0,
-    select: { 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, logType: 1, paymentStatus: 1 },
+    select: { 'tds': 1, 'totalAmount': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, logType: 1, paymentStatus: 1 },
     search: {
 
     },
@@ -43,7 +43,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     limit: req.body.length,
     skip: req.body.start,
     find: req.query,
-    select: { 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
+    select: { 'tds': 1, 'totalAmount': 1, 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
     search: {
 
     },
@@ -143,7 +143,10 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
   });
 
   if (req.body.paymentStatus === 'DECLINED') {
-    player = await transaction.creditPlayerWinings(amount);
+    player = await transaction.declineWithDrawPlayer(amount);
+
+
+
   }
 
 
