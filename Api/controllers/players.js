@@ -1214,7 +1214,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   let gst = 0;
   let stateCode = player.stateCode;
 
-  let PlayerAmount = winAfterTax;
+  let PlayerAmount = amount;
   let paymentStatus = 'paid';
   if (gameStatus === 'tie') {
     PlayerAmount = amount;
