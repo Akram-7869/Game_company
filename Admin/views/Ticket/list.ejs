@@ -61,6 +61,7 @@
                                         <th>email</th>
                                         <th>subject</th>
                                         <th>Status</th>
+                                        <th>image</th>
                                         <th>Dated</th>
 
                                         <th>Action</th>
@@ -189,6 +190,14 @@
                                 { data: 'playerId.email', "defaultContent": "" },
                                 { data: 'subject', "defaultContent": "" },
                                 { data: 'status', "defaultContent": "" },
+                                {
+                                    data: null,
+                                    "render": function (data, type, JsonResultRow, meta) {
+
+                                        let imgUrl = "<%= image_url %>" + JsonResultRow.ticketImage
+                                        return '<img width="50" src="' + imgUrl + '">';
+                                    }
+                                },
 
                                 {
                                     data: 'updatedAt', render: function (data) {
