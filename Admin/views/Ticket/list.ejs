@@ -194,7 +194,7 @@
                                     data: null,
                                     "render": function (data, type, JsonResultRow, meta) {
 
-                                        let imgUrl = "<%= image_url %>" + JsonResultRow.ticketImage
+                                        let imgUrl = "<%=process.env.IMAGE_URL %>" + JsonResultRow.ticketImage
                                         return '<img width="50" src="' + imgUrl + '">';
                                     }
                                 },
