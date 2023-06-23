@@ -423,22 +423,21 @@ exports.getTdsRecord = asyncHandler(async (req, res, next) => {
         }
       }
     ]);
-    // const filename = "saved_from_db.csv";
+    // const filename = =="saved_from_db.csv";
     const columns = [
-      "_id",
+      "id",
       "firstName",
       "panNumber",
       "totalTaxAmount",
-      "totalTaxAmount",
       "totalTds",
     ];
-    res.write(['Dated: ', req.query.s_date + ' - ' + req.query.e_date].join(', ') + '\n');
+    res.write(['From : ', req.query.s_date, ' to: ', req.query.e_date].join(', ') + '\n');
     res.write(columns.join(', ') + '\n');
     let s = [];
     for await (const row of rows) {
 
 
-      s[0] = row.id ?? '';
+      s[0] = row._id ?? '';
       s[1] = row.firstName ?? '';
       s[2] = row.panNumber ?? '';
       s[3] = row.totalTaxAmount ?? 0;
@@ -448,7 +447,7 @@ exports.getTdsRecord = asyncHandler(async (req, res, next) => {
     }
     res.end();
   } else if (req.query.report === 'datewise') {
-    await dateWiseTds(filter, res);
+    await dateWiseTds(filter, req, res);
   }
 
 
@@ -456,7 +455,7 @@ exports.getTdsRecord = asyncHandler(async (req, res, next) => {
 
 });
 
-let dateWiseTds = async (filter, res) => {
+let dateWiseTds = async (filter, req, res) => {
   let rows = [];
   rows = Transaction.aggregate([
     { $match: filter },
@@ -504,14 +503,14 @@ let dateWiseTds = async (filter, res) => {
   ]);
   // const filename = "saved_from_db.csv";
   const columns = [
-    "_id",
+    "id",
     "firstName",
     "panNumber",
     "totalTaxAmount",
     "totalTds",
     'date'
   ];
-  res.write(['Dated: ', req.query.s_date + ' - ' + req.query.e_date].join(', ') + '\n');
+  res.write(['From : ', req.query.s_date, ' to: ', req.query.e_date].join(', ') + '\n');
   res.write(columns.join(', ') + '\n');
   let s = [];
   for await (const row of rows) {
@@ -530,7 +529,7 @@ let dateWiseTds = async (filter, res) => {
   res.end();
 
 }
-let dateWiseAdminCommission = async (filter, res) => {
+let dateWiseAdminCommission = async (filter, req, res) => {
   let rows = [];
   rows = Transaction.aggregate([
     { $match: filter },
@@ -564,8 +563,7 @@ let dateWiseAdminCommission = async (filter, res) => {
     "totalCommision",
     'date'
   ];
-  res.write(['Dated: ', req.query.s_date + ' - ' + req.query.e_date].join(', ') + '\n');
-
+  res.write(['From : ', req.query.s_date, ' to: ', req.query.e_date].join(', ') + '\n');
   res.write(columns.join(', ') + '\n');
   let s = [];
   for await (const row of rows) {
@@ -639,7 +637,6 @@ exports.getAdminCommission = asyncHandler(async (req, res, next) => {
       },
       {
         $project: {
-          totalTds: 1,
           totalCommision: 1
         }
       }
@@ -648,20 +645,20 @@ exports.getAdminCommission = asyncHandler(async (req, res, next) => {
       "stateCode",
       "totalCommision",
 
-    ];
-    res.write(['Dated: ', req.query.s_date + ' - ' + req.query.e_date].join(', ') + '\n');
 
+    ];
+    res.write(['From : ', req.query.s_date, ' to: ', req.query.e_date].join(', ') + '\n');
     res.write(columns.join(', ') + '\n');
     let s = [];
     for await (const row of rows) {
-      s[0] = row.stateCode ?? '';
+      s[0] = row._id ?? '';
       s[1] = row.totalCommision ?? 0;
 
       res.write(s.join(', ') + '\n');
     }
     res.end();
   } else if (req.query.report === 'datewise') {
-    await dateWiseAdminCommission(filter, res);
+    await dateWiseAdminCommission(filter, req, res);
   }
   //res.status(200).json(res.advancedResults);
 });
