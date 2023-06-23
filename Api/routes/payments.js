@@ -17,6 +17,7 @@ const { protect, authorize, init } = require('../middleware/auth');
 const Setting = require('../models/Setting');
 //router.use(protect);
 //router.route('/cashfree/upiverify').post(protect, paymentCashfreeCtrl.upiValidate);
+router.route('/cashfree/panverify').post(paymentCashfreeCtrl.panValidate);
 
 router.route('/add').post(protect, createSetting);
 router.route('/').post(protect, getSettings);

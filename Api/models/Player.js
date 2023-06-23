@@ -135,6 +135,11 @@ const PlayerSchema = new mongoose.Schema({
     select: false
 
   },
+  pan: {
+    type: Map,
+    select: false
+
+  },
   dob: {
     type: String
   },
@@ -158,8 +163,13 @@ const PlayerSchema = new mongoose.Schema({
   phoneStatus: {
     type: String,
     enum: ['verified', 'notverified'],
-    default: 'notverified'
+    panStatus: {
+      type: String,
+      enum: ['verified', 'notverified'],
+      default: 'notverified'
+    }, default: 'notverified'
   },
+
   wallet: {
     select: false,
     type: Map,

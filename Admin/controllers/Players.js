@@ -2,7 +2,7 @@
 const asyncHandler = require('../middleware/async');
 // const {Players} = require('../models/Players');
 // const {User} = require('../models/User');
-const { callApi, api_url, redirect } = require('../helper/common');
+const { callApi, api_url, redirect, stateList } = require('../helper/common');
 
 var apiUrl = api_url + '/players/';
 var apiUrlGame = api_url + '/games/';
@@ -37,8 +37,57 @@ exports.getPaymentReport = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'PaymentList' };
       res.render('Reports/payment', { playerId: '' })
 });
+exports.adminCommissionReport = asyncHandler(async (req, res, next) => {
 
+      res.locals = { title: 'AdminCommissionList', stateList };
+      res.render('Reports/admincommission')
+});
+exports.tdsReport = asyncHandler(async (req, res, next) => {
 
+      res.locals = { title: 'TDSList', stateList };
+      res.render('Reports/tds')
+});
+
+exports.tdsReportDownload = asyncHandler(async (req, res, next) => {
+
+      res.locals = { title: 'TDSList', stateList };
+      callApi(req).get(api_url + '/transactions/tds', {
+            responseType: 'stream', // Set the response type to stream
+            params: req.query
+      })
+            .then(r => {
+                  res.set('Content-Disposition', 'attachment; filename=tds.csv'); // Set the filename and extension of the downloaded file
+
+                  r.data.pipe(res);
+                  //res.render('Reports/payoutprocessing', { row: r.data.data });
+            })
+            .catch(error => {
+                  console.log(error)
+                  res.status(400).json(error);
+                  //   req.flash('error', 'Incorrect email or password!');})
+            });
+
+});
+exports.adminCommissionDownload = asyncHandler(async (req, res, next) => {
+
+      res.locals = { title: 'Admin Comission', stateList };
+      callApi(req).get(api_url + '/transactions/admincommission', {
+            responseType: 'stream', // Set the response type to stream
+            params: req.query
+      })
+            .then(r => {
+                  res.set('Content-Disposition', 'attachment; filename=admincommission.csv'); // Set the filename and extension of the downloaded file
+
+                  r.data.pipe(res);
+                  //res.render('Reports/payoutprocessing', { row: r.data.data });
+            })
+            .catch(error => {
+                  console.log(error)
+                  res.status(400).json(error);
+                  //   req.flash('error', 'Incorrect email or password!');})
+            });
+
+});
 exports.getChatList = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'Chat' };
@@ -104,7 +153,7 @@ exports.getLeaderBoard = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Leader Board' };
       res.render('Players/leaderboard')
 });
-exports.getLeaderBoardList = asyncHandler(async (req, res, next) => { 
+exports.getLeaderBoardList = asyncHandler(async (req, res, next) => {
       callApi(req).post(apiUrlGame, { ...req.body }, { params: req.query })
             .then(r => {
                   res.status(200).json(r.data);

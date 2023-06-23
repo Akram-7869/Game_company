@@ -36,107 +36,120 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-body">
-
-                            <div class="row">
+                        <form id="filter" method="get" action="/admin/report/admincommission-download">
 
 
-                                <div class="float-end">
-                                    <div class="row">
-                                        <div class="col-lg-1">
-                                            <label class="form-check-label" for="order-selectinput">state</label>
-                                            <select class="form-select" id="stateCode">
-                                                <option value=''>All</option>
-                                                <% stateList.forEach(item=> { %>
-                                                    <option value="<%=item.code%>">
-                                                        <%=item.name%>
-                                                    </option>
-                                                    <% })%>
-                                            </select>
-                                        </div>
-                                        <div class="col-lg-2">
+                            <div class="card-body">
 
-                                            <div class="mb-3">
-                                                <label class="form-check-label " for="order-selectinput"></label>
-                                                <select class="form-select" id="id-field">
+                                <div class="row">
 
-                                                    <option value="playerId">Player Id</option>
-                                                    <option value="_id">Transaction Id</option>
-                                                    <option value="note">note</option>
-                                                    <option value="gameId">gameId</option>
-                                                    <option value="logType" selected>logType</option>
 
+                                    <div class="float-end">
+                                        <div class="row">
+                                            <div class="col-lg-1">
+                                                <label class="form-check-label" for="order-selectinput">state</label>
+                                                <select class="form-select" id="stateCode" name="stateCode">
+                                                    <option value=''>All</option>
+                                                    <% stateList.forEach(item=> { %>
+                                                        <option value="<%=item.code%>">
+                                                            <%=item.name%>
+                                                        </option>
+                                                        <% })%>
                                                 </select>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-2">
+                                            <div class="col-lg-2">
 
-                                            <div class="mb-3">
-                                                <label class="form-label" for="idvalue"></label>
-                                                <input id="id-value" name="playervalue" type="text"
-                                                    class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="manufacturerbrand">
-                                                </label>
-                                                <div class="input-daterange input-group" id="datepicker6"
-                                                    data-date-format="yyyy-mm-dd" data-date-autoclose="true"
-                                                    data-provide="datepicker" data-date-container='#datepicker6'>
-                                                    <input type="text" id="s_date" class="form-control text-start"
-                                                        placeholder="From" name="From" />
-                                                    <input type="text" id="e_date" class="form-control text-start"
-                                                        placeholder="To" name="To" data-date-format="yyyy-mm-dd" />
+                                                <div class="mb-3">
+                                                    <label class="form-check-label " for="order-selectinput"></label>
+                                                    <select class="form-select" id="id-field" name="rf">
 
-                                                    <!-- <button type="button" id="filter" class="btn btn-primary"><i
-                                                            class="mdi mdi-filter-variant"></i></button> -->
+                                                        <option value="playerId">Player Id</option>
+                                                        <option value="_id">Transaction Id</option>
+                                                        <option value="note">note</option>
+                                                        <option value="gameId">gameId</option>
+                                                        <option value="logType" selected>logType</option>
+
+                                                    </select>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-2">
-                                            <label class="form-check-label " for="order-selectinput">Status</label>
-                                            <select class="form-select" id="status-filter">
-                                                <option value="complete" selected>Complete</option>
-                                                <option value="log">Log</option>
-                                                <option value="All">All</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-lg-1">
-                                            <label class="form-check-label"
-                                                for="order-selectinput">transactionType</label>
-                                            <select class="form-select" id="transactionType">
-                                                <option value=''>All</option>
-                                                <option value="credit">credit</option>
-                                                <option value="debit">debit</option>
-                                            </select>
-                                        </div>
+                                            <div class="col-lg-2">
 
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="idvalue"></label>
+                                                    <input id="id-value" name="rfv" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="manufacturerbrand">
+                                                    </label>
+                                                    <div class="input-daterange input-group" id="datepicker6"
+                                                        data-date-format="yyyy-mm-dd" data-date-autoclose="true"
+                                                        data-provide="datepicker" data-date-container='#datepicker6'>
+                                                        <input type="text" id="s_date" class="form-control text-start"
+                                                            placeholder="From" name="s_date" />
+                                                        <input type="text" id="e_date" class="form-control text-start"
+                                                            placeholder="To" name="e_date"
+                                                            data-date-format="yyyy-mm-dd" />
+
+                                                        <!-- <button type="button" id="filter" class="btn btn-primary"><i
+                                                            class="mdi mdi-filter-variant"></i></button> -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <label class="form-check-label " for="order-selectinput">Status</label>
+                                                <select class="form-select" id="status-filter">
+                                                    <option value="complete" selected>Complete</option>
+                                                    <option value="log">Log</option>
+                                                    <option value="All">All</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <label class="form-check-label"
+                                                    for="order-selectinput">transactionType</label>
+                                                <select class="form-select" id="transactionType">
+                                                    <option value=''>All</option>
+                                                    <option value="credit">credit</option>
+                                                    <option value="debit">debit</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="mb-3 col-lg-2">
+                                    <label class="form-label" for="idvalue">Player</label>
+                                    <input id="" name="email" type="text" class="form-control"
+                                        placeholder="email / phone">
+                                </div>
+                                <button class="btn btn-success waves-effect waves-light" type="submit" name="report"
+                                    value="download">Download</button>
+                                <button class="btn btn-success waves-effect waves-light" type="submit" name="report"
+                                    value="datewise">Download Date Wise</button>
+
+                                <!-- <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap"
+                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Srno</th>
+                                            <th>State</th>
+                                            <th>Email</th>
+                                            <th>Type</th>
+                                            <th>Amount</th>
+                                            <th>note</th>
+                                            <th>payment status</th>
+                                            <th>Dated</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+
+                                    </tbody>
+                                </table> -->
                             </div>
-                            <!-- <button class="btn btn-success waves-effect waves-light" type="submit">Button</button> -->
-                            <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap"
-                                style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th>Srno</th>
-                                        <th>State</th>
-                                        <th>Email</th>
-                                        <th>Type</th>
-                                        <th>Amount</th>
-                                        <th>note</th>
-                                        <th>payment status</th>
-                                        <th>Dated</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-
-                                </tbody>
-                            </table>
-                        </div>
+                        </form>
                     </div>
                 </div> <!-- end col -->
             </div> <!-- end row -->
@@ -260,4 +273,9 @@
                                 },
                             ]
                         });
+
+
+                        function download() {
+
+                        }
                     </script>

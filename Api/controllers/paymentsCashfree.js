@@ -447,3 +447,57 @@ exports.upiValidate = async (req, res, next) => {
   return resPayout['data'];
 };
 
+exports.panValidate = async (req, res, next) => {
+  //asyncHandler(async (req, res, next) => {
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player not found`)
+    );
+  }
+  if (req.panStatus === 'verified') {
+    return next(
+      new ErrorResponse(`Pan is already verified`)
+    );
+  }
+  const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
+  let { name, pan } = req.body;
+
+  let data = JSON.stringify({
+    name,
+    pan
+  });
+  let config = {
+    method: 'post',
+    url: 'https://sandbox.cashfree.com/verification/pan',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-client-id': row.one.APP_ID,
+      'x-client-secret': row.one.SECRET_KEY
+    },
+    data: data
+
+  };
+  try {
+    let response = await axios(config);
+    if (response['data']['valid'] === true) {
+      req.player.panNumber = response['data']['pan'];
+      req.panStatus = 'verified'
+      await req.save();
+    }
+
+
+    res.status(200).json({
+      success: true,
+      data: response['data']
+
+    });
+  } catch (error) {
+    next(
+      new ErrorResponse(error['response']['data']['message'])
+    );
+  }
+
+
+
+
+};

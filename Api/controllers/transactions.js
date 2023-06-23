@@ -2,9 +2,9 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Transaction = require('../models/Transaction');
 const Player = require('../models/Player');
-const PlayerNotifcation = require('../models/PlayerNotifcation');
-const Notification = require('../models/Notification');
-const admin = require('../utils/fiebase');
+//const PlayerNotifcation = require('../models/PlayerNotifcation');
+//const Notification = require('../models/Notification');
+//const admin = require('../utils/fiebase');
 // @desc      Get all Transactions
 // @route     GET /api/v1/auth/Transactions
 // @access    Private/Admin
@@ -342,3 +342,326 @@ exports.deleteTransaction = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Get all Transactions
+// @route     GET /api/v1/auth/Transactions
+// @access    Private/Admin
+exports.getTdsRecord = asyncHandler(async (req, res, next) => {
+  let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.query.draw }
+  let filter = {};
+  if (req.query.status && req.query.status != 'All') {
+    filter['status'] = req.query.status;
+  }
+  if (req.query.paymentStatus) {
+    filter['paymentStatus'] = req.query.paymentStatus;
+  }
+
+  if (req.query.transactionType) {
+    filter['transactionType'] = req.query.transactionType;
+  }
+  let key = req.query.email;
+  if (key) {
+
+
+    let player = await Player.findOne({ $or: [{ 'email': { '$regex': key, '$options': 'i' } }, { phone: { '$regex': key, '$options': 'i' } }] });
+    if (!player) {
+      return res.json(empty);
+    }
+
+    filter['playerId'] = player._id;
+  }
+
+  //plaerId filter
+  if (req.query.rf && req.query.rfv) {
+    filter[req.query.rf] = { '$regex': req.query.rfv, '$options': 'i' };
+  }
+  if (req.query.logType) {
+    filter['logType'] = req.query.logType;
+  }
+  if (req.query.s_date && req.query.e_date) {
+    filter['createdAt'] = {
+      $gte: req.query.s_date,
+      $lt: req.query.e_date
+    }
+
+  }
+
+  if (req.query.stateCode) {
+    filter['stateCode'] = req.query.stateCode;
+  }
+  let rows = [];
+  if (req.query.report === 'download') {
+    rows = Transaction.aggregate([
+      {
+        $match: filter
+      },
+      {
+        $group: {
+          _id: "$playerId",
+          totalTds: { $sum: "$tds" },
+          totalTaxAmount: { $sum: "$taxableAmount" },
+
+        }
+      },
+      {
+        $lookup: {
+          from: "players",
+          localField: "_id",
+          foreignField: "_id",
+          as: "player"
+        }
+      },
+      {
+        $unwind: "$player"
+      },
+      {
+        $project: {
+          totalTds: 1,
+          email: "$player.email",
+          panNumber: "$player.panNumber",
+          firstName: "$player.firstName",
+          totalTaxAmount: 1
+        }
+      }
+    ]);
+    // const filename = "saved_from_db.csv";
+    const columns = [
+      "_id",
+      "firstName",
+      "panNumber",
+      "totalTaxAmount",
+      "totalTaxAmount",
+      "totalTds",
+    ];
+    res.write(['Dated: ', req.query.s_date + ' - ' + req.query.e_date].join(', ') + '\n');
+    res.write(columns.join(', ') + '\n');
+    let s = [];
+    for await (const row of rows) {
+
+
+      s[0] = row.id ?? '';
+      s[1] = row.firstName ?? '';
+      s[2] = row.panNumber ?? '';
+      s[3] = row.totalTaxAmount ?? 0;
+      s[4] = row.totalTds ?? 0;
+
+      res.write(s.join(', ') + '\n');
+    }
+    res.end();
+  } else if (req.query.report === 'datewise') {
+    await dateWiseTds(filter, res);
+  }
+
+
+
+
+});
+
+let dateWiseTds = async (filter, res) => {
+  let rows = [];
+  rows = Transaction.aggregate([
+    { $match: filter },
+    {
+      $group: {
+        _id: {
+          playerId: "$playerId",
+          day: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$createdAt",
+            },
+          },
+        },
+        totalTds: { $sum: "$tds" },
+        totalTaxAmount: { $sum: "$taxableAmount" },
+      },
+    },
+    {
+      $lookup: {
+        from: "players",
+        localField: "_id.playerId",
+        foreignField: "_id",
+        as: "player",
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        totalTds: 1,
+        email: {
+          $arrayElemAt: ["$player.email", 0],
+        },
+        panNumber: {
+          $arrayElemAt: ["$player.panNumber", 0],
+        },
+        firstName: {
+          $arrayElemAt: ["$player.firstName", 0],
+        },
+        day: "$_id.day",
+        id: "$_id.playerId",
+        totalTaxAmount: 1,
+      },
+    },
+  ]);
+  // const filename = "saved_from_db.csv";
+  const columns = [
+    "_id",
+    "firstName",
+    "panNumber",
+    "totalTaxAmount",
+    "totalTds",
+    'date'
+  ];
+  res.write(['Dated: ', req.query.s_date + ' - ' + req.query.e_date].join(', ') + '\n');
+  res.write(columns.join(', ') + '\n');
+  let s = [];
+  for await (const row of rows) {
+
+
+    s[0] = row.id ?? '';
+    s[1] = row.firstName ?? '';
+    s[2] = row.panNumber ?? '';
+    s[3] = row.totalTaxAmount ?? 0;
+    s[4] = row.totalTds ?? 0;
+    s[5] = row.day ?? '';
+
+    res.write(s.join(', ') + '\n');
+
+  }
+  res.end();
+
+}
+let dateWiseAdminCommission = async (filter, res) => {
+  let rows = [];
+  rows = Transaction.aggregate([
+    { $match: filter },
+    {
+      $group: {
+        _id: {
+          stateCode: "$stateCode",
+          day: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$createdAt",
+            },
+          },
+        },
+        totalCommision: { $sum: "$adminCommision" },
+      },
+    },
+
+    {
+      $project: {
+        _id: 0,
+        totalCommision: 1,
+        day: "$_id.day",
+        stateCode: "$_id.stateCode",
+      },
+    },
+  ]);
+  // const filename = "saved_from_db.csv";
+  const columns = [
+    "stateCode",
+    "totalCommision",
+    'date'
+  ];
+  res.write(['Dated: ', req.query.s_date + ' - ' + req.query.e_date].join(', ') + '\n');
+
+  res.write(columns.join(', ') + '\n');
+  let s = [];
+  for await (const row of rows) {
+    s[0] = row.stateCode ?? '';
+    s[1] = row.totalCommision ?? 0;
+    s[2] = row.day ?? 0;
+
+    res.write(s.join(', ') + '\n');
+  }
+  res.end();
+
+}
+
+// @desc      Get all Transactions
+// @route     GET /api/v1/auth/Transactions
+// @access    Private/Admin
+exports.getAdminCommission = asyncHandler(async (req, res, next) => {
+  let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.query.draw }
+  let filter = {};
+  if (req.query.status && req.query.status != 'All') {
+    filter['status'] = req.query.status;
+  }
+  if (req.query.paymentStatus) {
+    filter['paymentStatus'] = req.query.paymentStatus;
+  }
+
+  if (req.query.transactionType) {
+    filter['transactionType'] = req.query.transactionType;
+  }
+  let key = req.query.email;
+  if (key) {
+
+
+    let player = await Player.findOne({ $or: [{ 'email': { '$regex': key, '$options': 'i' } }, { phone: { '$regex': key, '$options': 'i' } }] });
+    if (!player) {
+      return res.json(empty);
+    }
+
+    filter['playerId'] = player._id;
+  }
+
+  //plaerId filter
+  if (req.query.rf && req.query.rfv) {
+    filter[req.query.rf] = { '$regex': req.query.rfv, '$options': 'i' };
+  }
+  if (req.query.logType) {
+    filter['logType'] = req.query.logType;
+  }
+  if (req.query.s_date && req.query.e_date) {
+    filter['createdAt'] = {
+      $gte: req.query.s_date,
+      $lt: req.query.e_date
+    }
+
+  }
+
+  if (req.query.stateCode) {
+    filter['stateCode'] = req.query.stateCode;
+  }
+  let rows = [];
+  if (req.query.report === 'download') {
+    rows = Transaction.aggregate([
+      {
+        $match: filter
+      },
+      {
+        $group: {
+          _id: "$stateCode",
+          totalCommision: { $sum: "$adminCommision" },
+        }
+      },
+      {
+        $project: {
+          totalTds: 1,
+          totalCommision: 1
+        }
+      }
+    ]);
+    const columns = [
+      "stateCode",
+      "totalCommision",
+
+    ];
+    res.write(['Dated: ', req.query.s_date + ' - ' + req.query.e_date].join(', ') + '\n');
+
+    res.write(columns.join(', ') + '\n');
+    let s = [];
+    for await (const row of rows) {
+      s[0] = row.stateCode ?? '';
+      s[1] = row.totalCommision ?? 0;
+
+      res.write(s.join(', ') + '\n');
+    }
+    res.end();
+  } else if (req.query.report === 'datewise') {
+    await dateWiseAdminCommission(filter, res);
+  }
+  //res.status(200).json(res.advancedResults);
+});
