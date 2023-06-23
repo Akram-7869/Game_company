@@ -480,9 +480,9 @@ exports.panValidate = async (req, res, next) => {
   try {
     let response = await axios(config);
     if (response['data']['valid'] === true) {
-      req.player.panNumber = response['data']['pan'];
-      req.panStatus = 'verified'
-      await req.save();
+      let updateData = { 'panNumber': response['data']['pan'], 'panStatus': 'verified' }
+      await Player.findByIdAndUpdate(req.player._id, updateData);
+
     }
 
 
@@ -492,6 +492,7 @@ exports.panValidate = async (req, res, next) => {
 
     });
   } catch (error) {
+    console.error(error);
     next(
       new ErrorResponse(error['response']['data']['message'])
     );

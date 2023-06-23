@@ -163,12 +163,14 @@ const PlayerSchema = new mongoose.Schema({
   phoneStatus: {
     type: String,
     enum: ['verified', 'notverified'],
-    panStatus: {
-      type: String,
-      enum: ['verified', 'notverified'],
-      default: 'notverified'
-    }, default: 'notverified'
+    default: 'notverified'
   },
+  panStatus: {
+    type: String,
+    enum: ['verified', 'notverified'],
+    default: 'notverified'
+  },
+
 
   wallet: {
     select: false,
