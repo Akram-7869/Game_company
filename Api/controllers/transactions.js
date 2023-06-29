@@ -470,8 +470,9 @@ let dateWiseTds = async (filter, req, res) => {
               format: "%Y-%m-%d",
               date: "$createdAt",
             },
-            playerId: "$playerId",
           },
+          playerId: "$playerId",
+
         },
         totalTds: { $sum: "$tds" },
         totalTaxAmount: { $sum: "$taxableAmount" },
