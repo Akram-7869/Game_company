@@ -377,10 +377,12 @@ exports.getTdsRecord = asyncHandler(async (req, res, next) => {
   if (req.query.logType) {
     filter['logType'] = req.query.logType;
   }
+
+
   if (req.query.s_date && req.query.e_date) {
     filter['createdAt'] = {
-      $gte: req.query.s_date,
-      $lt: req.query.e_date
+      $gte: new Date(req.query.s_date),
+      $lt: new Date(req.query.e_date)
     }
 
   }
@@ -462,12 +464,13 @@ let dateWiseTds = async (filter, req, res) => {
     {
       $group: {
         _id: {
-          playerId: "$playerId",
+
           day: {
             $dateToString: {
               format: "%Y-%m-%d",
               date: "$createdAt",
             },
+            playerId: "$playerId",
           },
         },
         totalTds: { $sum: "$tds" },
@@ -614,8 +617,8 @@ exports.getAdminCommission = asyncHandler(async (req, res, next) => {
   }
   if (req.query.s_date && req.query.e_date) {
     filter['createdAt'] = {
-      $gte: req.query.s_date,
-      $lt: req.query.e_date
+      $gte: new Date(req.query.s_date),
+      $lt: new Date(req.query.e_date)
     }
 
   }
