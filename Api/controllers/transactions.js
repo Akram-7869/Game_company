@@ -479,6 +479,11 @@ let dateWiseTds = async (filter, req, res) => {
       },
     },
     {
+      $sort: {
+        "_id.day": 1
+      }
+    },
+    {
       $lookup: {
         from: "players",
         localField: "_id.playerId",
