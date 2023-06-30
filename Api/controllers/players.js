@@ -72,7 +72,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
 
   if (amount < row.minwithdraw) {
     return next(
-      new ErrorResponse(`Wining Balance less than ${row.minwithdraw}`)
+      new ErrorResponse(`Minimum Withdraw ${row.minwithdraw}`)
     );
   }
 
