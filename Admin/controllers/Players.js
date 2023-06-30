@@ -75,9 +75,9 @@ exports.tdsReportDownload = asyncHandler(async (req, res, next) => {
 exports.adminCommissionDownload = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'Admin Comission', stateList };
-      let fileName = 'admincommission.csv';
+      let filename = 'admincommission.csv';
       if (req.query.report === 'datewise') {
-            fileName = 'admincommission-datewise.csv';
+            filename = 'admincommission-datewise.csv';
       }
       callApi(req).get(api_url + '/transactions/admincommission', {
             responseType: 'stream', // Set the response type to stream
