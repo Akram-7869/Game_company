@@ -1273,7 +1273,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     let tran = await Transaction.create(tranData);
     player = await tran.creditPlayerWinings(PlayerAmount);
     if (gameRec.status === 'start') {
-      Dashboard.totalIncome(betAmout, winAmount, commision);
+      Dashboard.totalIncome(betAmout, winAmount, adminCommision);
     }
 
     let leaderboard = await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
