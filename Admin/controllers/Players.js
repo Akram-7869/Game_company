@@ -51,12 +51,16 @@ exports.tdsReport = asyncHandler(async (req, res, next) => {
 exports.tdsReportDownload = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'TDSList', stateList };
+      let fileName = 'tdsreport.csv';
+      if (req.query.report === 'datewise') {
+            fileName = 'tdsreport-datewise.csv';
+      }
       callApi(req).get(api_url + '/transactions/tds', {
             responseType: 'stream', // Set the response type to stream
             params: req.query
       })
             .then(r => {
-                  res.set('Content-Disposition', 'attachment; filename=tds.csv'); // Set the filename and extension of the downloaded file
+                  res.set('Content-Disposition', 'attachment; filename=' + filename); // Set the filename and extension of the downloaded file
 
                   r.data.pipe(res);
                   //res.render('Reports/payoutprocessing', { row: r.data.data });
@@ -71,12 +75,16 @@ exports.tdsReportDownload = asyncHandler(async (req, res, next) => {
 exports.adminCommissionDownload = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'Admin Comission', stateList };
+      let fileName = 'admincommission.csv';
+      if (req.query.report === 'datewise') {
+            fileName = 'admincommission-datewise.csv';
+      }
       callApi(req).get(api_url + '/transactions/admincommission', {
             responseType: 'stream', // Set the response type to stream
             params: req.query
       })
             .then(r => {
-                  res.set('Content-Disposition', 'attachment; filename=admincommission.csv'); // Set the filename and extension of the downloaded file
+                  res.set('Content-Disposition', 'attachment; filename=' + filename); // Set the filename and extension of the downloaded file
 
                   r.data.pipe(res);
                   //res.render('Reports/payoutprocessing', { row: r.data.data });

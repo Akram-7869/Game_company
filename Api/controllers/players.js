@@ -127,17 +127,19 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     tds = taxableAmount * 0.30;
     incFiled['totalTaxableAmount'] = taxableAmount;
     incFiled['totalTds'] = tds;
-  } else {
-    totalAmount = 0;
+  }
+  else {
+    taxableAmount = 0;
     tds = 0;
   }
 
   totalAmount = amount - tds;
-  totalAmount = parseFloat(totalAmount).toFixed(2)
+  totalAmount = parseFloat(totalAmount).toFixed(2);
+  tranData['totalAmount'] = totalAmount;
+
   tranData['taxableAmount'] = taxableAmount;
   tranData['tds'] = tds;
-  tranData['totalAmount'] = totalAmount;
-  console.log(player.totalWithdraw, amount, player.totalDeposit, player.totalTaxableAmount, player.openingBalance, tranData);
+  // console.log(player.totalWithdraw, amount, player.totalDeposit, player.totalTaxableAmount, player.openingBalance, tranData);
   let tran = await Transaction.create(tranData);
   player = await Player.findByIdAndUpdate(req.player.id, { $inc: incFiled }, {
     new: true,
@@ -145,7 +147,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   });
 
   let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, { $set: { $inc: { totalPayoutRequest: 1 } } }, {
-    new: true, upsert: true,
+    new: true,
     runValidators: true
   });
 

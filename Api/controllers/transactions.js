@@ -545,16 +545,22 @@ let dateWiseAdminCommission = async (filter, req, res) => {
     {
       $group: {
         _id: {
-          stateCode: "$stateCode",
           day: {
             $dateToString: {
               format: "%Y-%m-%d",
               date: "$createdAt",
             },
           },
+          stateCode: "$stateCode",
+
         },
         totalCommision: { $sum: "$adminCommision" },
       },
+    },
+    {
+      $sort: {
+        "_id.day": 1
+      }
     },
 
     {
