@@ -1259,7 +1259,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'transactionType': "credit",
     'note': note,
     'prevBalance': player.balance,
-    'adminCommision': commision,
+    'adminCommision': adminCommision,
     'status': 'complete', 'paymentStatus': 'SUCCESS',
     'logType': req.body.logType,
     'gameId': gameId,
