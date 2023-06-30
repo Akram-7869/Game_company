@@ -51,9 +51,9 @@ exports.tdsReport = asyncHandler(async (req, res, next) => {
 exports.tdsReportDownload = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'TDSList', stateList };
-      let fileName = 'tdsreport.csv';
+      let filename = 'tdsreport.csv';
       if (req.query.report === 'datewise') {
-            fileName = 'tdsreport-datewise.csv';
+            filename = 'tdsreport-datewise.csv';
       }
       callApi(req).get(api_url + '/transactions/tds', {
             responseType: 'stream', // Set the response type to stream
