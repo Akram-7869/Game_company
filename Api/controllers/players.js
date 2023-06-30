@@ -68,10 +68,11 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Insufficent wining Balance`)
     );
   }
+  const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
 
-  if (req.player.winings < 25) {
+  if (req.player.winings < row.minwithdraw) {
     return next(
-      new ErrorResponse(`Wining Balance less than 25`)
+      new ErrorResponse(`Wining Balance less than ${row.minwithdraw}`)
     );
   }
 

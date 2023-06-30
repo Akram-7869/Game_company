@@ -62,7 +62,10 @@ const SettingSchema = new mongoose.Schema({
     }, currency_symbol: {
         type: String,
         default: 'INR'
-    }
+    }, minwithdraw: {
+        type: Number,
+        default: 0
+    },
 
 }, {
     timestamps: true,

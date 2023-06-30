@@ -180,11 +180,16 @@
                                         onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
                                         <p class="mb-0">
 
-                                            <!-- <div class="mb-3">
+                                        <div class="mb-3">
                                             <label class="form-label">Tournament Commission in percentage</label>
                                             <input type="text" class="form-control" required name="commission"
                                                 value="<%= row ? row['commission']:''%>" placeholder="" />
-                                        </div> -->
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Tournament Commission in percentage</label>
+                                            <input type="text" class="form-control" required name="minwithdraw"
+                                                value="<%= row ? row['minwithdraw']:''%>" placeholder="" />
+                                        </div>
 
                                         <div class="mb-3">
                                             <label class="form-label">Referral level 1 Commission fixed</label>
