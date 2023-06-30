@@ -216,7 +216,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       'status': 'active',
       'countryCode': countryCode,
       'refer_code': makeid(6),
-      'balance': 0,
+      'balance': addamount,
       'bonus': addamount,
       stateCode,
       stateName,
