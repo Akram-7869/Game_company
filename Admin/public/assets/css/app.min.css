@@ -4900,4 +4900,14 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before {
   padding: 7px 0
 }
 
+.text-primary {
+  color: #343a40 !important;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #343a40 !important;
+  /* border-color: #5b73e8; */
+}
+
 /*# sourceMappingURL=app.min.css.map */
