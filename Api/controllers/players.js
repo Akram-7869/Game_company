@@ -1965,7 +1965,11 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
 });
 
 exports.getReferList = asyncHandler(async (req, res, next) => {
-
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
   const winners = await Player.find({ status: 'active', refrer_player_id: req.player._id }).limit(100).select({ '_id': 1, 'firstName': 1, 'picture': 1 });
 
   let x = winners;
