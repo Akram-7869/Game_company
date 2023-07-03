@@ -1963,3 +1963,14 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
     data: winners
   });
 });
+
+exports.getReferList = asyncHandler(async (req, res, next) => {
+
+  const winners = await Player.find({ status: 'active', refrer_player_id: req.player._id }).limit(100).select({ '_id': 1, 'firstName': 1, 'picture': 1 });
+
+  let x = winners;
+  res.status(200).json({
+    success: true,
+    data: x
+  });
+});
