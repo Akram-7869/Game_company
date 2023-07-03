@@ -9,7 +9,7 @@ router.get('/commission', playerCtl.creditReferalComission);
 router.get('/winnerfeed', playerCtl.getWinnerfeed);
 router.get('/winnertop/:id', playerCtl.getWinnertop);
 router.post('/sendAppUrl', playerCtl.sendAppUrl);
-router.post('/myrefrer', playerCtl.getReferList);
+router.get('/myrefrer', playerCtl.getReferList);
 
 router.get('/versionlist', playerCtl.getVersion);
 
