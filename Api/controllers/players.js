@@ -1684,6 +1684,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
   let amount = row.lvl1_commission;
   let tranData = {
     'playerId': codeGiver._id,
+    'refer_playerId': req.player._id,
     'amount': amount,
     'transactionType': "credit",
     'note': note,
