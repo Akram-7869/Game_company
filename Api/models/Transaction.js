@@ -9,9 +9,8 @@ const TransactionsSchema = new mongoose.Schema({
         required: true,
         ref: 'Players'
     },
-    refrer_playerId: {
+    referer_playerId: {
         type: mongoose.Schema.ObjectId,
-        required: true,
         ref: 'Players'
     },
     couponId: {

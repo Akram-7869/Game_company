@@ -1684,7 +1684,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
   let amount = row.lvl1_commission;
   let tranData = {
     'playerId': codeGiver._id,
-    'refer_playerId': req.player._id,
+    'referer_playerId': req.player._id,
     'amount': amount,
     'transactionType': "credit",
     'note': note,
@@ -1971,7 +1971,7 @@ exports.getReferList = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
-  const winners = await Transaction.find({ status: 'active', player_id: req.player._id, logType: 'refer_bonus' }).select({ amount: 1, createdAt: 1 }).populate({ path: 'refer_playerId', select: { '_id': 0, 'firstName': 1, picture: 1 } });
+  const winners = await Transaction.find({ status: 'active', player_id: req.player._id, logType: 'refer_bonus' }).select({ amount: 1, createdAt: 1 }).populate({ path: 'referer_playerId', select: { '_id': 0, 'firstName': 1, picture: 1 } });
 
   let x = winners;
   res.status(200).json({
