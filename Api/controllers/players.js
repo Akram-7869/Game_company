@@ -1682,18 +1682,18 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
   const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
   let note = "Refrer bonus";
   let amount = row.lvl1_commission;
-  // let tranData = {
-  //   'playerId': codeGiver._id,
-  //   'amount': amount,
-  //   'transactionType': "credit",
-  //   'note': note,
-  //   'prevBalance': codeGiver.balance,
-  //   'logType': 'bonus',
-  //   status: 'complete', paymentStatus: 'SUCCESS'
-  // }
+  let tranData = {
+    'playerId': codeGiver._id,
+    'amount': amount,
+    'transactionType': "credit",
+    'note': note,
+    'prevBalance': codeGiver.balance,
+    'logType': 'refer_bonus',
+    status: 'complete', paymentStatus: 'SUCCESS'
+  }
 
-  // let tran = await Transaction.create(tranData);
-  // await tran.creditPlayerDeposit(amount);
+  let tran = await Transaction.create(tranData);
+  await tran.creditPlayerBonus(amount);
   let player = await Player.findByIdAndUpdate(req.player._id, { 'refrer_player_id': codeGiver._id }, {
     new: true,
     runValidators: true
@@ -1970,7 +1970,7 @@ exports.getReferList = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
-  const winners = await Player.find({ status: 'active', refrer_player_id: req.player._id }).limit(100).select({ '_id': 1, 'firstName': 1, 'picture': 1 });
+  const winners = await Transaction.find({ status: 'active', player_id: req.player._id, logType: 'refer_bonus' }).select({ amount: 1, createdAt: 1 }).populate({ path: 'refer_playerId', select: { '_id': 0, 'firstName': 1, picture: 1 } });
 
   let x = winners;
   res.status(200).json({

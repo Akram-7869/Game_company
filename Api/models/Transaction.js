@@ -9,6 +9,11 @@ const TransactionsSchema = new mongoose.Schema({
         required: true,
         ref: 'Players'
     },
+    refrer_playerId: {
+        type: mongoose.Schema.ObjectId,
+        required: true,
+        ref: 'Players'
+    },
     couponId: {
         type: String,
     },
@@ -76,7 +81,7 @@ const TransactionsSchema = new mongoose.Schema({
     },
     logType: {
         type: String,
-        enum: ['join', 'deposit', 'withdraw', 'game', 'won', 'bonus', 'payment', 'fees', 'adjustment', 'membership', 'reverse'],
+        enum: ['join', 'deposit', 'withdraw', 'game', 'won', 'bonus', 'payment', 'fees', 'adjustment', 'membership', 'reverse', 'refer_bonus'],
         required: true,
         default: 'game'
     },
