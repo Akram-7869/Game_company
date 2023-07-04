@@ -1971,7 +1971,7 @@ exports.getReferList = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
-  const winners = await Transaction.find({ status: 'active', playerId: req.player._id, logType: 'refer_bonus' }).select({ amount: 1, createdAt: 1 }).populate({ path: 'referer_playerId', select: { '_id': 0, 'firstName': 1, picture: 1 } });
+  const winners = await Transaction.find({ playerId: req.player._id, logType: 'refer_bonus' }).select({ amount: 1, createdAt: 1 }).populate({ path: 'referer_playerId', select: { '_id': 0, 'firstName': 1, picture: 1 } });
 
   let x = winners;
   res.status(200).json({
