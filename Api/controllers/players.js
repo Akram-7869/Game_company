@@ -1922,7 +1922,7 @@ exports.sendotp = asyncHandler(async (req, res, next) => {
     new: true,
     runValidators: true
   });
-  let x = await smsOtp(phone, vcode, sms.one.TEMPLATE_ADMIN_PASS, sms.one.AUTHKEY);
+  let x = await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
 
 
 
