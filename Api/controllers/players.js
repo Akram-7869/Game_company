@@ -1060,12 +1060,11 @@ exports.ticketReply = asyncHandler(async (req, res, next) => {
 
 
 
-
 // @desc      Log user out / clear cookie
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.debiteAmount = asyncHandler(async (req, res, next) => {
-  let { amount, note, gameId, betNo = 0 } = req.body;
+  let { amount, note, gameId } = req.body;
   console.log('debiteAmount =', gameId);
   if (!amount || amount < 0) {
     return next(
@@ -1082,7 +1081,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Game id requied`)
     );
   }
-  if (req.player.balance < amount) {
+  if (req.player.deposit < amount) {
     return next(
       new ErrorResponse(`Insufficent balance`)
     );
@@ -1103,18 +1102,9 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
-  let exist = await PlayerGame.countDocuments({ playerId: req.player.id, gameId });
-  if (exist) {
-    await PlayerGame.findOneAndUpdate({ playerId: req.player.id, gameId }, { $inc: { amountBet: amount } });
-  } else {
-    await PlayerGame.create({ playerId: req.player.id, gameId, amountBet: amount });
-  }
-
-
-
-  player = await tran.debitPlayer(amount);
-
+  player = await tran.debitPlayerDeposit(amount);
   if (req.body.logType === 'join') {
+    //Dashboard.join();
     player = await Player.findByIdAndUpdate(req.player.id, { $inc: { joinCount: 1 } }, {
       new: true,
       runValidators: true
@@ -1171,7 +1161,7 @@ exports.debitBonus = asyncHandler(async (req, res, next) => {
   player = await tran.debitPlayerBonus(amount);
   res.status(200).json({
     success: true,
-    data: { player, tran }
+    data: player
   });
 });
 // @desc      Log user out / clear cookie
@@ -1342,8 +1332,8 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
 exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
   let player = req.player;//await Player.findById(req.body.id);
-  let { betNo = 0, amount, gameId, note } = req.body;
-  console.log('reverseAmount', gameId);
+  let { amount, gameId, note } = req.body;
+  console.log('creditAmount', gameId);
   if (req.body.logType !== "reverse") {
     new ErrorResponse(`Invalid amount`);
   }
@@ -1371,8 +1361,9 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
   let leaderboard = await PlayerGame.findOne({ 'gameId': gameId });
   if (!leaderboard || leaderboard.status === 'paid') {
     return next(
-      new ErrorResponse(`Insufficent Balance`)
+      new ErrorResponse(`Game Paid`)
     );
+
   }
   let tranReverse = await Transaction.findOne({ 'gameId': gameId, logType: 'reverse', playerId: player._id });
   if (tranReverse) {
@@ -1381,6 +1372,7 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
     );
 
   }
+  //let gameRec = await PlayerGame.findOne({ 'gameId': gameId, playerCount: { $gt: 0 } });
   let tranJoin = await Transaction.findOne({ 'gameId': gameId, logType: 'join', playerId: player._id });
 
   if (!tranJoin) {
@@ -1405,10 +1397,6 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
   }
 
 
-
-
-
-
   console.log('reseved');
 
   let lobbyId = leaderboard.tournamentId;
@@ -1429,7 +1417,6 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
     data: player
   });
 });
-
 // @desc      Get current logged in user
 // @route     POST /api/v1/auth/me
 // @access    Private
