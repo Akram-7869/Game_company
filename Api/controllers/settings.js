@@ -123,12 +123,8 @@ exports.setCommission = asyncHandler(async (req, res, next) => {
     'commission': req.body.commission,
     'lvl1_commission': req.body.lvl1_commission,
     'lvl2_commission': req.body.lvl2_commission,
-<<<<<<< HEAD
-    'admin_referral_commission': req.body.admin_referral_commission
-=======
     'minwithdraw': req.body.minwithdraw,
 
->>>>>>> origin/ludo-ranger
   }
 
   setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {

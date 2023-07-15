@@ -134,13 +134,8 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
-<<<<<<< HEAD
-  let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
-
-=======
   let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode = '', stateName = '', latitude = 0, longitude = 0 } = req.body;
   //console.log(req.body);
->>>>>>> origin/ludo-ranger
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
   const client = new OAuth2Client(CLIENT_ID);
 
@@ -150,16 +145,6 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     );
   }
   let ticket;
-<<<<<<< HEAD
-  //, { 'deviceToken': deviceToken }
-  let player = await Player.findOne({ $or: [{ 'email': email }] });
-  if (player) {
-    // if (player.email !== email) {
-    //   return next(
-    //     new ErrorResponse(`This device is registered with another email ID`)
-    //   );
-    // }
-=======
   let player = await Player.findOne({ 'email': email });
   if (player) {
     if (player.email !== email) {
@@ -167,7 +152,6 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`This device is registered with another email ID`)
       );
     }
->>>>>>> origin/ludo-ranger
     // try {
     //   ticket = await client.verifyIdToken({
     //     idToken: firebaseToken,
@@ -177,11 +161,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     // } catch (error) {
 
     //   return next(
-<<<<<<< HEAD
-    //     new ErrorResponse(`Unable to Rgister----` + CLIENT_ID + 'firebaseToken --' + firebaseToken)
-=======
     //     new ErrorResponse(`Unable to Rgister`)
->>>>>>> origin/ludo-ranger
     //   );
     // }
 

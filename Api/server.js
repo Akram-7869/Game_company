@@ -162,16 +162,6 @@ io.on('connection', socket => {
     let roomName = '';
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
-<<<<<<< HEAD
-      //  await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
-      console.log('join-exisitng', roomName);
-    } else {
-      roomName = makeid(5);
-      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
-      state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [] };
-      console.log('create-room-', roomName);
-      //   await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1, gameData: {}, WinList: {} });
-=======
       await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
       // console.log('join-exisitng', roomName);
     } else {
@@ -180,7 +170,6 @@ io.on('connection', socket => {
       state[roomName] = { 'created': Date.now() + 600000, players: [] };
       // console.log('create-room-', roomName);
       await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1 });
->>>>>>> origin/ludo-ranger
     }
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
@@ -260,11 +249,7 @@ io.on('connection', socket => {
       room: room, userId,
       users: getRoomUsers(room)
     };
-<<<<<<< HEAD
-    console.log('leave-', d, data);
-=======
     //console.log('leave-', d);
->>>>>>> origin/ludo-ranger
     io.to(room).emit('res', { ev: 'leave', data });
   });
 
@@ -445,13 +430,8 @@ let getRoomLobbyUsers = (room, lobbyId) => {
 
 
 let userLeave = (s) => {
-<<<<<<< HEAD
-  console.log('leav-func')
-  if (state[s.room] && state[s.room].players.length !== -1) {
-=======
   //console.log('leav-func')
   if (state[s.room] && state[s.room].players.length !== 0) {
->>>>>>> origin/ludo-ranger
     //delete state[s.room].players[s.userId];
     const index = state[s.room].players.findIndex(user => user.userId === s.userId);
 
@@ -460,21 +440,12 @@ let userLeave = (s) => {
     }
   }
 
-<<<<<<< HEAD
-  // for (let r in state) {
-  //   if (state[r]['created'] < Date.now()) {
-  //     console.log('del-old');
-  //     delete state[r];
-  //   }
-  // }
-=======
   for (let r in state) {
     if (state[r]['created'] < Date.now()) {
       // console.log('del-old');
       delete state[r];
     }
   }
->>>>>>> origin/ludo-ranger
   //remove lobby 
   // for (let l in publicRoom) {
   //   if (publicRoom[l]['roomName']) {

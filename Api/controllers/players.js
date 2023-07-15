@@ -50,11 +50,7 @@ const checkOrderStatus = async (trxId) => {
 
 }
 exports.withDrawRequest = asyncHandler(async (req, res, next) => {
-<<<<<<< HEAD
-  let { amount, note, gameId, to, upi } = req.body;
-=======
   let { amount, note, gameId, to, upiId } = req.body;
->>>>>>> origin/ludo-ranger
 
   if (!req.player) {
     return next(
@@ -74,11 +70,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   }
   const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
 
-<<<<<<< HEAD
-  if (req.player.balance < 100) {
-=======
   if (amount < row.minwithdraw) {
->>>>>>> origin/ludo-ranger
     return next(
       new ErrorResponse(`Minimum Withdraw ${row.minwithdraw}`)
     );
@@ -110,13 +102,8 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     tranData['withdraw'] = player.wallet;
     req.body['upiId'] = player.wallet.get('walletAddress');
   } else if (req.body.to === 'upi') {
-<<<<<<< HEAD
-    tranData['withdraw'] = { 'upiId': upi };
-    req.body['upiId'] = upi;
-=======
     tranData['withdraw'] = { 'upiId': upiId };
     req.body['upiId'] = upiId;
->>>>>>> origin/ludo-ranger
   }
   //tranData['gameId'] = gameId;
 
@@ -142,24 +129,10 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     incFiled['totalTaxableAmount'] = taxableAmount;
     incFiled['totalTds'] = tds;
   }
-<<<<<<< HEAD
-  // const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
-  // if (upiStatus['status'] !== 'SUCCESS') {
-  //   return next(
-  //     new ErrorResponse(upiStatus['message'])
-  //   );
-  // }
-  // if (upiStatus.data.accountExists === 'NO') {
-  //   return next(
-  //     new ErrorResponse('Invalid Upi')
-  //   );
-  // }
-=======
   else {
     taxableAmount = 0;
     tds = 0;
   }
->>>>>>> origin/ludo-ranger
 
   totalAmount = amount - tds;
   totalAmount = parseFloat(totalAmount).toFixed(2);
@@ -1122,14 +1095,8 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': req.player.balance,
     'logType': req.body.logType,
-<<<<<<< HEAD
-    betNo,
-    status: 'complete', paymentStatus: 'SUCCESS'
-  }
-=======
     status: 'complete', paymentStatus: 'SUCCESS',
     'stateCode': req.player.stateCode
->>>>>>> origin/ludo-ranger
 
   }
   console.log(tranData, req.player);
@@ -1291,10 +1258,6 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
   }
 
 
-<<<<<<< HEAD
-  let betAmout = parseFloat(amount) + parseFloat(adminCommision);
-  betAmout = parseFloat(amount).toFixed(2);
-=======
   const betAmout = parseFloat(tournament.betAmount) * 2;
   const winAmount = parseFloat(tournament.winnerRow.winner_1).toFixed(2);
   const commision = betAmout - winAmount;
@@ -1315,7 +1278,6 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     }
   }
 
->>>>>>> origin/ludo-ranger
   let playerGame = {
     'playerId': req.player._id,
     'amountWon': amount,
@@ -1333,11 +1295,7 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': player.balance,
     'adminCommision': adminCommision,
-<<<<<<< HEAD
-    status: 'complete', 'paymentStatus': 'SUCCESS',
-=======
     'status': 'complete', 'paymentStatus': 'SUCCESS',
->>>>>>> origin/ludo-ranger
     'logType': req.body.logType,
     'gameId': gameId,
     'tds': tds,
@@ -1345,8 +1303,6 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     'stateCode': stateCode
   }
 
-<<<<<<< HEAD
-=======
   if (gameRec.status !== 'paid') {
     console.log('firsttime');
     let tran = await Transaction.create(tranData);
@@ -1354,19 +1310,18 @@ exports.creditAmount = asyncHandler(async (req, res, next) => {
     if (gameRec.status === 'start') {
       Dashboard.totalIncome(betAmout, winAmount, adminCommision);
     }
->>>>>>> origin/ludo-ranger
 
-  let tran = await Transaction.create(tranData);
-  player = await tran.creditPlayer(amount);
+    let tran = await Transaction.create(tranData);
+    player = await tran.creditPlayer(amount);
 
-  Dashboard.totalIncome(betAmout, amount, adminCommision);
-  await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
+    Dashboard.totalIncome(betAmout, amount, adminCommision);
+    await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'tournamentId': tournamentId }, playerGame);
 
-  res.status(200).json({
-    success: true,
-    data: player
+    res.status(200).json({
+      success: true,
+      data: player
+    });
   });
-});
 
 // @desc      Log user out / clear cookie
 // @route     GET /api/v1/auth/logout
@@ -1400,47 +1355,31 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player Not found`)
     );
   }
-<<<<<<< HEAD
-  // let leaderboard = await PlayerGame.findOne({ 'gameId': gameId, paymentStatus: 'paid' });
-  // if (leaderboard) {
-  //   return next(
-  //     new ErrorResponse(`Game Paid`)
-  //   );
-
-  // }
-  // let tranReverse = await Transaction.findOne({ 'gameId': gameId, logType: 'reverse', playerId: player._id });
-  // if (tranReverse) {
-  //   return next(
-  //     new ErrorResponse(`Transaction not found`)
-  //   );
-
-  // }
-  // //let gameRec = await PlayerGame.findOne({ 'gameId': gameId, playerCount: { $gt: 0 } });
-  let okBal = await PlayerGame.findOne({ 'gameId': gameId, playerId: player._id, amountBet: { $gte: amount } });
-  if (!okBal) {
-=======
   let leaderboard = await PlayerGame.findOne({ 'gameId': gameId });
   if (!leaderboard || leaderboard.status === 'paid') {
->>>>>>> origin/ludo-ranger
     return next(
       new ErrorResponse(`Insufficent Balance`)
     );
   }
-<<<<<<< HEAD
-  let gametran = await PlayerGame.findByIdAndUpdate(okBal._id, { $inc: { amountBet: -amount } });
-=======
   let tranReverse = await Transaction.findOne({ 'gameId': gameId, logType: 'reverse', playerId: player._id });
   if (tranReverse) {
     return next(
       new ErrorResponse(`refund given`)
     );
->>>>>>> origin/ludo-ranger
 
+  }
+  let tranJoin = await Transaction.findOne({ 'gameId': gameId, logType: 'join', playerId: player._id });
 
+  if (!tranJoin) {
+    return next(
+      new ErrorResponse(`Transaction not found`)
+    );
+
+  }
   let commision = 0;
   let tranData = {
     'playerId': player._id,
-    'amount': amount,
+    'amount': tranJoin.amount,
     'transactionType': "credit",
     'note': note,
     'prevBalance': player.balance,
@@ -1453,8 +1392,10 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
   }
 
 
-<<<<<<< HEAD
-=======
+
+
+
+
   console.log('reseved');
 
   let lobbyId = leaderboard.tournamentId;
@@ -1469,11 +1410,7 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
   let tran = await Transaction.create(tranData);
   player = await tran.creditPlayerDeposit(tranJoin.amount);
->>>>>>> origin/ludo-ranger
 
-  let tran = await Transaction.create(tranData);
-  player = await tran.creditPlayer(amount);
-  console.log('reseved');
   res.status(200).json({
     success: true,
     data: player
@@ -1844,15 +1781,10 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     'transactionType': "credit",
     'note': note,
     'prevBalance': codeGiver.balance,
-<<<<<<< HEAD
-    'logType': 'refer_bonus',
-    status: 'complete', paymentStatus: 'SUCCESS'
-=======
     'logType': 'bonus',
     status: 'complete', paymentStatus: 'SUCCESS',
     'stateCode': req.player.stateCode
 
->>>>>>> origin/ludo-ranger
   }
 
   let tran = await Transaction.create(tranData);

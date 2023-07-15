@@ -178,14 +178,6 @@ TransactionsSchema.methods.declineWithDrawPlayer = async function (amount) {
         runValidators: true
     })
 };
-<<<<<<< HEAD
-TransactionsSchema.methods.creditPlayerBonus = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { bonus: amount, balance: amount } }, {
-        new: true,
-        runValidators: true
-    });
-=======
->>>>>>> origin/ludo-ranger
 
 TransactionsSchema.methods.memberShip = async function () {
     let fieldsToUpdate = {}
