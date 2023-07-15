@@ -216,8 +216,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
     // console.log('Membership added');
   } else {
 
-    //  player = await tran.creditPlayerDeposit(amount);
-    player = await tran.creditPlayer(amount);
+    player = await tran.creditPlayerDeposit(amount);
     await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', 'paymentStatus': 'SUCCESS' });
     console.log('Deposit added');
     if (player.refrer_player_id) {
@@ -257,8 +256,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 
       }
       bonusTran = await Transaction.create(tranBonusData);
-      //  bonusTran.creditPlayerBonus(bonusAmount);
-      bonusTran.creditPlayer(bonusAmount);
+      bonusTran.creditPlayerBonus(bonusAmount);
       console.log('bonus added');
 
     }
