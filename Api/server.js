@@ -142,7 +142,7 @@ io.use(function (socket, next) {
 io.on('connection', socket => {
   // let data = { status: 'connected' };
   // socket.emit('res', { ev: 'connected', data });
-  console.log('contedt');
+  //console.log('contedt');
   //socket.join('notification_channel');
 
   socket.on('join', async (d) => {
@@ -154,7 +154,7 @@ io.on('connection', socket => {
       return;
     }
 
-    let player = await Player.findOne({ _id: userId, 'status': 'active', 'balance': { $gte: lobby.betAmount } });
+    let player = await Player.findOne({ _id: userId, 'status': 'active', 'deposit': { $gte: lobby.betAmount } });
     if (!player) {
       // console.log('player-not-found');
       return;
@@ -177,9 +177,7 @@ io.on('connection', socket => {
 
     let data = {
       roomName, users: getRoomLobbyUsers(roomName, lobbyId),
-      userId: userId,
-      gameData: state[roomName]['gameData'],
-      WinList: state[roomName]['WinList'],
+      userId: userId
     }
     if (state[roomName]) {
       publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
@@ -190,63 +188,24 @@ io.on('connection', socket => {
       // delete publicRoom[lobbyId];
     }
     io.to(roomName).emit('res', { ev: 'join', data });
-
-    io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
-
   });
 
 
-  socket.on('lobbyStat', (d) => {
-    let { userId, lobbyId } = d;//JSON.parse(d);
-    let cnt = 0;
-    let total = 0;
-    if (publicRoom[lobbyId]) {
-      let rn = publicRoom[lobbyId]['roomName'];
-      if (state[rn]) {
-        cnt = publicRoom[lobbyId]['count'] = state[rn].players.length;
-      }
-
-    }
-
-    io.emit('res', {
-      ev: 'lobbyStat', lobbyId, 'total': total, 'count': cnt
-    });
-
-  });
   socket.on('sendToRoom', (d) => {
 
     let { room, ev, data } = d;//JSON.parse(d);
-    console.log('sendToRoom', data)
+
     io.to(room).emit('res', { ev, data });
-
-  });
-  socket.on('setGameId', async (d) => {
-    let { room, lobbyId } = d;//JSON.parse(d);
-    if (state[room]) {
-      let bets = [];
-      for (let i = 0; i <= 36; i = i + 1) {
-        bets.push({ id: i, amount: -1 })
-      }
-
-      state[room]['betList'] = bets;
-    }
-
-    let data = {
-      gameId: makeid(5),
-      lobbyId
-    }
-    console.log('setGameId', data);
-    io.in(room).emit('res', { ev: 'setGameId', data });
 
   });
   //leave
   socket.on('leave', (d) => {
-    let { room, userId } = d;
+    let { room } = d;
 
-    userLeave(socket, userId);
+    userLeave(socket);
     socket.leave(room);
     let data = {
-      room: room, userId,
+      room: room,
       users: getRoomUsers(room)
     };
     //console.log('leave-', d);
@@ -284,7 +243,7 @@ io.on('connection', socket => {
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
       if (rn == room || data.users.length == 2) {
-        // publicRoom[lobbyId]['played'] = true;
+        publicRoom[lobbyId]['played'] = true;
       }
 
     }
@@ -317,73 +276,7 @@ io.on('connection', socket => {
     };
     io.to(room).emit('res', { ev: 'moveuser', data });
   });
-  //set game state 
-  socket.on('setGameData', (d) => {
-
-    let { room, gameData } = d; //JSON.parse(d);
-    let data = {
-      room: room, gameData: {}
-    }
-    if (state[room]) {
-
-      state[room]['gameData'] = gameData;
-      data['gameData'] = gameData;
-    }
-
-    console.log('setGameData', data);
-    io.to(room).emit('res', { ev: 'setGameData', data });
-  });
-  socket.on('setWinListData', (d) => {
-
-    let { room, WinList } = d; //JSON.parse(d);
-    let data = { room: room, WinList: {} }
-    if (state[room]) {
-      state[room]['WinList'] = WinList;
-      data['WinList'] = d;
-    }
-
-    console.log('setWinListData', data);
-    io.to(room).emit('res', { ev: 'setWinListData', data });
-  });
-  socket.on('setBetData', (d) => {
-
-    let { room, betNo, amount } = d; //JSON.parse(d);
-    console.log('setBetData', d);
-
-
-    if (state[room] && betNo <= 36) {
-      var foundIndex = state[room]['betList'].findIndex(x => x.id == betNo);
-      console.log('a----old', foundIndex, '===', amount, '---', state[room]['betList'][foundIndex]['amount']);
-
-      state[room]['betList'][foundIndex]['amount'] = parseInt(amount) + parseInt(state[room]['betList'][foundIndex]['amount']);
-    }
-  });
-  socket.on('getBetData', (d) => {
-
-    let { room } = d; //JSON.parse(d);
-    let winObject = {};
-    console.log('getBetData', room);
-    if (state[room]) {
-      let temp = state[room]['betList'];
-
-
-      let notBetArray = state[room]['betList'].filter(x => x.amount === -1);
-      if (notBetArray.length === 0) {
-        temp.sort((a, b) => a.amount - b.amount);
-        winObject = temp[0];
-      } else {
-        let win = Math.floor(Math.random() * notBetArray.length);
-        winObject = notBetArray[win];
-
-      }
-
-      let data = { room: room, betWin: winObject.id }
-      console.log('getBetData', data);
-      io.in(room).emit('res', { ev: 'getBetData', data });
-    }
-  });
 });
-
 
 function arraymove(arr, fromIndex, toIndex) {
   arr.unshift(arr.pop());
@@ -427,8 +320,6 @@ let getRoomLobbyUsers = (room, lobbyId) => {
   }
   return [];
 }
-
-
 let userLeave = (s) => {
   //console.log('leav-func')
   if (state[s.room] && state[s.room].players.length !== 0) {
@@ -436,7 +327,7 @@ let userLeave = (s) => {
     const index = state[s.room].players.findIndex(user => user.userId === s.userId);
 
     if (index !== -1) {
-      state[s.room].players.splice(index, 1);
+      state[s.room].players.splice(index, 1)[0];
     }
   }
 
@@ -447,14 +338,14 @@ let userLeave = (s) => {
     }
   }
   //remove lobby 
-  // for (let l in publicRoom) {
-  //   if (publicRoom[l]['roomName']) {
-  //     let rn = publicRoom[l]['roomName'];
-  //     if (!state[rn]) {
-  //       delete publicRoom[l];
-  //     }
-  //   }
-  // }
+  for (let l in publicRoom) {
+    if (publicRoom[l]['roomName']) {
+      let rn = publicRoom[l]['roomName'];
+      if (!state[rn]) {
+        delete publicRoom[l];
+      }
+    }
+  }
 
 }
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
