@@ -2,6 +2,8 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Ticket = require('../models/Ticket');
 const File = require('../models/File');
+var path = require('path');
+const { uploadFile, deletDiskFile } = require('../utils/utils');
 
 // @desc      Get all Tickets
 // @route     GET /api/v1/auth/Tickets
@@ -43,18 +45,17 @@ exports.getTicket = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Tickets
 // @access    Private/Admin
 exports.createTicket = asyncHandler(async (req, res, next) => {
-  if (req.files) {
-    let dataSave = {
-      // createdBy: req.user.id,
-      data: req.files.file.data,
-      contentType: req.files.file.mimetype,
-      size: req.files.file.size,
-    }
-    const newfile = await File.create(dataSave);
-    req.body['ticketImage'] = newfile._id;
 
+
+
+  let filename;
+  if (req.files) {
+    filename = '/img/ticket/' + req.player._id + '/' + req.files.file.name;
+    uploadFile(req, filename, res);
+    req.body['ticketImage'] = filename;
   }
-  const row = await Ticket.create(req.body);
+
+  //const row = await Ticket.create(req.body);
 
   res.status(201).json({
     success: true,
@@ -98,7 +99,10 @@ exports.updateTicket = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deleteTicket = asyncHandler(async (req, res, next) => {
   const row = await Ticket.findByIdAndDelete(req.params.id);
-  await File.findByIdAndDelete(row.ticketImage);
+  if (row.ticketImage) {
+    let filePath = path.resolve(__dirname, '../../assets/' + row.ticketImage);
+    deletDiskFile(filePath);
+  }
   res.status(200).json({
     success: true,
     data: {}
@@ -119,7 +123,8 @@ exports.deleteTicketBbIds = asyncHandler(async (req, res, next) => {
   ids.map(async d => {
     let row = await Ticket.findByIdAndDelete(d);
     if (row.ticketImage) {
-      await File.findByIdAndDelete(row.ticketImage);
+      let filePath = path.resolve(__dirname, '../../assets/' + row.ticketImage);
+      deletDiskFile(filePath);
     }
 
   });

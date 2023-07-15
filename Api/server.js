@@ -34,7 +34,7 @@ const bots = require('./routes/bots');
 const versions = require('./routes/versions');
 //const files = require('./routes/files');
 const banners = require('./routes/banners');
-//const tickets = require('./routes/tickets');
+const tickets = require('./routes/tickets');
 const notifications = require('./routes/notifications');
 const game = require('./routes/game');
 const dashboards = require('./routes/dashboard');
@@ -92,6 +92,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
   req.io = io;
+  req.publicRoom = publicRoom;
   if (!app.get('site_setting')) {
     // console.log('site setting');
     const setting = await Setting.findOne({
@@ -110,7 +111,7 @@ app.use('/api/v1/transactions', transactions);
 app.use('/api/v1/managers', managers);
 app.use('/api/v1/versions', versions);
 app.use('/api/v1/bots', bots);
-//app.use('/api/v1/tickets', tickets);
+app.use('/api/v1/tickets', tickets);
 app.use('/api/v1/payments', payments);
 //app.use('/api/v1/files', files);
 app.use('/api/v1/notifications', notifications);
@@ -155,12 +156,13 @@ io.on('connection', socket => {
 
     let player = await Player.findOne({ _id: userId, 'status': 'active', 'balance': { $gte: lobby.betAmount } });
     if (!player) {
-      console.log('player-not-found');
+      // console.log('player-not-found');
       return;
     }
     let roomName = '';
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
+<<<<<<< HEAD
       //  await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
       console.log('join-exisitng', roomName);
     } else {
@@ -169,6 +171,16 @@ io.on('connection', socket => {
       state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [] };
       console.log('create-room-', roomName);
       //   await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1, gameData: {}, WinList: {} });
+=======
+      await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
+      // console.log('join-exisitng', roomName);
+    } else {
+      roomName = makeid(5);
+      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
+      state[roomName] = { 'created': Date.now() + 600000, players: [] };
+      // console.log('create-room-', roomName);
+      await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1 });
+>>>>>>> origin/ludo-ranger
     }
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
@@ -248,7 +260,11 @@ io.on('connection', socket => {
       room: room, userId,
       users: getRoomUsers(room)
     };
+<<<<<<< HEAD
     console.log('leave-', d, data);
+=======
+    //console.log('leave-', d);
+>>>>>>> origin/ludo-ranger
     io.to(room).emit('res', { ev: 'leave', data });
   });
 
@@ -287,7 +303,7 @@ io.on('connection', socket => {
       }
 
     }
-    console.log('gameStart-', d);
+    //console.log('gameStart-', d);
     io.to(socket.room).emit('res', { ev: 'gameStart', data });
 
   });
@@ -429,8 +445,13 @@ let getRoomLobbyUsers = (room, lobbyId) => {
 
 
 let userLeave = (s) => {
+<<<<<<< HEAD
   console.log('leav-func')
   if (state[s.room] && state[s.room].players.length !== -1) {
+=======
+  //console.log('leav-func')
+  if (state[s.room] && state[s.room].players.length !== 0) {
+>>>>>>> origin/ludo-ranger
     //delete state[s.room].players[s.userId];
     const index = state[s.room].players.findIndex(user => user.userId === s.userId);
 
@@ -439,12 +460,21 @@ let userLeave = (s) => {
     }
   }
 
+<<<<<<< HEAD
   // for (let r in state) {
   //   if (state[r]['created'] < Date.now()) {
   //     console.log('del-old');
   //     delete state[r];
   //   }
   // }
+=======
+  for (let r in state) {
+    if (state[r]['created'] < Date.now()) {
+      // console.log('del-old');
+      delete state[r];
+    }
+  }
+>>>>>>> origin/ludo-ranger
   //remove lobby 
   // for (let l in publicRoom) {
   //   if (publicRoom[l]['roomName']) {

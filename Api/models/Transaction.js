@@ -43,6 +43,21 @@ const TransactionsSchema = new mongoose.Schema({
         enum: ['credit', 'debit'],
         required: true,
     },
+    taxableAmount: {
+        type: Number,
+        default: 0
+    },
+    totalAmount: {
+        type: Number,
+        default: 0
+    },
+    tds: {
+        type: Number,
+        default: 0
+    },
+    stateCode: {
+        type: String
+    },
     createdByName: {
         type: String
     },
@@ -78,6 +93,9 @@ const TransactionsSchema = new mongoose.Schema({
     gateWayCommision: {
         type: Number,
     },
+    gateWayCommision: {
+        type: Number,
+    },
     logType: {
         type: String,
         enum: ['join', 'deposit', 'withdraw', 'game', 'won', 'bonus', 'payment', 'fees', 'adjustment', 'membership', 'reverse', 'refer_bonus'],
@@ -94,26 +112,47 @@ const TransactionsSchema = new mongoose.Schema({
 }, {
     timestamps: true,
 });
-// debit player
+//   winning
 TransactionsSchema.methods.debitPlayerWinings = async function (amount) {
     return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: -amount, winings: -amount } }, {
         new: true,
         runValidators: true
     });
 };
-// debit player
+TransactionsSchema.methods.creditPlayerWinings = async function (amount) {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount, winings: amount } }, {
+        new: true,
+        runValidators: true
+    });
+
+};
+//   Bonus
 TransactionsSchema.methods.debitPlayerBonus = async function (amount) {
     return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: -amount, bonus: -amount } }, {
         new: true,
         runValidators: true
     });
 };
-// debit player
+TransactionsSchema.methods.creditPlayerBonus = async function (amount) {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { bonus: amount, balance: amount, } }, {
+        new: true,
+        runValidators: true
+    });
+
+};
+// debit deposit
 TransactionsSchema.methods.debitPlayerDeposit = async function (amount) {
     return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: -amount, deposit: -amount } }, {
         new: true,
         runValidators: true
     });
+};
+TransactionsSchema.methods.creditPlayerDeposit = async function (amount) {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount, deposit: amount, totalDeposit: amount } }, {
+        new: true,
+        runValidators: true
+    });
+
 };
 
 // debit player
@@ -130,29 +169,24 @@ TransactionsSchema.methods.creditPlayer = async function (amount) {
         new: true,
         runValidators: true
     });
-
 };
-TransactionsSchema.methods.creditPlayerWinings = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount, winings: amount } }, {
+
+// cedit player
+TransactionsSchema.methods.declineWithDrawPlayer = async function (amount) {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount, winings: amount, 'totalTaxableAmount': -this.taxableAmount, 'totalTds': -this.tds, 'totalWithdraw': -amount } }, {
         new: true,
         runValidators: true
-    });
-
+    })
 };
+<<<<<<< HEAD
 TransactionsSchema.methods.creditPlayerBonus = async function (amount) {
     return await Player.findByIdAndUpdate(this.playerId, { $inc: { bonus: amount, balance: amount } }, {
         new: true,
         runValidators: true
     });
+=======
+>>>>>>> origin/ludo-ranger
 
-};
-TransactionsSchema.methods.creditPlayerDeposit = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount, deposit: amount } }, {
-        new: true,
-        runValidators: true
-    });
-
-};
 TransactionsSchema.methods.memberShip = async function () {
     let fieldsToUpdate = {}
     if (this.membershipId === 'month') {

@@ -43,7 +43,11 @@
                                     <input type="text" class="form-control" required name="name"
                                         value="<%= row.name !== undefined ? row.name:''%>" placeholder="Name " />
                                 </div>
-
+                                <div class="mb-3">
+                                    <label class="form-label">Mode</label>
+                                    <input type="text" class="form-control" required name="one[mode]"
+                                        value="<%= row.one['mode'] %>" placeholder="mode" />
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">App ID</label>
                                     <input type="text" class="form-control" required name="one[APP_ID]"

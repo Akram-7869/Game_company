@@ -116,6 +116,10 @@ router.route('/payout').get(palyerCtrl.getPlayerPayout);
 router.route('/chat').get(palyerCtrl.getChatList);
 router.route('/report/player').get(palyerCtrl.getPlayerReport);
 router.route('/report/payment').get(palyerCtrl.getPaymentReport);
+router.route('/report/tds').get(palyerCtrl.tdsReport);
+router.route('/report/tds-download').get(palyerCtrl.tdsReportDownload);
+router.route('/report/admincommission').get(palyerCtrl.adminCommissionReport);
+router.route('/report/admincommission-download').get(palyerCtrl.adminCommissionDownload);
 
 router.route('/leaderboard').get(palyerCtrl.getLeaderBoard);
 router.route('/game/data').post(palyerCtrl.getLeaderBoardList);

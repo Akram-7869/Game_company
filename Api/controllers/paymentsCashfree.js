@@ -6,6 +6,8 @@ const crypto = require('crypto');
 const Transaction = require('../models/Transaction');
 const Coupon = require('../models/Coupon');
 const Player = require('../models/Player');
+const PlayerCtrl = require('./players');
+
 let axios = require('axios');
 
 
@@ -18,9 +20,13 @@ const paymentConfig = async (amount, trxId) => {
     "orderAmount": amount,
     "orderCurrency": "INR"
   });
+  let gatewayurl = 'https://test.cashfree.com/api/v2/cftoken/order';
+  if (row.one.mode === 'production') {
+    gatewayurl = 'https://api.cashfree.com/api/v2/cftoken/order';
+  }
   let config = {
     method: 'post',
-    url: 'https://api.cashfree.com/api/v2/cftoken/order',
+    url: gatewayurl,
     headers: {
       'Content-Type': 'application/json',
       'x-client-id': row.one.APP_ID,
@@ -92,6 +98,8 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     'paymentGateway': 'Cash Free',
     'logType': 'payment',
     'prevBalance': 0,
+    'stateCode': req.player.stateCode
+
 
   }
   let tran = await Transaction.create(tranData);
@@ -244,7 +252,9 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
         'prevBalance': player.balance,
         'paymentStatus': 'SUCCESS',
         'status': 'complete',
-        'paymentId': tran._id
+        'paymentId': tran._id,
+        'stateCode': player.stateCode
+
       }
       bonusTran = await Transaction.create(tranBonusData);
       //  bonusTran.creditPlayerBonus(bonusAmount);
@@ -294,6 +304,11 @@ exports.payout = asyncHandler(async (req, res, next) => {
       new ErrorResponse('Account is banned')
     );
   }
+  if (!player.phone) {
+    return next(
+      new ErrorResponse('Phone no is required')
+    );
+  }
   let bene = {};
   let transferMode = '';
 
@@ -308,7 +323,7 @@ exports.payout = asyncHandler(async (req, res, next) => {
       "ifsc": tran.withdraw.get('bankIfc'),
       "name": tran.withdraw.get('bankAccountHolder'),
       "email": player.email,
-      "phone": phone,
+      "phone": player.phone,
       "address1": tran.withdraw.get('bankAddress')
     };
   } else if (tran.withdrawTo === 'wallet') {
@@ -319,9 +334,8 @@ exports.payout = asyncHandler(async (req, res, next) => {
     bene['vpa'] = tran.withdraw.get('upiId');
   }
 
-
   let data = JSON.stringify({
-    "amount": tran.amount,
+    "amount": tran.totalAmount,
     "transferId": tran._id,
     "transferMode": transferMode,
     "remarks": "withdraw request",
@@ -386,7 +400,7 @@ exports.payout = asyncHandler(async (req, res, next) => {
 });
 exports.upiValidate = async (req, res, next) => {
   //disalbe it
-  //return { 'status': 'SUCCESS' };
+  return { 'status': 'SUCCESS' };
   //asyncHandler(async (req, res, next) => {
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
   let { upiId } = req.body;
@@ -435,3 +449,58 @@ exports.upiValidate = async (req, res, next) => {
   return resPayout['data'];
 };
 
+exports.panValidate = async (req, res, next) => {
+  //asyncHandler(async (req, res, next) => {
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player not found`)
+    );
+  }
+  if (req.panStatus === 'verified') {
+    return next(
+      new ErrorResponse(`Pan is already verified`)
+    );
+  }
+  const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
+  let { name, pan } = req.body;
+
+  let data = JSON.stringify({
+    name,
+    pan
+  });
+  let config = {
+    method: 'post',
+    url: 'https://sandbox.cashfree.com/verification/pan',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-client-id': row.one.APP_ID,
+      'x-client-secret': row.one.SECRET_KEY
+    },
+    data: data
+
+  };
+  try {
+    let response = await axios(config);
+    if (response['data']['valid'] === true) {
+      let updateData = { 'panNumber': response['data']['pan'], 'panStatus': 'verified' }
+      await Player.findByIdAndUpdate(req.player._id, updateData);
+
+    }
+
+
+    res.status(200).json({
+      success: true,
+      data: response['data']
+
+    });
+  } catch (error) {
+    console.error(error);
+    next(
+      new ErrorResponse(error['response']['data']['message'])
+    );
+  }
+
+
+
+
+};

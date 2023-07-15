@@ -47,38 +47,38 @@
                                         <%=row.description%>
                                     </p>
                                 </div>
-                                <%=apiUrl%>
-                                    <img width=100 src="<%=baseUrl +'/files/'+row.ticketImage%>">
 
-                                    <div class="chat-conversation p-3">
-                                        <ul class="list-unstyled mb-0" data-simplebar style="max-height: 455px;">
+                                <img width=100 src="<%=process.env.IMAGE_URL +row.ticketImage%>">
 
-                                            <% for (let item of row.history){ %>
-                                                <li>
-                                                    <div class="conversation-list">
-                                                        <div class="ctext-wrap">
-                                                            <div class="ctext-wrap-content">
-                                                                <h5 class="font-size-14 conversation-name"><a href="#"
-                                                                        class="text-dark">
-                                                                        <%=item.from%>
-                                                                    </a> <span
-                                                                        class="d-inline-block font-size-12 text-muted ms-2">
-                                                                        <%=item.dated%>
-                                                                    </span></h5>
-                                                                <p class="mb-0">
-                                                                    <%=item.reply%>
-                                                                </p>
-                                                            </div>
+                                <div class="chat-conversation p-3">
+                                    <ul class="list-unstyled mb-0" data-simplebar style="max-height: 455px;">
 
+                                        <% for (let item of row.history){ %>
+                                            <li>
+                                                <div class="conversation-list">
+                                                    <div class="ctext-wrap">
+                                                        <div class="ctext-wrap-content">
+                                                            <h5 class="font-size-14 conversation-name"><a href="#"
+                                                                    class="text-dark">
+                                                                    <%=item.from%>
+                                                                </a> <span
+                                                                    class="d-inline-block font-size-12 text-muted ms-2">
+                                                                    <%=item.dated%>
+                                                                </span></h5>
+                                                            <p class="mb-0">
+                                                                <%=item.reply%>
+                                                            </p>
                                                         </div>
+
                                                     </div>
+                                                </div>
 
-                                                </li>
+                                            </li>
 
-                                                <%}%>
+                                            <%}%>
 
 
-                                                    <!-- <li class="right">
+                                                <!-- <li class="right">
                                 <div class="conversation-list">
                                     <div class="ctext-wrap">
                                         <div class="ctext-wrap-content">
@@ -104,43 +104,42 @@
                             </li>
      -->
 
-                                        </ul>
+                                    </ul>
+                                </div>
+
+                                <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST"
+                                    name="player" enctype="application/x-www-form-urlencoded">
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Reply</label>
+                                        <textarea name="history" class="form-control" required
+                                            placeholder="Replay ..."></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Status</label>
+                                        <div class="col-md-10">
+                                            <select class="form-select" name="status" required>
+                                                <option value="open" <%=row.status==="open" ?'selected':'' %>>open
+                                                </option>
+                                                <option value="pending" <%=row.status==="pendin" ?'selected':'' %>
+                                                    >pending
+                                                </option>
+                                                <option value="close" <%=row.status==="close" ?'selected':'' %>
+                                                    >close
+                                                </option>
+                                            </select>
+                                        </div>
                                     </div>
 
-                                    <form class="custom-validation" action="" onsubmit="handleSubmit(this)"
-                                        method="POST" name="player" enctype="application/x-www-form-urlencoded">
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Reply</label>
-                                            <textarea name="history" class="form-control" required
-                                                placeholder="Replay ..."></textarea>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Status</label>
-                                            <div class="col-md-10">
-                                                <select class="form-select" name="status" required>
-                                                    <option value="open" <%=row.status==="open" ?'selected':'' %>>open
-                                                    </option>
-                                                    <option value="pending" <%=row.status==="pendin" ?'selected':'' %>
-                                                        >pending
-                                                    </option>
-                                                    <option value="close" <%=row.status==="close" ?'selected':'' %>
-                                                        >close
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-
+                                    <div>
                                         <div>
-                                            <div>
-                                                <button type="submit"
-                                                    class="btn btn-primary waves-effect waves-light me-1">
-                                                    Submit
-                                                </button>
+                                            <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                                Submit
+                                            </button>
 
-                                            </div>
                                         </div>
-                                    </form>
+                                    </div>
+                                </form>
 
                             </div>
                         </div>
