@@ -217,7 +217,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       'countryCode': countryCode,
       'refer_code': makeid(6),
       'balance': addamount,
-      'bonus': addamount,
+      'deposit': addamount,
       stateCode,
       stateName,
       longitude,
