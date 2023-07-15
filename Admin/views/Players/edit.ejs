@@ -365,11 +365,13 @@
                                             <label class="form-label">For</label>
                                             <div class="col-md-10">
                                                 <select class="form-select" name="logType" required>
+                                                    <option value="deposit" <%=row.status==='deposit' ?'selected':'' %>
+                                                        >deposit</option>
+                                                    <option value="bonus" <%=row.status==='bonus' ?'selected':'' %>
+                                                        >bonus</option>
 
-                                                    <option value="adjustment" <%=row.status==='adjustment'
-                                                        ?'selected':'' %>
-                                                        >adjustment</option>
-
+                                                    <option value="won" <%=row.status==='won' ?'selected':'' %>
+                                                        >winning</option>
                                                 </select>
                                             </div>
                                         </div>
