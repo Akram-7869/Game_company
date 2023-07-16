@@ -1781,7 +1781,7 @@ exports.updateRefer = asyncHandler(async (req, res, next) => {
     'transactionType': "credit",
     'note': note,
     'prevBalance': codeGiver.balance,
-    'logType': 'bonus',
+    'logType': 'refer_bonus',
     status: 'complete', paymentStatus: 'SUCCESS',
     'stateCode': req.player.stateCode
 
