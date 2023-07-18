@@ -15,9 +15,10 @@ let axios = require('axios');
 
 const paymentConfig = async (amount, trxId) => {
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
+
   let data = JSON.stringify({
     "orderId": trxId,
-    "orderAmount": amount,
+    "orderAmount": amount.toFixed(2),
     "orderCurrency": "INR"
   });
   let gatewayurl = 'https://test.cashfree.com/api/v2/cftoken/order';
@@ -46,6 +47,8 @@ exports.getToken = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Amount required`)
     );
   }
+  const setting = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
+  amount = parseFloat(amount);
   //create a transaction ;
   if (!req.player) {
     return next(
@@ -86,7 +89,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
 
   }
 
-
+  let gst = amount * parseFloat(setting.gst * 0.01);
 
   let tranData = {
     'playerId': req.player._id,
@@ -97,6 +100,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     'note': req.body.note,
     'paymentGateway': 'Cash Free',
     'logType': 'payment',
+    'gst': gst,
     'prevBalance': 0,
     'stateCode': req.player.stateCode
 
@@ -108,7 +112,8 @@ exports.getToken = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Provide all required fields`)
     );
   }
-  let config = await paymentConfig(amount, tran._id);
+  let totalAmount = amount + gst;
+  let config = await paymentConfig(totalAmount, tran._id);
 
   axios(config)
     .then(function (response) {
@@ -120,7 +125,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
       response.data['customerEmail'] = req.player.email;
       response.data['customerPhone'] = req.player.phone;
       response.data['customerName'] = req.player.firstName;
-      response.data['orderAmount'] = amount;
+      response.data['orderAmount'] = totalAmount;
 
       //  console.log(response.data);
       res.status(200).json({
