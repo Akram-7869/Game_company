@@ -347,7 +347,7 @@ exports.deleteTransaction = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.getTdsRecord = asyncHandler(async (req, res, next) => {
   let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.query.draw }
-  let filter = {};
+  let filter = { 'logType': 'withdraw' };
   if (req.query.status && req.query.status != 'All') {
     filter['status'] = req.query.status;
   }
@@ -677,3 +677,144 @@ exports.getAdminCommission = asyncHandler(async (req, res, next) => {
   }
   //res.status(200).json(res.advancedResults);
 });
+
+
+// @desc      Get all Transactions
+// @route     GET /api/v1/auth/Transactions
+// @access    Private/Admin
+exports.getGstRecord = asyncHandler(async (req, res, next) => {
+  let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.query.draw }
+  let filter = { 'logType': 'deposit' };
+  if (req.query.status && req.query.status != 'All') {
+    filter['status'] = req.query.status;
+  }
+  if (req.query.paymentStatus) {
+    filter['paymentStatus'] = req.query.paymentStatus;
+  }
+
+  if (req.query.transactionType) {
+    filter['transactionType'] = req.query.transactionType;
+  }
+  let key = req.query.email;
+  if (key) {
+
+
+    let player = await Player.findOne({ $or: [{ 'email': { '$regex': key, '$options': 'i' } }, { phone: { '$regex': key, '$options': 'i' } }] });
+    if (!player) {
+      return res.json(empty);
+    }
+
+    filter['playerId'] = player._id;
+  }
+
+  //plaerId filter
+  if (req.query.rf && req.query.rfv) {
+    filter[req.query.rf] = { '$regex': req.query.rfv, '$options': 'i' };
+  }
+  if (req.query.logType) {
+    filter['logType'] = req.query.logType;
+  }
+  if (req.query.s_date && req.query.e_date) {
+    filter['createdAt'] = {
+      $gte: new Date(req.query.s_date),
+      $lt: new Date(req.query.e_date)
+    }
+
+  }
+
+  if (req.query.stateCode) {
+    filter['stateCode'] = req.query.stateCode;
+  }
+  let rows = [];
+  if (req.query.report === 'download') {
+    rows = Transaction.aggregate([
+      {
+        $match: filter
+      },
+      {
+        $group: {
+          _id: "$stateCode",
+          totalGst: { $sum: "$gst" },
+        }
+      },
+      {
+        $project: {
+          totalGst: 1
+        }
+      }
+    ]);
+    const columns = [
+      "stateCode",
+      "totalGst",
+
+
+    ];
+    res.write(['From : ', req.query.s_date, ' to: ', req.query.e_date].join(', ') + '\n');
+    res.write(columns.join(', ') + '\n');
+    let s = [];
+    for await (const row of rows) {
+      s[0] = row._id ?? '';
+      s[1] = row.totalGst ?? 0;
+
+      res.write(s.join(', ') + '\n');
+    }
+    res.end();
+  } else if (req.query.report === 'datewise') {
+    await dateWiseGST(filter, req, res);
+  }
+  //res.status(200).json(res.advancedResults);
+});
+
+let dateWiseGST = async (filter, req, res) => {
+  let rows = [];
+  rows = Transaction.aggregate([
+    { $match: filter },
+    {
+      $group: {
+        _id: {
+          day: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$createdAt",
+            },
+          },
+          stateCode: "$stateCode",
+
+        },
+        totalGst: { $sum: "$gst" },
+      },
+    },
+    {
+      $sort: {
+        "_id.day": 1
+      }
+    },
+
+    {
+      $project: {
+        _id: 0,
+        totalGst: 1,
+        day: "$_id.day",
+        stateCode: "$_id.stateCode",
+      },
+    },
+  ]);
+  // const filename = "saved_from_db.csv";
+  const columns = [
+    "stateCode",
+    "totalGst",
+    'date'
+  ];
+  res.write(['From : ', req.query.s_date, ' to: ', req.query.e_date].join(', ') + '\n');
+  res.write(columns.join(', ') + '\n');
+  let s = [];
+  for await (const row of rows) {
+    s[0] = row.stateCode ?? '';
+    s[1] = row.totalGst ?? 0;
+    s[2] = row.day ?? 0;
+
+    res.write(s.join(', ') + '\n');
+  }
+  res.end();
+
+}

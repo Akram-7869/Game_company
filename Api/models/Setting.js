@@ -27,7 +27,7 @@ const SettingSchema = new mongoose.Schema({
     },
     gst: {
         type: Number,
-        default: 18,
+        default: 28,
     },
     type: {
         type: String,

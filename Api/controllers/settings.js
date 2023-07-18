@@ -124,7 +124,8 @@ exports.setCommission = asyncHandler(async (req, res, next) => {
     'lvl1_commission': req.body.lvl1_commission,
     'lvl2_commission': req.body.lvl2_commission,
     'minwithdraw': req.body.minwithdraw,
-
+    'tds': req.body.tds,
+    'gst': req.body.gst,
   }
 
   setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {

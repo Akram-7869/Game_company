@@ -125,7 +125,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   let incFiled = { balance: -amount, winings: -amount, 'totalWithdraw': amount };
 
   if (taxableAmount > 0) {
-    tds = taxableAmount * 0.30;
+    tds = taxableAmount * (parseFloat(row.tds * 0.01));
     incFiled['totalTaxableAmount'] = taxableAmount;
     incFiled['totalTds'] = tds;
   }

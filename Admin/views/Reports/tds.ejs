@@ -57,7 +57,7 @@
                                                         <% })%>
                                                 </select>
                                             </div>
-                                            <div class="col-lg-2">
+                                            <!-- <div class="col-lg-2">
 
                                                 <div class="mb-3">
                                                     <label class="form-check-label " for="order-selectinput"></label>
@@ -78,7 +78,7 @@
                                                     <label class="form-label" for="idvalue"></label>
                                                     <input id="id-value" name="rfv" type="text" class="form-control">
                                                 </div>
-                                            </div>
+                                            </div> -->
                                             <div class="col-lg-4">
                                                 <div class="mb-3">
                                                     <label class="form-label" for="manufacturerbrand">
@@ -99,7 +99,7 @@
                                             </div>
                                             <div class="col-lg-2">
                                                 <label class="form-check-label " for="order-selectinput">Status</label>
-                                                <select class="form-select" id="status-filter">
+                                                <select class="form-select" name="status" id="status-filter">
                                                     <option value="complete" selected>Complete</option>
                                                     <option value="log">Log</option>
                                                     <option value="All">All</option>
@@ -108,9 +108,9 @@
                                             <div class="col-lg-1">
                                                 <label class="form-check-label"
                                                     for="order-selectinput">transactionType</label>
-                                                <select class="form-select" id="transactionType">
-                                                    <option value=''>All</option>
+                                                <select class="form-select" name="transactionType" id="transactionType">
                                                     <option value="credit">credit</option>
+                                                    <option value=''>All</option>
                                                     <option value="debit">debit</option>
                                                 </select>
                                             </div>

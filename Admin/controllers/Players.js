@@ -72,6 +72,38 @@ exports.tdsReportDownload = asyncHandler(async (req, res, next) => {
             });
 
 });
+
+exports.gstReport = asyncHandler(async (req, res, next) => {
+
+      res.locals = { title: 'GST List', stateList };
+      res.render('Reports/gst')
+});
+
+exports.gstReportDownload = asyncHandler(async (req, res, next) => {
+
+      res.locals = { title: 'TDSList', stateList };
+      let filename = 'gstreport.csv';
+      if (req.query.report === 'datewise') {
+            filename = 'gstreport-datewise.csv';
+      }
+      callApi(req).get(api_url + '/transactions/gst', {
+            responseType: 'stream', // Set the response type to stream
+            params: req.query
+      })
+            .then(r => {
+                  res.set('Content-Disposition', 'attachment; filename=' + filename); // Set the filename and extension of the downloaded file
+
+                  r.data.pipe(res);
+                  //res.render('Reports/payoutprocessing', { row: r.data.data });
+            })
+            .catch(error => {
+                  console.log(error)
+                  res.status(400).json(error);
+                  //   req.flash('error', 'Incorrect email or password!');})
+            });
+
+});
+
 exports.adminCommissionDownload = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'Admin Comission', stateList };

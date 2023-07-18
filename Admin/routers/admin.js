@@ -120,6 +120,8 @@ router.route('/report/tds').get(palyerCtrl.tdsReport);
 router.route('/report/tds-download').get(palyerCtrl.tdsReportDownload);
 router.route('/report/admincommission').get(palyerCtrl.adminCommissionReport);
 router.route('/report/admincommission-download').get(palyerCtrl.adminCommissionDownload);
+router.route('/report/gst').get(palyerCtrl.gstReport);
+router.route('/report/gst-download').get(palyerCtrl.gstReportDownload);
 
 router.route('/leaderboard').get(palyerCtrl.getLeaderBoard);
 router.route('/game/data').post(palyerCtrl.getLeaderBoardList);

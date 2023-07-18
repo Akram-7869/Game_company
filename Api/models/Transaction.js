@@ -55,6 +55,10 @@ const TransactionsSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    gst: {
+        type: Number,
+        default: 0
+    },
     stateCode: {
         type: String
     },
