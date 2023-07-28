@@ -9,6 +9,7 @@ const {
 
 } = require('../controllers/settings');
 const paymentCashfreeCtrl = require('../controllers/paymentsCashfree');
+const upiCtrl = require('../controllers/paymentsUpi');
 
 const router = express.Router({ mergeParams: true });
 
@@ -21,7 +22,12 @@ router.route('/cashfree/panverify').post(protect, paymentCashfreeCtrl.panValidat
 
 router.route('/add').post(protect, createSetting);
 router.route('/').post(protect, getSettings);
+
+router.route('/cashfree/token').post(protect, upiCtrl.getToken);
+
 router.route('/cashfree/token').post(protect, paymentCashfreeCtrl.getToken);
+router.route('/cashfree/token').post(protect, paymentCashfreeCtrl.getToken);
+
 router.route('/cashfree/payout').post(protect, paymentCashfreeCtrl.payout);
 router.route('/cashfree/key').post(protect, paymentCashfreeCtrl.getKey);
 router.route('/cashfree/notify').post(paymentCashfreeCtrl.handleNotify);

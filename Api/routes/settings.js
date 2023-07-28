@@ -9,8 +9,8 @@ const {
     getSettingByName,
     uploadeImage,
     getFile,
-    setCommission, getSitedata
-
+    setCommission, getSitedata,
+    setUpi, setBank
 } = require('../controllers/settings');
 
 
@@ -30,6 +30,8 @@ router.route('/filter/SITE').get(getSitedata);
 router.route('/filter/:type/:name').get(getSettingByName);
 router.route('/filter/:type').post(protect, getSettings);
 router.route('/commission/:id').post(protect, setCommission);
+router.route('/upi/:id').post(protect, setUpi);
+router.route('/bank/:id').post(protect, setBank);
 
 router
     .route('/:id')

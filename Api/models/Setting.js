@@ -9,6 +9,8 @@ const SettingSchema = new mongoose.Schema({
     many: {
         type: Array,
     },
+    bank: {},
+    upi: {},
     siteLogo: {
         type: String,
 

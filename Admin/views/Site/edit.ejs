@@ -55,18 +55,18 @@
                                         <span class="d-none d-sm-block">Commision</span>
                                     </a>
                                 </li>
-                                <!--   <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#firebase" role="tab">
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#upi" role="tab">
                                         <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
-                                        <span class="d-none d-sm-block">Firebase</span>
+                                        <span class="d-none d-sm-block">UPI</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#step" role="tab">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#bank" role="tab">
                                         <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
-                                        <span class="d-none d-sm-block">2 step auth</span>
+                                        <span class="d-none d-sm-block">Bank</span>
                                     </a>
-                                </li> -->
+                                </li>
                             </ul>
 
                             <!-- Tab panes -->
@@ -228,72 +228,99 @@
                                         </p>
                                     </form>
                                 </div>
-                                <!-- <div class="tab-pane" id="supportemail" role="tabpanel">
+                                <div class="tab-pane" id="upi" role="tabpanel">
+                                    <p class="mb-0">
+                                    <form id="banner" action="<%=process.env.ADMIN_URL%>/admin/site/upi/<%=row._id%>"
+                                        onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
                                         <p class="mb-0">
                                         <div class="mb-3">
-                                            <label class="form-label">Support Email</label>
-                                            <input type="text" class="form-control" name="one[support_email]"
-                                                value="<%= row ? row.one['support_email']:''%>"
-                                                placeholder="" />
+                                            <label class="form-label">Upi Name</label>
+                                            <input type="text" class="form-control" required name="name"
+                                                value="<%= row ? row.upi['name']:''%>" placeholder="" />
                                         </div>
-                                        <div>
-                                            <div>
-                                                <button type="submit"
-                                                    class="btn btn-primary waves-effect waves-light me-1">
-                                                    Submit
-                                                </button>
-                                                <button type="reset" class="btn btn-secondary waves-effect">
-                                                    Cancel
-                                                </button>
-                                            </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Upi address</label>
+
+                                            <input type="text" class="form-control" required name="va"
+                                                value="<%= row ? row.upi['va']:''%>" placeholder="" />
                                         </div>
 
+                                        <button id="submit-all" type="submit"
+                                            class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+                                        <button type="reset" class="btn btn-secondary waves-effect">
+                                            Cancel
+                                        </button>
                                         </p>
+                                    </form>
+                                    </p>
+                                </div>
+                                <div class="tab-pane" id="bank" role="tabpanel">
+                                    <p class="mb-0">
+
+                                    <form id="banner" action="<%=process.env.ADMIN_URL%>/admin/site/bank/<%=row._id%>"
+                                        onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
+                                        <p class="mb-0">
+                                        <div class="mb-3">
+                                            <label class="form-label">Upi Name</label>
+                                            <input type="text" class="form-control" required name="name"
+                                                value="<%= row.bank ? row.bank['name']:''%>" placeholder="" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Account </label>
+                                            <input type="text" class="form-control" required name="account"
+                                                value="<%= row.bank ? row.bank['account']:''%>" placeholder="" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">IFC CODE </label>
+                                            <input type="text" class="form-control" required name="ifc"
+                                                value="<%= row.bank ? row.bank['ifc']:''%>" placeholder="" />
+                                        </div>
+
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Address </label>
+                                            <input type="text" class="form-control" required name="address"
+                                                value="<%= row.bank ? row.bank['address']:''%>" placeholder="" />
+                                        </div>
+
+
+                                        <button id="submit-all" type="submit"
+                                            class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+                                        <button type="reset" class="btn btn-secondary waves-effect">
+                                            Cancel
+                                        </button>
+
+
+
+
+                                        </p>
+                                    </form>
+                                    </p>
+                                </div>
+                                <!-- <div class="tab-pane" id="step" role="tabpanel">
+                                    <p class="mb-0">
+                                    <div class="mb-3">
+                                        <label class="form-label">2step auth</label>
+                                        <input type="text" class="form-control" name="one[2step_auth]"
+                                            value="<%= row ? row.one['2step_auth']:''%>" placeholder="" />
                                     </div>
-                                    <div class="tab-pane" id="firebase" role="tabpanel">
-                                        <p class="mb-0">
-                                        <div class="mb-3">
-                                            <label class="form-label">Firebase key</label>
-                                            <input type="text" class="form-control" required name="one[firebase_key]"
-                                                value="<%= row ? row.one['firebase_key']:''%>"
-                                                placeholder="" />
-                                        </div>
+                                    <div>
                                         <div>
-                                            <div>
-                                                <button type="submit"
-                                                    class="btn btn-primary waves-effect waves-light me-1">
-                                                    Submit
-                                                </button>
-                                                <button type="reset" class="btn btn-secondary waves-effect">
-                                                    Cancel
-                                                </button>
-                                            </div>
+                                            <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                                Submit
+                                            </button>
+                                            <button type="reset" class="btn btn-secondary waves-effect">
+                                                Cancel
+                                            </button>
                                         </div>
-
-                                        </p>
                                     </div>
-                                    <div class="tab-pane" id="step" role="tabpanel">
-                                        <p class="mb-0">
-                                        <div class="mb-3">
-                                            <label class="form-label">2step auth</label>
-                                            <input type="text" class="form-control" name="one[2step_auth]"
-                                                value="<%= row ? row.one['2step_auth']:''%>"
-                                                placeholder="" />
-                                        </div>
-                                        <div>
-                                            <div>
-                                                <button type="submit"
-                                                    class="btn btn-primary waves-effect waves-light me-1">
-                                                    Submit
-                                                </button>
-                                                <button type="reset" class="btn btn-secondary waves-effect">
-                                                    Cancel
-                                                </button>
-                                            </div>
-                                        </div>
 
-                                        </p>
-                                    </div> -->
+                                    </p>
+                            </div> -->
                             </div>
 
                         </div>
@@ -368,5 +395,97 @@
                         }
 
                     }
+                    $(document).on('click', '.update', function (e) {
+                        var id = $(this).attr("data-id");
+
+                        // var name = $(this).attr("data-name");
+                        // var email = $(this).attr("data-email");
+                        // var phone = $(this).attr("data-phone");
+                        // var city = $(this).attr("data-city");
+                        $('#id_u').val(id);
+                        // $('#name_u').val(name);
+                        // $('#email_u').val(email);
+                        // $('#phone_u').val(phone);
+                        // $('#city_u').val(city);
+                    });
+                    $(document).on('click', '#update', function (e) {
+                        alert('ffff');
+                    });
                 </script>
                 <%- contentFor('BottomJs') %>
+
+
+
+                    <div id="addEmployeeModal" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form id="user_form">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Add User</h4>
+                                        <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">×</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label>NAME</label>
+                                            <input type="text" id="name" name="name" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>EMAIL</label>
+                                            <input type="email" id="email" name="email" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>PHONE</label>
+                                            <input type="phone" id="phone" name="phone" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>CITY</label>
+                                            <input type="city" id="city" name="city" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <input type="hidden" value="1" name="type">
+                                        <input type="button" class="btn btn-default" data-dismiss="modal"
+                                            value="Cancel">
+                                        <button type="button" class="btn btn-success" id="btn-add">Add</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Edit Modal HTML -->
+                    <div id="editEmployeeModal" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form id="update_form">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Edit</h4>
+                                        <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">×</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="id_u" name="id" class="form-control" required>
+                                        <div class="form-group">
+                                            <label>Name</label>
+                                            <input type="text" id="name_u" name="name" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>UPI</label>
+                                            <input type="email" id="email_u" name="email" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>file</label>
+                                            <input type="file" id="phone_u" name="phone" class="form-control" required>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <input type="hidden" value="2" name="type">
+                                        <input type="button" class="btn btn-default" data-dismiss="modal"
+                                            value="Cancel">
+                                        <button type="button" class="btn btn-info" id="update">Update</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>

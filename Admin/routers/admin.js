@@ -47,6 +47,10 @@ router.route('/payment').get(settingCtrl.paymentList); router.route('/payment/da
 router.route('/payment/add').get(settingCtrl.addPayment).post(settingCtrl.createPayment);
 router.route('/payment/:id').get(settingCtrl.getPayment).post(settingCtrl.updatePayment).delete(settingCtrl.deletePayment);
 
+router.route('/paymentmethod').get(settingCtrl.paymentMethodList); router.route('/paymentmethod/data').post(settingCtrl.getPaymentMethod);
+router.route('/paymentmethod/add').get(settingCtrl.addPaymentMethod).post(settingCtrl.createPaymentMethod);
+router.route('/paymentmethod/:id').get(settingCtrl.getPaymentMethod).post(settingCtrl.updatePayment).delete(settingCtrl.deletePaymentMethod);
+
 router.route('/page').get(settingCtrl.pageList); router.route('/page/data').post(settingCtrl.getPageList);
 router.route('/page/add').get(settingCtrl.pageAdd).post(settingCtrl.createPage);
 router.route('/page/:id').get(settingCtrl.getPage).post(settingCtrl.updatePage).delete(settingCtrl.deletePage);
