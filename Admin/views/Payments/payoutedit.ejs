@@ -232,51 +232,71 @@
                                                 </ul>
                                                 <% }%>
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Note </label>
-                                            <textarea name="note" value="" class="form-control" required
-                                                placeholder="Refrence id  ..."><%=row.note%></textarea>
-                                        </div>
-                                        <div class="mb-3">
+                                        <% if(row.logType==='deposit' ) {%>
 
-                                            <p>
-                                                <label class="form-label"> paymentStatus</label>
-                                                <%=row.paymentStatus%>
-                                            </p>
-                                            <p>
-                                                <label class="form-label"> logType</label>
-                                                <%=row.logType%>
-                                            </p>
-                                            <p>
-                                                <label class="form-label"> Status</label>
-                                                <%=row.status%>
-                                            </p>
+                                            <div class="mb-3">
+                                                <label class="form-label">Image </label>
+                                                <img width=100 src="<%= process.env.IMAGE_URL + row.imageUrl %>">
 
-                                            <label class="form-label">Change Transaction Status</label>
-                                            <div class="col-md-10">
-                                                <select class="form-select" name="paymentStatus" required>
-                                                    <option value="PROCESSING" <%=row.paymentStatus==='PROCESSING'
-                                                        ?'selected':'' %>>Processing</option>
-                                                    <option value="SUCCESS" <%=row.paymentStatus==='SUCCESS'
-                                                        ?'selected':'' %>
-                                                        >Approve</option>
-                                                    <option value="DECLINED" <%=row.paymentStatus==='DECLINED'
-                                                        ?'selected':'' %>>Declined</option>
-
-                                                </select>
                                             </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Gateway Response</label>
-                                            <% for (items of row.gateWayResponse) { %>
-                                                <ul>
-                                                    <li>
-                                                        <%=` ${items}`%>
-                                                    </li>
-                                                </ul>
-                                                <% }%>
-                                        </div>
-                                        <!-- <div class="mb-3">
+                                            <% } %>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Note </label>
+                                                    <textarea name="note" value="" class="form-control" required
+                                                        placeholder="Transaction id  ..."><%=row.note%></textarea>
+                                                </div>
+                                                <div class="mb-3">
+
+                                                    <p>
+                                                        <label class="form-label"> paymentStatus</label>
+                                                        <%=row.paymentStatus%>
+                                                    </p>
+                                                    <p>
+                                                        <label class="form-label"> logType</label>
+                                                        <%=row.logType%>
+                                                    </p>
+                                                    <p>
+                                                        <label class="form-label"> Created : </label>
+                                                       
+                                                            <%=moment(row.createdAt).format('DD-MM-YYYY HH:mm:ss');%> 
+                                                    </p>
+                                                    <p>
+                                                        <label class="form-label"> Updated : </label>
+                                                        
+                                                      
+                                                                <%=moment(row.updatedAt).format('DD-MM-YYYY HH:mm:ss');%>
+                                                    </p>
+                                                    <p>
+                                                        <label class="form-label"> Status</label>
+                                                        <%=row.status%>
+                                                    </p>
+
+                                                    <label class="form-label">Change Transaction Status</label>
+                                                    <div class="col-md-10">
+                                                        <select class="form-select" name="paymentStatus" required>
+                                                            <option value="PROCESSING"
+                                                                <%=row.paymentStatus==='PROCESSING' ?'selected':'' %>
+                                                                >Processing</option>
+                                                            <option value="SUCCESS" <%=row.paymentStatus==='SUCCESS'
+                                                                ?'selected':'' %>
+                                                                >Approve</option>
+                                                            <option value="DECLINED" <%=row.paymentStatus==='DECLINED'
+                                                                ?'selected':'' %>>Declined</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Gateway Response</label>
+                                                    <% for (items of row.gateWayResponse) { %>
+                                                        <ul>
+                                                            <li>
+                                                                <%=` ${items}`%>
+                                                            </li>
+                                                        </ul>
+                                                        <% }%>
+                                                </div>
+                                                <!-- <div class="mb-3">
                                             <label class="form-label">For</label>
                                             <div class="col-md-10">
                                                 <select class="form-select" name="logType" required>
@@ -291,15 +311,15 @@
                                         </div> -->
 
 
-                                        <div>
-                                            <div>
-                                                <button type="submit"
-                                                    class="btn btn-primary waves-effect waves-light me-1">
-                                                    Submit
-                                                </button>
+                                                <div>
+                                                    <div>
+                                                        <button type="submit"
+                                                            class="btn btn-primary waves-effect waves-light me-1">
+                                                            Submit
+                                                        </button>
 
-                                            </div>
-                                        </div>
+                                                    </div>
+                                                </div>
                                     </form>
                                     </p>
                                 </div>

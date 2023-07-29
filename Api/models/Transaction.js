@@ -106,6 +106,9 @@ const TransactionsSchema = new mongoose.Schema({
         required: true,
         default: 'game'
     },
+    imageUrl: {
+        type: String
+    },
     withdraw: { type: Map },
     status: {
         type: String,

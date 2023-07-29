@@ -3,6 +3,7 @@ const asyncHandler = require('../middleware/async');
 // const {Players} = require('../models/Players');
 // const {User} = require('../models/User');
 const { callApi, api_url, redirect, stateList } = require('../helper/common');
+const moment = require('moment');
 
 var apiUrl = api_url + '/players/';
 var apiUrlGame = api_url + '/games/';
@@ -149,7 +150,7 @@ exports.getPlayerPayoutEdit = asyncHandler(async (req, res, next) => {
       callApi(req).get(apiUrlTransaction + 'payout/' + req.params.id)
             .then(r => {
                   //console.log(r.data.data);
-                  res.render('Payments/payoutedit', { row: r.data.data });
+                  res.render('Payments/payoutedit', { row: r.data.data, moment });
             })
             .catch(error => {//   req.flash('error', 'Incorrect email or password!');})
             });

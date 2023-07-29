@@ -43,7 +43,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     limit: req.body.length,
     skip: req.body.start,
     find: req.query,
-    select: { 'taxableAmount': 1, 'tds': 1, 'totalAmount': 1, 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
+    select: { 'logType': 1, 'taxableAmount': 1, 'tds': 1, 'totalAmount': 1, 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
     search: {
 
     },
@@ -65,6 +65,9 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
 
   if (req.body.transactionType) {
     filter['find']['transactionType'] = req.body.transactionType;
+  }
+  if (req.body.logType) {
+    filter['find']['logType'] = req.body.logType;
   }
   if (key) {
 
@@ -146,9 +149,8 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
 
   if (req.body.paymentStatus === 'DECLINED') {
     player = await transaction.declineWithDrawPlayer(amount);
-
-
-
+  } else if (req.body.paymentStatus === 'SUCCESS' && transaction.logType === 'deposit') {
+    player = await transaction.creditPlayerDeposit(amount);
   }
 
 
@@ -190,7 +192,11 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
   //     console.log('Error sending message:', error);
   //   });
 
-  //req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": transaction.playerId } });
+  if (req.userSocketMap[playerId]) {
+    let socketId = req.userSocketMap[playerId];
+    req.io.to(socketId).emit('res', { ev: 'approved_notify', data: { "playerId": playerId, transaction } });
+
+  }
 
 
 
