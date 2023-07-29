@@ -124,7 +124,7 @@ app.use('/api/v1/coupon', coupon);
 app.use('/api/v1/polls', polls);
 
 app.get('/api/v1/so', function (req, res, next) {
-  res.json({ state, publicRoom });
+  res.json({ state, publicRoom, userSocketMap });
 })
 app.use(errorHandler);
 
