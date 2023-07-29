@@ -142,7 +142,7 @@ io.use(function (socket, next) {
 })
 // Run when client connects
 io.on('connection', socket => {
-  //console.log('contedt');
+  console.log('contedt');
   //socket.join('notification_channel');
   socket.on('associateUserId', (d) => {
     let dataParsed = d;// JSON.parse(d);
