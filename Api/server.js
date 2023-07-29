@@ -144,8 +144,11 @@ io.use(function (socket, next) {
 io.on('connection', socket => {
   //console.log('contedt');
   //socket.join('notification_channel');
-  socket.on('associateUserId', (userId) => {
+  socket.on('associateUserId', (d) => {
+    let dataParsed = d;// JSON.parse(d);
+    let { userId } = dataParsed;
     // Store the mapping in the userSocketMap
+    console.log('associateUserId',d);
     userSocketMap[userId] = socket.id;
   });
   socket.on('join', async (d) => {
