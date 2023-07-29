@@ -11,7 +11,7 @@ router.post('/sendAppUrl', playerCtl.sendAppUrl);
 
 router.get('/versionlist', playerCtl.getVersion);
 router.get('/myrefrer', protect, playerCtl.getReferList);
-router.get('/paymentadd', protect, playerCtl.paymentAdd);
+router.post('/paymentadd', protect, playerCtl.paymentAdd);
 
 router.post('/saveleaderboard', protect, playerCtl.saveLeaderBoard);
 
