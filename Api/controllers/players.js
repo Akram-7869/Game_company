@@ -2117,6 +2117,7 @@ exports.paymentAdd = asyncHandler(async (req, res, next) => {
 
   // }
   updateFiled['paymentId']=paymentId;
+  updateFiled['status']='REQUESTED';
   const row = await Transaction.findByIdAndUpdate(id, updateFiled);
 
   res.status(200).json({
