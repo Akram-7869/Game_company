@@ -114,7 +114,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     }
     let totalAmount = amount + gst;
 
-    let url = `upi://pay?pa=${setting.upi.va}&pm=${setting.upi.name}&am=${totalAmount}&cu=INR`;
+    let url = `upi://pay?pa=${setting.upi.va}&pn=${setting.upi.name}&am=${totalAmount}&cu=INR`;
     //  console.log(response.data);
     res.status(200).json({
         success: true,
