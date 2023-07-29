@@ -236,13 +236,13 @@
                                         <div class="mb-3">
                                             <label class="form-label">Upi Name</label>
                                             <input type="text" class="form-control" required name="name"
-                                                value="<%= row ? row.upi['name']:''%>" placeholder="" />
+                                                value="<%= row.upi ? row.upi['name']:''%>" placeholder="" />
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Upi address</label>
 
                                             <input type="text" class="form-control" required name="va"
-                                                value="<%= row ? row.upi['va']:''%>" placeholder="" />
+                                                value="<%= row.upi ? row.upi['va']:''%>" placeholder="" />
                                         </div>
 
                                         <button id="submit-all" type="submit"
