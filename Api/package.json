@@ -27,7 +27,7 @@
     "hpp": "^0.2.2",
     "jsonwebtoken": "^9.0.1",
     "moment": "^2.29.1",
-    "mongoose": "^5.12.3",
+    "mongoose": "^5.13.20",
     "mongoose-datatables": "^3.2.0",
     "morgan": "^1.9.1",
     "nodemailer": "^6.9.4",
