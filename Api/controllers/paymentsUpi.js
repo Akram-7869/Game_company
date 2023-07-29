@@ -99,7 +99,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
         'transactionType': "credit",
         'note': req.body.note,
         'paymentGateway': 'Cash Free',
-        'logType': 'payment',
+        'logType': 'deposit',
         'gst': gst,
         'prevBalance': 0,
         'stateCode': req.player.stateCode
