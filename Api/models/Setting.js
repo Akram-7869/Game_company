@@ -25,11 +25,11 @@ const SettingSchema = new mongoose.Schema({
     },
     tds: {
         type: Number,
-        default: 30,
+        default: 0,
     },
     gst: {
         type: Number,
-        default: 28,
+        default: 0,
     },
     type: {
         type: String,
@@ -71,7 +71,10 @@ const SettingSchema = new mongoose.Schema({
     }, minwithdraw: {
         type: Number,
         default: 0
-    },
+    },mindeposit:{
+        type: Number,
+        default: 0
+    }
 
 }, {
     timestamps: true,

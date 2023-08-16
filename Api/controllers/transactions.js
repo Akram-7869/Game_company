@@ -99,7 +99,9 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
 
   }
 
-
+  if (req.body.stateCode) {
+    filter['find']['stateCode'] = req.body.stateCode;
+  }
 
   Transaction.dataTables(filter).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data

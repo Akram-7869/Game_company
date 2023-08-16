@@ -129,7 +129,7 @@ exports.setCommission = asyncHandler(async (req, res, next) => {
     'gst': req.body.gst,
     'mindeposit': req.body.mindeposit,
   }
-
+console.log(req.body);
   setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {
     new: true,
     runValidators: true
