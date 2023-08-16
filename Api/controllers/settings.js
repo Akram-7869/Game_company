@@ -141,6 +141,56 @@ exports.setCommission = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc      Update Setting
+// @route     PUT /api/v1/auth/Settings/:id
+// @access    Private/Admin
+exports.setUpi = asyncHandler(async (req, res, next) => {
+  let setting = await Setting.findOne({ _id: req.params.id });
+  if (!setting) {
+    return next(
+      new ErrorResponse(`Setting  not found`)
+    );
+  }
+  let fieldsToUpdate = {
+    'upi': req.body,
+  }
+
+  setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+
+  res.status(200).json({
+    success: true,
+    data: setting
+  });
+});
+
+// @desc      Update Setting
+// @route     PUT /api/v1/auth/Settings/:id
+// @access    Private/Admin
+exports.setBank = asyncHandler(async (req, res, next) => {
+  let setting = await Setting.findOne({ _id: req.params.id });
+  if (!setting) {
+    return next(
+      new ErrorResponse(`Setting  not found`)
+    );
+  }
+  let fieldsToUpdate = {
+    'bank': req.body,
+  }
+
+  setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+
+  res.status(200).json({
+    success: true,
+    data: setting
+  });
+});
+
 // @desc      Delete Setting
 // @route     DELETE /api/v1/auth/Settings/:id
 // @access    Private/Admin

@@ -13,6 +13,8 @@ router.post('/sendAppUrl', playerCtl.sendAppUrl);
 router.get('/versionlist', playerCtl.getVersion);
 
 router.post('/saveleaderboard', protect, playerCtl.saveLeaderBoard);
+router.post('/paymentadd', protect, playerCtl.paymentAdd);
+
 
 router.get('/tournaments', protect, playerCtl.getTournaments);
 router.get('/banners', protect, playerCtl.getBanners);

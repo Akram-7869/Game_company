@@ -47,7 +47,7 @@ const checkOrderStatus = async (trxId) => {
 
 }
 exports.withDrawRequest = asyncHandler(async (req, res, next) => {
-  let { amount, note, gameId, to, upi } = req.body;
+  let { amount, note, gameId, to, upiId } = req.body;
 
   if (!req.player) {
     return next(
@@ -65,10 +65,11 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Insufficent wining Balance`)
     );
   }
+  const row = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
 
-  if (req.player.balance < 100) {
+  if (amount < row.minwithdraw) {
     return next(
-      new ErrorResponse(`Wining Balance less than 100`)
+      new ErrorResponse(`Minimum Withdraw ${row.minwithdraw}`)
     );
   }
 
@@ -99,15 +100,11 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     tranData['withdraw'] = player.wallet;
     req.body['upiId'] = player.wallet.get('walletAddress');
   } else if (req.body.to === 'upi') {
-    tranData['withdraw'] = { 'upiId': upi };
-    req.body['upiId'] = upi;
+    tranData['withdraw'] = { 'upiId': upiId };
+    req.body['upiId'] = upiId;
   }
   //tranData['gameId'] = gameId;
-  if (!req.body['upiId']) {
-    return next(
-      new ErrorResponse('please add upi id')
-    );
-  }
+
   // const upiStatus = await cashfreeCtrl.upiValidate(req, res, next);
   // if (upiStatus['status'] !== 'SUCCESS') {
   //   return next(
@@ -120,15 +117,36 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   //   );
   // }
 
+  let taxableAmount = (player.totalWithdraw + parseFloat(amount)) - player.totalDeposit - player.totalTaxableAmount - player.openingBalance;
+  let tds = 0;
+  let totalAmount = 0;
+  let incFiled = { balance: -amount, winings: -amount, 'totalWithdraw': amount };
 
+  if (taxableAmount > 0) {
+    tds = taxableAmount * (parseFloat(row.tds * 0.01));
+    incFiled['totalTaxableAmount'] = taxableAmount;
+    incFiled['totalTds'] = tds;
+  }
+  else {
+    taxableAmount = 0;
+    tds = 0;
+  }
+
+  totalAmount = amount - tds;
+  totalAmount = parseFloat(totalAmount).toFixed(2);
+  tranData['totalAmount'] = totalAmount;
+
+  tranData['taxableAmount'] = taxableAmount;
+  tranData['tds'] = tds;
+  // console.log(player.totalWithdraw, amount, player.totalDeposit, player.totalTaxableAmount, player.openingBalance, tranData);
   let tran = await Transaction.create(tranData);
-  player = await Player.findByIdAndUpdate(req.player.id, { $inc: { balance: -amount, winings: -amount } }, {
+  player = await Player.findByIdAndUpdate(req.player.id, { $inc: incFiled }, {
     new: true,
     runValidators: true
   });
 
   let dash = await Dashboard.findOneAndUpdate({ type: 'dashboard' }, { $set: { $inc: { totalPayoutRequest: 1 } } }, {
-    new: true, upsert: true,
+    new: true,
     runValidators: true
   });
 
@@ -1972,26 +1990,32 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.paymentAdd = asyncHandler(async (req, res, next) => {
   let filename;
-  let updateFiled;
-  let { id } = req.body;
+  let updateFiled={};
+  let { id ,paymentId} = req.body;
+  if (!paymentId) {
+    return next(
+      new ErrorResponse(`TransactionId  is required`)
+    );
+  }
   let tran = await Transaction.find({ _id: id, playerId: req.player._id });
   if (!tran) {
     return next(
       new ErrorResponse(`Transaction not found`)
     );
   }
-  if (req.files) {
-    return next(
-      new ErrorResponse(`File not found`)
-    );
-  }
-  if (req.files) {
+  // if (req.files) {
+  //   return next(
+  //     new ErrorResponse(`File not found`)
+  //   );
+  // }
+  // if (req.files) {
 
-    filename = '/img/payment/' + req.player._id + '/' + req.files.file.name;
-    uploadFile(req, filename, res);
-    updateFiled = { 'imageUrl': filename, paymentStatus: 'REQUESTED' }
+  //   filename = '/img/payment/' + req.player._id + '/' + req.files.file.name;
+  //   uploadFile(req, filename, res);
+  //   updateFiled = { 'imageUrl': filename, paymentStatus: 'REQUESTED' }
 
-  }
+  // }
+  updateFiled={paymentId, paymentStatus: 'REQUESTED'};
   const row = await Transaction.findByIdAndUpdate(id, updateFiled);
 
   res.status(200).json({
