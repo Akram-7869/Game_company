@@ -92,6 +92,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
   req.io = io;
+  req.publicRoom = publicRoom;
+  req.userSocketMap = userSocketMap;
   if (!app.get('site_setting')) {
     // console.log('site setting');
     const setting = await Setting.findOne({
@@ -133,17 +135,19 @@ const Tournament = require('./models/Tournament');
 const Player = require('./models/Player');
 const state = {};
 const publicRoom = {};
+const userSocketMap = {};
 io.use(function (socket, next) {
   // execute some code
   next();
 })
 // Run when client connects
 io.on('connection', socket => {
-  // let data = { status: 'connected' };
-  // socket.emit('res', { ev: 'connected', data });
-  console.log('contedt');
+  //console.log('contedt');
   //socket.join('notification_channel');
-
+  socket.on('associateUserId', (userId) => {
+    // Store the mapping in the userSocketMap
+    userSocketMap[userId] = socket.id;
+  });
   socket.on('join', async (d) => {
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4 } = dataParsed;
@@ -256,6 +260,7 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
 
     let { room, userId, lobbyId } = socket;
+    delete userSocketMap[userId];
 
     userLeave(socket);
     //console.log('disconnect-inputstring');
@@ -266,6 +271,7 @@ io.on('connection', socket => {
     };
 
     console.log('disconnect-', room, userId, lobbyId);
+
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });

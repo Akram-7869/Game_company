@@ -43,7 +43,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     limit: req.body.length,
     skip: req.body.start,
     find: req.query,
-    select: { 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
+    select: { 'logType': 1, 'taxableAmount': 1, 'tds': 1, 'totalAmount': 1, 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
     search: {
 
     },
@@ -65,6 +65,9 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
 
   if (req.body.transactionType) {
     filter['find']['transactionType'] = req.body.transactionType;
+  }
+  if (req.body.logType) {
+    filter['find']['logType'] = req.body.logType;
   }
   if (key) {
 

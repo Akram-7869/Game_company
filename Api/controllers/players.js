@@ -87,7 +87,10 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     'prevBalance': req.player.balance,
     'status': 'log',
     'logType': 'withdraw',
-    'withdrawTo': req.body.to
+    'withdrawTo': req.body.to,
+    'stateCode': req.player.stateCode,
+    paymentStatus: 'REQUESTED'
+
 
   }
   if (req.body.to === 'bank') {
@@ -1961,5 +1964,38 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: winners
+  });
+});
+
+// @desc      Log user out / clear cookie
+// @route     GET /api/v1/auth/logout
+// @access    Private
+exports.paymentAdd = asyncHandler(async (req, res, next) => {
+  let filename;
+  let updateFiled;
+  let { id } = req.body;
+  let tran = await Transaction.find({ _id: id, playerId: req.player._id });
+  if (!tran) {
+    return next(
+      new ErrorResponse(`Transaction not found`)
+    );
+  }
+  if (req.files) {
+    return next(
+      new ErrorResponse(`File not found`)
+    );
+  }
+  if (req.files) {
+
+    filename = '/img/payment/' + req.player._id + '/' + req.files.file.name;
+    uploadFile(req, filename, res);
+    updateFiled = { 'imageUrl': filename, paymentStatus: 'REQUESTED' }
+
+  }
+  const row = await Transaction.findByIdAndUpdate(id, updateFiled);
+
+  res.status(200).json({
+    success: true,
+    data: row
   });
 });

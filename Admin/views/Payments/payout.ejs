@@ -48,10 +48,19 @@
                                             <label class="form-check-label my-2 me-2"
                                                 for="order-selectinput">Status</label>
                                             <select class="form-select" id="status-filter">
-                                                <option value="PROCESSING" selected>Processing</option>
+                                                <option value="REQESTED" selected>Requested</option>
+                                                <option value="PROCESSING">Processing</option>
                                                 <option value="ERROR">Error</option>
                                                 <option value="SUCCESS">Approve</option>
                                                 <option value="DECLINED">Declined</option>
+                                            </select>
+                                            <label class="form-check-label my-2 me-2"
+                                                for="order-selectinput">Logtype</label>
+                                            <select class="form-select" id="logtype-filter">
+                                                <option value="deposit">Deposit</option>
+
+                                                <option value="withdraw" selected>Withdraw</option>
+
                                             </select>
                                         </form>
                                     </div>
@@ -82,8 +91,11 @@
                                         <th>Srno</th>
                                         <th>First name</th>
                                         <th>Email</th>
-                                        <!-- <th>Mobile</th> -->
-                                        <th>Withdraw</th>
+                                        <th>Amount</th>
+                                        <th>Type</th>
+                                        <th>Taxable</th>
+                                        <th>TDS</th>
+                                        <th>Total</th>
                                         <th>Status</th>
                                         <th>Date</th>
                                         <th>Action</th>
@@ -182,12 +194,13 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "<%=process.env.ADMIN_URL%>/admin/transaction/data?logType=withdraw", type: "post",
+                                url: "<%=process.env.ADMIN_URL%>/admin/transaction/data?paymentStatus=REQESTED", type: "post",
                                 data: function (d) {
                                     d['s_date'] = $('#s_date').val();
                                     d['e_date'] = $('#e_date').val();
                                     // d['id'] =status-filter;
                                     d['paymentStatus'] = $('#status-filter').val();
+                                    d['logType'] = $('#logtype-filter').val();
                                     return d;
                                 }
                             },
@@ -199,9 +212,11 @@
                                 },
                                 { data: 'playerId.firstName', "defaultContent": "" },
                                 { data: 'playerId.email', "defaultContent": "" },
-                                // { data: 'playerId.phone', "defaultContent": "" },
-
                                 { data: 'amount', "defaultContent": "" },
+                                { data: 'logType', "defaultContent": "" },
+                                { data: 'taxableAmount', "defaultContent": "" },
+                                { data: 'tds', "defaultContent": "" },
+                                { data: 'totalAmount', "defaultContent": "" },
                                 { data: 'paymentStatus', "defaultContent": "" },
                                 {
                                     data: 'createdAt', render: function (data) {
