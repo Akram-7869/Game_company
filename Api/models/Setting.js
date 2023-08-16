@@ -9,6 +9,8 @@ const SettingSchema = new mongoose.Schema({
     many: {
         type: Array,
     },
+    bank: {},
+    upi: {},
     siteLogo: {
         type: String,
 
@@ -66,13 +68,9 @@ const SettingSchema = new mongoose.Schema({
     }, currency_symbol: {
         type: String,
         default: 'INR'
-    } ,minwithdraw: {
+    }, minwithdraw: {
         type: Number,
         default: 0
-    },
-    mindeposit: {
-        type: Number,
-        default: 1
     },
 
 }, {

@@ -296,8 +296,8 @@ exports.updateSite = asyncHandler(async (req, res, next) => {
 
 exports.updateSiteField = asyncHandler(async (req, res, next) => {
 
-      //console.log('', req.url);
-      callApi(req).post(apiUrl + 'commission/' + req.params.id, req.body)
+      console.log('ree', req.url);
+      callApi(req).post(apiUrl + req.params.field + '/' + req.params.id, req.body)
             .then(r => {
                   res.locals = { title: 'Site' };
                   req.flash('success', 'Updated');
@@ -367,3 +367,81 @@ exports.getSiteData = asyncHandler(async (req, res, next) => {
 
       //res.redirect(process.env.ADMIN_URL + '/login');
 });
+
+
+//payment Method list
+exports.paymentMethodList = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'PaymentMethod' };
+      let data = { 'message': req.flash('message'), 'error': req.flash('error') };
+      res.render('Payments/paymentmethod', data)
+});
+exports.getPaymentList = asyncHandler(async (req, res, next) => {
+      callApi(req).post(apiUrl + 'filter/PAYMENTMETHOD', { ...req.body })
+            .then(r => { res.status(200).json(r.data); }).catch(error => { })
+});
+
+//payment add
+
+exports.addPaymentMethod = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'PaymentMethod' };
+      res.render('Payments/paymentmethodedit', { 'message': req.flash('message'), 'error': req.flash('error'), row: { one: { title: '', content: '' } } });
+});
+exports.createPaymentMethod = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'PaymentMethod' };
+      req.body['type'] = 'PAYMENTMETHOD';
+      callApi(req).post(apiUrl + 'add', req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'PaymentMethod' };
+                  req.flash('message', 'Data save');
+                  res.redirect(process.env.ADMIN_URL + '/admin/paymentmethod/');
+
+            })
+            .catch(error => {
+                  req.flash('error', 'Data not updated');
+            })
+
+});
+
+
+exports.getPaymentMethod = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'PaymentMethod' };
+      callApi(req).get(apiUrl + req.params.id)
+            .then(r => {
+                  //console.log('response', r.data.data);
+                  // res.locals = { title: 'Player' };
+                  res.render('Payments/edit', { row: r.data.data });
+            })
+            .catch(error => {
+
+            })
+
+
+});
+exports.updatePaymentMethod = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'PaymentMethod' };
+      //console.log('', req.params.id, req.body);
+      callApi(req).post(apiUrl + req.params.id, req.body)
+            .then(r => {
+                  res.locals = { title: 'Payment ' };
+                  req.flash('success', 'Updated');
+                  res.redirect(process.env.ADMIN_URL + '/admin/paymentmethod/');
+                  return;
+            }).catch(error => { })
+});
+
+exports.deletePaymentMethod = asyncHandler(async (req, res, next) => {
+      callApi(req).delete(apiUrl + req.params.id, req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'PaymentMethod' };
+                  req.flash('success', 'Deleted');
+                  res.redirect(process.env.ADMIN_URL + '/admin/paymentmethod/');
+
+            }).catch(error => { req.flash('error', 'Data not updated'); })
+      res.status(200).json({
+            success: true,
+            data: {}
+      });
+});
+//payment edit
