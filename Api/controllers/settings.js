@@ -123,7 +123,11 @@ exports.setCommission = asyncHandler(async (req, res, next) => {
     'commission': req.body.commission,
     'lvl1_commission': req.body.lvl1_commission,
     'lvl2_commission': req.body.lvl2_commission,
-    'admin_referral_commission': req.body.admin_referral_commission
+    'admin_referral_commission': req.body.admin_referral_commission,
+    'minwithdraw': req.body.minwithdraw,
+    'tds': req.body.tds,
+    'gst': req.body.gst,
+    'mindeposit': req.body.mindeposit,
   }
 
   setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {

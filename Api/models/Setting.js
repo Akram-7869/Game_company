@@ -21,6 +21,14 @@ const SettingSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    tds: {
+        type: Number,
+        default: 30,
+    },
+    gst: {
+        type: Number,
+        default: 28,
+    },
     type: {
         type: String,
         required: true
@@ -58,7 +66,14 @@ const SettingSchema = new mongoose.Schema({
     }, currency_symbol: {
         type: String,
         default: 'INR'
-    }
+    } ,minwithdraw: {
+        type: Number,
+        default: 0
+    },
+    mindeposit: {
+        type: Number,
+        default: 1
+    },
 
 }, {
     timestamps: true,

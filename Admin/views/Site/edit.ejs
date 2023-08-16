@@ -198,6 +198,27 @@
                                                 value="<%= row ? row['admin_referral_commission']:''%>"
                                                 placeholder="admin referral commission" />
                                         </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">TDS</label>
+                                            <input type="text" class="form-control" required name="tds"
+                                                value="<%= row ? row['tds']:''%>" placeholder="" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">GST</label>
+                                            <input type="text" class="form-control" required name="gst"
+                                                value="<%= row ? row['gst']:''%>" placeholder="" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Minimum Withdraw</label>
+                                            <input type="text" class="form-control" required name="minwithdraw"
+                                                value="<%= row ? row['minwithdraw']:''%>" placeholder="" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Minimum Deposit</label>
+                                            <input type="text" class="form-control" required name="mindeposit"
+                                                value="<%= row ? row['mindeposit']:''%>" placeholder="" />
+                                        </div>
+
 
                                         <button id="submit-all" type="submit"
                                             class="btn btn-primary waves-effect waves-light me-1">

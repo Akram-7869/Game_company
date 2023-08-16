@@ -397,7 +397,7 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: { bot_profile, adminCommision: setting.commission }
+    data: { bot_profile, adminCommision: setting.commission ,mindeposit: setting.mindeposit}
   });
 });
 exports.smsOtp = async (mobile, otp, template_id, authkey) => {
