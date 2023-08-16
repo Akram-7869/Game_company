@@ -9,6 +9,7 @@ const {
 
 } = require('../controllers/settings');
 const paymentCashfreeCtrl = require('../controllers/paymentsCashfree');
+const upiCtrl = require('../controllers/paymentsUpi');
 
 const router = express.Router({ mergeParams: true });
 
@@ -17,6 +18,7 @@ const { protect, authorize, init } = require('../middleware/auth');
 const Setting = require('../models/Setting');
 //router.use(protect);
 //router.route('/cashfree/upiverify').post(protect, paymentCashfreeCtrl.upiValidate);
+router.route('/upiman/getlink').post(protect, upiCtrl.getToken);
 
 router.route('/add').post(protect, createSetting);
 router.route('/').post(protect, getSettings);
