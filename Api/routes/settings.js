@@ -9,14 +9,14 @@ const {
     getSettingByName,
     uploadeImage,
     getFile,
-    setCommission, getSitedata
-
+    setCommission, getSitedata,
+    setUpi, setBank
 } = require('../controllers/settings');
 
 
 const router = express.Router({ mergeParams: true });
 
-const { advancedResults, ownResults, defaultResults } = require('../middleware/advancedResults');
+//const { advancedResults, ownResults, defaultResults } = require('../middleware/advancedResults');
 const { protect, authorize, init } = require('../middleware/auth');
 const Setting = require('../models/Setting');
 //router.use(protect);
@@ -30,6 +30,8 @@ router.route('/filter/SITE').get(getSitedata);
 router.route('/filter/:type/:name').get(getSettingByName);
 router.route('/filter/:type').post(protect, getSettings);
 router.route('/commission/:id').post(protect, setCommission);
+router.route('/upi/:id').post(protect, setUpi);
+router.route('/bank/:id').post(protect, setBank);
 
 router
     .route('/:id')
