@@ -124,7 +124,7 @@ app.use('/api/v1/coupon', coupon);
 app.use('/api/v1/polls', polls);
 
 app.get('/api/v1/so', function (req, res, next) {
-  res.json({ state, publicRoom });
+  res.json({ state, publicRoom, userSocketMap });
 })
 app.use(errorHandler);
 
@@ -144,7 +144,9 @@ io.use(function (socket, next) {
 io.on('connection', socket => {
   //console.log('contedt');
   //socket.join('notification_channel');
-  socket.on('associateUserId', (userId) => {
+  socket.on('associateUserId', (d) => {
+    let dataParsed = d;// JSON.parse(d);
+    let { userId } = dataParsed;
     // Store the mapping in the userSocketMap
     userSocketMap[userId] = socket.id;
   });
@@ -337,7 +339,7 @@ io.on('connection', socket => {
 
     console.log('setGameData', data);
     io.to(room).emit('res', { ev: 'setGameData', data });
-  });
+});
   socket.on('setWinListData', (d) => {
 
     let { room, WinList } = d; //JSON.parse(d);

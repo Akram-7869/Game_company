@@ -47,6 +47,10 @@ router.route('/payment').get(settingCtrl.paymentList); router.route('/payment/da
 router.route('/payment/add').get(settingCtrl.addPayment).post(settingCtrl.createPayment);
 router.route('/payment/:id').get(settingCtrl.getPayment).post(settingCtrl.updatePayment).delete(settingCtrl.deletePayment);
 
+router.route('/paymentmethod').get(settingCtrl.paymentMethodList); router.route('/paymentmethod/data').post(settingCtrl.getPaymentMethod);
+router.route('/paymentmethod/add').get(settingCtrl.addPaymentMethod).post(settingCtrl.createPaymentMethod);
+router.route('/paymentmethod/:id').get(settingCtrl.getPaymentMethod).post(settingCtrl.updatePayment).delete(settingCtrl.deletePaymentMethod);
+
 router.route('/page').get(settingCtrl.pageList); router.route('/page/data').post(settingCtrl.getPageList);
 router.route('/page/add').get(settingCtrl.pageAdd).post(settingCtrl.createPage);
 router.route('/page/:id').get(settingCtrl.getPage).post(settingCtrl.updatePage).delete(settingCtrl.deletePage);
@@ -116,6 +120,12 @@ router.route('/payout').get(palyerCtrl.getPlayerPayout);
 router.route('/chat').get(palyerCtrl.getChatList);
 router.route('/report/player').get(palyerCtrl.getPlayerReport);
 router.route('/report/payment').get(palyerCtrl.getPaymentReport);
+router.route('/report/tds').get(palyerCtrl.tdsReport);
+router.route('/report/tds-download').get(palyerCtrl.tdsReportDownload);
+router.route('/report/admincommission').get(palyerCtrl.adminCommissionReport);
+router.route('/report/admincommission-download').get(palyerCtrl.adminCommissionDownload);
+router.route('/report/gst').get(palyerCtrl.gstReport);
+router.route('/report/gst-download').get(palyerCtrl.gstReportDownload);
 
 router.route('/leaderboard').get(palyerCtrl.getLeaderBoard);
 router.route('/game/data').post(palyerCtrl.getLeaderBoardList);

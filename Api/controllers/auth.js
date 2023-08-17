@@ -78,7 +78,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
     );
   }
 
-  let player = await Player.findOne({ $or: [{ 'phone': phone }, { 'deviceToken': deviceToken }] }).select('+deviceToken');
+  let player = await Player.findOne({ 'phone': phone }).select('+deviceToken');
   let vcode = Math.floor(1000 + Math.random() * 9000);
   const sms = await Setting.findOne({ type: 'SMSGATEWAY', name: 'MSG91' });
 
@@ -134,18 +134,18 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
-  let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "" } = req.body;
-
+  let { email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode = '', stateName = '', latitude = 0, longitude = 0 } = req.body;
+  //console.log(req.body);
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
   const client = new OAuth2Client(CLIENT_ID);
 
-  if (!email || !deviceToken) {
+  if (!email || !deviceToken || !firebaseToken || !stateCode) {
     return next(
       new ErrorResponse(`select email`)
     );
   }
   let ticket;
-  let player = await Player.findOne({ $or: [{ 'email': email }, { 'deviceToken': deviceToken }] });
+  let player = await Player.findOne({ 'email': email });
   if (player) {
     if (player.email !== email) {
       return next(
@@ -161,7 +161,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     // } catch (error) {
 
     //   return next(
-    //     new ErrorResponse(`Unable to Rgister----` + CLIENT_ID + 'firebaseToken --' + firebaseToken)
+    //     new ErrorResponse(`Unable to Rgister`)
     //   );
     // }
 
@@ -174,7 +174,10 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     // }
 
     let fieldsToUpdate = {
-      'firebaseToken': firebaseToken, 'deviceToken': deviceToken
+      'firebaseToken': firebaseToken, 'deviceToken': deviceToken, stateCode,
+      stateName,
+      longitude,
+      latitude
     }
     player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
       new: true,
@@ -215,6 +218,10 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       'refer_code': makeid(6),
       'balance': addamount,
       'deposit': addamount,
+      stateCode,
+      stateName,
+      longitude,
+      latitude
     };
     // Create user
     player = await Player.create(data);
@@ -224,7 +231,9 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
       transactionType: 'credit',
       note: 'player register',
       prevBalance: 0, logType: 'deposit',
-      status: 'complete', paymentStatus: 'SUCCESS'
+      status: 'complete', paymentStatus: 'SUCCESS',
+      'stateCode': stateCode
+
     }
     let tran = await Transaction.create(tranData);
 

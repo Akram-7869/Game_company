@@ -4,6 +4,9 @@ const tranCtr = require('../controllers/transactions');
 
 const router = express.Router({ mergeParams: true });
 const { protect } = require('../middleware/auth');
+router.route('/tds').get(tranCtr.getTdsRecord);
+router.route('/admincommission').get(tranCtr.getAdminCommission);
+router.route('/gst').get(tranCtr.getGstRecord);
 
 router.use(protect);
 router.route('/player').get(protect, tranCtr.getPlayerTransaction);

@@ -48,7 +48,7 @@
                                             <label class="form-check-label my-2 me-2"
                                                 for="order-selectinput">Status</label>
                                             <select class="form-select" id="status-filter">
-                                                <option value="REQESTED" selected>Requested</option>
+                                                <option value="REQUESTED" selected>Requested</option>
                                                 <option value="PROCESSING">Processing</option>
                                                 <option value="ERROR">Error</option>
                                                 <option value="SUCCESS">Approve</option>
@@ -194,7 +194,7 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "<%=process.env.ADMIN_URL%>/admin/transaction/data?paymentStatus=REQESTED", type: "post",
+                                url: "<%=process.env.ADMIN_URL%>/admin/transaction/data?paymentStatus=REQUESTED", type: "post",
                                 data: function (d) {
                                     d['s_date'] = $('#s_date').val();
                                     d['e_date'] = $('#e_date').val();

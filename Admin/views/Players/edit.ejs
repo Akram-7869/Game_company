@@ -113,7 +113,7 @@
                                         <thead>
                                             <tr>
 
-                                                <th scope="col">level</th>
+                                                <th scope="col"></th>
 
                                                 <th scope="col">Refer Count</th>
                                                 <th scope="col">Refer Total</th>
@@ -130,7 +130,7 @@
                                         <tbody>
                                             <tr>
                                                 <th scope="row">
-                                                    1
+
                                                 </th>
                                                 <td>
                                                     <%=row.refer_lvl1_count?row.refer_lvl1_count:'' %>
@@ -140,7 +140,7 @@
                                                 </td>
 
                                             </tr>
-                                            <tr>
+                                            <!-- <tr>
                                                 <th scope="row">2</th>
                                                 <td>
                                                     <%=row.refer_lvl2_count?row.refer_lvl2_count:'' %>
@@ -150,7 +150,7 @@
                                                 </td>
 
 
-                                            </tr>
+                                            </tr> -->
                                             <tr>
                                                 <th scope="row"></th>
                                                 <td>
@@ -164,6 +164,30 @@
                                             </tr>
 
                                         </tbody>
+                                    </table>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+
+                                                <th scope="col">TotalDeposit :
+                                                    <%=row.totalDeposit?row.totalDeposit:'' %>
+                                                </th>
+
+                                                <th scope="col">Totalwithdraw :
+                                                    <%=row.totalWithdraw?row.totalWithdraw:'' %>
+                                                </th>
+                                                <th scope="col">TotalTaxableAmount :
+                                                    <%=row.totalTaxableAmount?row.totalTaxableAmount:'' %>
+                                                </th>
+
+
+                                                <th scope="col"> TotalTDS :
+                                                    <%=row.totalTds?row.totalTds:'' %>
+                                                </th>
+
+                                            </tr>
+                                        </thead>
+
                                     </table>
                                     <!-- </form> -->
                                     </p>
@@ -196,6 +220,13 @@
                                             <label class="form-label">Country</label>
                                             <input type="text" name="country" value="<%=row.country?row.country:'' %>"
                                                 class="form-control" required placeholder="Country" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">State</label>
+                                            <p>
+                                                <%=row.stateCode?row.stateCode:'' %>-<%=row.stateName?row.stateName:''
+                                                        %>
+                                            </p>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Pan Card</label>
@@ -257,6 +288,18 @@
                                             </div>
                                         </div>
                                     </form>
+                                    <!-- <div class="mb-3">
+                                        <label class="form-label">firebaseToken</label>
+                                        <p>
+                                            <%=row.firebaseToken?row.firebaseToken:'' %>
+                                        </p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">devicetoken</label>
+                                        <p>
+                                            <%=row.deviceToken?row.deviceToken:'' %>
+                                        </p>
+                                    </div> -->
                                     </p>
                                 </div>
                                 <div class="tab-pane" id="messages1" role="tabpanel">
@@ -281,6 +324,12 @@
                                                         >deleted</option>
                                                 </select>
                                             </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">firebaseToken</label>
+                                            <p>
+                                                <%=row.firebaseToken?row.firebaseToken:'' %>
+                                            </p>
                                         </div>
                                         <div>
                                             <div>
@@ -328,11 +377,13 @@
                                             <label class="form-label">For</label>
                                             <div class="col-md-10">
                                                 <select class="form-select" name="logType" required>
+                                                    <option value="deposit" <%=row.status==='deposit' ?'selected':'' %>
+                                                        >deposit</option>
+                                                    <option value="bonus" <%=row.status==='bonus' ?'selected':'' %>
+                                                        >bonus</option>
 
-                                                    <option value="adjustment" <%=row.status==='adjustment'
-                                                        ?'selected':'' %>
-                                                        >adjustment</option>
-
+                                                    <option value="won" <%=row.status==='won' ?'selected':'' %>
+                                                        >winning</option>
                                                 </select>
                                             </div>
                                         </div>

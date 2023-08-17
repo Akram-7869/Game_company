@@ -2,7 +2,8 @@
 const asyncHandler = require('../middleware/async');
 // const {Players} = require('../models/Players');
 // const {User} = require('../models/User');
-const { callApi, api_url, redirect } = require('../helper/common');
+const { callApi, api_url, redirect, stateList } = require('../helper/common');
+const moment = require('moment');
 
 var apiUrl = api_url + '/players/';
 var apiUrlGame = api_url + '/games/';
@@ -37,8 +38,97 @@ exports.getPaymentReport = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'PaymentList' };
       res.render('Reports/payment', { playerId: '' })
 });
+exports.adminCommissionReport = asyncHandler(async (req, res, next) => {
 
+      res.locals = { title: 'AdminCommissionList', stateList };
+      res.render('Reports/admincommission')
+});
+exports.tdsReport = asyncHandler(async (req, res, next) => {
 
+      res.locals = { title: 'TDSList', stateList };
+      res.render('Reports/tds')
+});
+
+exports.tdsReportDownload = asyncHandler(async (req, res, next) => {
+
+      res.locals = { title: 'TDSList', stateList };
+      let filename = 'tdsreport.csv';
+      if (req.query.report === 'datewise') {
+            filename = 'tdsreport-datewise.csv';
+      }
+      callApi(req).get(api_url + '/transactions/tds', {
+            responseType: 'stream', // Set the response type to stream
+            params: req.query
+      })
+            .then(r => {
+                  res.set('Content-Disposition', 'attachment; filename=' + filename); // Set the filename and extension of the downloaded file
+
+                  r.data.pipe(res);
+                  //res.render('Reports/payoutprocessing', { row: r.data.data });
+            })
+            .catch(error => {
+                  console.log(error)
+                  res.status(400).json(error);
+                  //   req.flash('error', 'Incorrect email or password!');})
+            });
+
+});
+
+exports.gstReport = asyncHandler(async (req, res, next) => {
+
+      res.locals = { title: 'GST List', stateList };
+      res.render('Reports/gst')
+});
+
+exports.gstReportDownload = asyncHandler(async (req, res, next) => {
+
+      res.locals = { title: 'TDSList', stateList };
+      let filename = 'gstreport.csv';
+      if (req.query.report === 'datewise') {
+            filename = 'gstreport-datewise.csv';
+      }
+      callApi(req).get(api_url + '/transactions/gst', {
+            responseType: 'stream', // Set the response type to stream
+            params: req.query
+      })
+            .then(r => {
+                  res.set('Content-Disposition', 'attachment; filename=' + filename); // Set the filename and extension of the downloaded file
+
+                  r.data.pipe(res);
+                  //res.render('Reports/payoutprocessing', { row: r.data.data });
+            })
+            .catch(error => {
+                  console.log(error)
+                  res.status(400).json(error);
+                  //   req.flash('error', 'Incorrect email or password!');})
+            });
+
+});
+
+exports.adminCommissionDownload = asyncHandler(async (req, res, next) => {
+
+      res.locals = { title: 'Admin Comission', stateList };
+      let filename = 'admincommission.csv';
+      if (req.query.report === 'datewise') {
+            filename = 'admincommission-datewise.csv';
+      }
+      callApi(req).get(api_url + '/transactions/admincommission', {
+            responseType: 'stream', // Set the response type to stream
+            params: req.query
+      })
+            .then(r => {
+                  res.set('Content-Disposition', 'attachment; filename=' + filename); // Set the filename and extension of the downloaded file
+
+                  r.data.pipe(res);
+                  //res.render('Reports/payoutprocessing', { row: r.data.data });
+            })
+            .catch(error => {
+                  console.log(error)
+                  res.status(400).json(error);
+                  //   req.flash('error', 'Incorrect email or password!');})
+            });
+
+});
 exports.getChatList = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'Chat' };
@@ -60,7 +150,7 @@ exports.getPlayerPayoutEdit = asyncHandler(async (req, res, next) => {
       callApi(req).get(apiUrlTransaction + 'payout/' + req.params.id)
             .then(r => {
                   //console.log(r.data.data);
-                  res.render('Payments/payoutedit', { row: r.data.data });
+                  res.render('Payments/payoutedit', { row: r.data.data, moment });
             })
             .catch(error => {//   req.flash('error', 'Incorrect email or password!');})
             });
@@ -104,7 +194,7 @@ exports.getLeaderBoard = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Leader Board' };
       res.render('Players/leaderboard')
 });
-exports.getLeaderBoardList = asyncHandler(async (req, res, next) => { 
+exports.getLeaderBoardList = asyncHandler(async (req, res, next) => {
       callApi(req).post(apiUrlGame, { ...req.body }, { params: req.query })
             .then(r => {
                   res.status(200).json(r.data);

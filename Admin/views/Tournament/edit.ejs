@@ -63,7 +63,7 @@
                                     <input type="text" name="betAmount" value="<%=row.betAmount?row.betAmount:'' %>"
                                         class="form-control" required placeholder="Bet amount" />
                                 </div>
-                                <div class="mb-3">
+                                <!--  <div class="mb-3">
                                     <label class="form-label">Min Bet Amount</label>
                                     <input type="text" name="minBet" value="<%=row.minBet?row.minBet:'' %>"
                                         class="form-control" required placeholder="Min Bet amount" />
@@ -87,7 +87,7 @@
                                     <label class="form-label">Pot Limit</label>
                                     <input type="text" name="potLimit" value="<%=row.potLimit?row.potLimit:'' %>"
                                         class="form-control" required placeholder="Pot Limit amount" />
-                                </div>
+                                </div> -->
                                 <div class="mb-3">
                                     <label class="form-label">Bonus Amount Use</label>
                                     <input type="text" name="bonusAmountDeduction"
@@ -97,9 +97,9 @@
                                 <div class="mb-3">
                                     <label class="form-label">Players</label>
                                     <select class="form-select" name="players" required>
-                                        <option value="">Select Palyers..</option>
+                                        <option value="">Select players..</option>
                                         <option value="2" <%=row.players===2 ?'selected':'' %>>2 players</option>
-                                        <option value="4" <%=row.players===4 ?'selected':'' %>>4 players</option>
+                                        <!-- <option value="4" <%=row.players===4 ?'selected':'' %>>4 players</option> -->
                                     </select>
                                 </div>
                                 <div class="mb-3">
@@ -151,7 +151,7 @@
                                         <option value="">Select Accuracy..</option>
                                         <option value="1" <%=row.complexity===1 ?'selected':'' %>>Low</option>
                                         <option value="2" <%=row.complexity===2 ?'selected':'' %>>Medium</option>
-                                        <option value="3" <%=row.complexity===3 ?'selected':'' %>>Heigh</option>
+                                        <option value="3" <%=row.complexity===3 ?'selected':'' %>>High</option>
                                     </select>
                                 </div>
 
@@ -174,6 +174,8 @@
                                         <option value="10" <%=row.interval===10 ?'selected':'' %>>10</option>
                                         <option value="15" <%=row.interval===15 ?'selected':'' %>>15</option>
                                         <option value="30" <%=row.interval===30 ?'selected':'' %>>30</option>
+                                        <option value="40" <%=row.interval===40 ?'selected':'' %>>40</option>
+
                                     </select>
                                 </div>
                                 <div class="mb-3">

@@ -16,6 +16,8 @@ var AuthController = require('./controllers/AuthController');
 var SettingController = require('./controllers/SettingController');
 // import Router file
 var adminRoutes = require('./routers/admin');
+var siteRoutes = require('./routers/site');
+
 var session = require('express-session');
 const fileUpload = require('express-fileupload');
 var bodyParser = require('body-parser');
@@ -61,8 +63,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(SettingController.getSiteData);
 // apply controller
-AuthController(app);
-
+//AuthController(app);
+app.use('/', siteRoutes);
 //For set layouts of html view
 var expressLayouts = require('express-ejs-layouts');
 app.set('views', path.join(__dirname, './views'));
@@ -71,9 +73,7 @@ app.use(expressLayouts);
 // Define All Route 
 //pageRouter(app);
 app.use('/admin', adminRoutes);
-app.get('/', function (req, res) {
-  res.redirect('/login');
-});
+
 
 const PORT = process.env.PORT;
 

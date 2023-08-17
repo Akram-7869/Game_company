@@ -48,9 +48,10 @@
                                         <select id="location" class="form-select" name="location" required>
                                             <option value="HOME" <%=row.location==='HOME' ?'selected':'' %>>Home
                                             </option>
-                                            <option value="GAME" <%=row.location==='GAME' ?'selected':'' %>>Game
+                                            <option value="HOME" <%=row.location==='HOME' ?'selected':'' %>>Home
                                             </option>
-                                            <option value="LOBBY" <%=row.location==='LOBBY' ?'selected':'' %>>Lobby
+                                            <option value="PROFILE" <%=row.location==='PROFILE' ?'selected':'' %>
+                                                >Profile
                                             </option>
 
                                         </select>
@@ -62,8 +63,10 @@
                                         <select id="bannerType" class="form-select" name="bannerType" required>
                                             <option value="banner" <%=row.bannerType==='banner' ?'selected':'' %>>Banner
                                             </option>
-                                            <!-- <option value="poll" <%=row.bannerType==='poll' ?'selected':'' %>>Poll
-                                            </option> -->
+                                            <option value="fullscreen" <%=row.bannerType==='fullscreen' ?'selected':''
+                                                %>
+                                                >FullScreen
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
