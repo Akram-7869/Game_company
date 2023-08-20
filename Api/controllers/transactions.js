@@ -151,6 +151,7 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
     player = await transaction.declineWithDrawPlayer(amount);
   } else if (req.body.paymentStatus === 'SUCCESS' && transaction.logType === 'deposit') {
     player = await transaction.creditPlayerDeposit(amount);
+    await handleCoupon(transaction);
   }
 
 
@@ -823,4 +824,41 @@ let dateWiseGST = async (filter, req, res) => {
   }
   res.end();
 
+}
+let handleCoupon = async (tran )=>{
+  if (tran.couponId) {
+    let bonusAmount = 0;
+    let amount =tran.amount;
+
+    let couponRec = await Coupon.findOne({ 'minAmount': { $lte: amount }, 'maxAmount': { $gte: amount }, '_id': tran.couponId });
+    if (!couponRec) {
+        console.log('Coupon not found');
+        res.status(200);
+        return;
+    }
+    if (couponRec.couponType == 'percentage') {
+        bonusAmount = amount * (couponRec.couponAmount * 0.01);
+    } else {
+        bonusAmount = couponRec.couponAmount;
+    }
+
+    let tranBonusData = {
+        'playerId': tran.playerId,
+        'amount': bonusAmount,
+        'transactionType': "credit",
+        'note': 'Bonus amount',
+        'paymentGateway': 'Cashfree Pay',
+        'logType': 'bonus',
+        'prevBalance': player.balance,
+        'paymentStatus': 'SUCCESS',
+        'status': 'complete',
+        'paymentId': tran._id,
+        'stateCode': player.stateCode
+
+    }
+    bonusTran = await Transaction.create(tranBonusData);
+    bonusTran.creditPlayerBonus(bonusAmount);
+    console.log('bonus added');
+
+}
 }

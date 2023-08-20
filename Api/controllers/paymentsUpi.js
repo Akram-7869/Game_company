@@ -98,7 +98,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
         'membershipId': membership_id,
         'transactionType': "credit",
         'note': req.body.note,
-        'paymentGateway': 'Cash Free',
+        'paymentGateway': 'Upi manual',
         'logType': 'deposit',
         'gst': gst,
         'prevBalance': 0,
