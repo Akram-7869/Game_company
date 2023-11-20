@@ -280,7 +280,9 @@ io.on('connection', socket => {
   // Runs when client disconnects
   socket.on('gameStart', async (d) => {
 
-    let { room, lobbyId, userId } = d;
+    let { room = '', lobbyId = '', userId = '' } = d;
+    console.log('gameStart-', d);
+
     let data = {
       room: room,
       users: getRoomLobbyUsers(room, lobbyId),
@@ -290,12 +292,11 @@ io.on('connection', socket => {
     //start game Withb boat
     if (publicRoom[lobbyId]) {
       let rn = publicRoom[lobbyId]['roomName'];
-      if (rn == room || data.users.length == 2) {
-        // publicRoom[lobbyId]['played'] = true;
+      if (rn == room) {
+        publicRoom[lobbyId]['played'] = true;
       }
 
     }
-    console.log('gameStart-', d);
     io.to(socket.room).emit('res', { ev: 'gameStart', data });
 
   });
@@ -339,7 +340,7 @@ io.on('connection', socket => {
 
     console.log('setGameData', data);
     io.to(room).emit('res', { ev: 'setGameData', data });
-});
+  });
   socket.on('setWinListData', (d) => {
 
     let { room, WinList } = d; //JSON.parse(d);
