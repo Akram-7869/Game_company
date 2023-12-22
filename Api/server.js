@@ -228,12 +228,7 @@ io.on('connection', socket => {
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
     if (state[room]) {
-      let bets = [];
-      for (let i = 0; i <= 36; i = i + 1) {
-        bets.push({ id: i, amount: -1 })
-      }
-
-      state[room]['betList'] = bets;
+      state[room]['betList'] = defaultRolletValue();
     }
 
     let data = {
@@ -354,43 +349,81 @@ io.on('connection', socket => {
     io.to(room).emit('res', { ev: 'setWinListData', data });
   });
   socket.on('setBetData', (d) => {
-
-    let { room, betNo, amount } = d; //JSON.parse(d);
+    let { room, betNo, amount, action = 'bet', manyBet = '[]' } = d; //JSON.parse(d);
     console.log('setBetData', d);
+    amount = parseInt(amount)
+    if (state[room] && betNo <= 36 && amount > 0) {
+      if (action === 'bet') {
+        state[room]['betList'][betNo] = amount + parseInt(state[room]['betList'][betNo]);
+      } else if (action === 'unbet' && state[room]['betList'][betNo] > 0) {
+        let x = parseInt(state[room]['betList'][betNo]) - amount;
+        state[room]['betList'][betNo] = x < 0 ? 0 : x;
+      }
+
+    } else if (betNo > 36 && amount > 0) {
+      const betArray = JSON.parse(manyBet);
+      let amountMany = amount / manyBet.length;
+      if (action === 'bet') {
+        for (const id of betArray) {
+          state[room]['betList'][id] = amountMany + parseInt(state[room]['betList'][id]);
+        }
+      } else if (action === 'unbet') {
+        for (const id of betArray) {
+          if (state[room]['betList'][id] > 0) {
+            let x = parseInt(state[room]['betList'][id]) - amountMany;
+            state[room]['betList'][id] = x < 0 ? 0 : x;
+          }
 
 
-    if (state[room] && betNo <= 36) {
-      var foundIndex = state[room]['betList'].findIndex(x => x.id == betNo);
-      console.log('a----old', foundIndex, '===', amount, '---', state[room]['betList'][foundIndex]['amount']);
-
-      state[room]['betList'][foundIndex]['amount'] = parseInt(amount) + parseInt(state[room]['betList'][foundIndex]['amount']);
+        }
+      }
     }
+
   });
   socket.on('getBetData', (d) => {
 
     let { room } = d; //JSON.parse(d);
-    let winObject = {};
+
     console.log('getBetData', room);
     if (state[room]) {
-      let temp = state[room]['betList'];
 
-
-      let notBetArray = state[room]['betList'].filter(x => x.amount === -1);
-      if (notBetArray.length === 0) {
-        temp.sort((a, b) => a.amount - b.amount);
-        winObject = temp[0];
-      } else {
-        let win = Math.floor(Math.random() * notBetArray.length);
-        winObject = notBetArray[win];
-
-      }
-
-      let data = { room: room, betWin: winObject.id }
+      let data = { room: room, betWin: getKeyWithMinValue(state[room]['betList']) }
       console.log('getBetData', data);
       io.in(room).emit('res', { ev: 'getBetData', data });
+
+      state[room]['betList'] = defaultRolletValue();
+
+
     }
   });
 });
+let defaultRolletValue = () => {
+  return {
+    0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
+    11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0, 19: 0, 20: 0,
+    21: 0, 22: 0, 23: 0, 24: 0, 25: 0, 26: 0, 27: 0, 28: 0, 29: 0, 30: 0,
+    31: 0, 32: 0, 33: 0, 34: 0, 35: 0, 36: 0
+  }
+
+
+}
+function getKeyWithMinValue(data) {
+  // Ensure none of the values are less than 0
+  Object.keys(data).forEach(key => {
+    data[key] = Math.max(0, data[key]);
+  });
+
+  // Find the minimum value
+  const minValue = Math.min(...Object.values(data));
+
+  // Find keys with the minimum value
+  const minKeys = Object.keys(data).filter(key => data[key] === minValue);
+
+  // Pick a random key from keys with the minimum value
+  const randomMinKey = minKeys[Math.floor(Math.random() * minKeys.length)];
+  return randomMinKey;
+
+}
 
 
 function arraymove(arr, fromIndex, toIndex) {
