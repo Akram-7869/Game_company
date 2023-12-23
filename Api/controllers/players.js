@@ -1359,33 +1359,33 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player Not found`)
     );
   }
-  let leaderboard = await PlayerGame.findOne({ 'gameId': gameId });
-  if (!leaderboard || leaderboard.status === 'paid') {
-    return next(
-      new ErrorResponse(`Game Paid`)
-    );
+  // let leaderboard = await PlayerGame.findOne({ 'gameId': gameId });
+  // if (!leaderboard || leaderboard.status === 'paid') {
+  //   return next(
+  //     new ErrorResponse(`Game Paid`)
+  //   );
 
-  }
-  let tranReverse = await Transaction.findOne({ 'gameId': gameId, logType: 'reverse', playerId: player._id });
-  if (tranReverse) {
-    return next(
-      new ErrorResponse(`refund given`)
-    );
+  // }
+  // let tranReverse = await Transaction.findOne({ 'gameId': gameId, logType: 'reverse', playerId: player._id });
+  // if (tranReverse) {
+  //   return next(
+  //     new ErrorResponse(`refund given`)
+  //   );
 
-  }
+  // }
   //let gameRec = await PlayerGame.findOne({ 'gameId': gameId, playerCount: { $gt: 0 } });
-  let tranJoin = await Transaction.findOne({ 'gameId': gameId, logType: 'join', playerId: player._id });
+  // let tranJoin = await Transaction.findOne({ 'gameId': gameId, logType: 'join', playerId: player._id });
 
-  if (!tranJoin) {
-    return next(
-      new ErrorResponse(`Transaction not found`)
-    );
+  // if (!tranJoin) {
+  //   return next(
+  //     new ErrorResponse(`Transaction not found`)
+  //   );
 
-  }
+  // }
   let commision = 0;
   let tranData = {
     'playerId': player._id,
-    'amount': tranJoin.amount,
+    'amount': amount,
     'transactionType': "credit",
     'note': note,
     'prevBalance': player.balance,
@@ -1400,18 +1400,23 @@ exports.reverseAmount = asyncHandler(async (req, res, next) => {
 
   console.log('reseved');
 
-  let lobbyId = leaderboard.tournamentId;
-  if (req.publicRoom[lobbyId]) {
-    let rn = req.publicRoom[lobbyId]['roomName'];
-    if (rn == gameId) {
-      console.log('gameId', gameId);
-      req.publicRoom[lobbyId] = '';
-    }
+  // let lobbyId = leaderboard.tournamentId;
+  // if (req.publicRoom[lobbyId]) {
+  //   let rn = req.publicRoom[lobbyId]['roomName'];
+  //   if (rn == gameId) {
+  //     console.log('gameId', gameId);
+  //     req.publicRoom[lobbyId] = '';
+  //   }
 
-  }
+  // }
 
   let tran = await Transaction.create(tranData);
-  player = await tran.creditPlayerDeposit(tranJoin.amount);
+  player = await tran.creditPlayerDeposit(amount);
+
+  res.status(200).json({
+    success: true,
+    data: player
+  });
 
   res.status(200).json({
     success: true,
@@ -2091,8 +2096,8 @@ exports.getReferList = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.paymentAdd = asyncHandler(async (req, res, next) => {
   let filename;
-  let updateFiled={};
-  let { id ,paymentId} = req.body;
+  let updateFiled = {};
+  let { id, paymentId } = req.body;
   if (!paymentId) {
     return next(
       new ErrorResponse(`TransactionId  is required`)
@@ -2116,7 +2121,7 @@ exports.paymentAdd = asyncHandler(async (req, res, next) => {
   //   updateFiled = { 'imageUrl': filename, paymentStatus: 'REQUESTED' }
 
   // }
-  updateFiled={paymentId, paymentStatus: 'REQUESTED'};
+  updateFiled = { paymentId, paymentStatus: 'REQUESTED' };
   const row = await Transaction.findByIdAndUpdate(id, updateFiled);
 
   res.status(200).json({
@@ -2130,8 +2135,8 @@ exports.paymentAdd = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.paymentAdd = asyncHandler(async (req, res, next) => {
   let filename;
-  let updateFiled={};
-  let { id ,paymentId} = req.body;
+  let updateFiled = {};
+  let { id, paymentId } = req.body;
   if (!paymentId) {
     return next(
       new ErrorResponse(`TransactionId  is required`)
@@ -2155,7 +2160,7 @@ exports.paymentAdd = asyncHandler(async (req, res, next) => {
   //   updateFiled = { 'imageUrl': filename, paymentStatus: 'REQUESTED' }
 
   // }
-  updateFiled={paymentId, paymentStatus: 'REQUESTED'};
+  updateFiled = { paymentId, paymentStatus: 'REQUESTED' };
   const row = await Transaction.findByIdAndUpdate(id, updateFiled);
 
   res.status(200).json({
