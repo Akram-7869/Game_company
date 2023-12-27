@@ -1066,7 +1066,7 @@ exports.ticketReply = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.debiteAmount = asyncHandler(async (req, res, next) => {
   let { amount, note, gameId } = req.body;
-  console.log('debiteAmount =', gameId);
+  console.log('debiteAmount =', gameId, amount, eq.player.deposit);
   if (!amount || amount < 0) {
     return next(
       new ErrorResponse(`Invalid amount`)
