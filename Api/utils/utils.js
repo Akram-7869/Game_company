@@ -56,7 +56,7 @@ function setkey(key, v) {
 function maintenance_chk(req, res, next) {
 
    let x = getKey('site_setting');
-   if (x.one.maintenance === 'on') {
+   if (x.maintenance === 'on') {
       return next(new ErrorResponse('Site is in down', 503));
    }
    next();
