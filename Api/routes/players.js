@@ -38,6 +38,7 @@ router.get('/pollList', protect, playerCtl.pollList);
 router.post('/withdraw/request', protect, playerCtl.withDrawRequest);
 router.post('/debit', protect, playerCtl.debiteAmount);
 //router.post('/credit/', protect, playerCtl.creditAmount);
+router.post('/game/won', protect, playerCtl.won);
 router.post('/reverse/', protect, playerCtl.reverseAmount);
 router.post('/gamestatus/', protect, playerCtl.gameStatus);
 
@@ -73,7 +74,6 @@ module.exports = router;
 //router.post('/pin', protect, playerCtl.setPin);
 //router.post('/checkpin', playerCtl.chkPin);
 // router.post('/game/join', protect, join);
-router.post('/game/won', protect, playerCtl.won);
 //router.get('/info', protect, playerCtl.playerInfo);
 //router.route('/lobbys').get(protect, playerCtl.getLobbys);
 //router.post('/membership', protect, playerCtl.membership);
