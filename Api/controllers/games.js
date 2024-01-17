@@ -19,15 +19,10 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
     skip: req.body.start,
     //select: { 'gameId': 1, 'status': 1, 'createdAt': 1 },
     find: {},
-    search: {
-
-    },
+    search: {},
     columns: req.body.columns,
     order: req.body.order,
     populate: [{ path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, email: 1 } }, { path: 'tournamentId', select: { name: 1 } }],
-    sort: {
-      _id: -1
-    }
   };
 
   //plaerId filter

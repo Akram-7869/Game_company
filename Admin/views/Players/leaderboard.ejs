@@ -156,8 +156,7 @@
                         }
                         var i = 1;
                         var oTable = $('#listsetting').DataTable({
-                            order: [[9, 'desc']],
-
+                            order: [[0, 'desc']],
                             initComplete: function () {
                                 var input = $('.dataTables_filter input').unbind(),
                                     self = this.api(),
@@ -191,8 +190,8 @@
 
                             "columns": [
                                 {
-                                    "orderable": false,
-                                    data: null, "render": function (data, type, full, meta) {
+
+                                    data: '_id', "render": function (data, type, full, meta) {
                                         return meta.row + 1;
                                     }
                                 },
