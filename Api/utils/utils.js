@@ -3,7 +3,7 @@ const fs = require('fs');
 const sample = new Map();
 
 module.exports = {
-   makeid, uploadFile, deletDiskFile, getKey, setkey, maintenance_chk
+   makeid, uploadFile, deletDiskFile, getKey, setkey
 }
 
 function makeid(length) {
