@@ -81,7 +81,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   //     new ErrorResponse(`Please Verify Phone`)
   //   );
   // }
-  let player = await Player.findById(req.player.id).select('+bank +wallet +upi');
+  let player = await Player.findById(req.player._id).select('+bank +wallet +upi');
 
   let tranData = {
     'playerId': req.player._id,
@@ -143,7 +143,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   tranData['tds'] = tds;
   // console.log(player.totalWithdraw, amount, player.totalDeposit, player.totalTaxableAmount, player.openingBalance, tranData);
   let tran = await Transaction.create(tranData);
-  player = await Player.findByIdAndUpdate(req.player.id, { $inc: incFiled }, {
+  player = await Player.findByIdAndUpdate(req.player._id, { $inc: incFiled }, {
     new: true,
     runValidators: true
   });
@@ -166,13 +166,13 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
 
   // const notificationDb = await Notification.create(notification);
   // let updated = { read: false }
-  // await PlayerNotifcation.findOneAndUpdate({ playerId: req.player.id, notificationId: notificationDb._id }, updated, {
+  // await PlayerNotifcation.findOneAndUpdate({ playerId: req.player._id, notificationId: notificationDb._id }, updated, {
   //   new: false, upsert: true,
   //   runValidators: true
   // });
   // //console.log('sending message');
 
-  // let to_player = await Player.findById(req.player.id).select('+firebaseToken');
+  // let to_player = await Player.findById(req.player._id).select('+firebaseToken');
   // var message = {
   //   notification: {
   //     title: title,
@@ -193,7 +193,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   //     console.log('Error sending message:', error);
   //   });
 
-  //req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.player.id } });
+  //req.io.to('notification_channel').emit('res', { ev: 'notification_player', data: { "playerId": req.player._id } });
 
 
   res.status(200).json({
@@ -693,7 +693,7 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
   // }
 
 
-  let player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
+  let player = await Player.findByIdAndUpdate(req.player._id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
@@ -800,7 +800,7 @@ exports.setPin = asyncHandler(async (req, res, next) => {
 
 
   // Check for user
-  user = await Player.findByIdAndUpdate(req.player.id, { 'password': pin }, {
+  user = await Player.findByIdAndUpdate(req.player._id, { 'password': pin }, {
     new: true,
     runValidators: true
   });
@@ -899,7 +899,7 @@ exports.join = asyncHandler(async (req, res, next) => {
   // player game add {gameStatus='playing', amountPaid:'10'}
   // player stat
   // let fieldsToUpdate = { playerId: req.player._id, logType: 'join', amountPaid: req.body.amountPaid };
-  // let tran = await Transactions.findOneAndUpdate({ playerId: req.player.id, gameId: req.body.gameId }, fieldsToUpdate, {
+  // let tran = await Transactions.findOneAndUpdate({ playerId: req.player._id, gameId: req.body.gameId }, fieldsToUpdate, {
   //   new: true, upsert: true,
   //   runValidators: true
   // });
@@ -909,7 +909,7 @@ exports.join = asyncHandler(async (req, res, next) => {
   //   new: true, upsert: true,
   //   runValidators: true
   // });
-  // let player = await Player.joinCount(req.player.id);
+  // let player = await Player.joinCount(req.player._id);
   res.status(200).json({
     success: true,
     data: {}
@@ -1010,7 +1010,7 @@ exports.ticketAdd = asyncHandler(async (req, res, next) => {
 
 exports.ticketList = asyncHandler(async (req, res, next) => {
 
-  let row = await Ticket.find({ 'playerId': req.player.id }).populate('playerId');
+  let row = await Ticket.find({ 'playerId': req.player._id }).populate('playerId');
   res.status(200).json({
     success: true,
     data: row
@@ -1096,7 +1096,6 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'playerId': req.player._id,
     'amount': amount,
     'transactionType': "debit",
-    tournamentId,
     'note': note,
     'prevBalance': req.player.balance,
     'logType': req.body.logType,
@@ -1106,11 +1105,11 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   }
 
   let tran = await Transaction.create(tranData);
-  let exist = await PlayerGame.countDocuments({ playerId: req.player.id, gameId });
+  let exist = await PlayerGame.fineOne({ playerId: req.player._id, gameId }).select({ _id: 1 }).lean();
   if (exist) {
-    await PlayerGame.findOneAndUpdate({ playerId: req.player.id, gameId }, { $inc: { amountBet: amount } });
+    await PlayerGame.findOneAndUpdate({ playerId: req.player._id, gameId }, { $inc: { amountBet: amount } });
   } else {
-    await PlayerGame.create({ playerId: req.player.id, gameId, amountBet: amount });
+    await PlayerGame.create({ playerId: req.player._id, gameId, amountBet: amount, tournamentId });
   }
 
   if (req.player.deposit < amount) {
@@ -1135,7 +1134,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
 
 
   if (req.body.logType === 'join') {
-    player = await Player.findByIdAndUpdate(req.player.id, { $inc: { joinCount: 1 } }, {
+    player = await Player.findByIdAndUpdate(req.player._id, { $inc: { joinCount: 1 } }, {
       new: true,
       runValidators: true
     });
@@ -1738,7 +1737,7 @@ exports.poll = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const polled = await PlayerPoll.findOne({ 'playerId': req.player.id, pollId: req.body.id });
+  const polled = await PlayerPoll.findOne({ 'playerId': req.player._id, pollId: req.body.id });
   const poll = await Poll.find({ '_id': req.body.id, 'status': 'active' }).lean();
 
   if (!poll) {
@@ -1751,7 +1750,7 @@ exports.poll = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`Polled `));
   }
 
-  let m = await PlayerPoll.create({ 'playerId': req.player.id, pollId: req.body.id });
+  let m = await PlayerPoll.create({ 'playerId': req.player._id, pollId: req.body.id });
 
   let s = await Poll.findByIdAndUpdate(req.body.id, { $inc: { poll: 1 } }, {
     new: false,
@@ -1940,7 +1939,7 @@ exports.sendotp = asyncHandler(async (req, res, next) => {
     'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
 
   }
-  player = await Player.findByIdAndUpdate(req.player.id, fieldsToUpdate, {
+  player = await Player.findByIdAndUpdate(req.player._id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
@@ -2029,7 +2028,7 @@ exports.checkUpi = asyncHandler(async (req, res, next) => {
   }
   if (upiRes.data.accountExists === 'YES') {
     let fieldsToUpdate = { upiId };
-    let player = await Player.findByIdAndUpdate(req.player.id, { upi: fieldsToUpdate }, {
+    let player = await Player.findByIdAndUpdate(req.player._id, { upi: fieldsToUpdate }, {
       new: true,
       runValidators: true
     });

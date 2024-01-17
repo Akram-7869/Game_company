@@ -3,8 +3,6 @@ const asyncHandler = require('./async');
 const ErrorResponse = require('../utils/errorResponse');
 const Player = require('../models/Player');
 const User = require('../models/User');
-var mongoose = require('mongoose');
-
 // Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
   let token;
