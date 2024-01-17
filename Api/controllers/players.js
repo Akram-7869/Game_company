@@ -1092,6 +1092,13 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     note += ' using rest wining';
   }
 
+
+  let exist = await PlayerGame.findOne({ playerId: req.player._id, gameId }).select({ _id: 1 }).lean();
+  if (exist) {
+    await PlayerGame.findOneAndUpdate({ playerId: req.player._id, gameId }, { $inc: { amountBet: amount } });
+  } else {
+    await PlayerGame.create({ playerId: req.player._id, gameId, amountBet: amount, tournamentId });
+  }
   let tranData = {
     'playerId': req.player._id,
     'amount': amount,
@@ -1105,14 +1112,8 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   }
 
   let tran = await Transaction.create(tranData);
-  let exist = await PlayerGame.fineOne({ playerId: req.player._id, gameId }).select({ _id: 1 }).lean();
-  if (exist) {
-    await PlayerGame.findOneAndUpdate({ playerId: req.player._id, gameId }, { $inc: { amountBet: amount } });
-  } else {
-    await PlayerGame.create({ playerId: req.player._id, gameId, amountBet: amount, tournamentId });
-  }
-
   if (req.player.deposit < amount) {
+
 
     let damount = req.player.deposit;
     let windeduction;
