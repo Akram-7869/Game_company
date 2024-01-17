@@ -31,7 +31,7 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
   //plaerId filter
   let key = req.body.search ? req.body.search.value : '';
 
-  if (mongoose.isValidObjectId(key)) {
+  if (PlayerGame.isValidObjectId(key)) {
     filter['find']['playerId'] = key;
   } if (key.includes("@")) {
     let player = await Player.findOne({ 'email': { '$regex': key, '$options': 'i' } });
