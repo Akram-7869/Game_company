@@ -2,7 +2,9 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const PlayerGame = require('../models/PlayerGame');
 const Player = require('../models/Player');
-const Transaction = require('../models/Transaction');
+// const Transaction = require('../models/Transaction');
+const mongoose = require('mongoose');
+
 // @desc      Get all PlayerGames
 // @route     GET /api/v1/auth/PlayerGames
 // @access    Private/Admin
@@ -31,7 +33,7 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
   //plaerId filter
   let key = req.body.search ? req.body.search.value : '';
 
-  if (PlayerGame.isValidObjectId(key)) {
+  if (mongoose.isValidObjectId(key)) {
     filter['find']['playerId'] = key;
   } if (key.includes("@")) {
     let player = await Player.findOne({ 'email': { '$regex': key, '$options': 'i' } });
