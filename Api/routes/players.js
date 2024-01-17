@@ -37,7 +37,7 @@ router.get('/pollList', protect, playerCtl.pollList);
 
 router.post('/withdraw/request', protect, playerCtl.withDrawRequest);
 router.post('/debit', protect, playerCtl.debiteAmount);
-router.post('/credit/', protect, playerCtl.creditAmount);
+//router.post('/credit/', protect, playerCtl.creditAmount);
 router.post('/reverse/', protect, playerCtl.reverseAmount);
 router.post('/gamestatus/', protect, playerCtl.gameStatus);
 

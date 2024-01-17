@@ -65,14 +65,7 @@ exports.authorize = (...roles) => {
   };
 };
 
-// Grant access to maintenance 
-exports.maintenance_chk = (req, res, next) => {
-  let x = res.app.get('site_setting')
-  if (x.one.maintenance === 'on') {
-    return next(new ErrorResponse('Site is in down', 503));
-  }
-  next();
-};
+
 
 
 

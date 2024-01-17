@@ -974,7 +974,7 @@ exports.won = asyncHandler(async (req, res, next) => {
 
 
   let tran = await Transaction.create(tranData);
-  player = await tran.creditPlayer(amount);
+  player = await tran.creditPlayerWinings(amount);
 
   Dashboard.totalIncome(betAmout, amount, adminCommision);
   await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'playerId': req.player._id }, playerGame);

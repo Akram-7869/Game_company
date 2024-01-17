@@ -3,7 +3,7 @@ const fs = require('fs');
 const sample = new Map();
 
 module.exports = {
-   makeid, uploadFile, deletDiskFile, getKey, setkey
+   makeid, uploadFile, deletDiskFile, getKey, setkey, maintenance_chk
 }
 
 function makeid(length) {
@@ -52,3 +52,12 @@ function setkey(key, v) {
    return sample.set(key, v);
 
 }
+// Grant access to maintenance 
+function maintenance_chk(req, res, next) {
+
+   let x = getKey('site_setting');
+   if (x.one.maintenance === 'on') {
+      return next(new ErrorResponse('Site is in down', 503));
+   }
+   next();
+};
