@@ -43,7 +43,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     limit: req.body.length,
     skip: req.body.start,
     find: req.query,
-    select: { 'logType': 1, 'taxableAmount': 1, 'tds': 1, 'totalAmount': 1, 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
+    select: { 'stateCode': 1, 'logType': 1, 'taxableAmount': 1, 'tds': 1, 'totalAmount': 1, 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
     search: {
 
     },
@@ -80,7 +80,7 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     filter['find']['playerId'] = player._id;
   }
 
-  //plaerId filter
+
   if (req.body.rf && req.body.rfv) {
     filter['find'][req.body.rf] = { '$regex': req.body.rfv, '$options': 'i' };
   }
@@ -825,40 +825,40 @@ let dateWiseGST = async (filter, req, res) => {
   res.end();
 
 }
-let handleCoupon = async (tran )=>{
+let handleCoupon = async (tran) => {
   if (tran.couponId) {
     let bonusAmount = 0;
-    let amount =tran.amount;
+    let amount = tran.amount;
 
     let couponRec = await Coupon.findOne({ 'minAmount': { $lte: amount }, 'maxAmount': { $gte: amount }, '_id': tran.couponId });
     if (!couponRec) {
-        console.log('Coupon not found');
-        res.status(200);
-        return;
+      console.log('Coupon not found');
+      res.status(200);
+      return;
     }
     if (couponRec.couponType == 'percentage') {
-        bonusAmount = amount * (couponRec.couponAmount * 0.01);
+      bonusAmount = amount * (couponRec.couponAmount * 0.01);
     } else {
-        bonusAmount = couponRec.couponAmount;
+      bonusAmount = couponRec.couponAmount;
     }
 
     let tranBonusData = {
-        'playerId': tran.playerId,
-        'amount': bonusAmount,
-        'transactionType': "credit",
-        'note': 'Bonus amount',
-        'paymentGateway': 'Cashfree Pay',
-        'logType': 'bonus',
-        'prevBalance': player.balance,
-        'paymentStatus': 'SUCCESS',
-        'status': 'complete',
-        'paymentId': tran._id,
-        'stateCode': player.stateCode
+      'playerId': tran.playerId,
+      'amount': bonusAmount,
+      'transactionType': "credit",
+      'note': 'Bonus amount',
+      'paymentGateway': 'Cashfree Pay',
+      'logType': 'bonus',
+      'prevBalance': player.balance,
+      'paymentStatus': 'SUCCESS',
+      'status': 'complete',
+      'paymentId': tran._id,
+      'stateCode': player.stateCode
 
     }
     bonusTran = await Transaction.create(tranBonusData);
     bonusTran.creditPlayerBonus(bonusAmount);
     console.log('bonus added');
 
-}
+  }
 }
