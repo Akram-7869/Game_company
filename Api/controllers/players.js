@@ -1113,14 +1113,11 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
 
   let tran = await Transaction.create(tranData);
   if (req.player.deposit < amount) {
-
-
     let damount = req.player.deposit;
     let windeduction;
     if (damount > 0) {
       player = await tran.debitPlayerDeposit(damount);
       windeduction = amount - damount;
-
     } else {
       windeduction = amount;
     }
