@@ -3,6 +3,8 @@ const asyncHandler = require('./async');
 const ErrorResponse = require('../utils/errorResponse');
 const Player = require('../models/Player');
 const User = require('../models/User');
+var mongoose = require('mongoose');
+
 // Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
   let token;
@@ -65,7 +67,14 @@ exports.authorize = (...roles) => {
   };
 };
 
-
+// Grant access to maintenance 
+exports.maintenance_chk = (req, res, next) => {
+  let x = res.app.get('site_setting')
+  if (x.one.maintenance === 'on') {
+    return next(new ErrorResponse('Site is in down', 503));
+  }
+  next();
+};
 
 
 

@@ -3,10 +3,7 @@ const authCtrl = require('../controllers/auth');
 
 const router = express.Router();
 
-const { protect } = require('../middleware/auth');
-
-const { maintenance_chk } = require('../utils/utils');
-
+const { init, protect, maintenance_chk } = require('../middleware/auth');
 
 //router.post('/player/register', maintenance_chk, authCtrl.playerRegister);
 router.post('/player/registeremail', maintenance_chk, authCtrl.playerRegisterEmail);

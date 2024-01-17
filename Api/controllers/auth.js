@@ -375,10 +375,12 @@ exports.logout = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.maintanance = asyncHandler(async (req, res, next) => {
-  let bot_profile = getKey('bot_profile');
+  let bot_profile = [];
+  let setting = {};
+  //console.log('one---',res.app.get('bot_profile'));
+  if (!res.app.get('bot_profile')) {
 
-  if (!bot_profile) {
-    bot_profile = [];
+
     filename = '/img/profile-picture/';
     filePath = path.resolve(__dirname, '../../assets/' + filename);
     let pathurl = process.env.IMAGE_URL + filename;
@@ -387,26 +389,24 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
       // console.log(file);
       bot_profile.push(pathurl + file);
     });
-    setkey('bot_profile', bot_profile);
+    res.app.set('bot_profile', bot_profile);
+  } else {
+    bot_profile = res.app.get('bot_profile')
   }
-  let setting = getKey('site_setting');
-  if (!setting) {
-    setting = await Setting.findOne({
-      type: 'SITE',
-    });
-    setkey('site_setting', setting)
-  }
+  //console.log(setting );
+  setting = res.app.get('site_setting');
+  // console.log('site setting');
+  //if (!setting) {
+
+  setting = await Setting.findOne({
+    type: 'SITE',
+  });
+  res.app.set('site_setting', setting);
+  // }
 
   res.status(200).json({
     success: true,
-    data: {
-      bot_profile,
-      adminCommision: setting.commission,
-      mindeposit: setting.mindeposit,
-      minwithdraw: setting.minwithdraw,
-      maxwithdraw: setting.maxwithdraw
-
-    }
+    data: { bot_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit }
   });
 });
 exports.smsOtp = async (mobile, otp, template_id, authkey) => {
