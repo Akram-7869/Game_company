@@ -1065,7 +1065,7 @@ exports.ticketReply = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.debiteAmount = asyncHandler(async (req, res, next) => {
-  let { amount, note, gameId, betNo = 0 } = req.body;
+  let { amount, note, gameId, betNo = 0, tournamentId } = req.body;
   console.log('debiteAmount =', gameId);
   if (!amount || amount < 0) {
     return next(
@@ -1096,6 +1096,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'playerId': req.player._id,
     'amount': amount,
     'transactionType': "debit",
+    tournamentId,
     'note': note,
     'prevBalance': req.player.balance,
     'logType': req.body.logType,

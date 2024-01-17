@@ -85,13 +85,10 @@
                                         <th>gameName</th>
                                         <th>gameId</th>
                                         <th>status</th>
-                                        <th>opponent</th>
-
                                         <th>bot</th>
                                         <th>Note</th>
-
                                         <th>Played</th>
-                                        <th>Players</th>
+                                        <!-- <th>Players</th> -->
                                         <th>pstatus</th>
                                         <!-- <th>Action</th> -->
                                     </tr>
@@ -159,6 +156,8 @@
                         }
                         var i = 1;
                         var oTable = $('#listsetting').DataTable({
+                            order: [[10, 'asc']],
+
                             initComplete: function () {
                                 var input = $('.dataTables_filter input').unbind(),
                                     self = this.api(),
@@ -178,7 +177,7 @@
                             },
                             "processing": true,
                             "serverSide": true,
-                            "ordering": false,
+                            "ordering": true,
                             "ajax": {
                                 url: "<%=process.env.ADMIN_URL%>/admin/game/data", type: "post",
                                 data: function (d) {
@@ -192,6 +191,7 @@
 
                             "columns": [
                                 {
+
                                     data: null, "render": function (data, type, full, meta) {
                                         return meta.row + 1;
                                     }
@@ -200,15 +200,13 @@
                                 { data: 'amountWon', "defaultContent": "0" },
                                 { data: 'amountBet', "defaultContent": "0" },
                                 {
-                                    data: 'tournamentId.name', "defaultContent": ""
+                                    data: 'gameName', "defaultContent": ""
                                 },
                                 {
                                     data: 'gameId', "defaultContent": ""
                                 },
                                 { data: 'gameStatus', "defaultContent": "lost" },
-                                {
-                                    data: 'opponentName', "defaultContent": ""
-                                },
+
                                 {
                                     data: 'isBot', "defaultContent": ""
                                 },
@@ -219,16 +217,16 @@
                                         return moment(data).format('DD-MM-YYYY h:mm a');
                                     }
                                 },
-                                {
-                                    data: null, "render": function (data, type, full, meta) {
-                                        let t = full.players;
-                                        let o = '<textarea cols=70 rows=25>';
-                                        o += t ? JSON.stringify(JSON.parse(t), undefined, 2) : '';
-                                        o += "</textarea>";
-                                        return o;
-                                    }
-                                },
-                                { data: 'staus', "defaultContent": "" },
+                                // {
+                                //     data: null, "render": function (data, type, full, meta) {
+                                //         let t = full.players;
+                                //         let o = '<textarea cols=70 rows=25>';
+                                //         o += t ? JSON.stringify(JSON.parse(t), undefined, 2) : '';
+                                //         o += "</textarea>";
+                                //         return o;
+                                //     }
+                                // },
+                                { data: 'status', "defaultContent": "" },
                                 // {
                                 //     data: null, "render": function (data, type, full, meta) {
                                 //         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/playerhistory/'
