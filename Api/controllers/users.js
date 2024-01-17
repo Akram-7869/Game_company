@@ -124,7 +124,7 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.resetPassword = asyncHandler(async (req, res, next) => {
   const { code, password, oldpass } = req.body;
-  const user = req.staff;
+  let user = req.staff;
   if (!user) {
     return next(
       new ErrorResponse(`User  not found`)
@@ -144,7 +144,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
   } else {
     // Check for user
-    const user = await User.findById(user._id).select('+password');
+    user = await User.findById(user._id).select('+password');
 
     if (!user) {
       return next(new ErrorResponse('User not found'));
@@ -160,9 +160,6 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     user.password = req.body.password;
 
   }
-
-
-  //user.isNew = false;
   await user.save();
   res.status(200).json({
     success: true,

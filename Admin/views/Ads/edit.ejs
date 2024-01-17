@@ -50,9 +50,9 @@
                                             </option>
                                             <option value="HOME" <%=row.location==='HOME' ?'selected':'' %>>Home
                                             </option>
-                                            <option value="PROFILE" <%=row.location==='PROFILE' ?'selected':'' %>
+                                            <!-- <option value="PROFILE" <%=row.location==='PROFILE' ?'selected':'' %>
                                                 >Profile
-                                            </option>
+                                            </option> -->
 
                                         </select>
                                     </div>
@@ -61,8 +61,8 @@
                                     <label class="form-label">Type</label>
                                     <div class="col-md-10">
                                         <select id="bannerType" class="form-select" name="bannerType" required>
-                                            <option value="banner" <%=row.bannerType==='banner' ?'selected':'' %>>Banner
-                                            </option>
+                                            <!-- <option value="banner" <%=row.bannerType==='banner' ?'selected':'' %>>Banner
+                                            </option> -->
                                             <option value="fullscreen" <%=row.bannerType==='fullscreen' ?'selected':''
                                                 %>
                                                 >FullScreen
@@ -162,15 +162,15 @@
                         }
                     }
 
-// function handleSubmit(params) {
-//     if(params.checkValidity()){  
-//         params.preventDefault();
-//         myDropzone.processQueue();
+                    // function handleSubmit(params) {
+                    //     if(params.checkValidity()){
+                    //         params.preventDefault();
+                    //         myDropzone.processQueue();
 
-//         //Swal.showLoading();
+                    //         //Swal.showLoading();
 
-//     }
+                    //     }
 
-// }
+                    // }
                 </script>
                 <%- contentFor('BottomJs') %>

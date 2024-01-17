@@ -1065,8 +1065,8 @@ exports.ticketReply = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.debiteAmount = asyncHandler(async (req, res, next) => {
-  let { amount, note, gameId } = req.body;
-  console.log('debiteAmount =', gameId, amount, eq.player.deposit);
+  let { amount, note, gameId, betNo = 0 } = req.body;
+  console.log('debiteAmount =', gameId);
   if (!amount || amount < 0) {
     return next(
       new ErrorResponse(`Invalid amount`)
@@ -1082,10 +1082,14 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Game id requied`)
     );
   }
-  if (req.player.deposit < amount) {
+  let total = req.player.balance + req.player.winings;
+  if (total < amount) {
     return next(
       new ErrorResponse(`Insufficent balance`)
     );
+  }
+  if (req.player.deposit < amount) {
+    note += ' using rest wining';
   }
 
   let tranData = {
@@ -1095,17 +1099,41 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'note': note,
     'prevBalance': req.player.balance,
     'logType': req.body.logType,
-    status: 'complete', paymentStatus: 'SUCCESS',
-    'stateCode': req.player.stateCode
-
+    betNo,
+    'gameId': gameId,
+    status: 'complete', paymentStatus: 'SUCCESS'
   }
-  console.log(tranData, req.player);
-  tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
-  player = await tran.debitPlayerDeposit(amount);
+  let exist = await PlayerGame.countDocuments({ playerId: req.player.id, gameId });
+  if (exist) {
+    await PlayerGame.findOneAndUpdate({ playerId: req.player.id, gameId }, { $inc: { amountBet: amount } });
+  } else {
+    await PlayerGame.create({ playerId: req.player.id, gameId, amountBet: amount });
+  }
+
+  if (req.player.deposit < amount) {
+
+    let damount = req.player.deposit;
+    let windeduction;
+    if (damount > 0) {
+      player = await tran.debitPlayerDeposit(damount);
+      windeduction = amount - damount;
+
+    } else {
+      windeduction = amount;
+    }
+
+    if (windeduction > 0) {
+      player = await tran.debitPlayerWinings(windeduction);
+    }
+
+  } else {
+    player = await tran.debitPlayerDeposit(amount);
+  }
+
+
   if (req.body.logType === 'join') {
-    //Dashboard.join();
     player = await Player.findByIdAndUpdate(req.player.id, { $inc: { joinCount: 1 } }, {
       new: true,
       runValidators: true

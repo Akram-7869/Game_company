@@ -71,7 +71,15 @@ const SettingSchema = new mongoose.Schema({
     }, minwithdraw: {
         type: Number,
         default: 0
-    },mindeposit:{
+    },
+    maxwithdraw: {
+        type: Number,
+        default: 500
+    },
+    mindeposit: {
+        type: Number,
+        default: 0
+    }, registerBonus: {
         type: Number,
         default: 0
     }

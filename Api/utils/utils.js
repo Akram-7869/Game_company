@@ -1,8 +1,9 @@
 const path = require('path');
 const fs = require('fs');
+const sample = new Map();
 
 module.exports = {
-   makeid, uploadFile, deletDiskFile
+   makeid, uploadFile, deletDiskFile, getKey, setkey
 }
 
 function makeid(length) {
@@ -42,4 +43,12 @@ function deletDiskFile(filePath) {
          console.log('File not found, so not deleting.');
       }
    });
+}
+function getKey(key) {
+   return sample.get(key);
+}
+function setkey(key, v) {
+
+   return sample.set(key, v);
+
 }
