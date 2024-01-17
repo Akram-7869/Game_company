@@ -82,11 +82,14 @@
                                         <th>Email</th>
                                         <th>won</th>
                                         <th>bet</th>
+                                        <th>gameName</th>
+                                        <th>gameId</th>
                                         <th>status</th>
                                         <th>opponent</th>
+
                                         <th>bot</th>
                                         <th>Note</th>
-                                        <th>p-Count</th>
+
                                         <th>Played</th>
                                         <th>Players</th>
                                         <th>pstatus</th>
@@ -196,6 +199,12 @@
                                 { data: 'playerId.email', "defaultContent": "" },
                                 { data: 'amountWon', "defaultContent": "0" },
                                 { data: 'amountBet', "defaultContent": "0" },
+                                {
+                                    data: 'tournamentId.name', "defaultContent": ""
+                                },
+                                {
+                                    data: 'gameId', "defaultContent": ""
+                                },
                                 { data: 'gameStatus', "defaultContent": "lost" },
                                 {
                                     data: 'opponentName', "defaultContent": ""
@@ -204,9 +213,7 @@
                                     data: 'isBot', "defaultContent": ""
                                 },
                                 { data: 'note', "defaultContent": "WON" },
-                                {
-                                    data: 'playerCount', "defaultContent": "0"
-                                },
+
                                 {
                                     data: 'createdAt', render: function (data) {
                                         return moment(data).format('DD-MM-YYYY h:mm a');

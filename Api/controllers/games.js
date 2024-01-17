@@ -8,27 +8,43 @@ const Transaction = require('../models/Transaction');
 // @access    Private/Admin
 exports.getPlayerGames = asyncHandler(async (req, res, next) => {
 
+
+
+  let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.body.draw }
+
   let filter = {
     limit: req.body.length,
     skip: req.body.start,
     //select: { 'gameId': 1, 'status': 1, 'createdAt': 1 },
     find: {},
     search: {
-      value: req.body.search ? req.body.search.value : '',
-      fields: ['opponentName', 'email', 'gameId', 'isbot']
+
     },
     columns: req.body.columns,
-    populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, email: 1 } },
+    order: req.body.order,
+    populate: { path: 'playerId', select: { firstName: 1, lastName: 1, rank: 1, email: 1 }, path: 'tournamentId', select: { name: 1 } },
     sort: {
       _id: -1
     }
   };
 
-  // let filter = { logType: 'won' };
-
   //plaerId filter
-  if (req.body.playerId) {
-    filter['find']['playerId'] = req.body.playerId;
+  let key = req.body.search ? req.body.search.value : '';
+
+  if (mongoose.isValidObjectId(key)) {
+    filter['find']['playerId'] = key;
+  } if (key.includes("@")) {
+    let player = await Player.findOne({ 'email': { '$regex': key, '$options': 'i' } });
+    if (!player) {
+      return res.json(empty);
+    }
+
+    filter['find']['playerId'] = player._id;
+  } else {
+    filter.search = {
+      value: req.body.search ? req.body.search.value : '',
+      fields: ['status', 'gameId', 'isbot']
+    }
   }
   // //date filter
   if (req.body.s_date && req.body.e_date) {
@@ -38,20 +54,11 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
     }
 
   }
-  // let row = await Transaction.aggregate([{ $match: filter },
-  // //, tr: "$transactionType", gr: "$groupStatus " 
-  // {
-  //   $group: { _id: "$playerId", n: { $sum: "$amount" } }
-  // }
-  //   , { $sort: { n: -1 } }
-  //   , { $limit: 100 },
-  // ]);
-  // let x = await Player.populate(row, { path: "_id", select: { phone: 1, firstName: 1, lastName: 1, rank: 1, profilePic: 1 } });
+  // await Player.populate(row, { path: "_id", select: { phone: 1, firstName: 1, lastName: 1, rank: 1, profilePic: 1 } });
 
   PlayerGame.dataTables(filter).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })
-  //res.status(200).json({ data: row, recordsTotal: row.length, recordsFiltered: row.length, draw: req.body.draw });
 });
 
 // @desc      Get all PlayerGames
