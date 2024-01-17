@@ -952,7 +952,7 @@ exports.won = asyncHandler(async (req, res, next) => {
   let playerGame = {
     'playerId': req.player._id,
     'amountWon': amount,
-    'tournamentId': tournamentId,
+    // 'tournamentId': tournamentId,
     'winner': winner,
     'gameId': gameId,
     'gameStatus': 'won',
@@ -1065,6 +1065,7 @@ exports.ticketReply = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.debiteAmount = asyncHandler(async (req, res, next) => {
+  console.log('req.body', req.body);
   let { amount, note, gameId, betNo = 0, tournamentId } = req.body;
   console.log('debiteAmount =', gameId);
   if (!amount || amount < 0) {
@@ -1097,7 +1098,9 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   if (exist) {
     await PlayerGame.findOneAndUpdate({ playerId: req.player._id, gameId }, { $inc: { amountBet: amount } });
   } else {
-    await PlayerGame.create({ playerId: req.player._id, gameId, amountBet: amount, tournamentId });
+    let c = { playerId: req.player._id, gameId, amountBet: amount, tournamentId }
+    console.log('c', c)
+    await PlayerGame.create(c);
   }
   let tranData = {
     'playerId': req.player._id,
