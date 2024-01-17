@@ -2,7 +2,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Setting = require('../models/Setting');
 const File = require('../models/File');
-const { uploadFile, deletDiskFile, setkey } = require('../utils/utils');
+const { uploadFile, deletDiskFile } = require('../utils/utils');
 var path = require('path');
 
 
@@ -123,17 +123,68 @@ exports.setCommission = asyncHandler(async (req, res, next) => {
     'commission': req.body.commission,
     'lvl1_commission': req.body.lvl1_commission,
     'lvl2_commission': req.body.lvl2_commission,
+    'admin_referral_commission': req.body.admin_referral_commission,
     'minwithdraw': req.body.minwithdraw,
-    'maxwithdraw': req.body.maxwithdraw,
+    'tds': req.body.tds,
+    'gst': req.body.gst,
     'mindeposit': req.body.mindeposit,
-    'registerbonus': req.body.registerbonus,
+  }
+  console.log(req.body);
+  setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+
+  res.status(200).json({
+    success: true,
+    data: setting
+  });
+});
+
+// @desc      Update Setting
+// @route     PUT /api/v1/auth/Settings/:id
+// @access    Private/Admin
+exports.setUpi = asyncHandler(async (req, res, next) => {
+  let setting = await Setting.findOne({ _id: req.params.id });
+  if (!setting) {
+    return next(
+      new ErrorResponse(`Setting  not found`)
+    );
+  }
+  let fieldsToUpdate = {
+    'upi': req.body,
   }
 
   setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
-  setkey('site_setting', false);
+
+  res.status(200).json({
+    success: true,
+    data: setting
+  });
+});
+
+// @desc      Update Setting
+// @route     PUT /api/v1/auth/Settings/:id
+// @access    Private/Admin
+exports.setBank = asyncHandler(async (req, res, next) => {
+  let setting = await Setting.findOne({ _id: req.params.id });
+  if (!setting) {
+    return next(
+      new ErrorResponse(`Setting  not found`)
+    );
+  }
+  let fieldsToUpdate = {
+    'bank': req.body,
+  }
+
+  setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+
   res.status(200).json({
     success: true,
     data: setting
