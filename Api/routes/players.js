@@ -31,6 +31,8 @@ router.route('/profile').get(protect, playerCtl.getPlayer).post(protect, playerC
 router.route('/sendotp').post(protect, playerCtl.sendotp);
 router.post('/checkupi', protect, playerCtl.checkUpi);
 router.post('/savefbtoken', protect, playerCtl.savefbtoken);
+router.route('/sendotp').post(protect, playerCtl.sendotp);
+router.route('/verify-phone').post(protect, playerCtl.verifyPhoneCode);
 
 router.post('/poll', protect, playerCtl.poll);
 router.get('/pollList', protect, playerCtl.pollList);

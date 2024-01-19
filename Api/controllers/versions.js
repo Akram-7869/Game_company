@@ -6,21 +6,21 @@ const Version = require('../models/Version');
 // @route     GET /api/v1/auth/Versions
 // @access    Private/Admin
 exports.getVersions = asyncHandler(async (req, res, next) => {
-  ;
+
   Version.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-    select:{'versionControle':1,'appLink':1, 'createdAt':1},
+    select: { 'versionControle': 1, 'appLink': 1, 'createdAt': 1 },
     search: {
-      value: req.body.search?  req.body.search.value:'',
+      value: req.body.search ? req.body.search.value : '',
       fields: ['_id']
-      
+
     },
     sort: {
       _id: 1
     }
   }).then(function (table) {
-    res.json({data: table.data, recordsTotal:table.total,recordsFiltered:table.total, draw:req.body.draw}); // table.total, table.data
+    res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })
   //res.status(200).json(res.advancedResults);
 });
@@ -53,22 +53,22 @@ exports.createVersion = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/Versions/:id
 // @access    Private/Admin
 exports.updateVersion = asyncHandler(async (req, res, next) => {
-  let {appLink, versionControle}=req.body
+  let { appLink, versionControle } = req.body
   let row = await Version.findById(req.params.id);
   if (!row) {
     return next(
       new ErrorResponse(`Version  not found`)
     );
   }
-  let fieldsToUpdate= {appLink, versionControle}
-   
+  let fieldsToUpdate = { appLink, versionControle }
+
   row = await Version.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
     new: true,
     runValidators: true
   });
 
-   //Version.isNew = false;
- // await Version.save();
+  //Version.isNew = false;
+  // await Version.save();
   res.status(200).json({
     success: true,
     data: row
@@ -80,8 +80,8 @@ exports.updateVersion = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.deleteVersion = asyncHandler(async (req, res, next) => {
   const row = await Version.findById(req.params.id);
- await Version.findByIdAndDelete(req.params.id);
-  
+  await Version.findByIdAndDelete(req.params.id);
+
   res.status(200).json({
     success: true,
     data: {}

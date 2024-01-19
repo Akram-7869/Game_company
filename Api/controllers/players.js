@@ -2197,3 +2197,34 @@ exports.paymentAdd = asyncHandler(async (req, res, next) => {
     data: row
   });
 });
+
+exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
+  let { phone, code } = req.body;
+  if (!code || !phone) {
+    return next(
+      new ErrorResponse(`Please provide all required data`)
+    );
+  }
+
+  let user = await Player.findOne({ _id: req.player._id, verifyPhone: code });
+
+  if (!user) {
+    return next(
+      new ErrorResponse(`Invalid Code`)
+    );
+  }
+  let player = await Player.findByIdAndUpdate(user.id, {
+    'phoneStatus': 'verified', phone, verifyPhone: undefined, verifyPhoneExpire: undefined
+  }, {
+    new: true,
+    runValidators: true
+  });
+
+
+
+  res.status(200).json({
+    success: true,
+    data: player
+  });
+
+});
