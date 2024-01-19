@@ -2,7 +2,7 @@ const express = require('express');
 const playerCtl = require('../controllers/players');
 const router = express.Router({ mergeParams: true });
 
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, header_chk } = require('../middleware/auth');
 //router.use(protect);
 //router.use(authorize('admin','Player'));
 router.get('/commission', playerCtl.creditReferalComission);
@@ -38,9 +38,9 @@ router.post('/poll', protect, playerCtl.poll);
 router.get('/pollList', protect, playerCtl.pollList);
 
 router.post('/withdraw/request', protect, playerCtl.withDrawRequest);
-router.post('/debit', protect, playerCtl.debiteAmount);
+router.post('/debit', header_chk, protect, playerCtl.debiteAmount);
 //router.post('/credit/', protect, playerCtl.creditAmount);
-router.post('/game/won', protect, playerCtl.won);
+router.post('/game/won',header_chk, protect, playerCtl.won);
 router.post('/reverse/', protect, playerCtl.reverseAmount);
 router.post('/gamestatus/', protect, playerCtl.gameStatus);
 

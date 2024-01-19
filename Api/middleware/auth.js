@@ -75,6 +75,15 @@ exports.maintenance_chk = (req, res, next) => {
   }
   next();
 };
+// Grant header to maintenance 
+exports.header_chk = (req, res, next) => {
+  let { "x-app-name": appName } = req.headers;
+  if (appName !== '1256') {
+    console.log('api-errro',appName);
+    // return next(new ErrorResponse('', 200));
+  }
+  next();
+};
 
 
 
