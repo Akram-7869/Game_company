@@ -376,7 +376,7 @@ exports.paymentMethodList = asyncHandler(async (req, res, next) => {
       res.render('Payments/paymentmethod', data)
 });
 exports.getPaymentList = asyncHandler(async (req, res, next) => {
-      callApi(req).post(apiUrl + 'filter/PAYMENTMETHOD', { ...req.body })
+      callApi(req).post(apiUrl + 'filter/PAYMENT', { ...req.body })
             .then(r => { res.status(200).json(r.data); }).catch(error => { })
 });
 
@@ -388,7 +388,7 @@ exports.addPaymentMethod = asyncHandler(async (req, res, next) => {
 });
 exports.createPaymentMethod = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'PaymentMethod' };
-      req.body['type'] = 'PAYMENTMETHOD';
+      req.body['type'] = 'PAYMENT';
       callApi(req).post(apiUrl + 'add', req.body)
             .then(r => {
                   // Assign value in session

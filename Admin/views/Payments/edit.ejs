@@ -36,57 +36,96 @@
                             <!--  <h4 class="card-title">Validation type</h4>
                 <p class="card-title-desc"> </p> -->
 
-                            <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST"
-                                name="player" enctype="application/x-www-form-urlencoded">
-                                <div class="mb-3">
-                                    <label class="form-label">Name</label>
-                                    <input type="text" class="form-control" required name="name"
-                                        value="<%= row.name !== undefined ? row.name:''%>" placeholder="Name " />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Mode</label>
-                                    <input type="text" class="form-control" required name="one[mode]"
-                                        value="<%= row.one['mode'] %>" placeholder="mode" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">App ID</label>
-                                    <input type="text" class="form-control" required name="one[APP_ID]"
-                                        value="<%= row.one !== undefined ? row.one['APP_ID']:''%>"
-                                        placeholder="Title" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Secreate</label>
-                                    <input type="text" class="form-control" required name="one[SECRET_KEY]"
-                                        value="<%= row ? row.one['SECRET_KEY']:''%>" placeholder="Content" />
-                                </div>
+                <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST"
+                name="player" enctype="application/x-www-form-urlencoded">
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-control" required name="name"
+                        value="<%= row.name !== undefined ? row.name:''%>" placeholder="Name " />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Mode</label>
+                    <input type="text" class="form-control" required name="one[mode]"
+                        value="<%= row.one['mode'] %>" placeholder="mode" />
+                </div>
+                <% if(row.name=='PHONEPAY' ){%>
+
+                    <div class="mb-3">
+                        <label class="form-label">MERCHANTID</label>
+                        <input type="text" class="form-control" required name="one[MERCHANTID]"
+                            value="<%= row ? row.one['MERCHANTID']:''%>" placeholder="Content" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">SALT</label>
+                        <input type="text" class="form-control" required name="one[SALT]"
+                            value="<%= row ? row.one['SALT']:''%>" placeholder="Content" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">SALT_INDEX</label>
+                        <input type="text" class="form-control" required name="one[SALT_INDEX]"
+                            value="<%= row ? row.one['SALT_INDEX']:''%>" placeholder="Content" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">PAYOUT ACCOUNT</label>
+                        <input type="text" class="form-control" required name="one[PAYOUT_ACCOUNT]"
+                            value="<%= row ? row.one['PAYOUT_ACCOUNT']:''%>" placeholder="Content" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">PAYOUT ID</label>
+                        <input type="text" class="form-control" required name="one[PAYOUT_ID]"
+                            value="<%= row ? row.one['PAYOUT_ID']:''%>" placeholder="Content" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">PAYOUT SECREATE</label>
+                        <input type="text" class="form-control" required name="one[PAYOUT_SECRET]"
+                            value="<%= row ? row.one['PAYOUT_SECRET']:''%>" placeholder="Content" />
+                    </div>
+
+                    <% } else{ %>
+                        <div class="mb-3">
+                            <label class="form-label">App ID</label>
+                            <input type="text" class="form-control" required name="one[APP_ID]"
+                                value="<%= row.one !== undefined ? row.one['APP_ID']:''%>"
+                                placeholder="Title" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Secreate</label>
+                            <input type="text" class="form-control" required name="one[SECRET_KEY]"
+                                value="<%= row ? row.one['SECRET_KEY']:''%>" placeholder="Content" />
+                        </div>
 
 
-                                <div class="mb-3">
-                                    <label class="form-label">Payout ID</label>
-                                    <input type="text" class="form-control" required name="one[PAYOUT_ID]"
-                                        value="<%= row.one !== undefined ? row.one['PAYOUT_ID']:''%>"
-                                        placeholder="Title" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Payout Secreate</label>
-                                    <input type="text" class="form-control" required name="one[PAYOUT_SECRET]"
-                                        value="<%= row ? row.one['PAYOUT_SECRET']:''%>" placeholder="Content" />
-                                </div>
-
-
-
-
+                        <div class="mb-3">
+                            <label class="form-label">Payout ID</label>
+                            <input type="text" class="form-control" required name="one[PAYOUT_ID]"
+                                value="<%= row.one !== undefined ? row.one['PAYOUT_ID']:''%>"
+                                placeholder="Title" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Payout Secreate</label>
+                            <input type="text" class="form-control" required name="one[PAYOUT_SECRET]"
+                                value="<%= row ? row.one['PAYOUT_SECRET']:''%>" placeholder="Content" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Payout account</label>
+                            <input type="text" class="form-control" required name="one[PAYOUT_ACCOUNT]"
+                                value="<%= row ? row.one['PAYOUT_ACCOUNT']:''%>"
+                                placeholder="Content" />
+                        </div>
+                        <% } %>
+                            <div>
                                 <div>
-                                    <div>
-                                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                                            Submit
-                                        </button>
-                                        <button type="reset" class="btn btn-secondary waves-effect">
-                                            Cancel
-                                        </button>
-                                    </div>
+                                    <button type="submit"
+                                        class="btn btn-primary waves-effect waves-light me-1">
+                                        Submit
+                                    </button>
+                                    <button type="reset" class="btn btn-secondary waves-effect">
+                                        Cancel
+                                    </button>
                                 </div>
-                            </form>
+                            </div>
+            </form>
 
                         </div>
                     </div>
