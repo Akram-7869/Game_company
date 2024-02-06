@@ -128,7 +128,11 @@
                 <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
                 <%- contentFor('BottomJs') %>
                     <script>
-
+let day= new Date();
+                        let nextDay = new Date(day);
+                            nextDay.setDate(day.getDate() + 1);
+                        $("#s_date").datepicker("setDate", day); 
+                        $("#e_date").datepicker("setDate", nextDay);
                         function delRec(id) {
                             let r = confirm('Want to delet?');
 
