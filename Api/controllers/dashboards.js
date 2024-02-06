@@ -193,6 +193,7 @@ let calTotal = async (s_date, e_date) => {
       $match: {
         s_date: startDate,
         e_date: endDate,
+        paymentStatus:'SUCCESS',
         logType: { $in: ["withdraw", "deposit"] }
 
       },
