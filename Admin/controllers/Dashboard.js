@@ -29,7 +29,7 @@ exports.dashBoardView = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/Players
 // @access    Private/Admin
 exports.totalIncome = asyncHandler(async (req, res, next) => {
-    callApi(req).get(apiUrl + 'total-income')
+    callApi(req).post(apiUrl + 'total-income', req.body)
         .then(r => {
             res.status(200).json(r.data)
         })

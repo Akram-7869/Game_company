@@ -8,7 +8,7 @@ router.use(protect);
 
 router.route('/filter/:type').post(dash.getFilterDashboard);
 router.route('/chart/data').post(dash.getGraphData);
-router.route('/total-income').get(dash.totalIncome);
+router.route('/total-income').post(dash.totalIncome);
 router.route('/add').post(dash.createDashboard);
 router.route('/').post(dash.getDashboards);
 

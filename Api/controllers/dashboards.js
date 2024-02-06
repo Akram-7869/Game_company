@@ -169,7 +169,7 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
   row['livePlayers'] = req.io.engine.clientsCount;
 
 
-  row['totals'] = {}; //await calTotal();
+  row['totals'] = await calTotal();
 
   row['totalPlayers'] = await Player.estimatedDocumentCount();
   row['payoutCount'] = await Transaction.countDocuments({ logType: 'withdraw', paymentStatus: 'PROCESSING' });
@@ -178,55 +178,50 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
     data: { row, graph: [] }
   });
 });
-let calTotal = async () => {
+let calTotal = async (s_date, e_date) => {
+  const today = new Date();
+  // Calculate tomorrow's date
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  // Set s_date to today if not provided
+  const startDate = s_date ? new Date(s_date) : today;
+  // Set e_date to tomorrow if not provided
+  const endDate = e_date ? new Date(e_date) : tomorrow;
+
   const row = await Transaction.aggregate([
     {
-      '$match': {
-        'transactionType': 'debit',
-        'logType': 'game',
-        'status': 'complete'
-      }
-    }, {
-      '$group': {
-        '_id': '$logType',
-        'gameTotal': {
-          '$sum': '$amount'
-        }
-      }
-    }
+      $match: {
+        s_date: startDate,
+        e_date: endDate,
+        logType: { $in: ["withdraw", "deposit"] }
+
+      },
+    },
+    {
+      $group:
+      /**
+       * _id: The id of the group.
+       * fieldN: The first field name.
+       */
+      {
+        _id: "$logType",
+        Total: {
+          $sum: "$amount",
+        },
+      },
+    },
   ]);
 
-  const total = await Transaction.aggregate([{
-    '$match': {
-      'transactionType': 'credit',
-      'logType': 'won',
-      'status': 'complete'
-    }
-  }, {
-    '$group': {
-      '_id': '$logType',
-      'winTotal': {
-        '$sum': '$amount'
-      }
-    }
-  }]);
-  console.log('total', total);
-  if (total.length === 0) {
-    return {
-      bonusTotal: 0,
-      balanceTotal: 0,
-      winingsTotal: 0
-    };
-  }
-  if (row && total) {
-    total[0]['balanceTotal'] = row[0]['gameTotal'] - total[0]['winTotal'];
-    total[0]['gameTotal'] = row[0]['gameTotal'];
-  } else {
-    total[0]['balanceTotal'] = 0;
-    total[0]['gameTotal'] = 0;
-  }
+  const withdrawalsTotal = row.find(item => item._id === 'withdraw');
+  const depositsTotal = row.find(item => item._id === 'deposit');
 
-  return total[0];
+
+  return {
+    withdrawalsTotal: withdrawalsTotal ?? 0,
+    depositsTotal: depositsTotal ?? 0,
+
+  };
+
 
 }
 const payoutTotal = async () => {

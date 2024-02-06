@@ -72,7 +72,7 @@
                                                 data-date-format="yyyy-mm-dd" data-date-autoclose="true"
                                                 data-provide="datepicker" data-date-container='#datepicker6'>
                                                 <input type="text" id="s_date" class="form-control text-start"
-                                                    placeholder="From" name="From" />
+                                                    placeholder="From" name="From"  data-date-format="yyyy-mm-dd"/>
                                                 <input type="text" id="e_date" class="form-control text-start"
                                                     placeholder="To" name="To" data-date-format="yyyy-mm-dd" />
 
@@ -139,6 +139,11 @@
                 <%- contentFor('BottomJs') %>
                     <script>
                         var minDate, maxDate;
+                        let day= new Date();
+                        let nextDay = new Date(day);
+                            nextDay.setDate(day.getDate() + 1);
+                        $("#s_date").datepicker("setDate", day); 
+                        $("#e_date").datepicker("setDate", nextDay); 
                         function delRec(id) {
                             let r = confirm('Want to pay ?');
 
@@ -236,4 +241,5 @@
                                 },
                             ]
                         });
+                      
                     </script>

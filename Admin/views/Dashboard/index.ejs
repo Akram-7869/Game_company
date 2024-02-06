@@ -5,19 +5,52 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0">Dashboard</h4>
+                    <h4 class="mb-0">Dashboard </h4>
 
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">
-                                    <%=sitename%>
-                                </a></li>
-                            <li class="breadcrumb-item active">Dashboard</li>
-                        </ol>
+                    <div class="float-end row">
+
+
+
+
+
+                        <div class="col-md-3">
+                            <select onchange="view(event)" class="form-select" name="location" id="days_drop" required>
+                                <option value="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="week">Last Week</option>
+                                <option value="month">Last 30 days</option>
+                                <option value="custome">Custome</option>
+                            </select>
+                        </div>
+
+
+
+
+
+
+
+                        <div class="col-md-6">
+                            <div class="input-daterange input-group" id="datepicker6" data-date-format="yyyy-mm-dd"
+                                data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
+                                <input type="text" id="s_date" class="form-control text-start" placeholder="From"
+                                    name="From" data-date-format="yyyy-mm-dd" />
+                                <input type="text" id="e_date" class="form-control text-start" placeholder="To"
+                                    name="To" data-date-format="yyyy-mm-dd" />
+                            </div>
+                            
+                        </div>
+                        <div class="col-md-3 d ">
+                            <button onclick="getTotal()" class="btn btn-success">Refresh</button>
+                        </div>
+
+
+
+
                     </div>
-
                 </div>
+
             </div>
+        </div>
         </div>
         <!-- end page title -->
 
@@ -64,28 +97,7 @@
                     </div>
                 </div> <!-- end col-->
 
-                <!-- <div class="col-md-6 col-xl-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="float-end mt-2">
-                                <div id="customers-chart"> </div>
-                            </div>
-                            <div>
-                                <h4 class="mb-1 mt-1"><span data-plugin="counterup">
-                                        <%=list.withdrawRequest%>
-                                    </span></h4>
-                                <p class="text-muted mb-0">Payout Count</p>
-                            </div>
-                            <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
-                                        class="mdi mdi-arrow-down-bold me-1"></i>
-                                    <%=list.withdrawTotal%>
-                                </span>
-                                <%=currency_symbol%>
-                            </p>
-                        </div>
-                    </div>
-                </div>  -->
-                <!-- end col-->
+
 
                 <div class="col-md-6 col-xl-3">
 
@@ -105,29 +117,28 @@
                         </div>
                     </div>
                 </div> <!-- end col-->
-            </div> <!-- end row-->
-            <div class="row">
-                <!-- <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl-3">
                     <div class="card">
                         <div class="card-body">
                             <div class="float-end mt-2">
-                                <div id="total-revenue-chart">
-                                </div>
+                                <div id="customers-chart"> </div>
                             </div>
                             <div>
                                 <h4 class="mb-1 mt-1">
-                                    <%=currency_symbol%><span data-plugin="counterup">
-                                            <%=parseInt(list.totals.balanceTotal)%>
-                                        </span>
+                                        <%=currency_symbol %> <span id="WithdrawTotal">0</span>
                                 </h4>
-                                <p class="text-muted mb-0">BalanceTotal</p>
+                                <p class="text-muted mb-0">Withdraw Total ( <span class="days_view"></span> )</p>
                             </div>
-                            <p class="text-muted mt-3 mb-0"><span class="text-success me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>2.65%</span> since last week
+
+
                             </p>
                         </div>
                     </div>
-                </div> -->
+                </div>
                 <!-- end col-->
+            </div> <!-- end row-->
+            <div class="row">
+
 
                 <div class="col-md-6 col-xl-3">
                     <div class="card">
@@ -190,6 +201,24 @@
                     </div>
                 </div>
                 <!-- end col-->
+                <div class="col-md-6 col-xl-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="float-end mt-2">
+                                <div id="total-revenue-chart">
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="">
+                                    <%=currency_symbol%> <span id="DepositTotal">0</span>
+                                </h4>
+                                <p class="text-muted mb-0">DepositTotal ( <span class="days_view"> </span> )</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- end col-->
             </div> <!-- end row-->
 
             </div> <!-- end row-->
@@ -199,7 +228,89 @@
                 <!-- apexcharts -->
                 <script src="/public/assets/libs/apexcharts/apexcharts.min.js"></script>
                 <script src="/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+                <!-- Sweet Alerts js -->
+                <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
 
                 <script src="/public/assets/js/pages/dashboard.init.js"></script>
 
                 <%- contentFor('BottomJs') %>
+                    <script>
+                        var minDate, maxDate;
+                        let day = new Date();
+                        let nextDay = new Date(day);
+                        nextDay.setDate(day.getDate() + 1);
+                        $("#s_date").datepicker("setDate", day);
+                        $("#e_date").datepicker("setDate", nextDay);
+
+                        function getTotal() {
+                            let days_txt = $('#days_drop').val();
+                            Swal.showLoading();
+                            return $.ajax({
+                                type: 'POST',
+                                url: '<%=process.env.ADMIN_URL%>/admin/dashboard/total-income/',
+                                data: {
+                                    's_date': $('#s_date').val(),
+                                    'e_date': $('#e_date').val()
+                                },
+                                success: (results) => {
+                                    Swal.close();
+                                    if (results.success) {
+                                        $('.days_view').text(days_txt);
+                                        //  alert(results.data.status + ' ' + results.data.message);
+                                        $('#WithdrawTotal').val(results.data.withdrawalsTotal);
+
+                                        $('#DepositTotal').val(results.data.depositsTotal);
+                                    } else {
+                                        alert(results.error);
+
+                                    }
+
+                                },
+                                error: (err) => {
+                                    alert('Error');
+                                    //   location.reload();
+
+                                }
+                            });
+                        }
+                        function view(id) {
+                            let day = new Date();
+                            let nextDay = new Date(day);
+
+                            switch (id.target.value) {
+                                case 'today':
+                                    nextDay.setDate(day.getDate() + 1);
+                                    $("#s_date").datepicker("setDate", day);
+                                    $("#e_date").datepicker("setDate", nextDay);
+                                    break;
+                                case 'yestarday':
+                                    nextDay.setDate(day.getDate() - 1);
+                                    $("#s_date").datepicker("setDate", nextDay);
+                                    $("#e_date").datepicker("setDate", day);
+                                    break;
+                                case 'week':
+                                    nextDay.setDate(day.getDate() - 7);
+                                    $("#s_date").datepicker("setDate", nextDay);
+                                    $("#e_date").datepicker("setDate", day);
+                                    break;
+                                case 'month':
+                                    nextDay.setDate(day.getDate() - 30);
+                                    $("#s_date").datepicker("setDate", nextDay);
+                                    $("#e_date").datepicker("setDate", day);
+                                    break;
+                                case 'custome':
+                                    nextDay.setDate(day.getDate() - 30);
+                                    $("#s_date").datepicker("setDate", '');
+                                    $("#e_date").datepicker("setDate", '');
+                                    break;
+                                default:
+                                    break;
+                            }
+                            getTotal();
+
+
+
+
+                        }
+                        getTotal();
+                    </script>
