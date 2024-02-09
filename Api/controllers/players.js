@@ -206,7 +206,7 @@ exports.addBank = asyncHandler(async (req, res, next) => {
   let { bankName, bankAccount, bankIfc, bankAddress, bankAccountHolder } = req.body;
   let fieldsToUpdate = { bankName, bankAccount, bankIfc, bankAddress, bankAccountHolder };
   let player;
-  if (!bankName || !bankAccount || !bankIfc || !bankAddress || !bankAccountHolder) {
+  if ( !bankAccount || !bankIfc  || !bankAccountHolder) {
     return next(
       new ErrorResponse(`All fields are requied`)
     );
