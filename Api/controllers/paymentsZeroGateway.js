@@ -92,17 +92,18 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   }
   
   let data ={
-    "account_id" :row.one.APP_ID,
-    "secret_key" :row.one.SECRET_KEY,
-      "payment_id":tran._id,
-      "payment_purpose":'Add Money',
-      "payment_amount":amount,
-      "payment_name":'test',
-      "payment_phone":'1234567890',
-      "payment_email":'test@test.com',
-      "redirect_url":process.env.API_URI + '/payments/zeropg/notify/',
+    account_id :row.one.APP_ID,
+    secret_key :row.one.SECRET_KEY,
+      payment_id:tran._id,
+      payment_purpos:'Add Money',
+      payment_amount:amount,
+      payment_name:'test',
+      payment_phone:1234567890,
+      payment_email:'test@test.com',
+      redirect_url:"http://139.59.77.167/api/v1/payments/zeropg/notify?payment_id=65c9a9a1b75f4129fce2a26f",
   };
-
+    //data = JSON.stringify(data);
+  
   console.log(data, 'data');
   //let urlpg = 'https://api.phonepe.com/apis/hermes/pg/v1/pay';
   let gatewayurl = 'https://zgw.oynxdigital.com/api_payment_init.php';
@@ -113,20 +114,23 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   const options = {
     method: 'POST',
     url: gatewayurl,
-    headers: { accept: 'application/json', 'Content-Type': 'application/json', },
+    headers: { 'Content-Type': 'application/json', },
     data:  {"init_payment" : data}
   };
 
-  axios
-    .request(options)
+  axios.post(gatewayurl, { init_payment: data }, {
+    headers: {
+        'Content-Type': 'application/json'
+    }
+})
     .then(function (response) {
     
        console.log(response);
-
-      return res.status(200).json({
+       return    res.status(200).json({
         success: true,
-        data: d
-      });
+        data: { id: tran._id, url: response.data }
+    });
+     
     })
     .catch(function (error) {
       console.log(error.data);
