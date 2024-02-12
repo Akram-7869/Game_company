@@ -98,6 +98,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   if (row.one.mode === 'production') {
     gatewayurl = 'https://zgw.oynxdigital.com/api_payment_init.php';
   }
+  console.log(data,'input');
   axios.post(gatewayurl, { init_payment: data }, {
     headers: {
       'Content-Type': 'application/json'
@@ -105,7 +106,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   })
     .then(function (response) {
 
-      console.log(response.data);
+      console.log(response.data, 'link-response');
       return res.status(200).json({
         success: true,
         data: { id: tran._id, url: response.data }
@@ -140,7 +141,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   })
     .then(async function (response) {
 
-      console.log(response.data);
+      console.log(response.data, 'hook-reponse');
      // await handleSuccess(payment_id);
       return res.status(200).json({
         success: true,
