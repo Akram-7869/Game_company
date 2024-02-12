@@ -5,7 +5,7 @@ const crypto = require('crypto');
 
 const Transaction = require('../models/Transaction');
 const Coupon = require('../models/Coupon');
-const Coin = require('../models/Coin');
+// const Coin = require('../models/Coin');
 
 const Player = require('../models/Player');
 const PlayerCtrl = require('./players');
@@ -64,18 +64,18 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     }
 
   }
-  let coinDoc = await Coin.findOne({ amount, active: true });
-  if (!coinDoc) {
-    return next(
-      new ErrorResponse(`Amount not allowed`)
-    );
-  }
+  // let coinDoc = await Coin.findOne({ amount, active: true });
+  // if (!coinDoc) {
+  //   return next(
+  //     new ErrorResponse(`Amount not allowed`)
+  //   );
+  // }
 
   let tranData = {
     'playerId': req.player._id,
     'amount': amount,
     'couponId': coupon_id,
-    'coin': coinDoc.coin,
+    // 'coin': coinDoc.coin,
     'membershipId': membership_id,
     'transactionType': "credit",
     'note': req.body.note,
