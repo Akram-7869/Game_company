@@ -36,7 +36,7 @@ router.route('/cashfree/key').post(protect, paymentCashfreeCtrl.getKey);
 router.route('/cashfree/notify').post(paymentCashfreeCtrl.handleNotify);
 
 router.route('/zeropg/token').post(protect, zeroCtrl.getToken);
-router.route('/zeropg/webhook').get(zeroCtrl.handleNotify);
+router.route('/zeropg/notify').get(zeroCtrl.handleNotify);
 router
     .route('/:id')
     .get(protect, getSetting)
