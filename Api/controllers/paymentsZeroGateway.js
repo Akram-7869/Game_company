@@ -100,7 +100,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
       payment_name:'test',
       payment_phone:1234567890,
       payment_email:'test@test.com',
-      redirect_url:"http://139.59.77.167/api/v1/payments/zeropg/notify?payment_id=65c9a9a1b75f4129fce2a26f",
+      redirect_url:process.env.API_URI + '/payments/zeropg/notify?payment_id='+tran._id,
   };
     //data = JSON.stringify(data);
   
