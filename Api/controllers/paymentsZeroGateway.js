@@ -120,8 +120,8 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   axios
     .request(options)
     .then(function (response) {
-      let d = { id: tran._id, url: response.data.data.instrumentResponse.redirectInfo.url };
-      // console.log(d);
+    
+       console.log(response);
 
       return res.status(200).json({
         success: true,
