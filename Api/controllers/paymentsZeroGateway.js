@@ -164,20 +164,23 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 
   const options = {
     method: 'POST',
-    url: gatewayurl,
+    url: url,
     headers: { accept: 'application/json', 'Content-Type': 'application/json', },
     data:  {"fetch_payment" : data}
   };
 
-  axios
-    .request(options)
+  axios.post(url, { fetch_payment: data }, {
+    headers: {
+        'Content-Type': 'application/json'
+    }
+})
     .then(function (response) {
       
       console.log(response);
 
       return res.status(200).json({
         success: true,
-        data: response
+        data: response.data
       });
     })
     .catch(function (error) {
@@ -274,241 +277,4 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 });
 
 
-const verifySignature = (body, signature, clientSecret) => {
-
-  if (!(body && signature && clientSecret)) {
-    throw Error(
-      'Invalid Parameters: Please give request body,' +
-      'signature sent in X-Cf-Signature header and ' +
-      'clientSecret from dashboard as parameters',
-    );
-  }
-
-  const expectedSignature = crypto
-    .createHmac('sha256', clientSecret)
-    .update(body.toString())
-    .digest('hex');
-
-  return expectedSignature === signature;
-};
-exports.payout = asyncHandler(async (req, res, next) => {
-  const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
-  let { withdrawId } = req.body;
-  let tran = await Transaction.findOne({ _id: withdrawId, logType: 'withdraw', status: 'log' });
-
-  if (!tran) {
-    return next(
-      new ErrorResponse('Transaction canot be processed')
-    );
-  }
-  let player = await Player.findById(tran.playerId).select('+withdraw');
-  if (player.status === 'banned') {
-    return next(
-      new ErrorResponse('Account is banned')
-    );
-  }
-  if (!player.phone) {
-    return next(
-      new ErrorResponse('Phone no is required')
-    );
-  }
-  let bene = {};
-  let transferMode = '';
-
-  bene['phone'] = player.phone;
-  bene['name'] = player.firstName;
-  bene['email'] = player.email;
-  bene['address1'] = 'India' + player.state;
-  if (tran.withdrawTo === 'bank') {
-    transferMode = 'banktransfer';
-    bene = {
-      "bankAccount": tran.withdraw.get('bankAccount'),
-      "ifsc": tran.withdraw.get('bankIfc'),
-      "name": tran.withdraw.get('bankAccountHolder'),
-      "email": player.email,
-      "phone": player.phone,
-      "address1": tran.withdraw.get('bankAddress')
-    };
-  } else if (tran.withdrawTo === 'wallet') {
-    transferMode = 'upi';
-    bene['vpa'] = tran.withdraw.get('walletAddress');
-  } else if (tran.withdrawTo === 'upi') {
-    transferMode = 'upi';
-    bene['vpa'] = tran.withdraw.get('upiId');
-  }
-
-  let data = JSON.stringify({
-    "amount": tran.totalAmount,
-    "transferId": tran._id,
-    "transferMode": transferMode,
-    "remarks": "withdraw request",
-    "beneDetails": bene
-  });
-
-  let config = {
-    method: 'post',
-    url: 'https://payout-api.cashfree.com/payout/v1/authorize',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-client-id': row.one.PAYOUT_ID,
-      'x-client-secret': row.one.PAYOUT_SECRET,
-    }
-  };
-
-  let response = await axios(config);
-  if (response['data']['status'] === 'ERROR') {
-
-    return next(
-      new ErrorResponse(response['data']['message'])
-    );
-
-  }
-
-  let token = response['data']['data']['token']
-  //   console.log(token);
-  let url = 'https://payout-api.cashfree.com/payout/v1/directTransfer';
-  console.log(data);
-  let resPayout = await axios({
-    method: 'post',
-    url: url,
-    data: data,
-    headers: {
-      Authorization: 'Bearer ' + token,
-    }
-
-  })
-
-  if (response['data']['status'] === 'ERROR') {
-
-    return next(
-      new ErrorResponse(response['data']['message'])
-    );
-
-  }
-  let updateData = { 'paymentStatus': 'ERROR', gateWayResponse: JSON.stringify(resPayout['data']) };
-  if (resPayout['data']['status'] == 'SUCCESS') {
-    updateData['status'] = 'complete';
-    updateData['paymentStatus'] = 'SUCCESS';
-  }
-  if (resPayout['data']['status'] == 'PENDING') {
-    updateData['paymentStatus'] = 'PENDING';
-  }
-  await Transaction.findByIdAndUpdate(tran._id, updateData);
-
-  res.status(200).json({
-    success: true,
-    data: resPayout['data']
-  });
-
-});
-exports.upiValidate = async (req, res, next) => {
-  //disalbe it
-  return { 'status': 'SUCCESS' };
-  //asyncHandler(async (req, res, next) => {
-  const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
-  let { upiId } = req.body;
-
-  //console.log('req.query', upiId);
-
-  let config = {
-    method: 'post',
-    url: 'https://payout-api.cashfree.com/payout/v1/authorize',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-client-id': row.one.PAYOUT_ID,
-      'x-client-secret': row.one.PAYOUT_SECRET,
-    }
-  };
-
-  let response = await axios(config);
-
-  if (response['data']['status'] === 'ERROR') {
-
-    return response['data'];
-
-  }
-
-  let token = response['data']['data']['token']
-  //   console.log(token);
-  //let url = 'https://payout-api.cashfree.com/payout/v1/validation/upiDetails?vpa=success@upi&name=Cashfree';
-  let url = 'https://payout-api.cashfree.com/payout/v1/validation/upiDetails?vpa=' + upiId;
-
-
-  let resPayout = await axios({
-    method: 'get',
-    url: url,
-    headers: {
-      Authorization: 'Bearer ' + token,
-    }
-
-  });
-  // console.log('upi-verify', upiId, resPayout['data']);
-  // if (resPayout['data']['status'] === 'ERROR') {
-
-  //   return resPayout['data'];
-
-  // }
-
-  return resPayout['data'];
-};
-
-exports.panValidate = async (req, res, next) => {
-  //asyncHandler(async (req, res, next) => {
-  if (!req.player) {
-    return next(
-      new ErrorResponse(`Player not found`)
-    );
-  }
-  if (req.panStatus === 'verified') {
-    return next(
-      new ErrorResponse(`Pan is already verified`)
-    );
-  }
-  const row = await Setting.findOne({ type: 'PAYMENT', name: 'CASHFREE' });
-  let { name, pan } = req.body;
-
-  let data = JSON.stringify({
-    name,
-    pan
-  });
-  let config = {
-    method: 'post',
-    url: 'https://sandbox.cashfree.com/verification/pan',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-client-id': row.one.APP_ID,
-      'x-client-secret': row.one.SECRET_KEY
-    },
-    data: data
-
-  };
-  try {
-    let response = await axios(config);
-    if (response['data']['valid'] === true) {
-      let updateData = { 'panNumber': response['data']['pan'], 'panStatus': 'verified' }
-      await Player.findByIdAndUpdate(req.player._id, updateData);
-
-    }
-
-
-    res.status(200).json({
-      success: true,
-      data: response['data']
-
-    });
-  } catch (error) {
-    console.error(error);
-    next(
-      new ErrorResponse(error['response']['data']['message'])
-    );
-  }
-};
-
-
-let calculateXHash = (data, row) => {
-
-  let saltKey = row.one.SALT;
-  let saltIndex = row.one.SALT_INDEX
-  const sha256String = crypto.createHash('sha256').update(`${data}${saltKey}`).digest('hex');
-  return `${sha256String}###${saltIndex}`;
-}
+ 
