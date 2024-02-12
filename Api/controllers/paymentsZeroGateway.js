@@ -100,7 +100,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
       "payment_name":'test',
       "payment_phone":'1234567890',
       "payment_email":'test@test.com',
-      "redirect_url":process.env.API_URI + '/payments/zeropg/notify?payment_id='+tran._id,
+      "redirect_url":process.env.API_URI + '/payments/zeropg/notify/',
   };
 
   console.log(data, 'data');
