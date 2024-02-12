@@ -10,6 +10,8 @@ const {
 } = require('../controllers/settings');
 const paymentCashfreeCtrl = require('../controllers/paymentsCashfree');
 const upiCtrl = require('../controllers/paymentsUpi');
+const zeroCtrl = require('../controllers/paymentsZeroGateway');
+
 
 const router = express.Router({ mergeParams: true });
 
@@ -33,6 +35,8 @@ router.route('/cashfree/payout').post(protect, paymentCashfreeCtrl.payout);
 router.route('/cashfree/key').post(protect, paymentCashfreeCtrl.getKey);
 router.route('/cashfree/notify').post(paymentCashfreeCtrl.handleNotify);
 
+router.route('/zeropg/token').post(protect, zeroCtrl.getToken);
+router.route('/zeropg/webhook').post(zeroCtrl.handleNotify);
 router
     .route('/:id')
     .get(protect, getSetting)
