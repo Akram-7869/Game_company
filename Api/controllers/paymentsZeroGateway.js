@@ -125,7 +125,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
 })
     .then(function (response) {
     
-       console.log(response);
+       console.log(response.data);
        return    res.status(200).json({
         success: true,
         data: { id: tran._id, url: response.data }
@@ -151,7 +151,7 @@ exports.getKey = asyncHandler(async (req, res, next) => {
 });
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {
-  console.log('zeroo-notify-body',req.query);
+  console.log('handleNotify-notify-body',req.query);
   let { payment_id } = req.query;
   const url ='https://zgw.oynxdigital.com/api_payment_status.php';
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
@@ -176,7 +176,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 })
     .then(function (response) {
       
-      console.log(response);
+      console.log(response.data);
 
       return res.status(200).json({
         success: true,
