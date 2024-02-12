@@ -114,7 +114,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     method: 'POST',
     url: gatewayurl,
     headers: { accept: 'application/json', 'Content-Type': 'application/json', },
-    data:  data
+    data:  {"init_payment" : data}
   };
 
   axios
@@ -162,7 +162,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
     method: 'POST',
     url: gatewayurl,
     headers: { accept: 'application/json', 'Content-Type': 'application/json', },
-    data:  data
+    data:  {"fetch_payment" : data}
   };
 
   axios
