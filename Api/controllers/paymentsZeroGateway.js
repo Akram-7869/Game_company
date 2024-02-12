@@ -103,7 +103,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
       "redirect_url":process.env.API_URI + '/payments/zeropg/notify?payment_id='+tran._id,
   };
 
-  
+  console.log(data, 'data');
   //let urlpg = 'https://api.phonepe.com/apis/hermes/pg/v1/pay';
   let gatewayurl = 'https://zgw.oynxdigital.com/api_payment_init.php';
   if (row.one.mode === 'production') {
