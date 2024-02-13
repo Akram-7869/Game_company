@@ -113,8 +113,9 @@ exports.getToken = asyncHandler(async (req, res, next) => {
         );
     }
     let totalAmount = amount + gst;
+    //const upi_qr = `upi://pay?pa=${upi_id}&pn=${business_name}&am=${amount}&tn=${payment_id}&cu=${cu}`;
 
-    let url = `upi://pay?pa=${setting.upi.va}&pn=${setting.upi.name}&am=${totalAmount}&cu=INR`;
+    let url = `upi://pay?pa=${setting.upi.va}&pn=${setting.upi.name}&am=${totalAmount}&tn=${tran._id}&cu=INR`;
     //  console.log(response.data);
     res.status(200).json({
         success: true,

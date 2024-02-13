@@ -8,6 +8,7 @@ const Coupon = require('../models/Coupon');
 // const Player = require('../models/Player');
 // const PlayerCtrl = require('./players');
 let axios = require('axios');
+const urlParser = require('url');
 
 
 
@@ -94,31 +95,49 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     payment_email: 'test@test.com',
     redirect_url: process.env.API_URI + '/payments/zeropg/notify?payment_id=' + tran._id,
   };
-   let gatewayurl = 'https://zgw.oynxdigital.com/api_payment_init.php';
+  let gatewayurl = 'https://zgw.oynxdigital.com/api_payment_init.php';
   if (row.one.mode === 'production') {
     gatewayurl = 'https://zgw.oynxdigital.com/api_payment_init.php';
   }
-  console.log(data,'input');
-  axios.post(gatewayurl, { init_payment: data }, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(function (response) {
+  console.log(data, 'input');
+  data = {
+    amount: amount,
+    email_field: req.player.email
+  };
+  let url = 'https://zgw.oynxdigital.com/payment1.php?i='+row.one.APP_ID;
 
-      console.log(response.data, 'link-response');
+
+  axios.post(url, data, { maxRedirects: 0, validateStatus: null })
+    .then(async(response) => {
+      if(response.status >= 300 && response.status < 400) {
+        const redirectedPath = response.headers.location;
+    const parsedOriginalUrl = urlParser.parse(url);
+    const redirectedUrl = `${parsedOriginalUrl.protocol}//${parsedOriginalUrl.hostname}${redirectedPath}`;
+    console.log("Redirected URL: " + redirectedUrl);
+    const match = response.headers.location.match(/[?&]i=([^&]+)/);
+    
+    if (match) {
+      const iValue = match[1];
+      await Transaction.findByIdAndUpdate(tran._id, { paymentId: iValue });     
       return res.status(200).json({
         success: true,
-        data: { id: tran._id, url: response.data }
+        data: { id: tran._id, url: redirectedUrl}
       });
-
-    })
-    .catch(function (error) {
-      console.log(error.data);
+    } else {
       return next(
         new ErrorResponse(`Try again`)
       );
-    });
+    }
+  }
+
+
+})
+  .catch(function (error) {
+    console.log(error);
+    return next(
+      new ErrorResponse(`Try again`)
+    );
+  });
 });
 
 
@@ -142,7 +161,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
     .then(async function (response) {
 
       console.log(response.data, 'hook-reponse');
-     // await handleSuccess(payment_id);
+      // await handleSuccess(payment_id,response);
       return res.status(200).json({
         success: true,
         data: response.data
@@ -157,63 +176,60 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 });
 
 
-let handleSuccess = async (orderId) => {
+let handleSuccess = async (orderId, responsObj) => {
 
-  let tran = await Transaction.findOne({ _id: orderId, status: 'log' });
+  let tran = await Transaction.findOne({ paymentId: orderId, status: 'log' });
   if (!tran) {
+    return;
+  }
+  if(tran.paymentStatus =='FAILED'){
     return;
   }
   let updateField = {}
   let playerStat = {};
   let player;
+  updateField = { status: 'complete', 'paymentStatus': responsObj.data[0].payment_status.toUpperCase(), note: responsObj.data[0].utr +' '+responsObj.data[0].payment_mode };
+  if (responsObj.data[0].payment_status.toUpperCase() === 'SUCCESS') {
+     player = await tran.creditPlayerDeposit(tran.amount);
+  }
+  await Transaction.findByIdAndUpdate(tran._id, updateField);
+  console.log('Deposit added');
 
- 
-    updateField = { status: 'complete', 'paymentStatus': responsObj.data.state, paymentId: responsObj.data.transactionId };
 
-    if (responsObj.code === 'PAYMENT_SUCCESS') {
-      updateField = { status: 'complete', 'paymentStatus': 'SUCCESS', paymentId: responsObj.data.transactionId };
-      player = await tran.creditPlayerDeposit(tran.amount);
+  if (tran.couponId.length === 24) {
+    let bonusAmount = 0;
+    let couponRec = await Coupon.findOne({ 'minAmount': { $lte: amount }, 'maxAmount': { $gte: amount }, '_id': tran.couponId });
+    if (!couponRec) {
+      console.log('Coupon not found');
+      res.status(200);
+      return;
+    }
+    if (couponRec.couponType == 'percentage') {
+      bonusAmount = amount * (couponRec.couponAmount * 0.01);
+    } else {
+      bonusAmount = couponRec.couponAmount;
     }
 
-
-    await Transaction.findByIdAndUpdate(tran._id, updateField);
-    console.log('Deposit added');
- 
-
-    if (tran.couponId.length === 24) {
-      let bonusAmount = 0;
-      let couponRec = await Coupon.findOne({ 'minAmount': { $lte: amount }, 'maxAmount': { $gte: amount }, '_id': tran.couponId });
-      if (!couponRec) {
-        console.log('Coupon not found');
-        res.status(200);
-        return;
-      }
-      if (couponRec.couponType == 'percentage') {
-        bonusAmount = amount * (couponRec.couponAmount * 0.01);
-      } else {
-        bonusAmount = couponRec.couponAmount;
-      }
-
-      let tranBonusData = {
-        'playerId': tran.playerId,
-        'amount': bonusAmount,
-        'transactionType': "credit",
-        'note': 'Bonus amount',
-        'paymentGateway': 'Cashfree Pay',
-        'logType': 'bonus',
-        'prevBalance': player.balance,
-        'paymentStatus': 'SUCCESS',
-        'status': 'complete',
-        'paymentId': tran._id,
-        'stateCode': player.stateCode
-
-      }
-      bonusTran = await Transaction.create(tranBonusData);
-      bonusTran.creditPlayerBonus(bonusAmount);
-      console.log('bonus added');
+    let tranBonusData = {
+      'playerId': tran.playerId,
+      'amount': bonusAmount,
+      'transactionType': "credit",
+      'note': 'Bonus amount',
+      'paymentGateway': 'Cashfree Pay',
+      'logType': 'bonus',
+      'prevBalance': player.balance,
+      'paymentStatus': 'SUCCESS',
+      'status': 'complete',
+      'paymentId': tran._id,
+      'stateCode': player.stateCode
 
     }
-  
+    bonusTran = await Transaction.create(tranBonusData);
+    bonusTran.creditPlayerBonus(bonusAmount);
+    console.log('bonus added');
+
+  }
+
 
   // res.status(200).json({
   //   success: true,
