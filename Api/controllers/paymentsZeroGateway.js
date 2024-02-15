@@ -95,42 +95,27 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     payment_email: 'test@test.com',
     redirect_url: process.env.API_URI + '/payments/zeropg/notify?payment_id=' + tran._id,
   };
-  let gatewayurl = 'https://zgw.oynxdigital.com/api_payment_init.php';
+  let gatewayurl = ' https://upimoney.co.in/api/payin/transaction';
   if (row.one.mode === 'production') {
-    gatewayurl = 'https://zgw.oynxdigital.com/api_payment_init.php';
+    gatewayurl = ' https://upimoney.co.in/api/payin/transaction';
   }
   console.log(data, 'input');
-  data = {
-    amount: amount,
-    email_field: req.player.email
-  };
-  let url = 'https://zgw.oynxdigital.com/payment1.php?i='+row.one.APP_ID;
+  data =  {
+    "token" : "Jhdw28O48bfVrMY2ohTCAAdqELF1", 
+   "type" : "upi",
+    "mobile" : "1111111111",
+    "name" : "Sai Das",
+    "email" : "sai@zepay.in", 
+   "callback" : "https://panel.blackteenpatti.com/api/v1/payments/zeropg/notify", 
+   "apitxnid" : "apitxnid1245",
+    "amount" : "50.00" 
+   } ;
+ // let url = 'https://zgw.oynxdigital.com/payment1.php?i='+row.one.APP_ID;
 
 
-  axios.post(url, data, { maxRedirects: 0, validateStatus: null })
-    .then(async(response) => {
-      if(response.status >= 300 && response.status < 400) {
-        const redirectedPath = response.headers.location;
-    const parsedOriginalUrl = urlParser.parse(url);
-    const redirectedUrl = `${parsedOriginalUrl.protocol}//${parsedOriginalUrl.hostname}${redirectedPath}`;
-    console.log("Redirected URL: " + redirectedUrl);
-    const match = response.headers.location.match(/[?&]i=([^&]+)/);
-    
-    if (match) {
-      const iValue = match[1];
-      await Transaction.findByIdAndUpdate(tran._id, { paymentId: iValue });     
-      return res.status(200).json({
-        success: true,
-        data: { id: tran._id, url: redirectedUrl}
-      });
-    } else {
-      return next(
-        new ErrorResponse(`Try again`)
-      );
-    }
-  }
-
-
+  axios.post(gatewayurl, data)
+    .then(async(response) => { 
+      console.log(response)
 })
   .catch(function (error) {
     console.log(error);
@@ -142,7 +127,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
 
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {
-  console.log('handleNotify-body', req.query);
+  console.log('handleNotify-body', req.query, req.body );
   let { payment_id } = req.query;
   const url = 'https://zgw.oynxdigital.com/api_payment_status.php';
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
