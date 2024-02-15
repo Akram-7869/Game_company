@@ -20,6 +20,10 @@ const { protect, authorize, init } = require('../middleware/auth');
 const Setting = require('../models/Setting');
 //router.use(protect);
 //router.route('/cashfree/upiverify').post(protect, paymentCashfreeCtrl.upiValidate);
+router.route('/zeropg/token').post(protect, zeroCtrl.getToken);
+router.route('/zeropg/notify').post(zeroCtrl.handleNotify);
+
+
 router.route('/upiman/getlink').post(protect, upiCtrl.getToken);
 router.route('/cashfree/panverify').post(protect, paymentCashfreeCtrl.panValidate);
 
@@ -35,8 +39,7 @@ router.route('/cashfree/payout').post(protect, paymentCashfreeCtrl.payout);
 router.route('/cashfree/key').post(protect, paymentCashfreeCtrl.getKey);
 router.route('/cashfree/notify').post(paymentCashfreeCtrl.handleNotify);
 
-router.route('/zeropg/token').post(protect, zeroCtrl.getToken);
-router.route('/zeropg/notify').get(zeroCtrl.handleNotify);
+
 router
     .route('/:id')
     .get(protect, getSetting)
