@@ -17,72 +17,72 @@ const urlParser = require('url');
 
 exports.getToken = asyncHandler(async (req, res, next) => {
   let { amount, membership_id = "", coupon_id = "" } = req.body;
-  const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
-  if (amount <= 0) {
-    return next(
-      new ErrorResponse(`Amount required`)
-    );
-  }
-  //create a transaction ;
-  if (!req.player) {
-    return next(
-      new ErrorResponse(`Player not found`)
-    );
-  }
-  //check coupon
-  if (coupon_id.length === 24) {
-    let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true, _id: coupon_id });
-    if (!couponRec) {
-      return next(
-        new ErrorResponse(`Invalid Coupon`)
-      );
-    }
-    if (couponRec.expiryDate) {
-      let today = new Date();
-      if (couponRec.expiryDate < today) {
-        await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
-        return next(
-          new ErrorResponse(`Code Expired`)
-        );
+  // const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
+  // if (amount <= 0) {
+  //   return next(
+  //     new ErrorResponse(`Amount required`)
+  //   );
+  // }
+  // //create a transaction ;
+  // if (!req.player) {
+  //   return next(
+  //     new ErrorResponse(`Player not found`)
+  //   );
+  // }
+  // //check coupon
+  // if (coupon_id.length === 24) {
+  //   let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true, _id: coupon_id });
+  //   if (!couponRec) {
+  //     return next(
+  //       new ErrorResponse(`Invalid Coupon`)
+  //     );
+  //   }
+  //   if (couponRec.expiryDate) {
+  //     let today = new Date();
+  //     if (couponRec.expiryDate < today) {
+  //       await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
+  //       return next(
+  //         new ErrorResponse(`Code Expired`)
+  //       );
 
-      }
-    }
-    if (couponRec.useOnlyOnce === true) {
-      let used = await Transaction.findOne({ 'playerId': req.player._id, 'couponId': couponRec._id, 'status': 'complete' });
-      if (used) {
-        return next(new ErrorResponse(`Code Used`));
-      }
-    }
-    if (couponRec.usageLimit > 1) {
-      let useCount = await Transaction.find({ 'couponId': couponRec._id });
-      if (useCount > couponRec.usageLimit) {
-        await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
-        return next(new ErrorResponse(`Code Limit reached`));
+  //     }
+  //   }
+  //   if (couponRec.useOnlyOnce === true) {
+  //     let used = await Transaction.findOne({ 'playerId': req.player._id, 'couponId': couponRec._id, 'status': 'complete' });
+  //     if (used) {
+  //       return next(new ErrorResponse(`Code Used`));
+  //     }
+  //   }
+  //   if (couponRec.usageLimit > 1) {
+  //     let useCount = await Transaction.find({ 'couponId': couponRec._id });
+  //     if (useCount > couponRec.usageLimit) {
+  //       await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
+  //       return next(new ErrorResponse(`Code Limit reached`));
 
-      }
-    }
+  //     }
+  //   }
 
-  }
+  // }
 
-  let tranData = {
-    'playerId': req.player._id,
-    'amount': amount,
-    'couponId': coupon_id,
-    // 'coin': coinDoc.coin,
-    'membershipId': membership_id,
-    'transactionType': "credit",
-    'note': req.body.note,
-    'paymentGateway': 'Phonepay',
-    'logType': 'payment',
-    'prevBalance': 0,
-    'stateCode': req.player.stateCode
-  }
-  let tran = await Transaction.create(tranData);
-  if (!tran._id) {
-    return next(
-      new ErrorResponse(`Provide all required fields`)
-    );
-  }
+  // let tranData = {
+  //   'playerId': req.player._id,
+  //   'amount': amount,
+  //   'couponId': coupon_id,
+  //   // 'coin': coinDoc.coin,
+  //   'membershipId': membership_id,
+  //   'transactionType': "credit",
+  //   'note': req.body.note,
+  //   'paymentGateway': 'Phonepay',
+  //   'logType': 'payment',
+  //   'prevBalance': 0,
+  //   'stateCode': req.player.stateCode
+  // }
+  // let tran = await Transaction.create(tranData);
+  // if (!tran._id) {
+  //   return next(
+  //     new ErrorResponse(`Provide all required fields`)
+  //   );
+  // }
 
   let data = {
     account_id: row.one.APP_ID,
