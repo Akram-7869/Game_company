@@ -84,17 +84,17 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   //   );
   // }
 
-  let data = {
-    account_id: row.one.APP_ID,
-    secret_key: row.one.SECRET_KEY,
-    payment_id: tran._id,
-    payment_purpos: 'Add Money',
-    payment_amount: amount,
-    payment_name: 'test',
-    payment_phone: 1234567890,
-    payment_email: 'test@test.com',
-    redirect_url: process.env.API_URI + '/payments/zeropg/notify?payment_id=' + tran._id,
-  };
+  // let data = {
+  //   account_id: row.one.APP_ID,
+  //   secret_key: row.one.SECRET_KEY,
+  //   payment_id: tran._id,
+  //   payment_purpos: 'Add Money',
+  //   payment_amount: amount,
+  //   payment_name: 'test',
+  //   payment_phone: 1234567890,
+  //   payment_email: 'test@test.com',
+  //   redirect_url: process.env.API_URI + '/payments/zeropg/notify?payment_id=' + tran._id,
+  // };
   let gatewayurl = ' https://upimoney.co.in/api/payin/transaction';
   if (row.one.mode === 'production') {
     gatewayurl = ' https://upimoney.co.in/api/payin/transaction';
