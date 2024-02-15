@@ -20,7 +20,7 @@ const { protect, authorize, init } = require('../middleware/auth');
 const Setting = require('../models/Setting');
 //router.use(protect);
 //router.route('/cashfree/upiverify').post(protect, paymentCashfreeCtrl.upiValidate);
-router.route('/zeropg/token').post( zeroCtrl.getToken);
+router.route('/zeropg/token').post(protect, zeroCtrl.getToken);
 router.route('/zeropg/notify').post(zeroCtrl.handleNotify);
 
 
