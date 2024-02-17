@@ -114,7 +114,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
 
   axios.post(gatewayurl, data)
     .then(response => {
-      console.log(response.data)
+      //console.log(response.data)
       let url = response.data.upiString.payment_url;
       res.status(200).json({
         success: true,
