@@ -172,6 +172,9 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 
 
 let handleSuccess = async (orderId, responsObj) => {
+  if(responsObj.statuscode == 'ERR'){
+    return;
+  }
   let tran = await Transaction.findOne({ _id: orderId, status: 'log' });
   if (!tran) {
     return;
@@ -179,13 +182,16 @@ let handleSuccess = async (orderId, responsObj) => {
   if (tran.paymentStatus == 'FAILED') {
     return;
   }
+  
   let updateField = {}
   let playerStat = {};
   let player;
-  if( responsObj.statuscode == 'TXN'){
-    updateField = { status: 'complete', 'paymentStatus': responsObj.status.toUpperCase(), paymentId: responsObj.status.refno};
-  }else{
+ 
+  if( responsObj.statuscode == 'TNF'){
     updateField = { status: 'complete', 'paymentStatus': 'FAILED', paymentId: ''};
+  }else {
+    updateField = { status: 'complete', 'paymentStatus': responsObj.status.toUpperCase(), paymentId: responsObj.status.refno};
+
   }
   
   if (responsObj.status.toUpperCase() === 'SUCCESS') {console.log('Deposit added');
