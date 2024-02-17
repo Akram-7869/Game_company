@@ -17,72 +17,72 @@ const urlParser = require('url');
 
 exports.getToken = asyncHandler(async (req, res, next) => {
   let { amount, membership_id = "", coupon_id = "" } = req.body;
-  // const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
-  // if (amount <= 0) {
-  //   return next(
-  //     new ErrorResponse(`Amount required`)
-  //   );
-  // }
-  // //create a transaction ;
-  // if (!req.player) {
-  //   return next(
-  //     new ErrorResponse(`Player not found`)
-  //   );
-  // }
-  // //check coupon
-  // if (coupon_id.length === 24) {
-  //   let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true, _id: coupon_id });
-  //   if (!couponRec) {
-  //     return next(
-  //       new ErrorResponse(`Invalid Coupon`)
-  //     );
-  //   }
-  //   if (couponRec.expiryDate) {
-  //     let today = new Date();
-  //     if (couponRec.expiryDate < today) {
-  //       await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
-  //       return next(
-  //         new ErrorResponse(`Code Expired`)
-  //       );
+  const row = await Setting.findOne({ type: 'PAYMENT', name: 'UPIMONEY' });
+  if (amount <= 0) {
+    return next(
+      new ErrorResponse(`Amount required`)
+    );
+  }
+  //create a transaction ;
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player not found`)
+    );
+  }
+  //check coupon
+  if (coupon_id.length === 24) {
+    let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true, _id: coupon_id });
+    if (!couponRec) {
+      return next(
+        new ErrorResponse(`Invalid Coupon`)
+      );
+    }
+    if (couponRec.expiryDate) {
+      let today = new Date();
+      if (couponRec.expiryDate < today) {
+        await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
+        return next(
+          new ErrorResponse(`Code Expired`)
+        );
 
-  //     }
-  //   }
-  //   if (couponRec.useOnlyOnce === true) {
-  //     let used = await Transaction.findOne({ 'playerId': req.player._id, 'couponId': couponRec._id, 'status': 'complete' });
-  //     if (used) {
-  //       return next(new ErrorResponse(`Code Used`));
-  //     }
-  //   }
-  //   if (couponRec.usageLimit > 1) {
-  //     let useCount = await Transaction.find({ 'couponId': couponRec._id });
-  //     if (useCount > couponRec.usageLimit) {
-  //       await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
-  //       return next(new ErrorResponse(`Code Limit reached`));
+      }
+    }
+    if (couponRec.useOnlyOnce === true) {
+      let used = await Transaction.findOne({ 'playerId': req.player._id, 'couponId': couponRec._id, 'status': 'complete' });
+      if (used) {
+        return next(new ErrorResponse(`Code Used`));
+      }
+    }
+    if (couponRec.usageLimit > 1) {
+      let useCount = await Transaction.find({ 'couponId': couponRec._id });
+      if (useCount > couponRec.usageLimit) {
+        await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
+        return next(new ErrorResponse(`Code Limit reached`));
 
-  //     }
-  //   }
+      }
+    }
 
-  // }
+  }
 
-  // let tranData = {
-  //   'playerId': req.player._id,
-  //   'amount': amount,
-  //   'couponId': coupon_id,
-  //   // 'coin': coinDoc.coin,
-  //   'membershipId': membership_id,
-  //   'transactionType': "credit",
-  //   'note': req.body.note,
-  //   'paymentGateway': 'Phonepay',
-  //   'logType': 'payment',
-  //   'prevBalance': 0,
-  //   'stateCode': req.player.stateCode
-  // }
-  // let tran = await Transaction.create(tranData);
-  // if (!tran._id) {
-  //   return next(
-  //     new ErrorResponse(`Provide all required fields`)
-  //   );
-  // }
+  let tranData = {
+    'playerId': req.player._id,
+    'amount': amount,
+    'couponId': coupon_id,
+    // 'coin': coinDoc.coin,
+    'membershipId': membership_id,
+    'transactionType': "credit",
+    'note':  'Add Money',
+    'paymentGateway': 'Phonepay',
+    'logType': 'payment',
+    'prevBalance': 0,
+    'stateCode': req.player.stateCode
+  }
+  let tran = await Transaction.create(tranData);
+  if (!tran._id) {
+    return next(
+      new ErrorResponse(`Provide all required fields`)
+    );
+  }
 
   // let data = {
   //   account_id: row.one.APP_ID,
@@ -99,43 +99,51 @@ exports.getToken = asyncHandler(async (req, res, next) => {
   if (row.one.mode === 'production') {
     gatewayurl = ' https://upimoney.co.in/api/payin/transaction';
   }
-  console.log(data, 'input');
-  data =  {
-    "token" : "Jhdw28O48bfVrMY2ohTCAAdqELF1", 
-   "type" : "upi",
-    "mobile" : "1111111111",
-    "name" : "Sai Das",
-    "email" : "sai@zepay.in", 
-   "callback" : "https://panel.blackteenpatti.com/api/v1/payments/zeropg/notify", 
-   "apitxnid" : "apitxnid1245",
-    "amount" : "50.00" 
-   } ;
- // let url = 'https://zgw.oynxdigital.com/payment1.php?i='+row.one.APP_ID;
-
+  //console.log(data, 'input');
+  let data = {
+    "token": row.one.SECRET_KEY,
+    "type": "upi",
+    "mobile": "1111111111",
+    "name": req.player.firstName ?? 'user',
+    "email": req.player.email ?? 'test@tp.com',
+    "callback": "https://panel.blackteenpatti.com/api/v1/payments/zeropg/notify",
+    "apitxnid": tran._id,
+    "amount": amount
+  };
+ 
 
   axios.post(gatewayurl, data)
-    .then(async(response) => { 
-      console.log(response)
-})
-  .catch(function (error) {
-    console.log(error);
-    return next(
-      new ErrorResponse(`Try again`)
-    );
-  });
+    .then( response => {
+      let url =response.data.upiString.payment_url;
+      res.status(200).json({
+        success: true,
+        data: { url, id: tran._id }
+    });
+    })
+    .catch(function (error) {
+      console.log(error.data || error);
+      return next(
+        new ErrorResponse(`Try again`)
+      );
+    });
 });
 
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {
-  console.log('handleNotify-body', req.query, req.body );
-  let { payment_id } = req.query;
-  const url = 'https://zgw.oynxdigital.com/api_payment_status.php';
+  console.log('handleNotify-body', req.query, req.body);
+  // {
+  //      apitxnid: 'apitxnid12456',
+  //      amount: 1,
+  //      status: 'success',
+  //      refno: '404811830649'
+  //    }
+  let {  apitxnid} = req.query;
+ 
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
-
+  const url = 'https://upimoney.co.in/api/transaction/query?token='+ row.SECRET_KEY ;
   data = {
-    "account_id": row.one.APP_ID,
-    "secret_key": row.one.SECRET_KEY,
-    "payment_id": payment_id
+    "apitxnid": apitxnid,
+    "product": "payout"
   };
 
   axios.post(url, { fetch_payment: data }, {
@@ -167,15 +175,15 @@ let handleSuccess = async (orderId, responsObj) => {
   if (!tran) {
     return;
   }
-  if(tran.paymentStatus =='FAILED'){
+  if (tran.paymentStatus == 'FAILED') {
     return;
   }
   let updateField = {}
   let playerStat = {};
   let player;
-  updateField = { status: 'complete', 'paymentStatus': responsObj.data[0].payment_status.toUpperCase(), note: responsObj.data[0].utr +' '+responsObj.data[0].payment_mode };
+  updateField = { status: 'complete', 'paymentStatus': responsObj.data[0].payment_status.toUpperCase(), note: responsObj.data[0].utr + ' ' + responsObj.data[0].payment_mode };
   if (responsObj.data[0].payment_status.toUpperCase() === 'SUCCESS') {
-     player = await tran.creditPlayerDeposit(tran.amount);
+    player = await tran.creditPlayerDeposit(tran.amount);
   }
   await Transaction.findByIdAndUpdate(tran._id, updateField);
   console.log('Deposit added');
