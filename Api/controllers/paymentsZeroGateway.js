@@ -172,8 +172,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 
 
 let handleSuccess = async (orderId, responsObj) => {
-
-  let tran = await Transaction.findOne({ paymentId: orderId, status: 'log' });
+  let tran = await Transaction.findOne({ _id: orderId, status: 'log' });
   if (!tran) {
     return;
   }
@@ -184,11 +183,12 @@ let handleSuccess = async (orderId, responsObj) => {
   let playerStat = {};
   let player;
   updateField = { status: 'complete', 'paymentStatus': responsObj.status.toUpperCase(), paymentId: responsObj.status.refno};
-  if (responsObj.status.toUpperCase() === 'SUCCESS') {
+  if (responsObj.status.toUpperCase() === 'SUCCESS') {console.log('Deposit added');
     player = await tran.creditPlayerDeposit(tran.amount);
   }
+  console.log('tan updated');
   await Transaction.findByIdAndUpdate(tran._id, updateField);
-  console.log('Deposit added');
+  
 
 
   if (tran.couponId.length === 24) {
@@ -222,6 +222,9 @@ let handleSuccess = async (orderId, responsObj) => {
     bonusTran = await Transaction.create(tranBonusData);
     bonusTran.creditPlayerBonus(bonusAmount);
     console.log('bonus added');
+
+  
+   
 
   }
 
