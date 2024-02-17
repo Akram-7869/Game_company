@@ -74,7 +74,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     'note':  'Add Money',
     'paymentGateway': 'Phonepay',
     'logType': 'payment',
-    'prevBalance': req.player,deposit,
+    'prevBalance': 0,
     'stateCode': req.player.stateCode
   }
   let tran = await Transaction.create(tranData);
