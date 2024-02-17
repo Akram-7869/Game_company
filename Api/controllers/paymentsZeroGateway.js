@@ -71,7 +71,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     // 'coin': coinDoc.coin,
     'membershipId': membership_id,
     'transactionType': "credit",
-    'note':  'Add Money',
+    'note': 'Add Money',
     'paymentGateway': 'Phonepay',
     'logType': 'payment',
     'prevBalance': 0,
@@ -110,16 +110,16 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     "apitxnid": tran._id,
     "amount": amount
   };
- 
+
 
   axios.post(gatewayurl, data)
-    .then( response => {
+    .then(response => {
       console.log(response.data)
-      let url =response.data.upiString.payment_url;
+      let url = response.data.upiString.payment_url;
       res.status(200).json({
         success: true,
-        data: { url, id: tran._id, 'response' :response.data }
-    });
+        data: { url, id: tran._id, 'response': response.data }
+      });
     })
     .catch(function (error) {
       console.log(error.data || error);
@@ -137,15 +137,22 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   //      status: 'success',
   //      refno: '404811830649'
   //    }
-  let {  apitxnid} = req.query;
-  const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
+  let { apitxnid } = req.query;
   
-  const url = 'https://upimoney.co.in/api/transaction/query?token='+row.one.SECRET_KEY ;
+  if (!apitxnid) {
+
+    return res.status(200).json({
+      success: true,
+      data: {}
+    });
+  }
+  const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
+  const url = 'https://upimoney.co.in/api/transaction/query?token=' + row.one.SECRET_KEY;
   data = {
     "apitxnid": apitxnid,
     "product": "payin",
   };
-  axios.post(url,  data , {
+  axios.post(url, data, {
     headers: {
       'Content-Type': 'application/json'
     }
@@ -153,8 +160,11 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
     .then(async function (response) {
 
       console.log(response.data, 'hook-reponse');
-      await handleSuccess(apitxnid,response.data);
-     
+      if (response.data.statuscode == 'ERR') {
+        return;
+      }
+      await handleSuccess(apitxnid, response.data);
+
     })
     .catch(function (error) {
       console.log(error.data);
@@ -162,19 +172,17 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`Try again`)
       );
     });
-  
-    return res.status(200).json({
-        success: true,
-        data: {}
-      });
-  
+
+  return res.status(200).json({
+    success: true,
+    data: {}
+  });
+
 });
 
 
 let handleSuccess = async (orderId, responsObj) => {
-  if(responsObj.statuscode == 'ERR'){
-    return;
-  }
+  
   let tran = await Transaction.findOne({ _id: orderId, status: 'log' });
   if (!tran) {
     return;
@@ -182,24 +190,24 @@ let handleSuccess = async (orderId, responsObj) => {
   if (tran.paymentStatus == 'FAILED') {
     return;
   }
-  
+
   let updateField = {}
   let playerStat = {};
   let player;
- 
-  if( responsObj.statuscode == 'TNF'){
-    updateField = { status: 'complete', 'paymentStatus': 'FAILED', paymentId: ''};
-  }else {
-    updateField = { status: 'complete', 'paymentStatus': responsObj.status.toUpperCase(), paymentId: responsObj.status.refno};
 
+  if (responsObj.statuscode == 'TNF') {
+    updateField = { status: 'complete', 'paymentStatus': 'FAILED', paymentId: '' };
+  } else {
+    updateField = { status: 'complete', 'paymentStatus': responsObj.status.toUpperCase(), paymentId: responsObj.status.refno };
   }
-  
-  if (responsObj.status.toUpperCase() === 'SUCCESS') {console.log('Deposit added');
+
+  if (responsObj.status.toUpperCase() === 'SUCCESS') {
+    console.log('Deposit added');
     player = await tran.creditPlayerDeposit(tran.amount);
   }
   console.log('tan updated');
   await Transaction.findByIdAndUpdate(tran._id, updateField);
-  
+
 
 
   if (tran.couponId.length === 24) {
@@ -234,8 +242,8 @@ let handleSuccess = async (orderId, responsObj) => {
     bonusTran.creditPlayerBonus(bonusAmount);
     console.log('bonus added');
 
-  
-   
+
+
 
   }
 
