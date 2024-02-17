@@ -138,7 +138,31 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   //      refno: '404811830649'
   //    }
   let {  apitxnid} = req.query;
-  await handleSuccess(apitxnid,req.body);
+  const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
+  
+  const url = 'https://upimoney.co.in/api/transaction/query?token='+row.one.SECRET_KEY ;
+  data = {
+    "apitxnid": apitxnid,
+    "product": "payin",
+  };
+  axios.post(url,  data , {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(async function (response) {
+
+      console.log(response.data, 'hook-reponse');
+      await handleSuccess(apitxnid,response.data);
+     
+    })
+    .catch(function (error) {
+      console.log(error.data);
+      return next(
+        new ErrorResponse(`Try again`)
+      );
+    });
+  
     return res.status(200).json({
         success: true,
         data: {}
