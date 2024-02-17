@@ -182,7 +182,12 @@ let handleSuccess = async (orderId, responsObj) => {
   let updateField = {}
   let playerStat = {};
   let player;
-  updateField = { status: 'complete', 'paymentStatus': responsObj.status.toUpperCase(), paymentId: responsObj.status.refno};
+  if( responsObj.statuscode == 'TXN'){
+    updateField = { status: 'complete', 'paymentStatus': responsObj.status.toUpperCase(), paymentId: responsObj.status.refno};
+  }else{
+    updateField = { status: 'complete', 'paymentStatus': 'FAILED', paymentId: ''};
+  }
+  
   if (responsObj.status.toUpperCase() === 'SUCCESS') {console.log('Deposit added');
     player = await tran.creditPlayerDeposit(tran.amount);
   }
