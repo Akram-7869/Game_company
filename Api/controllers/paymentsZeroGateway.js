@@ -114,6 +114,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
 
   axios.post(gatewayurl, data)
     .then( response => {
+      console.log(response.data)
       let url =response.data.upiString.payment_url;
       res.status(200).json({
         success: true,
@@ -143,7 +144,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   const url = 'https://upimoney.co.in/api/transaction/query?token='+ row.SECRET_KEY ;
   data = {
     "apitxnid": apitxnid,
-    "product": "payout"
+    "product": "payin"
   };
 
   axios.post(url, { fetch_payment: data }, {
