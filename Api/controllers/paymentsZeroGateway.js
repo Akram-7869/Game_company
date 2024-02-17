@@ -17,7 +17,7 @@ const urlParser = require('url');
 
 exports.getToken = asyncHandler(async (req, res, next) => {
   let { amount, membership_id = "", coupon_id = "" } = req.body;
-  const row = await Setting.findOne({ type: 'PAYMENT', name: 'UPIMONEY' });
+  const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
   if (amount <= 0) {
     return next(
       new ErrorResponse(`Amount required`)
@@ -74,7 +74,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     'note':  'Add Money',
     'paymentGateway': 'Phonepay',
     'logType': 'payment',
-    'prevBalance': 0,
+    'prevBalance': req.player,deposit,
     'stateCode': req.player.stateCode
   }
   let tran = await Transaction.create(tranData);
@@ -154,10 +154,10 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
     .then(async function (response) {
 
       console.log(response.data, 'hook-reponse');
-      // await handleSuccess(payment_id,response);
+       await handleSuccess(apitxnid,response.data);
       return res.status(200).json({
         success: true,
-        data: response.data
+        data: {}
       });
     })
     .catch(function (error) {
@@ -181,8 +181,8 @@ let handleSuccess = async (orderId, responsObj) => {
   let updateField = {}
   let playerStat = {};
   let player;
-  updateField = { status: 'complete', 'paymentStatus': responsObj.data[0].payment_status.toUpperCase(), note: responsObj.data[0].utr + ' ' + responsObj.data[0].payment_mode };
-  if (responsObj.data[0].payment_status.toUpperCase() === 'SUCCESS') {
+  updateField = { status: 'complete', 'paymentStatus': responsObj.status.toUpperCase(), paymentId: responsObj.status.refno};
+  if (responsObj.status.toUpperCase() === 'SUCCESS') {
     player = await tran.creditPlayerDeposit(tran.amount);
   }
   await Transaction.findByIdAndUpdate(tran._id, updateField);
