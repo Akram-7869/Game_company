@@ -118,7 +118,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
       let url =response.data.upiString.payment_url;
       res.status(200).json({
         success: true,
-        data: { url, id: tran._id }
+        data: { url, id: tran._id, 'response' :response.data }
     });
     })
     .catch(function (error) {
