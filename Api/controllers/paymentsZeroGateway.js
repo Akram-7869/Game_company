@@ -129,7 +129,6 @@ exports.getToken = asyncHandler(async (req, res, next) => {
     });
 });
 
-
 exports.handleNotify = asyncHandler(async (req, res, next) => {
   console.log('handleNotify-body', req.query, req.body);
   // {
@@ -139,34 +138,12 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   //      refno: '404811830649'
   //    }
   let {  apitxnid} = req.query;
- 
-  const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
-  const url = 'https://upimoney.co.in/api/transaction/query?token='+ row.SECRET_KEY ;
-  data = {
-    "apitxnid": apitxnid,
-    "product": "payin"
-  };
-
-  axios.post(url, { fetch_payment: data }, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(async function (response) {
-
-      console.log(response.data, 'hook-reponse');
-       await handleSuccess(apitxnid,response.data);
-      return res.status(200).json({
+  await handleSuccess(apitxnid,req.body);
+    return res.status(200).json({
         success: true,
         data: {}
       });
-    })
-    .catch(function (error) {
-      console.log(error.data);
-      return next(
-        new ErrorResponse(`Try again`)
-      );
-    });
+  
 });
 
 

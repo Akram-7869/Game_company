@@ -14,7 +14,35 @@ var path = require('path');
 const { makeid, setkey, getKey } = require('../utils/utils');
 const { OAuth2Client } = require('google-auth-library');
 
+exports.test = asyncHandler(async (req, res, next) => {
+  const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
+  const url = 'https://upimoney.co.in/api/transaction/query?token='+row.SECRET_KEY ;
+  data = {
+    "apitxnid": '65d0a9ff8628c4cd0bfe51f7',
+    "product": "payout",
+  };
 
+  axios.post(url,  data , {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(async function (response) {
+
+      console.log(response.data, 'hook-reponse');
+      // await handleSuccess(apitxnid,response.data);
+      return res.status(200).json({
+        success: true,
+        data: {}
+      });
+    })
+    .catch(function (error) {
+      console.log(error.data);
+      return next(
+        new ErrorResponse(`Try again`)
+      );
+    });
+});
 
 // @desc      Register user
 // @route     POST /api/v1/auth/register
