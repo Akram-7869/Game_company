@@ -130,7 +130,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
 });
 
 exports.handleNotify = asyncHandler(async (req, res, next) => {
-  console.log('handleNotify-body', req.query, req.body);
+ // console.log('handleNotify-body', req.query, req.body);
   // {
   //      apitxnid: 'apitxnid12456',
   //      amount: 1,
@@ -146,6 +146,17 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
       data: {}
     });
   }
+   // console.log(responsObj,'responsObj')
+   let tran = await Transaction.findOne({ _id: apitxnid, status: 'log' });
+   if (!tran || tran.paymentStatus == 'FAILED') {
+    
+    return res.status(200).json({
+      success: true,
+      data: {}
+    });
+    
+   }
+
   const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
   const url = 'https://upimoney.co.in/api/transaction/query?token=' + row.one.SECRET_KEY;
   data = {
@@ -163,7 +174,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
       if (response.data.statuscode == 'ERR') {
         return;
       }
-      await handleSuccess(apitxnid, response.data);
+      await handleSuccess(tran, response.data);
 
     })
     .catch(function (error) {
@@ -181,15 +192,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 });
 
 
-let handleSuccess = async (orderId, responsObj) => {
-  console.log(responsObj,'responsObj')
-  let tran = await Transaction.findOne({ _id: orderId, status: 'log' });
-  if (!tran) {
-    return;
-  }
-  if (tran.paymentStatus == 'FAILED') {
-    return;
-  }
+let handleSuccess = async (tran, responsObj) => {
 
   let updateField = {}
   let playerStat = {};
@@ -241,10 +244,6 @@ let handleSuccess = async (orderId, responsObj) => {
     bonusTran = await Transaction.create(tranBonusData);
     bonusTran.creditPlayerBonus(bonusAmount);
     console.log('bonus added');
-
-
-
-
   }
 
 
