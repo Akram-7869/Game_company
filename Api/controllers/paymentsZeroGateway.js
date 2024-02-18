@@ -198,7 +198,7 @@ let handleSuccess = async (orderId, responsObj) => {
   if (responsObj.statuscode == 'TNF') {
     updateField = { status: 'complete', 'paymentStatus': 'FAILED', paymentId: '' };
   } else {
-    updateField = { status: 'complete', 'paymentStatus': responsObj.status.toUpperCase(), paymentId: responsObj.status.refno };
+    updateField = { status: 'complete', 'paymentStatus': responsObj.status.toUpperCase(), paymentId: responsObj.refno };
   }
 
   if (responsObj.status.toUpperCase() === 'SUCCESS') {
