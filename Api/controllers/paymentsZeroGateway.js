@@ -182,7 +182,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 
 
 let handleSuccess = async (orderId, responsObj) => {
-  
+  console.log(responsObj,'responsObj')
   let tran = await Transaction.findOne({ _id: orderId, status: 'log' });
   if (!tran) {
     return;
