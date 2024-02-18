@@ -137,7 +137,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
   //      status: 'success',
   //      refno: '404811830649'
   //    }
-  let { apitxnid } = req.query;
+  let { apitxnid } = req.body;
   
   if (!apitxnid) {
 
