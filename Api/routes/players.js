@@ -9,6 +9,7 @@ router.get('/commission', playerCtl.creditReferalComission);
 router.get('/winnerfeed', playerCtl.getWinnerfeed);
 router.get('/winnertop/:id', playerCtl.getWinnertop);
 router.post('/sendAppUrl', playerCtl.sendAppUrl);
+router.get('/tournaments', playerCtl.getTournaments);
 
 router.get('/versionlist', playerCtl.getVersion);
 router.get('/myrefrer', protect, playerCtl.getReferList);
@@ -18,7 +19,6 @@ router.post('/saveleaderboard', protect, playerCtl.saveLeaderBoard);
 router.post('/paymentadd', protect, playerCtl.paymentAdd);
 
 
-router.get('/tournaments', protect, playerCtl.getTournaments);
 router.get('/banners', protect, playerCtl.getBanners);
 router.post('/refer', protect, playerCtl.updateRefer);
 

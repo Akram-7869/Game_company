@@ -139,8 +139,8 @@ const userSocketMap = {};
 io.use(function (socket, next) {
   const { tkn } = socket.handshake.query;
   console.log('c', tkn);
-  if (tkn !== '1256') {
-   //  return next(new Error(''));
+  if (tkn !== '2873') {
+    return next(new Error(''));
   }
   // execute some code
   next();
