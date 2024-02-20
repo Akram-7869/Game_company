@@ -167,7 +167,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
   const client = new OAuth2Client(CLIENT_ID);
 
-  if (!email || !deviceToken ) {
+  if (!email ) {
     return next(
       new ErrorResponse(`select email`)
     );
@@ -202,7 +202,8 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     // }
 
     let fieldsToUpdate = {
-      'firebaseToken': firebaseToken, 'deviceToken': deviceToken, stateCode,
+      'firebaseToken': firebaseToken, 
+      //'deviceToken': deviceToken, stateCode,
       stateName,
       longitude,
       latitude
@@ -214,11 +215,24 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
 
   } else {
     console.log('playerRegisterEmail-new');
-    if(!firebaseToken){
+
+    if( !firebaseToken){
       return next(
-        new ErrorResponse(`Token required`)
+        new ErrorResponse(`Registration  failed retry fb `)
       );
     }
+    if( !deviceToken  ){
+      return next(
+        new ErrorResponse(`Registration  failed retry token `)
+      );
+    }
+    let playerdevice = await Player.findOne({ deviceToken: deviceToken }).lean().select({ _id: 1 });
+    if (playerdevice) {
+      return next(
+        new ErrorResponse(`Mutiple account canot be created in one device`)
+      );
+    }
+    
     try {
       ticket = await client.verifyIdToken({
         idToken: firebaseToken,
