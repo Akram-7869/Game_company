@@ -167,7 +167,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
   const client = new OAuth2Client(CLIENT_ID);
 
-  if (!email || !deviceToken || !firebaseToken || !stateCode) {
+  if (!email || !deviceToken ) {
     return next(
       new ErrorResponse(`select email`)
     );
@@ -214,6 +214,11 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
 
   } else {
     console.log('playerRegisterEmail-new');
+    if(!firebaseToken){
+      return next(
+        new ErrorResponse(`Token required`)
+      );
+    }
     try {
       ticket = await client.verifyIdToken({
         idToken: firebaseToken,
