@@ -157,45 +157,122 @@
 
 
                     $(document).ready(function (e) {
-                        $("#package").on('submit', (function (e) {
+                        // $("#package").on('submit', (function (e) {
+                        //     e.preventDefault();
+                        //     $.ajax({
+                        //         url: '<%= apiUrl +"upload/" +row._id %>',
+                        //         type: "POST",
+                        //         data: new FormData(this),
+                        //         contentType: false,
+                        //         cache: false,
+                        //         processData: false,
+                        //         success: function (data) {
+                        //             location.reload();
+                        //         },
+                        //         error: function (e) {
+                        //             alert('error');
+                        //         }
+                        //     });
+                        // }));
+
+                        // $("#imageId").on('submit', (function (e) {
+                        //     e.preventDefault();
+                        //     $.ajax({
+                        //         url: '<%= apiUrl +"upload/" +row._id %>',
+                        //         type: "POST",
+                        //         data: new FormData(this),
+                        //         contentType: false,
+                        //         cache: false,
+                        //         processData: false,
+                        //         success: function (data) {
+                        //             location.reload();
+                        //         },
+                        //         error: function (e) {
+                        //             alert('error');
+                        //         }
+                        //     });
+                        // }));
+                        $("#package").on('submit', function (e) {
                             e.preventDefault();
                             $.ajax({
+                                xhr: function () {
+                                    var xhr = new window.XMLHttpRequest();
+                                    xhr.upload.addEventListener("progress", function (evt) {
+                                        if (evt.lengthComputable) {
+                                            var percentComplete = ((evt.loaded / evt.total) * 100);
+                                            $(".progress-bar").width(percentComplete + '%');
+                                            $(".progress-bar").html(percentComplete + '%');
+                                        }
+                                    }, false);
+                                    return xhr;
+                                },
+                                type: 'POST',
                                 url: '<%= apiUrl +"upload/" +row._id %>',
-                                type: "POST",
                                 data: new FormData(this),
                                 contentType: false,
                                 cache: false,
                                 processData: false,
-                                success: function (data) {
-                                    location.reload();
+                                beforeSend: function () {
+                                    $(".progress-bar").width('0%');
                                 },
-                                error: function (e) {
-                                    alert('error');
+                                error: function () {
+                                    $('#uploadStatus').html('<p style="color:#EA4335;">File upload failed, please try again.</p>');
+                                },
+                                success: function (resp) {
+
+                                    $('#package')[0].reset();
+                                    $('#uploadStatus').html('<p style="color:#28A74B;">File has uploaded successfully!</p>');
+                                    location.reload();
+
                                 }
                             });
-                        }));
-                        $("#imageId").on('submit', (function (e) {
+                        });
+
+
+
+
+                        $("#imageId").on('submit', function (e) {
                             e.preventDefault();
                             $.ajax({
+                                xhr: function () {
+                                    var xhr = new window.XMLHttpRequest();
+                                    xhr.upload.addEventListener("progress", function (evt) {
+                                        if (evt.lengthComputable) {
+                                            var percentComplete = ((evt.loaded / evt.total) * 100);
+                                            $(".progress-bar").width(percentComplete + '%');
+                                            $(".progress-bar").html(percentComplete + '%');
+                                        }
+                                    }, false);
+                                    return xhr;
+                                },
+                                type: 'POST',
                                 url: '<%= apiUrl +"upload/" +row._id %>',
-                                type: "POST",
                                 data: new FormData(this),
                                 contentType: false,
                                 cache: false,
                                 processData: false,
-                                success: function (data) {
-                                    location.reload();
+                                beforeSend: function () {
+                                    $(".progress-bar").width('0%');
                                 },
-                                error: function (e) {
-                                    alert('error');
+                                error: function () {
+                                    $('#uploadStatus').html('<p style="color:#EA4335;">File upload failed, please try again.</p>');
+                                },
+                                success: function (resp) {
+
+                                    $('#imageId')[0].reset();
+                                    $('#uploadStatus').html('<p style="color:#28A74B;">File has uploaded successfully!</p>');
+                                    location.reload();
+
+                                    
+
                                 }
                             });
-                        }));
-
-
+                        });
 
 
                     });
+
+
                 </script>
                 <%- contentFor('BottomJs') %>
 
@@ -219,10 +296,16 @@
                                                 src="<%= process.env.IMAGE_URL + row.imageId %>">
 
                                         </div>
-                                             <div>
-                                                <input id="uploadImage" type="file" class="form-control" name="file" />
+                                        <div>
+                                            <input id="uploadImage" type="file" class="form-control" name="file" />
 
-                                             </div>
+                                        </div>
+                                        <!-- Progress bar -->
+                                        <div class="progress">
+                                            <div class="progress-bar"></div>
+                                        </div>
+                                        <!-- Display upload status -->
+                                        <div id="uploadStatus"></div>
 
                                     </div>
                                     <div class="modal-footer">
@@ -262,7 +345,11 @@
                                         </div>
 
                                         <input id="uploadImage" type="file" name="file" />
-
+                                        <div class="progress">
+                                            <div class="progress-bar"></div>
+                                        </div>
+                                        <!-- Display upload status -->
+                                        <div id="uploadStatus"></div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-light"
