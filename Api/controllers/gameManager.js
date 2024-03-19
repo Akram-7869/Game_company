@@ -35,20 +35,12 @@ exports.getGame = asyncHandler(async (req, res, next) => {
 
 
 exports.createGame = asyncHandler(async (req, res, next) => {
-  console.log(req.files.file);
-  if (!req.files) { }
-  let filename;
-  if (req.files) {
-    filename = '/img/gm/' + req.files.file.name;
-    uploadFile(req, filename, res);
-  }
-
+     
+console.log(req.body, 'req.body');
   let banner = {
     name: req.body.name,
     version: req.body.version,
-    packageId: '',
-    imageId: filename,
-    status: 'active'
+    status: req.body.status
   }
 
   const row = await Game.create(banner);

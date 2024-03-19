@@ -93,14 +93,14 @@ exports.gameAdd = asyncHandler(async (req, res, next) => {
 
 exports.gameCreate = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Game' };
-      //console.log('creating-image', req.files);
+      console.log('creating-image', apiUrl);
 
-      axios.post(apiUrl, { body: req.body, file: req.files })
+      axios.post(apiUrl+'add',  req.body)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Game' };
-                  req.flash('message', 'Data save');
-                  res.redirect(process.env.ADMIN_URL + '/admin/gamemanager');
+                   req.flash('message', 'Data save');
+                   console.log(r.data);
+                  res.redirect(process.env.ADMIN_URL + '/admin/gamemanager/'+r.data.data._id);
 
 
             })
@@ -108,9 +108,9 @@ exports.gameCreate = asyncHandler(async (req, res, next) => {
                   //   
 
                   req.flash('error', 'Data not updated');
+ 
 
             })
-      res.render('GameManager/list', { row: {} });
 });
 
 
@@ -121,7 +121,7 @@ exports.updatePackage = asyncHandler(async (req, res, next) => {
             .then(r => {
                   res.locals = { title: 'Site' };
                   req.flash('success', 'Updated');
-                  res.redirect(process.env.ADMIN_URL + '/admin/site/');
+                  res.redirect(process.env.ADMIN_URL + '/admin/gamemanager/');
                   return;
             }).catch(error => { })
 });
