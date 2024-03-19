@@ -34,27 +34,7 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-body">
-                            <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" data-bs-toggle="tab" href="#home1" role="tab">
-                                        <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
-                                        <span class="d-none d-sm-block">Home</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#logo" role="tab">
-                                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-                                        <span class="d-none d-sm-block">Site Logo</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#profile1" role="tab">
-                                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-                                        <span class="d-none d-sm-block">Package</span>
-                                    </a>
-                                </li>
 
-                            </ul>
                             <!-- Tab panes -->
                             <div class="tab-content p-3 text-muted">
                                 <div class="tab-pane active" id="home1" role="tabpanel">
@@ -90,69 +70,83 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Game Image</label>
+                                            <div class="col-md-10">
+                                                <div> <img width=100 class="img-thumbnail"
+                                                        src="<%= process.env.IMAGE_URL + row.siteLogo %>">
+
+                                                </div>
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                    data-bs-target="#imageModal">
+                                                    upload game image
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Package </label>
+                                            <div class="col-md-10">
+                                                <div>
+                                                    <%= process.env.IMAGE_URL + row.packageId %>
+
+                                                </div>
+
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                    data-bs-target="#pacakgeModal">
+                                                    upload package
+                                                </button>
+
+                                            </div>
+                                        </div>
+
 
                                         <div>
                                             <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
                                                 Submit
                                             </button>
 
+
+
                                         </div>
 
                                     </form>
 
                                     </p>
                                 </div>
-                                <div class="tab-pane" id="profile1" role="tabpanel">
-                                    <p class="mb-0">
-                                    <form id="package" name="package" action="" enctype="multipart/form-data"
-                                        method="POST">
-                                        <p class="mb-0">
-                                        <div class="mb-3">
-                                            <label class="form-label">Pacakge Path</label>
-                                            <%= process.env.IMAGE_URL + row.packageId %>
 
-                                            <input type="hidden" id="siteLogo" class="form-control" name="col"
-                                                value="package" />
+                            </div>
+
+
+
+
+                            <!-- staticBackdrop Modal -->
+                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" role="dialog"
+                                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                            </button>
                                         </div>
-
-                                        <input id="uploadImage" type="file" name="file" />
-                                         <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                                            Submit
-                                        </button>
-                                         
-                                        </p>
-                                    </form>
-                                    </p>
-                                </div>
-                                <div class="tab-pane" id="logo" role="tabpanel">
-                                    <p class="mb-0">
-                                    <p><label class="form-label">Game Icon : </label>
-
-                                        <%= process.env.IMAGE_URL + row.imageId %>
-                                    </p>
-                                    <form id="imageId" name="package" action="" enctype="multipart/form-data"
-                                        method="POST">
-                                        <p class="mb-0">
-                                        <div class="mb-3">
-                                            <label class="form-label">Game Image</label>
-                                            <input type="hidden" name="col" value="imageId" />
+                                        <div class="modal-body">
+                                            <p>I will not close if you click outside me. Don't even try to press escape
+                                                key.</p>
                                         </div>
-
-                                        <input id="uploadImage" type="file" name="file" />
-                                        <div id="preview"></div><br>
-                                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                                            Submit
-                                        </button>
-                                        <!-- <button type="reset" class="btn btn-secondary waves-effect">
-                                                Cancel
-                                            </button> -->
-                                        </p>
-                                    </form>
-
-
-                                    </p>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary">Understood</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+
+
                         </div>
                     </div>
                 </div> <!-- end col -->
@@ -231,23 +225,94 @@
 
 
                     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 </script>
                 <%- contentFor('BottomJs') %>
+
+                    <div class="modal fade" id="imageModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                        tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <form id="imageId" name="package" action="" enctype="multipart/form-data" method="POST">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Upload Game Image</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><label class="form-label">Game Icon : </label>
+
+                                        <%= process.env.IMAGE_URL + row.imageId %>
+                                    </p>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Game Image</label>
+                                            <input type="hidden" name="col" value="imageId" />
+                                        </div>
+
+                                        <input id="uploadImage" type="file" class="form-control" name="file" />
+
+
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                        Submit
+                                    </button>
+                                </div>
+                            </form>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="pacakgeModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                        tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <form id="package" name="package" action="" enctype="multipart/form-data"
+                                method="POST">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Upload Package File</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                   
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Pacakge Path</label>
+                                            <%= process.env.IMAGE_URL + row.packageId %>
+
+                                                <input type="hidden" id="siteLogo" class="form-control" name="col"
+                                                    value="package" />
+                                        </div>
+
+                                        <input id="uploadImage" type="file" name="file" />
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                        Submit
+                                    </button>
+                                </div>
+                            </form>
+
+                            </div>
+                        </div>
+
+
+
+
+
+
+                        <div class="modal-dialog">
+
+
+                        </div>
+                    </div>
+                    </div>

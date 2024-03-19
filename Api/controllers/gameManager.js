@@ -35,8 +35,12 @@ exports.getGame = asyncHandler(async (req, res, next) => {
 
 
 exports.createGame = asyncHandler(async (req, res, next) => {
-     
-console.log(req.body, 'req.body');
+
+  if (!req.body.name || req.body.version || req.body.status) {
+    return next(
+      new ErrorResponse(`All Fields Are Required`)
+    );
+  }
   let banner = {
     name: req.body.name,
     version: req.body.version,
@@ -94,7 +98,7 @@ exports.deleteGame = asyncHandler(async (req, res, next) => {
 });
 
 exports.uploadeImage = asyncHandler(async (req, res, next) => {
-  console.log('sdsdsssdsdsdsd', req.body, req.files);
+  // console.log('sdsdsssdsdsdsd', req.body, req.files);
   let row = await Game.findById(req.params.id);
 
   if (!row) {
@@ -107,34 +111,37 @@ exports.uploadeImage = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`File  not uploaded`)
     );
   }
-  let fieldsToUpdate = {};
+  let fieldsToUpdate;
 
   let filename;
   let filePath;
- 
+
   if (req.files) {
     filename = '/img/gm/' + req.files.file.name;
     uploadFile(req, filename, res);
-    if(req.body.col==='package'){
+    if (req.body.col === 'package') {
       if (row.packageId) {
         filePath = path.resolve(__dirname, '../../assets/' + row.packageId);
         deletDiskFile(filePath);
       }
-      fieldsToUpdate['packageId'] = filename;
+      fieldsToUpdate = { 'packageId': filename };
 
-    }else if(req.body.col==='imageId'){
+    } else if (req.body.col === 'imageId') {
       if (row.imageId) {
         filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
         deletDiskFile(filePath);
       }
-      fieldsToUpdate['imageId'] = filename;
+      fieldsToUpdate = { 'imageId': filename };
 
     }
   }
-  row = await Game.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
-    new: true,
-    runValidators: true
-  });
+  if (fieldsToUpdate) {
+    row = await Game.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+  }
+
 
   res.status(200).json({
     success: true,

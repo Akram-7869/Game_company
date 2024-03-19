@@ -34,16 +34,10 @@ exports.editgame = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Game', apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/gamemanager' };
       axios.get(apiUrl + req.params.id, req.body)
             .then(r => {
-                  // Assign value in session
-
-                  // req.flash('message', 'Data save');
-console.log(r.data.data,'r.data.data');
-                  res.render('GameManager/edit', { row: r.data.data });
+                   res.render('GameManager/edit', { row: r.data.data });
             })
             .catch(error => {
-
                   req.flash('error', 'Data not updated');
-
             })
 });
 
@@ -70,15 +64,10 @@ exports.getgamedata= asyncHandler(async (req, res, next) => {
       axios.post(apiUrl, { ...req.body })
             .then(r => {
                   // Assign value in session
-
                   res.status(200).json(r.data);
-
-
             })
             .catch(error => {
-
                   //   req.flash('error', 'Incorrect email or password!');
-
             })
 
 });
@@ -93,8 +82,7 @@ exports.gameAdd = asyncHandler(async (req, res, next) => {
 
 exports.gameCreate = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Game' };
-      console.log('creating-image', apiUrl);
-
+ 
       axios.post(apiUrl+'add',  req.body)
             .then(r => {
                   // Assign value in session
