@@ -74,7 +74,7 @@
                                             <label class="form-label">Game Image</label>
                                             <div class="col-md-10">
                                                 <div> <img width=100 class="img-thumbnail"
-                                                        src="<%= process.env.IMAGE_URL + row.siteLogo %>">
+                                                        src="<%= process.env.IMAGE_URL + row.imageId %>">
 
                                                 </div>
                                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
@@ -116,35 +116,6 @@
                                 </div>
 
                             </div>
-
-
-
-
-                            <!-- staticBackdrop Modal -->
-                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
-                                data-bs-keyboard="false" tabindex="-1" role="dialog"
-                                aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close">
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>I will not close if you click outside me. Don't even try to press escape
-                                                key.</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-light"
-                                                data-bs-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Understood</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
 
 
                         </div>
@@ -234,35 +205,34 @@
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <form id="imageId" name="package" action="" enctype="multipart/form-data" method="POST">
+                                    <input type="hidden" name="col" value="imageId" />
 
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="staticBackdropLabel">Upload Game Image</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <p><label class="form-label">Game Icon : </label>
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Upload Game Image</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><label class="form-label">Game Icon : </label>
+                                        <div> <img width=100 class="img-thumbnail"
+                                                src="<%= process.env.IMAGE_URL + row.imageId %>">
 
-                                        <%= process.env.IMAGE_URL + row.imageId %>
-                                    </p>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Game Image</label>
-                                            <input type="hidden" name="col" value="imageId" />
                                         </div>
+                                             <div>
+                                                <input id="uploadImage" type="file" class="form-control" name="file" />
 
-                                        <input id="uploadImage" type="file" class="form-control" name="file" />
+                                             </div>
 
-
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                                        Submit
-                                    </button>
-                                </div>
-                            </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light"
+                                            data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+                                    </div>
+                                </form>
 
                             </div>
                         </div>
@@ -273,15 +243,15 @@
 
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
-                                <form id="package" name="package" action="" enctype="multipart/form-data"
-                                method="POST">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="staticBackdropLabel">Upload Package File</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                   
+                                <form id="package" name="package" action="" enctype="multipart/form-data" method="POST">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Upload Package File</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+
 
                                         <div class="mb-3">
                                             <label class="form-label">Pacakge Path</label>
@@ -293,14 +263,15 @@
 
                                         <input id="uploadImage" type="file" name="file" />
 
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                                        Submit
-                                    </button>
-                                </div>
-                            </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light"
+                                            data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+                                    </div>
+                                </form>
 
                             </div>
                         </div>
