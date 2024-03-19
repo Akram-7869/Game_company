@@ -67,7 +67,8 @@ app.use(morgan('dev'));
 
 // File uploading
 app.use(fileupload({
-  createParentPath: true
+  createParentPath: true,
+  limits: { fileSize: 50 * 1024 * 1024 },
 }));
 
 // Sanitize data
