@@ -36,7 +36,7 @@ exports.getGame = asyncHandler(async (req, res, next) => {
 
 exports.createGame = asyncHandler(async (req, res, next) => {
 
-  if (!req.body.name || req.body.version || req.body.status) {
+  if (!req.body.name || !req.body.version || !req.body.status) {
     return next(
       new ErrorResponse(`All Fields Are Required`)
     );
