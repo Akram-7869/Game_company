@@ -41,11 +41,15 @@ const dashboards = require('./routes/dashboard');
 const tournaments = require('./routes/tournament');
 const coupon = require('./routes/coupon');
 const polls = require('./routes/polls');
+const gamemanager = require('./routes/gameManager');
+
+
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 const Setting = require('./models/Setting');
 const PlayerGame = require('./models/PlayerGame');
+
 // Body parser
 app.use(express.json());
 
@@ -57,8 +61,8 @@ app.use(cookieParser());
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
-  require('mongoose').set('debug', true);
-  app.use(morgan('dev'));
+ require('mongoose').set('debug', true);
+app.use(morgan('dev'));
 }
 
 // File uploading
@@ -122,6 +126,8 @@ app.use('/api/v1/dashboards', dashboards);
 app.use('/api/v1/tournaments', tournaments);
 app.use('/api/v1/coupon', coupon);
 app.use('/api/v1/polls', polls);
+app.use('/api/v1/gamemanager', gamemanager);
+
 
 app.get('/api/v1/so', function (req, res, next) {
   res.json({ state, publicRoom, userSocketMap });

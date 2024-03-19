@@ -28,7 +28,7 @@ const { siteDate, siteData } = require('./middleware/auth');
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+ // app.use(morgan('dev'));
   app.use('/public', express.static('public'));
 
 }

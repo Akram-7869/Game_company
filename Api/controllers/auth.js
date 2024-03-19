@@ -6,6 +6,8 @@ const Player = require('../models/Player');
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
 const Setting = require('../models/Setting');
+const Game = require('../models/Game');
+
 const Dashboard = require('../models/Dashboard');
 //const axios = require('axios')
 //const admin = require('../utils/fiebase')
@@ -15,33 +17,33 @@ const { makeid, setkey, getKey } = require('../utils/utils');
 const { OAuth2Client } = require('google-auth-library');
 
 exports.test = asyncHandler(async (req, res, next) => {
-  const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
-  const url = 'https://upimoney.co.in/api/transaction/query?token='+row.SECRET_KEY ;
-  data = {
-    "apitxnid": '65d0a9ff8628c4cd0bfe51f7',
-    "product": "payout",
-  };
+  // const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
+  // const url = 'https://upimoney.co.in/api/transaction/query?token='+row.SECRET_KEY ;
+  // data = {
+  //   "apitxnid": '65d0a9ff8628c4cd0bfe51f7',
+  //   "product": "payout",
+  // };
 
-  axios.post(url,  data , {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(async function (response) {
+  // axios.post(url,  data , {
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   }
+  // })
+  //   .then(async function (response) {
 
-      console.log(response.data, 'hook-reponse');
-      // await handleSuccess(apitxnid,response.data);
-      return res.status(200).json({
-        success: true,
-        data: {}
-      });
-    })
-    .catch(function (error) {
-      console.log(error.data);
-      return next(
-        new ErrorResponse(`Try again`)
-      );
-    });
+  //     console.log(response.data, 'hook-reponse');
+  //     // await handleSuccess(apitxnid,response.data);
+  //     return res.status(200).json({
+  //       success: true,
+  //       data: {}
+  //     });
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error.data);
+  //     return next(
+  //       new ErrorResponse(`Try again`)
+  //     );
+  //   });
 });
 
 // @desc      Register user
@@ -424,6 +426,7 @@ exports.logout = asyncHandler(async (req, res, next) => {
 exports.maintanance = asyncHandler(async (req, res, next) => {
   let bot_profile = [];
   let setting = {};
+  let games=[]
   //console.log('one---',res.app.get('bot_profile'));
   if (!res.app.get('bot_profile')) {
 
@@ -448,12 +451,15 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
   setting = await Setting.findOne({
     type: 'SITE',
   });
+  games = await Game.find({
+    status: 'active',
+  });
   res.app.set('site_setting', setting);
   // }
 
   res.status(200).json({
     success: true,
-    data: { bot_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit }
+    data: { bot_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit ,games }
   });
 });
 exports.smsOtp = async (mobile, otp, template_id, authkey) => {

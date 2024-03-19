@@ -1,0 +1,253 @@
+<%- contentFor('HeaderCss') %>
+    <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+    <link href="/public/assets/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
+
+    <%- contentFor('breadcrumb') %>
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">
+                        <%- title %> Edit
+                    </h4>
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item active"><a href="<%=process.env.ADMIN_URL%>/admin/gamemanager">
+                                    <%- title %> List
+                                </a></li>
+                            <li class="breadcrumb-item active">Edit</li>
+                        </ol>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <%- contentFor('body') %>
+
+
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#home1" role="tab">
+                                        <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                        <span class="d-none d-sm-block">Home</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#logo" role="tab">
+                                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                        <span class="d-none d-sm-block">Site Logo</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#profile1" role="tab">
+                                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                        <span class="d-none d-sm-block">Package</span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                            <!-- Tab panes -->
+                            <div class="tab-content p-3 text-muted">
+                                <div class="tab-pane active" id="home1" role="tabpanel">
+                                    <p class="mb-0">
+                                    <form action="" enctype="multipart/form-data" method="POST"
+                                        onsubmit="handleSubmit(this)">
+                                        <input type="hidden" id="siteLogo" class="form-control" name="col"
+                                            value="game" />
+                                        <div class="mb-3">
+                                            <label class="form-label">Name</label>
+                                            <input type="text" id="name" name="name" value="<%=row.name?row.name:'' %>"
+                                                class="form-control" required placeholder="name " />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Version</label>
+                                            <div class="col-md-10">
+
+                                                <input type="text" id="version" name="version"
+                                                    value="<%=row.version ? row.version: '' %>" class="form-control"
+                                                    required placeholder="version" />
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Status</label>
+                                            <div class="col-md-10">
+                                                <select id="statustxt" class="form-select" name="status" required>
+                                                    <option value="active" <%=row.status==='active' ?'selected':'' %>
+                                                        >active
+                                                    </option>
+                                                    <option value="inactive" <%=row.status==='inactive' ?'selected':''%>
+                                                        >inactive</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                                Submit
+                                            </button>
+
+                                        </div>
+
+                                    </form>
+
+                                    </p>
+                                </div>
+                                <div class="tab-pane" id="profile1" role="tabpanel">
+                                    <p class="mb-0">
+                                    <form id="package" name="package" action="" enctype="multipart/form-data"
+                                        method="POST">
+                                        <p class="mb-0">
+                                        <div class="mb-3">
+                                            <label class="form-label">Pacakge Path</label>
+                                            <%= process.env.IMAGE_URL + row.packageId %>
+
+                                            <input type="hidden" id="siteLogo" class="form-control" name="col"
+                                                value="package" />
+                                        </div>
+
+                                        <input id="uploadImage" type="file" name="file" />
+                                         <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+                                         
+                                        </p>
+                                    </form>
+                                    </p>
+                                </div>
+                                <div class="tab-pane" id="logo" role="tabpanel">
+                                    <p class="mb-0">
+                                    <p><label class="form-label">Game Icon : </label>
+
+                                        <%= process.env.IMAGE_URL + row.imageId %>
+                                    </p>
+                                    <form id="imageId" name="package" action="" enctype="multipart/form-data"
+                                        method="POST">
+                                        <p class="mb-0">
+                                        <div class="mb-3">
+                                            <label class="form-label">Game Image</label>
+                                            <input type="hidden" name="col" value="imageId" />
+                                        </div>
+
+                                        <input id="uploadImage" type="file" name="file" />
+                                        <div id="preview"></div><br>
+                                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+                                        <!-- <button type="reset" class="btn btn-secondary waves-effect">
+                                                Cancel
+                                            </button> -->
+                                        </p>
+                                    </form>
+
+
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- end col -->
+
+
+            </div> <!-- end row -->
+
+            <%- contentFor('FooterJs') %>
+                <script src="/public/assets/libs/dropzone/min/dropzone.min.js"></script>
+
+                <!-- parsleyjs -->
+                <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
+
+                <script src="/public/assets/js/pages/form-validation.init.js"></script>
+                <!-- Sweet Alerts js -->
+                <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <!-- Sweet alert init js
+<script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
+                <script>
+                    let url = '<%= apiUrl  +row._id %>'
+                    function handleSubmit(params) {
+                        if (params.checkValidity()) {
+                            //Swal.showLoading();
+                            Swal.fire({
+                                title: '',
+                                html: 'Please wait...',
+                                allowEscapeKey: false,
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading()
+                                }
+                            });
+                        }
+
+                    }
+
+
+
+                    $(document).ready(function (e) {
+                        $("#package").on('submit', (function (e) {
+                            e.preventDefault();
+                            $.ajax({
+                                url: '<%= apiUrl +"upload/" +row._id %>',
+                                type: "POST",
+                                data: new FormData(this),
+                                contentType: false,
+                                cache: false,
+                                processData: false,
+                                success: function (data) {
+                                    location.reload();
+                                },
+                                error: function (e) {
+                                    alert('error');
+                                }
+                            });
+                        }));
+                        $("#imageId").on('submit', (function (e) {
+                            e.preventDefault();
+                            $.ajax({
+                                url: '<%= apiUrl +"upload/" +row._id %>',
+                                type: "POST",
+                                data: new FormData(this),
+                                contentType: false,
+                                cache: false,
+                                processData: false,
+                                success: function (data) {
+                                    location.reload();
+                                },
+                                error: function (e) {
+                                    alert('error');
+                                }
+                            });
+                        }));
+
+
+
+
+                    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </script>
+                <%- contentFor('BottomJs') %>

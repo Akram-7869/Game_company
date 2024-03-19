@@ -14,6 +14,8 @@ const tournamentCtrl = require('../controllers/TurnamentController');
 const notificationCtrl = require('../controllers/NotificationController');
 const couponCtrl = require('../controllers/CouponController');
 const pollCtrl = require('../controllers/PollController');
+const gameMangCtrl = require('../controllers/GameManagerController');
+
 
 const { protect } = require('../middleware/auth');
 const router = express.Router({ mergeParams: true });
@@ -97,6 +99,13 @@ router.route('/notification/:id').get(notificationCtrl.getNotification).post(not
 
 
 //router.route('/notification').get(palyerCtrl.getPlayerNotification);
+router.route('/gamemanager/add').get(gameMangCtrl.gameAdd).post(gameMangCtrl.gameCreate);
+router.route('/gamemanager/upload/:id').post(gameMangCtrl.updatePackage);
+
+router.route('/gamemanager/data').post(gameMangCtrl.getgamedata);
+router.route('/gamemanager').get(gameMangCtrl.gameList);
+
+router.route('/gamemanager/:id').get(gameMangCtrl.editgame).post(gameMangCtrl.updategame).delete(gameMangCtrl.delgame);
 
 
 router.route('/banner/add').get(bannerControler.bannerAdd)

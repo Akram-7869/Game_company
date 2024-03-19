@@ -113,20 +113,4 @@ exports.createBanners = asyncHandler(async (req, res, next) => {
       res.render('Ads/list', { row: {} });
 });
 
-// exports.showPlayerView = asyncHandler(async (req, res, next) => {
-//       axios.get(apiUrl + req.params.id)
-//             .then(r => {
-//                   // Assign value in session
-//
-//                   res.locals = { title: 'Banner' };
-//                   res.render('Ads/view',{row:r.data.data});
-//
 
-//             })
-//             .catch(error => {
-//
-
-//                //   req.flash('error', 'Incorrect email or password!');
-//
-//             })
-// });
