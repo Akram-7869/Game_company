@@ -23,6 +23,7 @@ const SettingSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    games:[{_id:Number, name:String}],
     tds: {
         type: Number,
         default: 0,
