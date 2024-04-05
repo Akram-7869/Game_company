@@ -67,6 +67,12 @@
                                         <span class="d-none d-sm-block">Bank</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#games" role="tab">
+                                        <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                                        <span class="d-none d-sm-block">Games</span>
+                                    </a>
+                                </li>
                             </ul>
 
                             <!-- Tab panes -->
@@ -263,46 +269,17 @@
                                 <div class="tab-pane" id="bank" role="tabpanel">
                                     <p class="mb-0">
 
-                                    <form id="banner" action="<%=process.env.ADMIN_URL%>/admin/site/bank/<%=row._id%>"
-                                        onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
-                                        <p class="mb-0">
-                                        <div class="mb-3">
-                                            <label class="form-label"> Account Holder Name</label>
-                                            <input type="text" class="form-control" required name="name"
-                                                value="<%= row.bank ? row.bank['name']:''%>" placeholder="" />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Account </label>
-                                            <input type="text" class="form-control" required name="account"
-                                                value="<%= row.bank ? row.bank['account']:''%>" placeholder="" />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">IFC CODE </label>
-                                            <input type="text" class="form-control" required name="ifc"
-                                                value="<%= row.bank ? row.bank['ifc']:''%>" placeholder="" />
-                                        </div>
+                                        <ul>
+                                            <% row.games.forEach(item=> { %>
+                                                <li>
+                                                    <%=item.name%>
 
+                                                    <button onclick="editGame(item)">edit</button>
+                                                    <button onclick="delGame(item)">del</button>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">Address </label>
-                                            <input type="text" class="form-control" required name="address"
-                                                value="<%= row.bank ? row.bank['address']:''%>" placeholder="" />
-                                        </div>
-
-
-                                        <button id="submit-all" type="submit"
-                                            class="btn btn-primary waves-effect waves-light me-1">
-                                            Submit
-                                        </button>
-                                        <button type="reset" class="btn btn-secondary waves-effect">
-                                            Cancel
-                                        </button>
-
-
-
-
-                                        </p>
-                                    </form>
+                                                </li>
+                                                <% })%>
+                                        </ul>
                                     </p>
                                 </div>
                                 <!-- <div class="tab-pane" id="step" role="tabpanel">

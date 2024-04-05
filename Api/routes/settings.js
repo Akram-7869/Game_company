@@ -32,6 +32,8 @@ router.route('/filter/:type').post(protect, getSettings);
 router.route('/commission/:id').post(protect, setCommission);
 router.route('/upi/:id').post(protect, setUpi);
 router.route('/bank/:id').post(protect, setBank);
+router.route('/games/:id').post(protect, setGame);
+
 router
     .route('/:id')
     .get(protect, getSetting)

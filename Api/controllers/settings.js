@@ -191,6 +191,39 @@ exports.setBank = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.setGame = asyncHandler(async (req, res, next) => {
+  let {action, id, name} = req.body;
+  let setting = await Setting.findOne({ _id: req.params.id });
+  if (!setting) {
+    return next(
+      new ErrorResponse(`Setting  not found`)
+    );
+  }
+  let fieldsToUpdate = {}
+
+  if(action ==='add'){
+
+  }else if(action==='edit'){
+
+  }else if(action ==='del'){
+
+  }else{
+    return next(
+      new ErrorResponse(`Game  not found`)
+    );
+  }
+
+  setting = await Setting.findByIdAndUpdate(setting.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
+
+  res.status(200).json({
+    success: true,
+    data: setting
+  });
+});
+
 // @desc      Delete Setting
 // @route     DELETE /api/v1/auth/Settings/:id
 // @access    Private/Admin
