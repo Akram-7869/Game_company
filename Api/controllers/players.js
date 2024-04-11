@@ -1236,7 +1236,7 @@ exports.creditBonus = asyncHandler(async (req, res, next) => {
   //tranData['gameId'] = gameId;
 
   let tran = await Transaction.create(tranData);
-  player = await tran.creditPlayerBonus(amount);
+  player = await tran.creditPlayerDeposit(amount);
 
   res.status(200).json({
     success: true,
