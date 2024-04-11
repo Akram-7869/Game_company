@@ -9,7 +9,7 @@ const {
     getSettingByName,
     uploadeImage,
     getFile,
-    setCommission, getSitedata,setUpi,setBank
+    setCommission, getSitedata,setUpi,setBank,setGame
 
 } = require('../controllers/settings');
 
