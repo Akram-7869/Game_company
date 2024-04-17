@@ -302,7 +302,7 @@ exports.addUpi = asyncHandler(async (req, res, next) => {
   });
 });
 exports.addMoney = asyncHandler(async (req, res, next) => {
-  let { amount, note, orderId } = req.body;
+  let { orderId } = req.body;
   let player = req.player;
   // if (!amount || amount < 0) {
   //   return next(
@@ -321,72 +321,11 @@ exports.addMoney = asyncHandler(async (req, res, next) => {
   }
 
 
-  let tran = await Transaction.findOne({ _id: orderId, status: 'log' });
+  let tran = await Transaction.findOne({ _id: orderId, paymentStatus: 'SUCCESS' });
   if (!tran) {
     return next(
-      new ErrorResponse(`Transaction not found`)
+      new ErrorResponse(`Transaction faild`)
     );
-  }
-  const row = await checkOrderStatus(orderId);
-  //console.log('row', row.data, tran);
-  amount = row.data.details.orderAmount;
-  if (row.data.details.orderStatus === 'PAID') {
-
-    if (tran.membershipId) {
-
-    } else {
-      let fieldsToUpdate = {
-        $inc: { balance: row.data.details.orderAmount, deposit: row.data.details.orderAmount }
-      }
-
-      player = await Player.findByIdAndUpdate(tran.playerId, fieldsToUpdate, {
-        new: true,
-        runValidators: true
-      });
-      await Transaction.findByIdAndUpdate(tran._id, { status: 'complete', paymentStatus: 'SUCCESS' });
-
-      if (player.refrer_player_id) {
-        playerStat = { $inc: { refer_deposit_count: 1 } };
-        await Player.findByIdAndUpdate(player.refrer_player_id, playerStat, {
-          new: true,
-          runValidators: true
-        });
-      }
-
-
-      // if (tran.couponId) {
-      let coupon = await Coupon.findOne({ minAmount: { $gte: amount }, maxAmount: { $lte: amount }, active: true });
-      let bonus_amount = 0;
-      if (coupon.calculateType === 'percentage') {
-        bonus_amount = tran.amount * coupon.couponAmount * 0.01;
-      } else if (coupon.calculateType === 'fixed') {
-        bonus_amount = coupon.couponAmount;
-      }
-      if (coupon) {
-        //create transaction
-        let tranData = {
-          'playerId': tran.playerId,
-          'amount': bonus_amount,
-          'transactionType': "credit",
-          'note': 'coupon bonus',
-          'prevBalance': req.player.balance,
-          'status': 'complete',
-          'logType': 'bonus',
-          'stateCode': req.player.stateCode
-
-        }
-        let tranb = await Transaction.create(tranData);
-        //
-        player = await tranb.creditPlayerBonus(bonus_amount);
-      }
-
-
-      //  }
-      //handle coupon
-
-    }
-  } else {
-    //await Transaction.findByIdAndUpdate(tran._id, { paymentStatus: row.data.details.orderStatus });
   }
 
   res.status(200).json({

@@ -11,6 +11,7 @@ const {
 const paymentCashfreeCtrl = require('../controllers/paymentsCashfree');
 const upiCtrl = require('../controllers/paymentsUpi');
 const zeroCtrl = require('../controllers/paymentsZeroGateway');
+const phonePayCtrl = require('../controllers/paymentsPhonepay');
 
 
 const router = express.Router({ mergeParams: true });
@@ -39,6 +40,8 @@ router.route('/cashfree/payout').post(protect, paymentCashfreeCtrl.payout);
 router.route('/cashfree/key').post(protect, paymentCashfreeCtrl.getKey);
 router.route('/cashfree/notify').post(paymentCashfreeCtrl.handleNotify);
 
+router.route('/phonepaypg/token').post(protect, phonePayCtrl.getToken);
+router.route('/phonepaypg/webhook').post(phonePayCtrl.handleNotify);
 
 router
     .route('/:id')
