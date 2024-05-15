@@ -5,7 +5,7 @@ const router = express.Router();
 
 const { init, protect, maintenance_chk } = require('../middleware/auth');
 
-//router.post('/player/register', maintenance_chk, authCtrl.playerRegister);
+router.post('/player/register', maintenance_chk, authCtrl.playerRegister);
 router.post('/player/registeremail', maintenance_chk, authCtrl.playerRegisterEmail);
 router.get('/maintanance', maintenance_chk, authCtrl.maintanance);
 //router.get('/test', authCtrl.test);

@@ -98,8 +98,7 @@ exports.getByEmail = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegister = asyncHandler(async (req, res, next) => {
-  res.status(200).json({});
-  console.log('playerRegister');
+   console.log('playerRegister');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.body;
 
   if (!phone) {
@@ -296,9 +295,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
 // @access    Public
 exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   let { phone, code } = req.body;
-
-
-  if (!req.player || !code || !phone || req.player.status !== 'active') {
+  if (!code || !phone) {
     return next(
       new ErrorResponse(`Please provide all required data`)
     );
@@ -308,22 +305,46 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   // await verifyOtp(req.body.phone, req.body.code).then(r=>{
   //   r.data.type
   // })
-  let user = await Player.findOne({ _id: req.player._id, verifyPhone: code, verifyPhoneExpire: { $gt: Date.now() } });
-  // console.log('verifyPhone', user)
+  let player = await Player.findOne({ 'phone': phone, verifyPhone: code });
 
-  if (!user) {
+  if (!player) {
     return next(
       new ErrorResponse(`Invalid Code`)
     );
   }
-  let player = await Player.findByIdAndUpdate(req.player.id, { 'phoneStatus': 'verified', phone }, {
-    new: true,
-    runValidators: true
-  });
-  res.status(200).json({
-    success: true,
-    data: player
-  });
+
+  let addamount = 10;
+  let tranData = {
+    playerId: player._id,
+    amount: addamount,
+    transactionType: 'credit',
+    note: 'player register',
+    prevBalance: 0, logType: 'deposit',
+    status: 'complete', paymentStatus: 'SUCCESS'
+  }
+  let tran = await Transaction.create(tranData);
+  if (player.status === 'notverified') {
+    player = await Player.findByIdAndUpdate(player.id, {
+      'balance': addamount,
+      'deposit': addamount, 'phoneStatus': 'verified', phone, 'status': 'active', verifyPhone: undefined, verifyPhoneExpire: undefined
+    }, {
+      new: true,
+      runValidators: true
+    });
+  } else {
+    player = await Player.findByIdAndUpdate(player.id, {
+      'phoneStatus': 'verified', phone, 'status': 'active', verifyPhone: undefined, verifyPhoneExpire: undefined
+    }, {
+      new: true,
+      runValidators: true
+    });
+  }
+
+  sendTokenResponse(player, 200, res);
+  // res.status(200).json({
+  //   success: true,
+  //   data: player
+  // });
 
 });
 exports.playerLogin = asyncHandler(async (req, res, next) => {
