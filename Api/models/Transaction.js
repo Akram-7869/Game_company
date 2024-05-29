@@ -121,13 +121,13 @@ const TransactionsSchema = new mongoose.Schema({
 });
 //   winning
 TransactionsSchema.methods.debitPlayerWinings = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: -amount, winings: -amount } }, {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: {  winings: -amount } }, {
         new: true,
         runValidators: true
     });
 };
 TransactionsSchema.methods.creditPlayerWinings = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount, winings: amount } }, {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: {  winings: amount } }, {
         new: true,
         runValidators: true
     });
@@ -149,38 +149,22 @@ TransactionsSchema.methods.creditPlayerBonus = async function (amount) {
 };
 // debit deposit
 TransactionsSchema.methods.debitPlayerDeposit = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: -amount, deposit: -amount } }, {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: {  deposit: -amount } }, {
         new: true,
         runValidators: true
     });
 };
 TransactionsSchema.methods.creditPlayerDeposit = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount, deposit: amount, totalDeposit: amount } }, {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { deposit: amount, totalDeposit: amount } }, {
         new: true,
         runValidators: true
     });
 
-};
+}; 
 
-// debit player
-TransactionsSchema.methods.debitPlayer = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: -amount } }, {
-        new: true,
-        runValidators: true
-    });
-};
-
-// cedit player
-TransactionsSchema.methods.creditPlayer = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount } }, {
-        new: true,
-        runValidators: true
-    });
-};
-
-// cedit player
+// withdraw player
 TransactionsSchema.methods.declineWithDrawPlayer = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount, winings: amount, 'totalTaxableAmount': -this.taxableAmount, 'totalTds': -this.tds, 'totalWithdraw': -amount } }, {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: {  winings: amount, 'totalTaxableAmount': -this.taxableAmount, 'totalTds': -this.tds, 'totalWithdraw': -amount } }, {
         new: true,
         runValidators: true
     })

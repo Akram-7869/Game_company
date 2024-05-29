@@ -2026,7 +2026,7 @@ exports.creditReferalComission = asyncHandler(async (req, res, next) => {
 
 
     let tran = await Transaction.create(tranData);
-    await tran.creditPlayer(amount);
+    await tran.creditPlayerDeposit(amount);
 
 
   }
