@@ -8,7 +8,7 @@ const PlayerSchema = new mongoose.Schema({
 
   firstName: {
     type: String,
-    minLength: [3, 'try again'],
+   // minLength: [3, 'try again'],
 
   },
   lastName: {
@@ -66,12 +66,12 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
     select: false,
     trim: true,
-    minLength: [32, 'try again'],
+   // minLength: [32, 'try again'],
   },
   firebaseToken: {
     type: String,
     select: false,
-    minLength: [800, 'try again'],
+   // minLength: [800, 'try again'],
 
     trim: true,
   },
