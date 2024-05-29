@@ -150,7 +150,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
     // Create user
     player = await Player.create(data);
   }
-  await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
+  await this.smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
   //subscribeToTopic(firebaseToken);
   res.status(200).json({
     success: true,
