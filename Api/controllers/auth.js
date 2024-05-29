@@ -9,7 +9,7 @@ const Setting = require('../models/Setting');
 const Game = require('../models/Game');
 
 const Dashboard = require('../models/Dashboard');
-//const axios = require('axios')
+const axios = require('axios')
 //const admin = require('../utils/fiebase')
 const fs = require('fs');
 var path = require('path');
