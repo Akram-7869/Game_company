@@ -137,7 +137,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
     // create new player
     let data = {
       'email': email,
-
+      firstName: generateName(),
       'phone': phone,
       'verifyPhone': vcode,
       'verifyPhoneExpire': Date.now() + 10 * 60 * 1000,
@@ -158,6 +158,10 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
   });
 
 });
+function generateName() {
+  const randomTwoDigitNumber = Math.floor(Math.random() * 90) + 10; // Generates a random number between 10 and 99
+  return `Cherry_${randomTwoDigitNumber}`;
+}
 
 // @desc      Register user
 // @route     POST /api/v1/auth/register
