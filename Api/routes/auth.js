@@ -9,7 +9,7 @@ router.post('/player/register', maintenance_chk, authCtrl.playerRegister);
 router.post('/player/registeremail', maintenance_chk, authCtrl.playerRegisterEmail);
 router.get('/maintanance', maintenance_chk, authCtrl.maintanance);
 //router.get('/test', authCtrl.test);
-router.post('/player/verify', maintenance_chk, protect, authCtrl.verifyPhoneCode);
+router.post('/player/verify', maintenance_chk, authCtrl.verifyPhoneCode);
 //router.get('/getbyphone', authCtrl.getByPhone);
 //router.get('/getbyemail', authCtrl.getByEmail);
 
