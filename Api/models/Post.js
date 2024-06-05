@@ -8,7 +8,7 @@ const PostSchema = new mongoose.Schema({
     status: { type: String },
 
     likes: [{ type: Schema.Types.ObjectId, ref: 'Player' }],
-    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+    comments: [],
     createdAt: { type: Date, default: Date.now }
 }, {
     timestamps: true,

@@ -11,7 +11,7 @@ const { uploadFile, deletDiskFile } = require('../utils/utils');
 // @route     GET /api/v1/auth/Posts
 // @access    Private/Admin
 exports.getPosts = asyncHandler(async (req, res, next) => {
-  
+
   Post.dataTables({
     limit: req.body.length,
     skip: req.body.start,
@@ -45,11 +45,7 @@ exports.getPost = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Posts
 // @access    Private/Admin
 exports.createPost = asyncHandler(async (req, res, next) => {
-  console.log(req.files.file);
-
-  if (!req.files) {
-
-  }
+  if (!req.files) {}
   let filename;
   if (req.files) {
     filename = '/img/post/' + req.files.file.name;
@@ -113,10 +109,8 @@ exports.updatePost = asyncHandler(async (req, res, next) => {
 exports.deletePost = asyncHandler(async (req, res, next) => {
   const row = await Post.findById(req.params.id);
   await Post.findByIdAndDelete(req.params.id);
-  //await File.findByIdAndDelete(row.imageId);
   let filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
   deletDiskFile(filePath);
-  await PlayerPoll.deleteMany({ postId: req.params.id });
 
   res.status(200).json({
     success: true,
@@ -124,3 +118,41 @@ exports.deletePost = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.likePost = asyncHandler(async (req, res, next) => {
+  const row = await Post.findById(req.params.id);
+  if (!row) {
+    return next(
+      new ErrorResponse(`Post  not found`)
+    );
+  }
+  post = await Post.updateOne(
+    { _id: req.params.id },
+    { $addToSet: { likes: req.player._id } }
+  )
+  res.status(200).json({
+    success: true,
+    data: post
+  });
+});
+
+exports.commentOnPost = asyncHandler(async (req, res, next) => {
+  const row = await Post.findById(req.params.id);
+  if (!row) {
+    return next(
+      new ErrorResponse(`Post  not found`)
+    );
+  }
+  const comment = {
+    content: req.body.content,
+    createdAt: new Date(),
+    player: req.player._id
+  };
+    post = await Post.updateOne(
+    { _id: req.params.id },
+    { $addToSet: { commets: comment} }
+  )
+  res.status(200).json({
+    success: true,
+    data: post
+  });
+});

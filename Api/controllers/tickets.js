@@ -135,13 +135,4 @@ exports.deleteTicketBbIds = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc      Update Banner
-// @route     PUT /api/v1/auth/Banners/:id
-// @access    Private/Admin
-exports.getFile = asyncHandler(async (req, res, next) => {
-
-  let rec = await File.findById(req.params.id);
-  res.contentType('image/png');
-  res.send(rec.data);
-
-});
+ 

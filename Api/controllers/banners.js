@@ -45,8 +45,7 @@ exports.getBanner = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Banners
 // @access    Private/Admin
 exports.createBanner = asyncHandler(async (req, res, next) => {
-  console.log(req.files.file);
-
+ 
   if (!req.files) {
 
   }
