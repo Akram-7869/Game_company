@@ -4,7 +4,6 @@ const socketio = require('socket.io');
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
-const colors = require('colors');
 
 const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
@@ -509,6 +508,11 @@ let userLeave = (s) => {
   //   }
   // }
 
+}
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
