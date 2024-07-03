@@ -136,12 +136,16 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
-const { makeid } = require('./utils/utils');
+const { makeid} = require('./utils/utils');
 const Tournament = require('./models/Tournament');
 const Player = require('./models/Player');
+const TambolaGenerator = require('./utils/tomblagame'); // Import TambolaGenerator
+
 const state = {};
 const publicRoom = {};
 const userSocketMap = {};
+// Tambola generator instance
+const tambola = new TambolaGenerator();
 io.use(function (socket, next) {
   const { tkn } = socket.handshake.query;
   console.log('c', tkn);
@@ -407,6 +411,21 @@ io.on('connection', socket => {
 
     }
   });
+
+  // Listen for a custom event to start the Tambola game
+  socket.on('startTambola', () => {
+    console.log('Tambola game started');
+    const intervalId = setInterval(() => {
+      const number = tambola.drawNumber();
+      if (number === null) {
+        clearInterval(intervalId);
+        io.emit('tambolaEnd', { message: 'All numbers have been drawn' });
+      } else {
+        io.emit('newNumber', { number: number });
+      }
+    }, 30000); // Draw a number every second
+  });
+
 });
 let defaultRolletValue = () => {
   return {
