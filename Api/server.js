@@ -222,10 +222,11 @@ io.on('connection', socket => {
     io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
     if(lobby.mode === gameName.tambola){
       setTimeout(()=>{
-        console.log('emited----startTambola');
         io.to(roomName).emit('startTambola', {  });
         
         if(        publicRoom[lobbyId]['started'] === false){publicRoom[lobbyId]['started'] = true;
+          console.log('emited----startTambola');
+
                     onstartTambola();
         }
         
