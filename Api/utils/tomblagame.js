@@ -1,6 +1,4 @@
 class TambolaGenerator {
-  io;
-  state;
     constructor(io,state) {
       this.io;
       this.state;
