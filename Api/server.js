@@ -50,7 +50,7 @@ const Setting = require('./models/Setting');
 const PlayerGame = require('./models/PlayerGame');
 
 // Body parser
-app.use(express.json({limit: '50mb'}));
+app.use(express.json({ limit: '50mb' }));
 
 app.use(express.urlencoded({
   extended: true
@@ -60,8 +60,8 @@ app.use(cookieParser());
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
- require('mongoose').set('debug', true);
-app.use(morgan('dev'));
+  require('mongoose').set('debug', true);
+  app.use(morgan('dev'));
 }
 
 // File uploading
@@ -136,7 +136,7 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
-const { makeid} = require('./utils/utils');
+const { makeid } = require('./utils/utils');
 const Tournament = require('./models/Tournament');
 const Player = require('./models/Player');
 const TambolaGenerator = require('./utils/tomblagame'); // Import TambolaGenerator
@@ -144,28 +144,28 @@ const TambolaGenerator = require('./utils/tomblagame'); // Import TambolaGenerat
 const state = {};
 const publicRoom = {};
 const userSocketMap = {};
-let gameName={
+let gameName = {
   'ludo': 1,
   'dragon_tiger': 2,
-  'teen_pati': 3,
+  'teen_patti': 3,
   'rouletee': 4,
   'tambola': 5,
-  'Crash':6,
+  'crash': 6,
 }
 // Tambola generator instance
-const tambola = new TambolaGenerator();
+const tambolaGame = new TambolaGenerator(io,state);
 io.use(function (socket, next) {
   const { tkn } = socket.handshake.query;
   console.log('c', tkn);
   if (tkn !== '2873') {
-   // return next(new Error(''));
+    // return next(new Error(''));
   }
   // execute some code
   next();
 })
 // Run when client connects
 io.on('connection', socket => {
-  console.log('contedt',socket.id);
+  console.log('contedt', socket.id);
   //socket.join('notification_channel');
   socket.on('associateUserId', (d) => {
     let dataParsed = d;// JSON.parse(d);
@@ -195,8 +195,8 @@ io.on('connection', socket => {
       console.log('join-exisitng', roomName);
     } else {
       roomName = makeid(5);
-      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false ,started:false}
-      state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [] };
+      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
+      state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [], started: false };
       console.log('create-room-', roomName);
       //   await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1, gameData: {}, WinList: {} });
     }
@@ -220,235 +220,202 @@ io.on('connection', socket => {
     }
     io.to(roomName).emit('res', { ev: 'join', data });
     io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
-    if(lobby.mode === gameName.tambola){
-      setTimeout(()=>{
-        io.to(roomName).emit('startTambola', {  });
-        
-        if(        publicRoom[lobbyId]['started'] === false){publicRoom[lobbyId]['started'] = true;
-          console.log('emited----startTambola');
-
-          const intervalId = setInterval(() => {
-            const number = tambola.drawNumber();
-            if (number === null) {
-              clearInterval(intervalId);
-              io.emit('tambolaEnd', { message: 'All numbers have been drawn' });
-            } else {
-              console.log('newNumber');
-              io.emit('newNumber', { number: number });
-            }
-          }, 10000); // Draw a number every second
-        }
-        
-      },2000)
+    if (lobby.mode === gameName.tambola) {
+      tambolaGame.handleTambolaStart(roomName);
     }
   });
 
-
-  socket.on('lobbyStat', (d) => {
-    let { userId, lobbyId } = d;//JSON.parse(d);
-    let cnt = 0;
-    let total = 0;
-    if (publicRoom[lobbyId]) {
-      let rn = publicRoom[lobbyId]['roomName'];
-      if (state[rn]) {
-        cnt = publicRoom[lobbyId]['count'] = state[rn].players.length;
-      }
-
+socket.on('lobbyStat', (d) => {
+  let { userId, lobbyId } = d;//JSON.parse(d);
+  let cnt = 0;
+  let total = 0;
+  if (publicRoom[lobbyId]) {
+    let rn = publicRoom[lobbyId]['roomName'];
+    if (state[rn]) {
+      cnt = publicRoom[lobbyId]['count'] = state[rn].players.length;
     }
-
-    io.emit('res', {
-      ev: 'lobbyStat', lobbyId, 'total': total, 'count': cnt
-    });
-
+  }
+  io.emit('res', {
+    ev: 'lobbyStat', lobbyId, 'total': total, 'count': cnt
   });
-  socket.on('sendToRoom', (d) => {
-
-    let { room, ev, data } = d;//JSON.parse(d);
-    console.log('sendToRoom', data)
-    io.to(room).emit('res', { ev, data });
-
-  });
-  socket.on('setGameId', async (d) => {
-    let { room, lobbyId } = d;//JSON.parse(d);
-    if (state[room]) {
-      state[room]['betList'] = defaultRolletValue();
-    }
-
-    let data = {
-      gameId: makeid(5),
-      lobbyId
-    }
-    console.log('setGameId', data);
-    io.in(room).emit('res', { ev: 'setGameId', data });
-
-  });
-  //leave
-  socket.on('leave', (d) => {
-    let { room, userId } = d;
-
-    userLeave(socket, userId);
-    socket.leave(room);
-    let data = {
-      room: room, userId,
-      users: getRoomUsers(room)
-    };
-    console.log('leave-', d, data);
-    io.to(room).emit('res', { ev: 'leave', data });
-  });
-
-  // Runs when client disconnects
-  socket.on('disconnect', () => {
-
-    let { room, userId, lobbyId } = socket;
-    delete userSocketMap[userId];
-
-    userLeave(socket);
-    //console.log('disconnect-inputstring');
-    let data = {
-      room: room,
-      users: getRoomUsers(room),
-      userId: userId
-    };
-
-    console.log('disconnect-', room, userId, lobbyId);
-
-    io.to(socket.room).emit('res', { ev: 'disconnect', data });
-
-  });
-  // Runs when client disconnects
-  socket.on('gameStart', async (d) => {
-
-    let { room = '', lobbyId = '', userId = '' } = d;
-    console.log('gameStart-', d);
-
-    let data = {
-      room: room,
-      users: getRoomLobbyUsers(room, lobbyId),
-      lobbyId,
-      userId: userId
-    };
-    //start game Withb boat
-    if (publicRoom[lobbyId]) {
-      let rn = publicRoom[lobbyId]['roomName'];
-      if (rn == room) {
-        publicRoom[lobbyId]['played'] = true;
-      }
-
-    }
-    io.to(socket.room).emit('res', { ev: 'gameStart', data });
-
-  });
-  //move user
-  socket.on('moveuser', (d) => {
-
-    let { room, userId, action } = d; //JSON.parse(d);
-    if (state[room]) {
-
-      const index = state[room].players.findIndex(user => user.userId === userId);
-      let toIndex
-      if (action === 'win') {
-        toIndex = index - 1;
-      } else {
-        toIndex = index + 1
-      }
-      arraymove(state[room].players, index, 1);
-
-    }
-
-
-
-    let data = {
-      room: room,
-      users: getRoomUsers(room)
-    };
-    io.to(room).emit('res', { ev: 'moveuser', data });
-  });
-  //set game state 
-  socket.on('setGameData', (d) => {
-
-    let { room, gameData } = d; //JSON.parse(d);
-    let data = {
-      room: room, gameData: {}
-    }
-    if (state[room]) {
-
-      state[room]['gameData'] = gameData;
-      data['gameData'] = gameData;
-    }
-
-    console.log('setGameData', data);
-    io.to(room).emit('res', { ev: 'setGameData', data });
-  });
-  socket.on('setWinListData', (d) => {
-
-    let { room, WinList } = d; //JSON.parse(d);
-    let data = { room: room, WinList: {} }
-    if (state[room]) {
-      state[room]['WinList'] = WinList;
-      data['WinList'] = d;
-    }
-
-    console.log('setWinListData', data);
-    io.to(room).emit('res', { ev: 'setWinListData', data });
-  });
-  socket.on('setBetData', (d) => {
-    let { room, betNo, amount, action = 'bet', manyBet = '[]' } = d; //JSON.parse(d);
-    console.log('setBetData', d);
-    amount = parseInt(amount)
-    if (state[room] && betNo <= 36 && amount > 0) {
-      if (action === 'bet') {
-        state[room]['betList'][betNo] = amount + parseInt(state[room]['betList'][betNo]);
-      } else if (action === 'unbet' && state[room]['betList'][betNo] > 0) {
-        let x = parseInt(state[room]['betList'][betNo]) - amount;
-        state[room]['betList'][betNo] = x < 0 ? 0 : x;
-      }
-
-    } else if (betNo > 36 && amount > 0) {
-      const betArray = JSON.parse(manyBet);
-      let amountMany = amount / manyBet.length;
-      if (action === 'bet') {
-        for (const id of betArray) {
-          state[room]['betList'][id] = amountMany + parseInt(state[room]['betList'][id]);
-        }
-      } else if (action === 'unbet') {
-        for (const id of betArray) {
-          if (state[room]['betList'][id] > 0) {
-            let x = parseInt(state[room]['betList'][id]) - amountMany;
-            state[room]['betList'][id] = x < 0 ? 0 : x;
-          }
-
-
-        }
-      }
-    }
-
-  });
-  socket.on('getBetData', (d) => {
-
-    let { room } = d; //JSON.parse(d);
-
-    console.log('getBetData', room);
-    if (state[room]) {
-
-      let data = { room: room, betWin: getKeyWithMinValue(state[room]['betList']) }
-      console.log('getBetData', data);
-      io.in(room).emit('res', { ev: 'getBetData', data });
-
-      state[room]['betList'] = defaultRolletValue();
-
-
-    }
-  });
-
-  // Listen for a custom event to start the Tambola game
- 
 
 });
-let onstartTambola = () => {
-  console.log('Tambola game started');
+socket.on('sendToRoom', (d) => {
 
-  
-};
+  let { room, ev, data } = d;//JSON.parse(d);
+  console.log('sendToRoom', data)
+  io.to(room).emit('res', { ev, data });
+
+});
+socket.on('setGameId', async (d) => {
+  let { room, lobbyId } = d;//JSON.parse(d);
+  if (state[room]) {
+    state[room]['betList'] = defaultRolletValue();
+  }
+
+  let data = {
+    gameId: makeid(5),
+    lobbyId
+  }
+  console.log('setGameId', data);
+  io.in(room).emit('res', { ev: 'setGameId', data });
+
+});
+//leave
+socket.on('leave', (d) => {
+  let { room, userId } = d;
+
+  userLeave(socket, userId);
+  socket.leave(room);
+  let data = {
+    room: room, userId,
+    users: getRoomUsers(room)
+  };
+  console.log('leave-', d, data);
+  io.to(room).emit('res', { ev: 'leave', data });
+});
+
+// Runs when client disconnects
+socket.on('disconnect', () => {
+
+  let { room, userId, lobbyId } = socket;
+  delete userSocketMap[userId];
+
+  userLeave(socket);
+  //console.log('disconnect-inputstring');
+  let data = {
+    room: room,
+    users: getRoomUsers(room),
+    userId: userId
+  };
+
+  console.log('disconnect-', room, userId, lobbyId);
+
+  io.to(socket.room).emit('res', { ev: 'disconnect', data });
+
+});
+// Runs when client disconnects
+socket.on('gameStart', async (d) => {
+
+  let { room = '', lobbyId = '', userId = '' } = d;
+  console.log('gameStart-', d);
+
+  let data = {
+    room: room,
+    users: getRoomLobbyUsers(room, lobbyId),
+    lobbyId,
+    userId: userId
+  };
+  //start game Withb boat
+  if (publicRoom[lobbyId]) {
+    let rn = publicRoom[lobbyId]['roomName'];
+    if (rn == room) {
+      publicRoom[lobbyId]['played'] = true;
+    }
+
+  }
+  io.to(socket.room).emit('res', { ev: 'gameStart', data });
+
+});
+//move user
+socket.on('moveuser', (d) => {
+
+  let { room, userId, action } = d; //JSON.parse(d);
+  if (state[room]) {
+
+    const index = state[room].players.findIndex(user => user.userId === userId);
+    let toIndex
+    if (action === 'win') {
+      toIndex = index - 1;
+    } else {
+      toIndex = index + 1
+    }
+    arraymove(state[room].players, index, 1);
+
+  }
+
+
+
+  let data = {
+    room: room,
+    users: getRoomUsers(room)
+  };
+  io.to(room).emit('res', { ev: 'moveuser', data });
+});
+//set game state 
+socket.on('setGameData', (d) => {
+
+  let { room, gameData } = d; //JSON.parse(d);
+  let data = {
+    room: room, gameData: {}
+  }
+  if (state[room]) {
+
+    state[room]['gameData'] = gameData;
+    data['gameData'] = gameData;
+  }
+
+  console.log('setGameData', data);
+  io.to(room).emit('res', { ev: 'setGameData', data });
+});
+socket.on('setWinListData', (d) => {
+
+  let { room, WinList } = d; //JSON.parse(d);
+  let data = { room: room, WinList: {} }
+  if (state[room]) {
+    state[room]['WinList'] = WinList;
+    data['WinList'] = d;
+  }
+
+  console.log('setWinListData', data);
+  io.to(room).emit('res', { ev: 'setWinListData', data });
+});
+socket.on('setBetData', (d) => {
+  let { room, betNo, amount, action = 'bet', manyBet = '[]' } = d; //JSON.parse(d);
+  console.log('setBetData', d);
+  amount = parseInt(amount)
+  if (state[room] && betNo <= 36 && amount > 0) {
+    if (action === 'bet') {
+      state[room]['betList'][betNo] = amount + parseInt(state[room]['betList'][betNo]);
+    } else if (action === 'unbet' && state[room]['betList'][betNo] > 0) {
+      let x = parseInt(state[room]['betList'][betNo]) - amount;
+      state[room]['betList'][betNo] = x < 0 ? 0 : x;
+    }
+
+  } else if (betNo > 36 && amount > 0) {
+    const betArray = JSON.parse(manyBet);
+    let amountMany = amount / manyBet.length;
+    if (action === 'bet') {
+      for (const id of betArray) {
+        state[room]['betList'][id] = amountMany + parseInt(state[room]['betList'][id]);
+      }
+    } else if (action === 'unbet') {
+      for (const id of betArray) {
+        if (state[room]['betList'][id] > 0) {
+          let x = parseInt(state[room]['betList'][id]) - amountMany;
+          state[room]['betList'][id] = x < 0 ? 0 : x;
+        }
+
+
+      }
+    }
+  }
+
+});
+socket.on('getBetData', (d) => {
+  let { room } = d; //JSON.parse(d);
+  console.log('getBetData', room);
+  if (state[room]) {
+    let data = { room: room, betWin: getKeyWithMinValue(state[room]['betList']) }
+    console.log('getBetData', data);
+    io.in(room).emit('res', { ev: 'getBetData', data });
+    state[room]['betList'] = defaultRolletValue();
+  }
+});
+
+});
+
+
 let defaultRolletValue = () => {
   return {
     0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
@@ -507,15 +474,12 @@ let getRoomUsers = (room) => {
   return [];
 }
 let getRoomLobbyUsers = (room, lobbyId) => {
-
   if (state[room]) {
-
     for (let x of state[room].players) {
       if (x.lobbyId != lobbyId) {
         return [];
       }
     }
-
     return state[room].players;
   }
   return [];
@@ -527,7 +491,6 @@ let userLeave = (s) => {
   if (state[s.room] && state[s.room].players.length !== -1) {
     //delete state[s.room].players[s.userId];
     const index = state[s.room].players.findIndex(user => user.userId === s.userId);
-
     if (index !== -1) {
       state[s.room].players.splice(index, 1);
     }

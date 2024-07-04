@@ -1,5 +1,9 @@
 class TambolaGenerator {
-    constructor() {
+  io;
+  state;
+    constructor(io,state) {
+      this.io;
+      this.state;
       this.numbers = new Set();
       this.generateNumbers();
     }
@@ -32,6 +36,26 @@ class TambolaGenerator {
     // Display all drawn numbers
     displayDrawnNumbers() {
       return Array.from(this.numbers).sort((a, b) => a - b);
+    }
+    emitStartTambola = (roomId) => {
+      console.log('Tambola game started');
+      this.state[roomId]['intervalId'] = setInterval(() => {
+        const number = this.drawNumber();
+        if (number === null) {
+          clearInterval(this.state[roomId]['intervalId']);
+          this.io.to(roomId).emit('tambolaEnd', { message: 'All numbers have been drawn' });
+        } else {
+          this.io.to(roomId).emit('newNumber', { number: number });
+        }
+      }, 10000); // Draw a number every second
+    };
+    handleTambolaStart(roomName){
+      this.io.to(roomName).emit('startTambola', {});
+      if (this.state[roomName]['started'] === false) {
+        this.state[roomName]['started'] = true;
+        console.log('emited----startTambola');
+        this.emitStartTambola(roomName);
+      }
     }
   }
   module.exports = TambolaGenerator;
