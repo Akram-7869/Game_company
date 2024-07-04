@@ -423,7 +423,7 @@ io.on('connection', socket => {
       } else {
         io.emit('newNumber', { number: number });
       }
-    }, 30000); // Draw a number every second
+    }, 10000); // Draw a number every second
   });
 
 });
