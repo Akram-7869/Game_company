@@ -144,6 +144,14 @@ const TambolaGenerator = require('./utils/tomblagame'); // Import TambolaGenerat
 const state = {};
 const publicRoom = {};
 const userSocketMap = {};
+let gameName={
+  'ludo': 1,
+  'dragon_tiger': 2,
+  'teen_pati': 3,
+  'rouletee': 4,
+  'tambola': 5,
+  'Crash':6,
+}
 // Tambola generator instance
 const tambola = new TambolaGenerator();
 io.use(function (socket, next) {
@@ -210,9 +218,10 @@ io.on('connection', socket => {
       // delete publicRoom[lobbyId];
     }
     io.to(roomName).emit('res', { ev: 'join', data });
-
     io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
-
+    if(lobby.mode === gameName.tambola){
+      setTimeout(()=>{io.to(roomName).emit('startTambola', { data });},2000)
+    }
   });
 
 
