@@ -227,7 +227,16 @@ io.on('connection', socket => {
         if(        publicRoom[lobbyId]['started'] === false){publicRoom[lobbyId]['started'] = true;
           console.log('emited----startTambola');
 
-                    onstartTambola();
+          const intervalId = setInterval(() => {
+            const number = tambola.drawNumber();
+            if (number === null) {
+              clearInterval(intervalId);
+              io.emit('tambolaEnd', { message: 'All numbers have been drawn' });
+            } else {
+              console.log('newNumber');
+              io.emit('newNumber', { number: number });
+            }
+          }, 10000); // Draw a number every second
         }
         
       },2000)
@@ -438,16 +447,7 @@ io.on('connection', socket => {
 let onstartTambola = () => {
   console.log('Tambola game started');
 
-  const intervalId = setInterval(() => {
-    const number = tambola.drawNumber();
-    if (number === null) {
-      clearInterval(intervalId);
-      io.emit('tambolaEnd', { message: 'All numbers have been drawn' });
-    } else {
-      console.log('newNumber');
-      io.emit('newNumber', { number: number });
-    }
-  }, 10000); // Draw a number every second
+  
 };
 let defaultRolletValue = () => {
   return {
