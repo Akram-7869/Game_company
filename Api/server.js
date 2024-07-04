@@ -195,7 +195,7 @@ io.on('connection', socket => {
       console.log('join-exisitng', roomName);
     } else {
       roomName = makeid(5);
-      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
+      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false ,started:false}
       state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [] };
       console.log('create-room-', roomName);
       //   await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1, gameData: {}, WinList: {} });
@@ -223,8 +223,12 @@ io.on('connection', socket => {
     if(lobby.mode === gameName.tambola){
       setTimeout(()=>{
         console.log('emited----startTambola');
-        io.to(roomName).emit('startTambola', { data });
-        onstartTambola();
+        io.to(roomName).emit('startTambola', {  });
+        
+        if(        publicRoom[lobbyId]['started'] === false){publicRoom[lobbyId]['started'] = true;
+                    onstartTambola();
+        }
+        
       },2000)
     }
   });
@@ -432,6 +436,7 @@ io.on('connection', socket => {
 });
 let onstartTambola = () => {
   console.log('Tambola game started');
+
   const intervalId = setInterval(() => {
     const number = tambola.drawNumber();
     if (number === null) {
