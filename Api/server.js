@@ -434,6 +434,7 @@ io.on('connection', socket => {
         clearInterval(intervalId);
         io.emit('tambolaEnd', { message: 'All numbers have been drawn' });
       } else {
+        console.log('newNumber');
         io.emit('newNumber', { number: number });
       }
     }, 10000); // Draw a number every second
