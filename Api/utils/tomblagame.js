@@ -1,7 +1,7 @@
 class TambolaGenerator {
     constructor(io,state) {
-      this.io;
-      this.state;
+      this.io=io;
+      this.state=state;
       this.numbers = new Set();
       this.generateNumbers();
     }
