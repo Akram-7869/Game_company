@@ -224,6 +224,7 @@ io.on('connection', socket => {
       setTimeout(()=>{
         console.log('emited----startTambola');
         io.to(roomName).emit('startTambola', { data });
+        onstartTambola();
       },2000)
     }
   });
