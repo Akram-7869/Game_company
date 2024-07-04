@@ -165,7 +165,7 @@ io.use(function (socket, next) {
 })
 // Run when client connects
 io.on('connection', socket => {
-  console.log('contedt');
+  console.log('contedt',socket.id);
   //socket.join('notification_channel');
   socket.on('associateUserId', (d) => {
     let dataParsed = d;// JSON.parse(d);
@@ -426,21 +426,22 @@ io.on('connection', socket => {
   });
 
   // Listen for a custom event to start the Tambola game
-  socket.on('startTambola', () => {
-    console.log('Tambola game started');
-    const intervalId = setInterval(() => {
-      const number = tambola.drawNumber();
-      if (number === null) {
-        clearInterval(intervalId);
-        io.emit('tambolaEnd', { message: 'All numbers have been drawn' });
-      } else {
-        console.log('newNumber');
-        io.emit('newNumber', { number: number });
-      }
-    }, 10000); // Draw a number every second
-  });
+ 
 
 });
+let onstartTambola = () => {
+  console.log('Tambola game started');
+  const intervalId = setInterval(() => {
+    const number = tambola.drawNumber();
+    if (number === null) {
+      clearInterval(intervalId);
+      io.emit('tambolaEnd', { message: 'All numbers have been drawn' });
+    } else {
+      console.log('newNumber');
+      io.emit('newNumber', { number: number });
+    }
+  }, 10000); // Draw a number every second
+};
 let defaultRolletValue = () => {
   return {
     0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
