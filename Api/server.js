@@ -174,6 +174,7 @@ io.on('connection', socket => {
     userSocketMap[userId] = socket.id;
   });
   socket.on('join', async (d) => {
+    console.log('join', d);
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4 } = dataParsed;
     let lobby = await Tournament.findById(lobbyId);
@@ -220,7 +221,10 @@ io.on('connection', socket => {
     io.to(roomName).emit('res', { ev: 'join', data });
     io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
     if(lobby.mode === gameName.tambola){
-      setTimeout(()=>{io.to(roomName).emit('startTambola', { data });},2000)
+      setTimeout(()=>{
+        console.log('emited----startTambola');
+        io.to(roomName).emit('startTambola', { data });
+      },2000)
     }
   });
 
