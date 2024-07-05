@@ -466,7 +466,7 @@ let joinRoom = (socket, playerId, room, d = {}) => {
     let currentroom = userSocketMap[playerId]['room'];
       userSocketMap[playerId]={room,'socket_id':socket.id};
       console.log('468');
-    if( currentroom && currentroom != room ){
+    if( currentroom){
       console.log('469');
       console.log('leaveling-from-server', currentroom, room);
       socket.leave(currentroom);
