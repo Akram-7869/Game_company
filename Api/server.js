@@ -476,13 +476,7 @@ let joinRoom = (socket, playerId, room, d = {}) => {
   socket['room'] = room;
   socket['userId'] = playerId;
   socket['lobbyId'] = d.lobbyId;
-  if(!userSocketMap[playerId]){
-      userSocketMap[playerId]={room,'socket_id':socket.id};
-  }else{
-    let currentroom = userSocketMap[playerId]['room'];
-      userSocketMap[playerId]={room,'socket_id':socket.id};
-      
-  }
+  userSocketMap[playerId]={room,'socket_id':socket.id}; 
   d['socket_id']=socket.id;
   let index = -1;
   if (state[room]) {
