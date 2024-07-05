@@ -25,7 +25,7 @@ class TambolaGame {
     const players = this.players;
     players.forEach(playerId => {
       const ticket = this.generateTicket();
-      //this.io.to(playerId.socket_id).emit('gameStart', { gameType: 'tambola', room: this.room, ticket });
+      this.io.to(playerId.socket_id).emit('gameStart', { gameType: 'tambola', room: this.room, ticket });
     });
 
     // Start the game logic here (e.g., drawing numbers)
