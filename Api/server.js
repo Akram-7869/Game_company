@@ -189,7 +189,7 @@ io.on('connection', socket => {
       return;
     }
     let roomName = '';
-    
+  
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
       //  await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
@@ -201,6 +201,15 @@ io.on('connection', socket => {
       console.log('create-room-', roomName);
       //   await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1, gameData: {}, WinList: {} });
     }
+    if(userSocketMap[userId]){
+      if(userSocketMap[userId].room === roomName){
+
+        console.log('not registering');
+        return ;
+
+      }
+  } 
+    
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
     socket.join(roomName);
