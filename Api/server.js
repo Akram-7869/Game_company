@@ -460,17 +460,11 @@ function arraymove(arr, fromIndex, toIndex) {
 let joinRoom = (socket, playerId, room, d = {}) => {
   //console.log('join room', socket.id, playerId, room);
   if(!userSocketMap[playerId]){
-    console.log('463');
-     userSocketMap[playerId]={room,'socket_id':socket.id};
+      userSocketMap[playerId]={room,'socket_id':socket.id};
   }else{
     let currentroom = userSocketMap[playerId]['room'];
       userSocketMap[playerId]={room,'socket_id':socket.id};
-      console.log('468');
-    if( currentroom){
-      console.log('469');
-      console.log('leaveling-from-server', currentroom, room);
-      socket.leave(currentroom);
-     }
+      
   }
   d['socket_id']=socket.id;
   let index = -1;
