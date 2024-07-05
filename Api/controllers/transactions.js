@@ -194,7 +194,7 @@ exports.updatePayoutDetail = asyncHandler(async (req, res, next) => {
   //   });
 
   if (req.userSocketMap[playerId]) {
-    let socketId = req.userSocketMap[playerId];
+    let socketId = req.userSocketMap[playerId]['socket_id'];
     req.io.to(socketId).emit('res', { ev: 'approved_notify', data: { "playerId": playerId, transaction } });
 
   }

@@ -171,7 +171,7 @@ io.on('connection', socket => {
     let dataParsed = d;// JSON.parse(d);
     let { userId } = dataParsed;
     // Store the mapping in the userSocketMap
-    userSocketMap[userId] = socket.id;
+    userSocketMap[userId]['socket_id'] = socket.id;
   });
   socket.on('join', async (d) => {
     console.log('join', d);
@@ -189,6 +189,7 @@ io.on('connection', socket => {
       return;
     }
     let roomName = '';
+    
     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
       //  await PlayerGame.findOneAndUpdate({ 'gameId': roomName, 'tournamentId': lobbyId }, { opponentId: userId, playerCount: 2 });
@@ -196,7 +197,7 @@ io.on('connection', socket => {
     } else {
       roomName = makeid(5);
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
-      state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [], started: false };
+      state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [], status: 'open' };
       console.log('create-room-', roomName);
       //   await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1, gameData: {}, WinList: {} });
     }
@@ -221,7 +222,7 @@ io.on('connection', socket => {
     io.to(roomName).emit('res', { ev: 'join', data });
     io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
     if (lobby.mode === gameName.tambola) {
-      tambolaGame.handleTambolaStart(roomName);
+      tambolaGame.handleTambolaStart(roomName,socket);
     }
   });
 
@@ -265,7 +266,7 @@ socket.on('setGameId', async (d) => {
 socket.on('leave', (d) => {
   let { room, userId } = d;
 
-  userLeave(socket, userId);
+  userLeave(d);
   socket.leave(room);
   let data = {
     room: room, userId,
@@ -454,9 +455,18 @@ function arraymove(arr, fromIndex, toIndex) {
 
 let joinRoom = (socket, playerId, room, d = {}) => {
   //console.log('join room', socket.id, playerId, room);
-  socket['room'] = room;
-  socket['userId'] = playerId;
-  socket['lobbyId'] = d.lobbyId;
+  if(!userSocketMap[playerId]){
+     userSocketMap[playerId]={room,'socket_id':socket.id};
+  }else{
+    let currentroom = userSocketMap[playerId]['room'];
+      userSocketMap[playerId]={room,'socket_id':socket.id};
+
+    if( currentroom && currentroom != room ){
+      console.log('leaveling-from-server', currentroom, room);
+      socket.leave(currentroom);
+     }
+  }
+  d['socket_id']=socket.id;
   let index = -1;
   if (state[room]) {
     index = state[room].players.findIndex(user => user.userId === playerId);
@@ -494,6 +504,10 @@ let userLeave = (s) => {
     if (index !== -1) {
       state[s.room].players.splice(index, 1);
     }
+    if(userSocketMap[s.userId]){
+      userSocketMap[s.userId]['room']=null;
+    }
+    
   }
 
   // for (let r in state) {

@@ -2,14 +2,12 @@ class TambolaGenerator {
     constructor(io,state) {
       this.io=io;
       this.state=state;
-      this.numbers = new Set();
-      this.generateNumbers();
     }
   
     // Generate numbers 1 to 90 and shuffle them
-    generateNumbers() {
-      this.numbersArray = Array.from({ length: 90 }, (_, i) => i + 1);
-      this.shuffle(this.numbersArray);
+    generateNumbers(roomName) {
+      this.state[roomName].numbersArray = Array.from({ length: 90 }, (_, i) => i + 1);
+      this.state[roomName].shuffle(this.state[roomName].numbersArray);
     }
   
     // Fisher-Yates Shuffle Algorithm
@@ -21,38 +19,45 @@ class TambolaGenerator {
     }
   
     // Get a random number from the shuffled list
-    drawNumber() {
-      if (this.numbersArray.length === 0) {
+    drawNumber(roomName) {
+      if (this.state[roomName].numbersArray.length === 0) {
         console.log("All numbers have been drawn.");
         return null;
       }
-      const number = this.numbersArray.pop();
-      this.numbers.add(number);
+      const number = this.state[roomName].numbersArray.pop();
+      this.state[roomName].numbers.add(number);
       return number;
     }
   
     // Display all drawn numbers
-    displayDrawnNumbers() {
-      return Array.from(this.numbers).sort((a, b) => a - b);
+    displayDrawnNumbers(roomName) {
+      return Array.from(this.state[roomName].numbers).sort((a, b) => a - b);
     }
-    emitStartTambola = (roomId) => {
+    emitStartTambola = (roomName) => {
       console.log('Tambola game started');
-      this.state[roomId]['intervalId'] = setInterval(() => {
+      this.state[roomName]['intervalId'] = setInterval(() => {
         const number = this.drawNumber();
         if (number === null) {
-          clearInterval(this.state[roomId]['intervalId']);
-          this.io.to(roomId).emit('tambolaEnd', { message: 'All numbers have been drawn' });
+          this.io.to(roomName).emit('tambolaEnd', { message: 'All numbers have been drawn' });
+          clearInterval(this.state[roomName]['intervalId']);
+          this.state[roomName]['status'] = 'ended';
+          this.state[roomName]['intervalId'] = null;
+          
         } else {
-          this.io.to(roomId).emit('newNumber', { number: number });
+          this.io.to(roomName).emit('newNumber', { number: number });
         }
       }, 10000); // Draw a number every second
     };
-    handleTambolaStart(roomName){
-      this.io.to(roomName).emit('startTambola', {});
-      if (this.state[roomName]['started'] === false) {
-        this.state[roomName]['started'] = true;
+    handleTambolaStart(roomName, socket){
+      
+      if (this.state[roomName]['status'] === 'open' || this.state[roomName]['status'] === 'pause') {
+        this.io.to(roomName).emit('startTambola', {});
+        this.generateNumbers(roomName);
+        this.state[roomName]['status'] = 'started';
         console.log('emited----startTambola');
         this.emitStartTambola(roomName);
+      }else{
+          this.io.to(socket.id).emit('startTambola',{});  // Send event only to the rejoining user
       }
     }
   }
