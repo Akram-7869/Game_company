@@ -221,7 +221,7 @@ io.on('connection', socket => {
     io.to(roomName).emit('res', { ev: 'join', data });
     io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
     if (lobby.mode === gameName.tambola) {
-      state[roomName] = new TambolaGame(io, state);
+      state[roomName] = new TambolaGame(io, roomName);
       state[roomName].start();
     //  tambolaGame.handleTambolaStart(roomName,socket);
     }

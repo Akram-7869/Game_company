@@ -40,6 +40,7 @@ class TambolaGame {
         clearInterval(intervalId);
         this.io.to(this.room).emit('tambolaEnd', { message: 'All numbers have been drawn' });
       } else {
+         console.log(`newnumber`)
         this.io.to(this.room).emit('newNumber', { gameType: 'tambola', room: this.room, number });
       }
     }, 1000); // Draw a number every second
