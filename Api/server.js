@@ -202,14 +202,18 @@ io.on('connection', socket => {
       //   await PlayerGame.create({ playerId: userId, 'gameId': roomName, 'tournamentId': lobbyId, playerCount: 1, gameData: {}, WinList: {} });
     }
     if(userSocketMap[userId]){
-      if(userSocketMap[userId].room === roomName){
-
+      const playerRoom = userSocketMap[userId].room;
+      if( playerRoom === roomName){
         console.log('not registering');
-        return ;
+        socket.emit('joinRoomError', { message: 'You are already in this room' });
 
-      }
+        return ;
+      } else {
+        socket.leave(playerRoom);
+        userLeave({userId, room:playerRoom})
+       }
   } 
-    
+  
     // console.log('room', roomName);
     joinRoom(socket, userId, roomName, dataParsed);
     socket.join(roomName);
