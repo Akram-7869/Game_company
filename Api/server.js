@@ -139,7 +139,7 @@ const PORT = process.env.PORT || 3000;
 const { makeid } = require('./utils/utils');
 const Tournament = require('./models/Tournament');
 const Player = require('./models/Player');
-const TambolaGenerator = require('./utils/tomblagame'); // Import TambolaGenerator
+const TambolaGame = require('./utils/tomblagame'); // Import TambolaGenerator
 
 const state = {};
 const publicRoom = {};
@@ -153,7 +153,6 @@ let gameName = {
   'crash': 6,
 }
 // Tambola generator instance
-const tambolaGame = new TambolaGenerator(io,state);
 io.use(function (socket, next) {
   const { tkn } = socket.handshake.query;
   console.log('c', tkn);
@@ -222,7 +221,9 @@ io.on('connection', socket => {
     io.to(roomName).emit('res', { ev: 'join', data });
     io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
     if (lobby.mode === gameName.tambola) {
-      tambolaGame.handleTambolaStart(roomName,socket);
+      state[roomName] = new TambolaGame(io, state);
+      state[roomName].start();
+    //  tambolaGame.handleTambolaStart(roomName,socket);
     }
   });
 
