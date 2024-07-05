@@ -7,7 +7,7 @@ class TambolaGenerator {
     // Generate numbers 1 to 90 and shuffle them
     generateNumbers(roomName) {
       this.state[roomName].numbersArray = Array.from({ length: 90 }, (_, i) => i + 1);
-      this.state[roomName].shuffle(this.state[roomName].numbersArray);
+      this.shuffle(this.state[roomName].numbersArray);
     }
   
     // Fisher-Yates Shuffle Algorithm
