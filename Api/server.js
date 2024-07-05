@@ -203,6 +203,7 @@ io.on('connection', socket => {
     }
     if(userSocketMap[userId]){
       const playerRoom = userSocketMap[userId].room;
+      console.log(playerRoom, roomName, userSocketMap);
       if( playerRoom === roomName){
         console.log('not registering');
         socket.emit('joinRoomError', { message: 'You are already in this room' });
