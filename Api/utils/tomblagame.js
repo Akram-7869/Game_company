@@ -36,7 +36,7 @@ class TambolaGenerator {
     emitStartTambola = (roomName) => {
       console.log('Tambola game started');
       this.state[roomName]['intervalId'] = setInterval(() => {
-        const number = this.drawNumber();
+        const number = this.drawNumber(roomName);
         if (number === null) {
           this.io.to(roomName).emit('tambolaEnd', { message: 'All numbers have been drawn' });
           clearInterval(this.state[roomName]['intervalId']);
