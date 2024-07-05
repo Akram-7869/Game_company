@@ -130,6 +130,7 @@ app.use('/api/v1/gamemanager', gamemanager);
 app.use('/api/v1/bannertext', bannertext);
 
 app.get('/api/v1/so', function (req, res, next) {
+  console.log(state);
   res.json({ state, publicRoom, userSocketMap });
 })
 app.use(errorHandler);
@@ -223,6 +224,7 @@ io.on('connection', socket => {
     if (lobby.mode === gameName.tambola) {
       state[roomName] = new TambolaGame(io, roomName);
       state[roomName].start();
+
     //  tambolaGame.handleTambolaStart(roomName,socket);
     }
   });
