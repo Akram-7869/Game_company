@@ -473,6 +473,9 @@ function arraymove(arr, fromIndex, toIndex) {
 
 let joinRoom = (socket, playerId, room, d = {}) => {
   //console.log('join room', socket.id, playerId, room);
+  socket['room'] = room;
+  socket['userId'] = playerId;
+  socket['lobbyId'] = d.lobbyId;
   if(!userSocketMap[playerId]){
       userSocketMap[playerId]={room,'socket_id':socket.id};
   }else{
