@@ -149,13 +149,13 @@ TransactionsSchema.methods.creditPlayerBonus = async function (amount) {
 };
 // debit deposit
 TransactionsSchema.methods.debitPlayerDeposit = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: {  deposit: -amount } }, {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: -amount, deposit: -amount } }, {
         new: true,
         runValidators: true
     });
 };
 TransactionsSchema.methods.creditPlayerDeposit = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: { deposit: amount, totalDeposit: amount } }, {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount,deposit: amount, totalDeposit: amount } }, {
         new: true,
         runValidators: true
     });
