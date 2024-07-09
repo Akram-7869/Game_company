@@ -121,13 +121,13 @@ const TransactionsSchema = new mongoose.Schema({
 });
 //   winning
 TransactionsSchema.methods.debitPlayerWinings = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: {  winings: -amount } }, {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: {balance: -amount,  winings: -amount } }, {
         new: true,
         runValidators: true
     });
 };
 TransactionsSchema.methods.creditPlayerWinings = async function (amount) {
-    return await Player.findByIdAndUpdate(this.playerId, { $inc: {  winings: amount } }, {
+    return await Player.findByIdAndUpdate(this.playerId, { $inc: { balance: amount, winings: amount } }, {
         new: true,
         runValidators: true
     });

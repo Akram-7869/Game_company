@@ -47,7 +47,6 @@ router.use('/api/v1/bannertext', bannertext);
 
 router.get('/api/v1/so', function (req, res, next) {
     console.log(JoinRoom)
-  res.send( JoinRoom);
 })
  
 

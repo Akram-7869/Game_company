@@ -1,7 +1,5 @@
 const path = require('path');
-const http = require('http');
-const socketio = require('socket.io');
-const express = require('express');
+const {publicRoom, userSocketMap, io,app,server,express,} = require('./utils/JoinRoom');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 
@@ -22,18 +20,14 @@ dotenv.config({ path: './config/config.env' });
 // Connect to database
 connectDB();
 
-
-
-const app = express();
-const server = http.createServer(app);
-const io = socketio(server);
+// const app = express();
+// const server = http.createServer(app);
+// const io = socketio(server);
 const Setting = require('./models/Setting');
-const {publicRoom, userSocketMap} = require('./utils/JoinRoom');
+
 const socket = require('./utils/socket').setupSocket(io);
 
 const index = require('./routes/index');
-
-
 
 // Body parser
 app.use(express.json({ limit: '50mb' }));

@@ -1,4 +1,5 @@
-// tambolaGame.js
+// const {state ,publicRoom, userSocketMap} = require('../utils/JoinRoom');
+
 class TambolaGame {
   constructor(io, room) {
     this.io = io;
@@ -43,7 +44,7 @@ class TambolaGame {
          console.log(`newnumber`)
         this.io.to(this.room).emit('newNumber', { gameType: 'tambola', room: this.room, number });
       }
-    }, 1000); // Draw a number every second
+    }, 30000); // Draw a number every second
   }
 
   generateNumbers() {
