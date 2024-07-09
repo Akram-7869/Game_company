@@ -82,11 +82,11 @@ let onConnection = (socket) => {
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
         state[roomName]['codeObj'].start();
         break;
-        case gameName.dragon_tiger:
-          state[roomName]['codeObj'] =new DragonTigerGame(roomName, io);
-          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-          state[roomName]['codeObj'].startBettingPhase();
-          break;  
+        // case gameName.dragon_tiger:
+        //   state[roomName]['codeObj'] =new DragonTigerGame(roomName, io);
+        //   state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+        //   state[roomName]['codeObj'].startBettingPhase();
+        //   break;  
     }
   
   });
