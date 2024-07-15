@@ -4,7 +4,7 @@ var dataTables = require('mongoose-datatables')
 const PostSchema = new mongoose.Schema({
     player: { type: mongoose.Schema.Types.ObjectId, ref: 'Players', required: true },
     imageId: {type: String},
-    caption: { type: String },
+    title: { type: String },
     status: { type: String },
 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Players' }],

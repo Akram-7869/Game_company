@@ -30,7 +30,7 @@ router.use(protect);
 
 router.route('/posts').get(postCtrl.postList); 
 router.route('/posts/data').post(postCtrl.getPosts);
-router.route('/posts/add').get(postCtrl.getPost).post(postCtrl.postAdd);
+router.route('/posts/add').get(postCtrl.postAdd).post(postCtrl.createPost);
 router.route('/posts/:id').get(postCtrl.editPost).post(postCtrl.updatePost).delete(postCtrl.deletePost);
 
 
