@@ -8,6 +8,8 @@ const { state, publicRoom, userSocketMap, tokenMiddleware, gameName, sleep, user
 const Tournament = require('../models/Tournament');
 const TambolaGame = require('../game/tomblagame');
 const DragonTigerGame = require('../game/dragontiger');
+const AviatorGame = require('../game/aviator');
+
 
 let io;
 
@@ -82,11 +84,16 @@ let onConnection = (socket) => {
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
         state[roomName]['codeObj'].start();
         break;
-        // case gameName.dragon_tiger:
-        //   state[roomName]['codeObj'] =new DragonTigerGame(roomName, io);
-        //   state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-        //   state[roomName]['codeObj'].startBettingPhase();
-        //   break;  
+        case gameName.dragon_tiger:
+          state[roomName]['codeObj'] =new DragonTigerGame(roomName, io);
+          //[roomName]['codeObj'].updatePlayers(state[roomName].players);
+          state[roomName]['codeObj'].startGame();
+          break; 
+          case gameName.crash:
+          state[roomName]['codeObj'] =new AviatorGame(roomName, io);
+          // state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+          state[roomName]['codeObj'].startGame();
+          break;  
     }
   
   });

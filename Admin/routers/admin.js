@@ -14,6 +14,8 @@ const tournamentCtrl = require('../controllers/TurnamentController');
 const notificationCtrl = require('../controllers/NotificationController');
 const couponCtrl = require('../controllers/CouponController');
 const bannerTextCtrl = require('../controllers/BannerTextController');
+const postCtrl = require('../controllers/PostController');
+
 
 const pollCtrl = require('../controllers/PollController');
 const gameMangCtrl = require('../controllers/GameManagerController');
@@ -25,6 +27,12 @@ const router = express.Router({ mergeParams: true });
 
 //var upload = multer({ storage: storage })
 router.use(protect);
+
+router.route('/posts').get(postCtrl.postList); 
+router.route('/posts/data').post(postCtrl.getPosts);
+router.route('/posts/add').get(postCtrl.getPost).post(postCtrl.postAdd);
+router.route('/posts/:id').get(postCtrl.editPost).post(postCtrl.updatePost).delete(postCtrl.deletePost);
+
 
 router.route('/bannertext').get(bannerTextCtrl.listBannertext); 
 router.route('/bannertext/data').post(bannerTextCtrl.getBannertexts);

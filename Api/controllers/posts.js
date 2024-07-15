@@ -1,8 +1,6 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Post = require('../models/Post');
-const File = require('../models/File');
-const PlayerPoll = require('../models/PlayerPoll');
 var path = require('path');
 const { uploadFile, deletDiskFile } = require('../utils/utils');
 
@@ -28,7 +26,38 @@ exports.getPosts = asyncHandler(async (req, res, next) => {
   })
   //res.status(200).json(res.advancedResults);
 });
+// @desc      Get all Posts
+// @route     GET /api/v1/auth/Posts
+// @access    Private/Admin
+exports.getPostFeed = asyncHandler(async (req, res, next) => {
 
+  const posts = await Post.find({status:'active'});
+  
+  //.populate('likes', 'firstName').populate('player', 'firstName').populate('comments.player', 'firstName');
+ 
+  res.status(200).json({
+    success: true,
+    data: posts
+  });
+});
+exports.getPostLikes = asyncHandler(async (req, res, next) => {
+
+  const posts = await Post.findOne({status:'active'}).populate('likes', 'firstName').populate('player', 'firstName');
+ 
+  res.status(200).json({
+    success: true,
+    data: posts
+  });
+});
+exports.getPostComments = asyncHandler(async (req, res, next) => {
+
+  const posts = await Post.findOne({status:'active'}).populate('comments.player', 'firstName');
+ 
+  res.status(200).json({
+    success: true,
+    data: posts
+  });
+});
 // @desc      Get single Post
 // @route     GET /api/v1/auth/Posts/:id
 // @access    Private/Admin
@@ -53,6 +82,7 @@ exports.createPost = asyncHandler(async (req, res, next) => {
   }
 
   let post = {
+    player:req.player._id,
     caption: req.body.caption,
     status: 'active',
     imageId: filename,
@@ -125,7 +155,7 @@ exports.likePost = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Post  not found`)
     );
   }
-  post = await Post.updateOne(
+  let post = await Post.updateOne(
     { _id: req.params.id },
     { $addToSet: { likes: req.player._id } }
   )
@@ -144,12 +174,11 @@ exports.commentOnPost = asyncHandler(async (req, res, next) => {
   }
   const comment = {
     content: req.body.content,
-    createdAt: new Date(),
-    player: req.player._id
+     player: req.player._id
   };
-    post = await Post.updateOne(
+   let  post = await Post.updateOne(
     { _id: req.params.id },
-    { $addToSet: { commets: comment} }
+    { $addToSet: { comments: comment} }
   )
   res.status(200).json({
     success: true,

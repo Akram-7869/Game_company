@@ -21,6 +21,7 @@ const polls = require('./polls');
 const gamemanager = require('./gameManager');
 const bannertext = require('./bannertext');
 const JoinRoom = require('../utils/JoinRoom');
+const posts = require('./posts');
 
 
 
@@ -34,7 +35,6 @@ router.use('/api/v1/versions', versions);
 router.use('/api/v1/bots', bots);
 //router.use('/api/v1/tickets', tickets);
 router.use('/api/v1/payments', payments);
-//router.use('/api/v1/files', files);
 router.use('/api/v1/notifications', notifications);
 router.use('/api/v1/banners', banners);
 router.use('/api/v1/games', game);
@@ -44,6 +44,8 @@ router.use('/api/v1/coupon', coupon);
 router.use('/api/v1/polls', polls);
 router.use('/api/v1/gamemanager', gamemanager);
 router.use('/api/v1/bannertext', bannertext);
+router.use('/api/v1/posts', posts);
+
 
 router.get('/api/v1/so', function (req, res, next) {
     console.log(JoinRoom)

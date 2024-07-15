@@ -1,64 +1,70 @@
 // const {state ,publicRoom, userSocketMap} = require('../utils/JoinRoom');
  
 const Timer = require("./Timer");
+
 class DragonTigerGame {
-  constructor(roomName, io) {
-      this.roomName = roomName;
-      this.io = io;
-      this.players = [];
-      this.gameState = 'waiting';
-      this.bettingTimer = new Timer( 10, (remainingTime) => {
-        console.log(`Countdown: ${remainingTime}`);
-    },()=>{this.endBettingPhase()} ); // 15 seconds betting phase
-      this.pauseTimer = new Timer( 3, (remainingTime) => {
-        console.log(`PassCountdown: ${remainingTime}`);
-    },()=>{this.startBettingPhase()} ); // 6 seconds waiting phase
-  }
+    constructor(roomName, io) {
+        this.io = io;
+        this.roomName = roomName;
+        this.currentPhase = 'betting';
+        this.bets = [];
+        this.bettingTime = 20; // 20 seconds
+        this.pauseTime = 10; // 10 seconds
+        this.players = new Set();
+    }
 
-  startBettingPhase() {
-      this.gameState = 'betting';
-      this.io.in(this.roomName).emit('message', 'Betting phase started. You have 15 seconds to place your bets.');
-      console.log('startBettingPhase');
-      this.bettingTimer.reset(10);
-      this.bettingTimer.startTimer();
-  }
+    startGame() {
+        this.currentPhase = 'betting';
+        this.io.to(this.roomName).emit('phase_change', { phase: 'betting' });
+        console.log(`Betting phase started in room: ${this.roomName}`);
 
-  endBettingPhase() {
-      this.gameState = 'paused';
-      this.io.in(this.roomName).emit('message', 'Betting phase ended. Calculating results...');
-      console.log('endBettingPhase');
+        this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
+            this.io.to(this.roomName).emit('betting_tick', { remainingTime: remaining });
+        }, () => {
+            this.startPausePhase();
+        });
 
-      this.pauseTimer.reset(3);
-      this.pauseTimer.startTimer();
-  }
+        this.bettingTimer.startTimer();
+    }
 
-  addPlayer(playerId) {
-      if (this.gameState === 'waiting') {
-          this.players.push(playerId);
-          this.io.to(playerId).emit('message', 'Waiting for the next game to start...');
-      } else {
-          this.io.to(playerId).emit('message', 'Cannot join, game in progress. Please wait.');
-      }
-  }
+    startPausePhase() {
+        this.currentPhase = 'pause';
+        this.io.to(this.roomName).emit('phase_change', { phase: 'pause' });
+        console.log(`Pause phase started in room: ${this.roomName}`);
 
-  updatePlayers(players) {
-      this.players = players;
-  }
+        const winningNumber = this.getWinningNumber();
+        this.io.to(this.roomName).emit('winning_number', { number: winningNumber });
 
-  pauseBettingTimer() {
-      this.bettingTimer.pause();
-  }
+        this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
+            this.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });
+        }, () => {
+            this.startGame();
+        });
 
-  resumeBettingTimer() {
-      this.bettingTimer.resume();
-  }
+        this.pauseTimer.startTimer();
+    }
 
-  pausePauseTimer() {
-      this.pauseTimer.pause();
-  }
+    getWinningNumber() {
+        return Math.floor(Math.random() * 100) + 1; // Random number between 1 and 100
+    }
 
-  resumePauseTimer() {
-      this.pauseTimer.resume();
-  }
+    addPlayer(socket) {
+        if (this.currentPhase === 'betting') {
+            this.players.add(socket.id);
+            socket.join(this.roomName);
+            this.io.to(this.roomName).emit('player_joined', { id: socket.id });
+            console.log(`Player ${socket.id} joined room ${this.roomName}`);
+        } else {
+            socket.emit('error', 'Can only join during betting phase.');
+        }
+    }
+
+    removePlayer(socket) {
+        this.players.delete(socket.id);
+        socket.leave(this.roomName);
+        this.io.to(this.roomName).emit('player_left', { id: socket.id });
+        console.log(`Player ${socket.id} left room ${this.roomName}`);
+    }
 }
+
 module.exports = DragonTigerGame;

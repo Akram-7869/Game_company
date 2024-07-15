@@ -1,0 +1,127 @@
+const asyncHandler = require('../middleware/async');
+let axios = require("axios");
+const { callApi, api_url } = require('../helper/common');
+let apiUrl = api_url + '/posts/';
+
+exports.postList = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Post', apiUrl, image_url: process.env.IMAGE_URL };
+      res.render('Post/list')
+});
+exports.getPosts = asyncHandler(async (req, res, next) => {
+      callApi(req).post(apiUrl, { ...req.body })
+          .then(r => {
+              // Assign value in session
+              res.status(200).json(r.data);
+          })
+          .catch(error => {
+              //   req.flash('error', 'Incorrect email or password!');
+          })
+  
+  });
+exports.getPost = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Post', apiUrl, image_url: process.env.IMAGE_URL };
+      axios.get(apiUrl + req.params.id)
+            .then(r => {
+                  res.locals = { title: 'Post' };
+                  res.render('Post/edit', { row: r.data.data });
+            })
+            .catch(error => {
+
+            })
+});
+
+
+exports.updatePost = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Post' };
+      axios.post(apiUrl + req.params.id, req.body)
+            .then(r => {
+                  // Assign value in session
+                  req.flash('message', 'Data save');
+                  res.redirect(process.env.ADMIN_URL + '/admin/post');
+            })
+            .catch(error => { req.flash('error', 'Data not updated'); })
+});
+exports.editPost = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Post', apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/post' };
+      axios.get(apiUrl + req.params.id, req.body)
+            .then(r => {
+                  // Assign value in session
+
+                  req.flash('message', 'Data save');
+
+                  res.render('Post/edit', { row: r.data.data });
+            })
+            .catch(error => {
+
+                  req.flash('error', 'Data not updated');
+
+            })
+});
+
+exports.deletePost = asyncHandler(async (req, res, next) => {
+      callApi(req).delete(apiUrl + req.params.id, req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'Player-edit' };
+                  req.flash('success', 'Deleted');
+                  // res.render('Players/List',{row:r.data.data}); 
+
+            }).catch(error => { req.flash('error', 'Data not updated'); })
+      res.status(200).json({
+            success: true,
+            data: {}
+      });
+});
+
+
+
+
+exports.getPost = asyncHandler(async (req, res, next) => {
+
+      axios.post(apiUrl, { ...req.body })
+            .then(r => {
+                  // Assign value in session
+
+                  res.status(200).json(r.data);
+
+
+            })
+            .catch(error => {
+
+                  //   req.flash('error', 'Incorrect email or password!');
+
+            })
+
+});
+
+
+exports.postAdd = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Post', 'apiUrl': apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/post', image_url: process.env.IMAGE_URL };
+
+      res.render('Post/add', { row: {} });
+});
+
+
+exports.createPost = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Post' };
+      //console.log('creating-image', req.files);
+
+      axios.post(apiUrl, { body: req.body, file: req.files })
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'Post' };
+                  req.flash('message', 'Data save');
+                  res.redirect(process.env.ADMIN_URL + '/admin/post');
+
+
+            })
+            .catch(error => {
+                  //   
+
+                  req.flash('error', 'Data not updated');
+
+            })
+      res.render('Post/list', { row: {} });
+});
+
+
