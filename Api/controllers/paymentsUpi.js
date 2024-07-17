@@ -56,7 +56,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
         );
     }
     if (coupon_id.length === 24) {
-        let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true, _id: coupon_id });
+        let couponRec = await Coupon.findOne({ minAmount:  amount , active: true, _id: coupon_id });
         if (!couponRec) {
             return next(
                 new ErrorResponse(`Invalid Coupon`)
@@ -218,7 +218,7 @@ exports.handleNotify = asyncHandler(async (req, res, next) => {
 
         if (tran.couponId) {
             let bonusAmount = 0;
-            let couponRec = await Coupon.findOne({ 'minAmount': { $lte: amount }, 'maxAmount': { $gte: amount }, '_id': tran.couponId });
+            let couponRec = await Coupon.findOne({ 'minAmount':  amount, '_id': tran.couponId });
             if (!couponRec) {
                 console.log('Coupon not found');
                 res.status(200);
