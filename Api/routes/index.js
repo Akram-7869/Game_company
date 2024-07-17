@@ -22,6 +22,7 @@ const gamemanager = require('./gameManager');
 const bannertext = require('./bannertext');
 const JoinRoom = require('../utils/JoinRoom');
 const posts = require('./posts');
+const faqs = require('./faqs');
 
 
 
@@ -45,6 +46,8 @@ router.use('/api/v1/polls', polls);
 router.use('/api/v1/gamemanager', gamemanager);
 router.use('/api/v1/bannertext', bannertext);
 router.use('/api/v1/posts', posts);
+router.use('/api/v1/faqs', faqs);
+
 
 
 router.get('/api/v1/so', function (req, res, next) {

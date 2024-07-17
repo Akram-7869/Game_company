@@ -15,6 +15,7 @@ const notificationCtrl = require('../controllers/NotificationController');
 const couponCtrl = require('../controllers/CouponController');
 const bannerTextCtrl = require('../controllers/BannerTextController');
 const postCtrl = require('../controllers/PostController');
+const faqCtrl = require('../controllers/FaqController');
 
 
 const pollCtrl = require('../controllers/PollController');
@@ -27,6 +28,12 @@ const router = express.Router({ mergeParams: true });
 
 //var upload = multer({ storage: storage })
 router.use(protect);
+
+router.route('/faq').get(faqCtrl.faqList); 
+router.route('/faq/data').post(faqCtrl.getFaqs);
+router.route('/faq/add').get(faqCtrl.faqAdd).post(faqCtrl.createFaq);
+router.route('/faq/:id').get(faqCtrl.editFaq).post(faqCtrl.updateFaq).delete(faqCtrl.deleteFaq);
+
 
 router.route('/posts').get(postCtrl.postList); 
 router.route('/posts/data').post(postCtrl.getPosts);

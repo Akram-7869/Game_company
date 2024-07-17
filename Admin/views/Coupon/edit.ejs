@@ -47,7 +47,7 @@
                                         class="form-control" required placeholder="coupon name" />
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">coupon Type</label>
+                                    <label class="form-label">Coupon Type</label>
 
                                     <select class="form-select" name="couponType" required id="couponType">
                                         <option value="">Select</option>
@@ -57,7 +57,7 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">calculate Type</label>
+                                    <label class="form-label">Calculate Type</label>
                                     <select class="form-select" name="calculateType" required id="calculateType">
                                         <option value="">Select</option>
                                         <option value="fixed" <%=row.calculateType==='fixed' ?'selected':'' %>>Fixed
@@ -68,19 +68,19 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">couponAmount</label>
+                                    <label class="form-label">CouponAmount</label>
                                     <input id="couponAmount" type="text" name="couponAmount"
                                         value="<%=row.couponAmount?row.couponAmount:'' %>" class="form-control" required
                                         placeholder="couponAmount" />
                                 </div>
-                                <div class="mb-3">
+                                <!-- <div class="mb-3">
                                     <label class="form-label">Max Amount</label>
                                     <input type="text" id="max" name="maxAmount"
                                         value="<%=row.maxAmount?row.maxAmount:'' %>" class="form-control" required
                                         placeholder="Max Amount" />
-                                </div>
+                                </div> -->
                                 <div class="mb-3">
-                                    <label class="form-label">Min Amount</label>
+                                    <label class="form-label">Amount</label>
                                     <input type="text" id="min" name="minAmount"
                                         value="<%=row.minAmount?row.minAmount:'' %>" class="form-control" required
                                         placeholder="Min Amount" />
