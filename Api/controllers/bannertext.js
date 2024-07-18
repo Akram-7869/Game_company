@@ -29,6 +29,14 @@ exports.getBannertexts = asyncHandler(async (req, res, next) => {
     //res.status(200).json(res.advancedResults);
 });
 
+exports.getBannertextList = asyncHandler(async (req, res, next) => {
+    
+  let row=   Bannertext.find({status:'active'});
+    res.status(200).json({
+        success: true,
+        data: row
+    });
+});
 // @desc      Get single Bannertext
 // @route     GET /api/v1/auth/Bannertexts/:id
 // @access    Private/Admin

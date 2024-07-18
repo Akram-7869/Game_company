@@ -9,6 +9,7 @@ const { protect } = require('../middleware/auth');
 
 router.route('/add').post(bannertextCtrl.createBannertext);
 router.route('/').post(bannertextCtrl.getBannertexts);
+router.route('/list').post(bannertextCtrl.getBannertextList);
 
 router
     .route('/:id')
