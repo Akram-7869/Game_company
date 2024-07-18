@@ -47,14 +47,8 @@
                                 <div class="mb-3">
                                     <label class="form-label">Location</label>
                                     <div class="col-md-10">
-                                        <select id="location" class="form-select" name="location" required>
-                                            <option value="HOME" <%=row.location==='HOME' ?'selected':'' %>>Home
-                                            </option>
-                                            <!-- <option value="PROFILE" <%=row.location==='PROFILE' ?'selected':'' %>
-                                                >Profile
-                                            </option> -->
-
-                                        </select>
+                                        <input type="title" id="location" name="location" value="<%=row.location?row.location:'' %>"
+                                        class="form-control" required placeholder="location" />
                                     </div>
                                 </div>
                                  
