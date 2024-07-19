@@ -97,9 +97,6 @@ const TransactionsSchema = new mongoose.Schema({
     gateWayCommision: {
         type: Number,
     },
-    gateWayCommision: {
-        type: Number,
-    },
     logType: {
         type: String,
         enum: ['join', 'deposit', 'withdraw', 'game', 'won', 'bonus', 'payment', 'fees', 'adjustment', 'membership', 'reverse', 'refer_bonus'],

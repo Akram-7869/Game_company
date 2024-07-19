@@ -41,6 +41,13 @@ const TournamentSchema = new mongoose.Schema({
     maxBet: {
         type: Number
     },
+    tournamentType: {
+        type: String,
+        default: 'admin' //influencer,private ,
+    },
+    room: {
+        type: String,
+    },
     maxPayout: {
         type: Number
     },
@@ -50,7 +57,7 @@ const TournamentSchema = new mongoose.Schema({
     potLimit: {
         type: Number
     },
-    createdBy: {
+    influencerId: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
     },

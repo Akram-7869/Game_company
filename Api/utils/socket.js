@@ -82,6 +82,7 @@ let onConnection = (socket) => {
       case gameName.tambola:
         state[roomName]['codeObj'] =new TambolaGame(io, roomName);
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+        state[roomName]['codeObj'].syncPlayer(socket.id);
         state[roomName]['codeObj'].start();
         break;
         case gameName.dragon_tiger:
