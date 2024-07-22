@@ -19,7 +19,7 @@ class TambolaGame {
     this.players = players;
   }
 
-  start() {
+  startGame() {
     if (this.gameStarted) return; // Prevent multiple starts
 
     this.gameStarted = true;

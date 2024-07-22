@@ -15,8 +15,6 @@ const PlayerGameSchema = new mongoose.Schema({
   tournamentId: {
     type: mongoose.Schema.ObjectId,
     ref: 'Tournaments'
-
-
   },
   gameType: {
     type: String,

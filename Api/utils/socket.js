@@ -80,23 +80,23 @@ let onConnection = (socket) => {
     io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
     switch (lobby.mode) {
       case gameName.tambola:
-        state[roomName]['codeObj'] =new TambolaGame(io, roomName);
+        state[roomName]['codeObj'] = new TambolaGame(io, roomName);
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
         state[roomName]['codeObj'].syncPlayer(socket.id);
-        state[roomName]['codeObj'].start();
+        state[roomName]['codeObj'].startGame();
         break;
-        case gameName.dragon_tiger:
-          state[roomName]['codeObj'] =new DragonTigerGame(roomName, io);
-          //[roomName]['codeObj'].updatePlayers(state[roomName].players);
-          state[roomName]['codeObj'].startGame();
-          break; 
-          case gameName.crash:
-          state[roomName]['codeObj'] =new AviatorGame(roomName, io);
-          // state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-          state[roomName]['codeObj'].startGame();
-          break;  
+      case gameName.dragon_tiger:
+        state[roomName]['codeObj'] = new DragonTigerGame(roomName, io);
+        //[roomName]['codeObj'].updatePlayers(state[roomName].players);
+        state[roomName]['codeObj'].startGame();
+        break;
+      case gameName.crash:
+        state[roomName]['codeObj'] = new AviatorGame(roomName, io);
+        // state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+        state[roomName]['codeObj'].startGame();
+        break;
     }
-  
+
   });
 
   socket.on('lobbyStat', (d) => {
@@ -147,6 +147,11 @@ let onConnection = (socket) => {
     };
     console.log('leave-', d, data);
     io.to(room).emit('res', { ev: 'leave', data });
+  });
+  //chat_message
+  socket.on('chat_message', (d) => {
+    let { room} = d;
+    socket.to(room).emit('chat_message', d);
   });
 
   // Runs when client disconnects
