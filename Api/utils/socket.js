@@ -82,19 +82,20 @@ let onConnection = (socket) => {
       case gameName.tambola:
         state[roomName]['codeObj'] = new TambolaGame(io, roomName);
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-        state[roomName]['codeObj'].syncPlayer(socket.id);
+        state[roomName]['codeObj'].syncPlayer(socket.id,d);
         state[roomName]['codeObj'].startGame();
         break;
       case gameName.dragon_tiger:
         state[roomName]['codeObj'] = new DragonTigerGame(roomName, io);
-        //[roomName]['codeObj'].updatePlayers(state[roomName].players);
+        state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+        state[roomName]['codeObj'].syncPlayer(socket.id,d);
         state[roomName]['codeObj'].startGame();
-        state[roomName]['codeObj'].syncPlayer(socket.id);
-
         break;
       case gameName.crash:
         state[roomName]['codeObj'] = new AviatorGame(roomName, io);
-        // state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+        state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+      //  state[roomName]['codeObj'].syncPlayer(socket.id,d);
+
         state[roomName]['codeObj'].startGame();
         break;
     }
@@ -152,7 +153,7 @@ let onConnection = (socket) => {
   });
   //chat_message
   socket.on('chat_message', (d) => {
-    let { room} = d;
+    let { room } = d;
     socket.to(room).emit('chat_message', d);
   });
 

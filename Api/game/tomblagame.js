@@ -93,14 +93,15 @@ class TambolaGame {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  syncPlayer(playerId) {
+  syncPlayer(playerId,player) {
     // Send current game state to the player
     this.io.to(playerId).emit('syncState', {
       gameType: 'tambola',
       room: this.room,
       numbers: Array.from(this.numbers),
       claimed: this.claimed,
-      gameStarted: this.gameStarted
+      gameStarted: this.gameStarted,
+      player:player
     });
   }
 }

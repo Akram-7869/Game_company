@@ -67,12 +67,14 @@ class DragonTigerGame {
         this.io.to(this.roomName).emit('player_left', { id: socket.id });
         console.log(`Player ${socket.id} left room ${this.roomName}`);
     }
-    syncPlayer(playerId) {
+    syncPlayer(playerId , player) {
         // Send current game state to the player
         this.io.to(playerId).emit('syncState', {
           gameType: 'DragonTiger',
           room: this.roomName,
-          currentPhase:this.currentPhase
+          currentPhase:this.currentPhase,
+          player:player
+
 
         });
       }
