@@ -60,7 +60,8 @@ class DragonTigerGame {
             tiger: 0,
             tie: 0,
         };
-        this.winList.push(win).shift();
+        this.winList.push(win);
+        this.winList.shift();
 
         return win; // Random number between 1 and 100
     }
