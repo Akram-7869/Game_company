@@ -43,7 +43,7 @@ class DragonTigerGame {
         this.io.to(this.roomName).emit('winning_number', { number: winningNumber });
 
         this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
-            this.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });
+            //  this.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });
         }, () => {
             this.startGame();
         });
@@ -52,7 +52,7 @@ class DragonTigerGame {
     }
     updatePlayers(players) {
         this.players = players;
-      }
+    }
     getWinningNumber() {
         let win = this.determineWinningOutcome();
         this.bets = {
