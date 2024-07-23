@@ -34,6 +34,8 @@ class LudoGame {
     }
 
     startGame() {
+        if (this.bettingTimer) return; // Prevent multiple starts
+
         this.gameState = 'playing';
         this.turnOrder = [...this.players, ...this.bots];
         this.io.to(this.roomName).emit('game_start', { players: this.turnOrder });

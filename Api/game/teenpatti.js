@@ -33,6 +33,7 @@ class TeenpattiGame {
     }
 
     startGame() {
+        
         this.gameState = 'playing';
         this.io.to(this.roomName).emit('game_start', { players: Array.from(this.players) });
         console.log(`Game started in room: ${this.roomName}`);

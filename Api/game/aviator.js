@@ -16,6 +16,8 @@ class AviatorGame {
     }
 
     startGame() {
+        if (this.bettingTimer) return; // Prevent multiple starts
+
         this.currentPhase = 'betting';
         this.io.to(this.roomName).emit('phase_change', { phase: 'betting' });
         console.log(`Betting phase started in room: ${this.roomName}`);
