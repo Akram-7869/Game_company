@@ -108,7 +108,7 @@ class DragonTigerGame {
             winner
         });
 
-        setTimeout( ()=>{ this.startGame()},4000);
+        setTimeout( ()=>{ this.startGame()},6000);
     
 
        
