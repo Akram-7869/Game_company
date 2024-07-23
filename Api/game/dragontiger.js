@@ -73,7 +73,9 @@ class DragonTigerGame {
           gameType: 'DragonTiger',
           room: this.roomName,
           currentPhase:this.currentPhase,
-          player:player
+          player:player,
+          postion: this.players.indexOf(playerId),
+          total_players: this.players.size;
 
 
         });
