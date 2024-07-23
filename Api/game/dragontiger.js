@@ -120,7 +120,7 @@ class DragonTigerGame {
             currentPhase: this.currentPhase,
             player: player,
             postion: this.players.indexOf(socket),
-            total_players: this.players.size;
+            total_players: this.players.size,
             bets: this.bets
         });
         this.onBetPlaced(socket);
