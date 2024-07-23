@@ -71,7 +71,7 @@ class DragonTigerGame {
 
 
     startGame() {
-        if (this.bettingTimer) return; // Prevent multiple starts
+       // if (this.bettingTimer) return; // Prevent multiple starts
 
         this.currentPhase = 'betting';
         this.dragonBet = 0;
