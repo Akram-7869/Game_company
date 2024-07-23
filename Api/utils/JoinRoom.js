@@ -252,7 +252,23 @@ let defaultRolletValue = () => {
   
   
   }
-
+  function getKeyWithMinValue(data) {
+    // Ensure none of the values are less than 0
+    Object.keys(data).forEach(key => {
+      data[key] = Math.max(0, data[key]);
+    });
+  
+    // Find the minimum value
+    const minValue = Math.min(...Object.values(data));
+  
+    // Find keys with the minimum value
+    const minKeys = Object.keys(data).filter(key => data[key] === minValue);
+  
+    // Pick a random key from keys with the minimum value
+    const randomMinKey = minKeys[Math.floor(Math.random() * minKeys.length)];
+    return randomMinKey;
+  
+  }
   
   
   function arraymove(arr, fromIndex, toIndex) {
