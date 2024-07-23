@@ -106,7 +106,6 @@ class DragonTigerGame {
         this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
             //  this.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });
         }, () => {
-            this.bettingTimer=null;
             this.startGame();
         });
 
