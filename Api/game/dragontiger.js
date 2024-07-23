@@ -8,47 +8,43 @@ class DragonTigerGame {
         this.roomName = roomName;
         this.currentPhase = 'betting';
         this.winList = [1, 2, 3, 3, 1];
-        this.bets = {
-            dragon: 0,
-            tiger: 0,
-            tie: 0,
-        };
-         this.dragonBet = 0;
-this.tigerBet = 0;
-this.tieBet = 0;
+
+        this.dragonBet = 0;
+        this.tigerBet = 0;
+        this.tieBet = 0;
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 10; // 10 seconds
         this.players = new Set();
         this.staticDeck = [
             // Clubs (0-12)
-            {cardNo: 2, color: 1}, {cardNo: 3, color: 1}, {cardNo: 4, color: 1}, {cardNo: 5, color: 1},
-            {cardNo: 6, color: 1}, {cardNo: 7, color: 1}, {cardNo: 8, color: 1}, {cardNo: 9, color: 1},
-            {cardNo: 10, color: 1}, {cardNo: 11, color: 1}, {cardNo: 12, color: 1}, {cardNo: 13, color: 1},
-            {cardNo: 14, color: 1},
+            { cardNo: 2, color: 1 }, { cardNo: 3, color: 1 }, { cardNo: 4, color: 1 }, { cardNo: 5, color: 1 },
+            { cardNo: 6, color: 1 }, { cardNo: 7, color: 1 }, { cardNo: 8, color: 1 }, { cardNo: 9, color: 1 },
+            { cardNo: 10, color: 1 }, { cardNo: 11, color: 1 }, { cardNo: 12, color: 1 }, { cardNo: 13, color: 1 },
+            { cardNo: 14, color: 1 },
             // Diamonds (13-25)
-            {cardNo: 2, color: 2}, {cardNo: 3, color: 2}, {cardNo: 4, color: 2}, {cardNo: 5, color: 2},
-            {cardNo: 6, color: 2}, {cardNo: 7, color: 2}, {cardNo: 8, color: 2}, {cardNo: 9, color: 2},
-            {cardNo: 10, color: 2}, {cardNo: 11, color: 2}, {cardNo: 12, color: 2}, {cardNo: 13, color: 2},
-            {cardNo: 14, color: 2},
+            { cardNo: 2, color: 2 }, { cardNo: 3, color: 2 }, { cardNo: 4, color: 2 }, { cardNo: 5, color: 2 },
+            { cardNo: 6, color: 2 }, { cardNo: 7, color: 2 }, { cardNo: 8, color: 2 }, { cardNo: 9, color: 2 },
+            { cardNo: 10, color: 2 }, { cardNo: 11, color: 2 }, { cardNo: 12, color: 2 }, { cardNo: 13, color: 2 },
+            { cardNo: 14, color: 2 },
             // Spades (26-38)
-            {cardNo: 2, color: 3}, {cardNo: 3, color: 3}, {cardNo: 4, color: 3}, {cardNo: 5, color: 3},
-            {cardNo: 6, color: 3}, {cardNo: 7, color: 3}, {cardNo: 8, color: 3}, {cardNo: 9, color: 3},
-            {cardNo: 10, color: 3}, {cardNo: 11, color: 3}, {cardNo: 12, color: 3}, {cardNo: 13, color: 3},
-            {cardNo: 14, color: 3},
+            { cardNo: 2, color: 3 }, { cardNo: 3, color: 3 }, { cardNo: 4, color: 3 }, { cardNo: 5, color: 3 },
+            { cardNo: 6, color: 3 }, { cardNo: 7, color: 3 }, { cardNo: 8, color: 3 }, { cardNo: 9, color: 3 },
+            { cardNo: 10, color: 3 }, { cardNo: 11, color: 3 }, { cardNo: 12, color: 3 }, { cardNo: 13, color: 3 },
+            { cardNo: 14, color: 3 },
             // Hearts (39-51)
-            {cardNo: 2, color: 4}, {cardNo: 3, color: 4}, {cardNo: 4, color: 4}, {cardNo: 5, color: 4},
-            {cardNo: 6, color: 4}, {cardNo: 7, color: 4}, {cardNo: 8, color: 4}, {cardNo: 9, color: 4},
-            {cardNo: 10, color: 4}, {cardNo: 11, color: 4}, {cardNo: 12, color: 4}, {cardNo: 13, color: 4},
-            {cardNo: 14, color: 4}
+            { cardNo: 2, color: 4 }, { cardNo: 3, color: 4 }, { cardNo: 4, color: 4 }, { cardNo: 5, color: 4 },
+            { cardNo: 6, color: 4 }, { cardNo: 7, color: 4 }, { cardNo: 8, color: 4 }, { cardNo: 9, color: 4 },
+            { cardNo: 10, color: 4 }, { cardNo: 11, color: 4 }, { cardNo: 12, color: 4 }, { cardNo: 13, color: 4 },
+            { cardNo: 14, color: 4 }
         ];
-        
+
     }
 
     selectWinningCards() {
         let dragonCardIndex, tigerCardIndex;
-    
+
         if (this.dragonBet <= this.tigerBet && this.dragonBet <= this.tieBet) {
-          
+
         } else if (this.tigerBet <= this.dragonBet && this.tigerBet <= this.tieBet) {
             // Tiger should win
             do {
@@ -62,15 +58,18 @@ this.tieBet = 0;
                 tigerCardIndex = Math.floor(Math.random() * 52);
             } while (this.staticDeck[dragonCardIndex].cardNo !== this.staticDeck[tigerCardIndex].cardNo);
         }
-    
+
         return { dragonCardIndex, tigerCardIndex };
     }
-    
+
 
     startGame() {
         if (this.bettingTimer) return; // Prevent multiple starts
 
         this.currentPhase = 'betting';
+        this.dragonBet = 0;
+        this.tigerBet = 0;
+        this.tieBet = 0
         this.io.to(this.roomName).emit('phase_change', { phase: 'betting' });
         console.log(`Betting phase started in room: ${this.roomName}`);
 
@@ -91,9 +90,9 @@ this.tieBet = 0;
         // const winningNumber = this.getWinningNumber();
         // this.io.to(this.roomName).emit('winning_number', { number: winningNumber });
         const { dragonCardIndex, tigerCardIndex } = this.selectWinningCards();
-        const winner = this.staticDeck[dragonCardIndex].cardNo > this.staticDeck[tigerCardIndex].cardNo ? 'dragon' : 
-                       this.staticDeck[dragonCardIndex].cardNo < this.staticDeck[tigerCardIndex].cardNo ? 'tiger' : 'tie';
-        
+        const winner = this.staticDeck[dragonCardIndex].cardNo > this.staticDeck[tigerCardIndex].cardNo ? 'dragon' :
+            this.staticDeck[dragonCardIndex].cardNo < this.staticDeck[tigerCardIndex].cardNo ? 'tiger' : 'tie';
+
         // Emit the result to all clients immediately
         this.io.to(this.roomName).emit('game_result', {
             dragonCardIndex,
@@ -112,7 +111,7 @@ this.tieBet = 0;
     updatePlayers(players) {
         this.players = players;
     }
-    
+
     onBetPlaced(socket) {
         socket.removeAllListeners('onBetPlaced');
 
@@ -132,20 +131,7 @@ this.tieBet = 0;
         });
     }
 
-    determineWinningOutcome() {
-        const dragonPayout = this.bets.dragon * 2;
-        const tigerPayout = this.bets.tiger * 2;
-        const tiePayout = this.bets.tie * 10;
 
-        if (dragonPayout <= tigerPayout && dragonPayout <= tiePayout) {
-            return 1;//'dragon';
-        } else if (tigerPayout <= dragonPayout && tigerPayout <= tiePayout) {
-            return 2;//'tiger';
-        } else {
-            return 3;//'tie';
-        }
-
-    }
     addPlayer(socket) {
         if (this.currentPhase === 'betting') {
             this.players.add(socket.id);
@@ -172,7 +158,9 @@ this.tieBet = 0;
             player: player,
             postion: this.players.indexOf(socket),
             total_players: this.players.size,
-            bets: this.bets
+            betting_remaing:this.bettingTimer?.remaining,
+            pause_remaing:this.pauseTimer?.remaining
+
         });
         this.onBetPlaced(socket);
     }
