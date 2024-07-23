@@ -124,12 +124,7 @@ let onConnection = (socket) => {
     io.to(room).emit('res', { ev, data });
 
   });
-  socket.on('onBetPlaced', (d) => {
-    let { room, ev, data } = d;//JSON.parse(d);
-    console.log('onBetPlaced', data)
-    io.to(room).emit('onBetPlaced', d);
-
-  });
+ 
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
     if (state[room]) {
@@ -258,48 +253,7 @@ let onConnection = (socket) => {
     console.log('setWinListData', data);
     io.to(room).emit('res', { ev: 'setWinListData', data });
   });
-  socket.on('setBetData', (d) => {
-    let { room, betNo, amount, action = 'bet', manyBet = '[]' } = d; //JSON.parse(d);
-    console.log('setBetData', d);
-    amount = parseInt(amount)
-    if (state[room] && betNo <= 36 && amount > 0) {
-      if (action === 'bet') {
-        state[room]['betList'][betNo] = amount + parseInt(state[room]['betList'][betNo]);
-      } else if (action === 'unbet' && state[room]['betList'][betNo] > 0) {
-        let x = parseInt(state[room]['betList'][betNo]) - amount;
-        state[room]['betList'][betNo] = x < 0 ? 0 : x;
-      }
-
-    } else if (betNo > 36 && amount > 0) {
-      const betArray = JSON.parse(manyBet);
-      let amountMany = amount / manyBet.length;
-      if (action === 'bet') {
-        for (const id of betArray) {
-          state[room]['betList'][id] = amountMany + parseInt(state[room]['betList'][id]);
-        }
-      } else if (action === 'unbet') {
-        for (const id of betArray) {
-          if (state[room]['betList'][id] > 0) {
-            let x = parseInt(state[room]['betList'][id]) - amountMany;
-            state[room]['betList'][id] = x < 0 ? 0 : x;
-          }
-
-
-        }
-      }
-    }
-
-  });
-  socket.on('getBetData', (d) => {
-    let { room } = d; //JSON.parse(d);
-    console.log('getBetData', room);
-    if (state[room]) {
-      let data = { room: room, betWin: getKeyWithMinValue(state[room]['betList']) }
-      console.log('getBetData', data);
-      io.in(room).emit('res', { ev: 'getBetData', data });
-      state[room]['betList'] = defaultRolletValue();
-    }
-  });
+  
 
 };
 
