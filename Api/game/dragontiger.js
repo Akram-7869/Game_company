@@ -116,7 +116,7 @@ class DragonTigerGame {
     }
     syncPlayer(socket, player) {
         // Send current game state to the player
-        this.io.to(socket).emit('syncState', {
+        this.io.to(socket.id).emit('syncState', {
             gameType: 'DragonTiger',
             room: this.roomName,
             currentPhase: this.currentPhase,
