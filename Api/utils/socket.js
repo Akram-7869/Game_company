@@ -124,6 +124,12 @@ let onConnection = (socket) => {
     io.to(room).emit('res', { ev, data });
 
   });
+  socket.on('onBetPlaced', (d) => {
+    let { room, ev, data } = d;//JSON.parse(d);
+    console.log('onBetPlaced', data)
+    io.to(room).emit('onBetPlaced', d);
+
+  });
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
     if (state[room]) {
