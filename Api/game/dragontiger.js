@@ -8,6 +8,7 @@ class DragonTigerGame {
         this.roomName = roomName;
         this.currentPhase = 'betting';
         this.winList = [1, 2, 3, 3, 1,2,1,3];
+        this.gameStarted = false;
 
         this.dragonBet = 0;
         this.tigerBet = 0;
@@ -68,11 +69,15 @@ class DragonTigerGame {
         }
         return { dragonCardIndex, tigerCardIndex, winner };
     }
+    StartDragonTigerGameStated(){
+         if (this.gameStarted) return; 
 
+        this.gameStarted=true;
+        this.startGame();
+    }
 
     startGame() {
-       // if (this.bettingTimer) return; // Prevent multiple starts
-
+       
         this.currentPhase = 'betting';
         this.dragonBet = 0;
         this.tigerBet = 0;
@@ -103,13 +108,10 @@ class DragonTigerGame {
             winner
         });
 
-        this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
-            //  this.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });
-        }, () => {
-            this.startGame();
-        });
+        setTimeout(  this.startGame,4000);
+    
 
-        this.pauseTimer.startTimer();
+       
     }
     updatePlayers(players) {
         this.players = players;
@@ -173,9 +175,6 @@ class DragonTigerGame {
         });
         this.onBetPlaced(socket);
     }
-
-
-
 }
 
 module.exports = DragonTigerGame;
