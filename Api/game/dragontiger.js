@@ -77,7 +77,7 @@ class DragonTigerGame {
         this.dragonBet = 0;
         this.tigerBet = 0;
         this.tieBet = 0
-        this.io.to(this.roomName).emit('phase_change', { phase: 'betting', winList});
+        this.io.to(this.roomName).emit('phase_change', { phase: 'betting', winList:this.winList});
         console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
@@ -168,7 +168,8 @@ class DragonTigerGame {
             postion: this.players.indexOf(socket),
             total_players: this.players.size,
             betting_remaing: this.bettingTimer?.remaining,
-            pause_remaing: this.pauseTimer?.remaining
+            pause_remaing: this.pauseTimer?.remaining,
+            winList:this.winList
 
         });
         this.onBetPlaced(socket);
