@@ -67,6 +67,15 @@ class DragonTigerGame {
         this.io.to(this.roomName).emit('player_left', { id: socket.id });
         console.log(`Player ${socket.id} left room ${this.roomName}`);
     }
+    syncPlayer(playerId) {
+        // Send current game state to the player
+        this.io.to(playerId).emit('syncState', {
+          gameType: 'dragontiger',
+          room: this.roomName,
+          currentPhase:this.currentPhase
+
+        });
+      }
 }
 
 module.exports = DragonTigerGame;
