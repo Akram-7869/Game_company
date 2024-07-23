@@ -7,7 +7,7 @@ class DragonTigerGame {
         this.io = io;
         this.roomName = roomName;
         this.currentPhase = 'betting';
-        this.winList = [1, 2, 3, 3, 1];
+        this.winList = [1, 2, 3, 3, 1,2,1,3];
 
         this.dragonBet = 0;
         this.tigerBet = 0;
@@ -77,7 +77,7 @@ class DragonTigerGame {
         this.dragonBet = 0;
         this.tigerBet = 0;
         this.tieBet = 0
-        this.io.to(this.roomName).emit('phase_change', { phase: 'betting' });
+        this.io.to(this.roomName).emit('phase_change', { phase: 'betting', winList});
         console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
