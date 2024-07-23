@@ -90,7 +90,7 @@ class DragonTigerGame {
         }, () => {
             this.startPausePhase();
         });
-
+        this.bettingTimer.reset(this.bettingTime);
         this.bettingTimer.startTimer();
     }
 
@@ -107,8 +107,8 @@ class DragonTigerGame {
             tigerCardIndex,
             winner
         });
-
-        setTimeout( ()=>{ this.startGame()},6000);
+ 
+        setTimeout( ()=>{ this.startGame()},10000);
     
 
        
