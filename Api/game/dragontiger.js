@@ -50,7 +50,9 @@ class DragonTigerGame {
 
         this.pauseTimer.startTimer();
     }
-
+    updatePlayers(players) {
+        this.players = players;
+      }
     getWinningNumber() {
         let win = this.determineWinningOutcome();
         this.bets = {
