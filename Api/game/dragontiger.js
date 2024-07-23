@@ -41,25 +41,32 @@ class DragonTigerGame {
     }
 
     selectWinningCards() {
-        let dragonCardIndex, tigerCardIndex;
+        let dragonCardIndex, tigerCardIndex, winner;
+        const dragonPayout = this.dragonBet * 2;
+        const tigerPayout = this.tigerBet * 2;
+        const tiePayout = this.tieBet * 10;
 
-        if (this.dragonBet <= this.tigerBet && this.dragonBet <= this.tieBet) {
-
-        } else if (this.tigerBet <= this.dragonBet && this.tigerBet <= this.tieBet) {
-            // Tiger should win
+        if (dragonPayout <= tigerPayout && dragonPayout <= tiePayout) {
+            // Dragon should win
+            do {
+                dragonCardIndex = Math.floor(Math.random() * 52);
+                tigerCardIndex = Math.floor(Math.random() * 52);
+            } while (this.staticDeck[dragonCardIndex].cardNo <= this.staticDeck[tigerCardIndex].cardNo);
+            winner = 'Dragon';
+        } else if (tigerPayout <= dragonPayout && tigerPayout <= tiePayout) {
             do {
                 dragonCardIndex = Math.floor(Math.random() * 52);
                 tigerCardIndex = Math.floor(Math.random() * 52);
             } while (this.staticDeck[tigerCardIndex].cardNo <= this.staticDeck[dragonCardIndex].cardNo);
+            winner = 'Tiger';
         } else {
-            // Tie should win
             do {
                 dragonCardIndex = Math.floor(Math.random() * 52);
                 tigerCardIndex = Math.floor(Math.random() * 52);
             } while (this.staticDeck[dragonCardIndex].cardNo !== this.staticDeck[tigerCardIndex].cardNo);
+            winner = 'Tie';
         }
-
-        return { dragonCardIndex, tigerCardIndex };
+        return { dragonCardIndex, tigerCardIndex, winner };
     }
 
 
@@ -86,12 +93,8 @@ class DragonTigerGame {
         this.currentPhase = 'pause';
         this.io.to(this.roomName).emit('phase_change', { phase: 'pause' });
         console.log(`Pause phase started in room: ${this.roomName}`);
+        const { dragonCardIndex, tigerCardIndex, winner } = this.selectWinningCards();
 
-        // const winningNumber = this.getWinningNumber();
-        // this.io.to(this.roomName).emit('winning_number', { number: winningNumber });
-        const { dragonCardIndex, tigerCardIndex } = this.selectWinningCards();
-        const winner = this.staticDeck[dragonCardIndex].cardNo > this.staticDeck[tigerCardIndex].cardNo ? 'dragon' :
-            this.staticDeck[dragonCardIndex].cardNo < this.staticDeck[tigerCardIndex].cardNo ? 'tiger' : 'tie';
 
         // Emit the result to all clients immediately
         this.io.to(this.roomName).emit('game_result', {
@@ -118,14 +121,19 @@ class DragonTigerGame {
         socket.on('onBetPlaced', (d) => {
 
             const { boxNo, amount } = d;
+            switch (boxNo) {
+                case 1:
+                    this.dragonBet += amount;
+                    break;
+                case 2:
+                    this.tigerBet += amount;
+                    break;
+                case 3:
+                    this.tieBet += amount;
+                    break;
 
-            if (boxNo === 1) {
-                this.dragonBet += amount;
-            } else if (boxNo === 2) {
-                this.tigerBet += amount;
-            } else if (boxNo === 3) {
-                this.tieBet += amount;
             }
+
             this.io.to(this.roomName).emit('onBetPlaced', d);
 
         });
@@ -158,12 +166,13 @@ class DragonTigerGame {
             player: player,
             postion: this.players.indexOf(socket),
             total_players: this.players.size,
-            betting_remaing:this.bettingTimer?.remaining,
-            pause_remaing:this.pauseTimer?.remaining
+            betting_remaing: this.bettingTimer?.remaining,
+            pause_remaing: this.pauseTimer?.remaining
 
         });
         this.onBetPlaced(socket);
     }
+
 
 
 }
