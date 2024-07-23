@@ -70,7 +70,7 @@ class DragonTigerGame {
     syncPlayer(playerId) {
         // Send current game state to the player
         this.io.to(playerId).emit('syncState', {
-          gameType: 'dragontiger',
+          gameType: 'DragonTiger',
           room: this.roomName,
           currentPhase:this.currentPhase
 
