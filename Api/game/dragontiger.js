@@ -8,7 +8,6 @@ class DragonTigerGame {
         this.roomName = roomName;
         this.currentPhase = 'betting';
         this.winList = [1, 2, 3, 3, 1,2,1,3];
-        this.gameStarted = false;
 
         this.dragonBet = 0;
         this.tigerBet = 0;
@@ -16,6 +15,7 @@ class DragonTigerGame {
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 10; // 10 seconds
         this.players = new Set();
+        this.timerRunning = false; // To track if the timer is running
         this.staticDeck = [
             // Clubs (0-12)
             { cardNo: 2, color: 1 }, { cardNo: 3, color: 1 }, { cardNo: 4, color: 1 }, { cardNo: 5, color: 1 },
@@ -69,15 +69,11 @@ class DragonTigerGame {
         }
         return { dragonCardIndex, tigerCardIndex, winner };
     }
-    StartDragonTigerGameStated(){
-         if (this.gameStarted) return; 
 
-        this.gameStarted=true;
-        this.startGame();
-    }
 
     startGame() {
-       
+        if (this.timerRunning) return; // Prevent multiple timers
+        this.timerRunning = true;
         this.currentPhase = 'betting';
         this.dragonBet = 0;
         this.tigerBet = 0;
@@ -86,11 +82,12 @@ class DragonTigerGame {
         console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
+            console.log(remaining);
             this.io.to(this.roomName).emit('betting_tick', { remainingTime: remaining });
         }, () => {
             this.startPausePhase();
         });
-        this.bettingTimer.reset(this.bettingTime);
+
         this.bettingTimer.startTimer();
     }
 
@@ -107,11 +104,19 @@ class DragonTigerGame {
             tigerCardIndex,
             winner
         });
- 
-        setTimeout( ()=>{ this.startGame()},10000);
-    
 
-       
+        this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
+            console.log(remaining);
+            //  this.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });
+        }, () => {
+            if (this.bettingTimer) {
+                this.bettingTimer.reset(0);
+            }
+            this.timerRunning = false;
+            this.startGame();
+        });
+
+        this.pauseTimer.startTimer();
     }
     updatePlayers(players) {
         this.players = players;
