@@ -82,24 +82,24 @@ let onConnection = (socket) => {
       case gameName.tambola:
         state[roomName]['codeObj'] = new TambolaGame(io, roomName);
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-        state[roomName]['codeObj'].syncPlayer(socket.id,d);
+        state[roomName]['codeObj'].syncPlayer(socket.id, d);
         state[roomName]['codeObj'].startGame();
         break;
       case gameName.dragon_tiger:
         if (!state[roomName]['codeObj']) {
-        state[roomName]['codeObj'] = new DragonTigerGame(roomName, io);
-        state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-        state[roomName]['codeObj'].syncPlayer(socket,d);
-        state[roomName]['codeObj'].startGame();
-      }else{
-        state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-        state[roomName]['codeObj'].syncPlayer(socket,d);
-      }
+          state[roomName]['codeObj'] = new DragonTigerGame(roomName, io);
+          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          state[roomName]['codeObj'].startGame();
+        } else {
+          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+        }
         break;
       case gameName.crash:
         state[roomName]['codeObj'] = new AviatorGame(roomName, io);
-       // state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-      //  state[roomName]['codeObj'].syncPlayer(socket.id,d);
+        // state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+        //  state[roomName]['codeObj'].syncPlayer(socket.id,d);
 
         state[roomName]['codeObj'].startGame();
         break;
@@ -129,7 +129,7 @@ let onConnection = (socket) => {
     io.to(room).emit('res', { ev, data });
 
   });
- 
+
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
     if (state[room]) {
@@ -258,7 +258,7 @@ let onConnection = (socket) => {
     console.log('setWinListData', data);
     io.to(room).emit('res', { ev: 'setWinListData', data });
   });
-  
+
 
 };
 

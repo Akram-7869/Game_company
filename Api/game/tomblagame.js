@@ -9,7 +9,10 @@ class TambolaGame {
     this.claimed = {
       upperRow: false,
       lowerRow: false,
-      fullHouse: false
+      fullHouse: false,
+      middle: false,
+      fourcorner: false,
+      earlyfive: false
     };
     this.players = [];
     this.gameStarted = false;
