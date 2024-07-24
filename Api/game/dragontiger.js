@@ -13,7 +13,7 @@ class DragonTigerGame {
         this.tigerBet = 0;
         this.tieBet = 0;
         this.bettingTime = 20; // 20 seconds
-        this.pauseTime = 9; // 5 seconds
+        this.pauseTime = 10; // 5 seconds
         this.players = new Set();
         this.timerRunning = false; // To track if the timer is running
         this.staticDeck = [
@@ -107,7 +107,7 @@ class DragonTigerGame {
 
         this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
             console.log(remaining);
-            if(remaining == 3){
+            if(remaining == 2){
                 console.log('reseting');
                 this.io.to(this.roomName).emit('OnReset', { phase: 'reset' });
 
