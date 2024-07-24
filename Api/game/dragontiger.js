@@ -113,6 +113,7 @@ class DragonTigerGame {
                 this.bettingTimer.reset(0);
             }
             this.timerRunning = false;
+            this.io.to(this.roomName).emit('reset_timer', { phase: 'pause_end' });
             this.startGame();
         });
 
