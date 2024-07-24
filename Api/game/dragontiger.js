@@ -110,9 +110,6 @@ class DragonTigerGame {
             //  this.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });
         }, () => {
              this.resetTimers();
-            this.io.to(this.roomName).emit('OnReset', { phase: 'reset' });
-            
-            setTimeout(()=>this.startGame(), 2000);
         });
 
         this.pauseTimer.startTimer();
@@ -126,6 +123,8 @@ class DragonTigerGame {
             this.pauseTimer.reset(0);
         }
         this.timerRunning = false;
+        this.io.to(this.roomName).emit('OnReset', { phase: 'reset' });
+        setTimeout(()=>this.startGame(), 3000);
     }
 
     updatePlayers(players) {
