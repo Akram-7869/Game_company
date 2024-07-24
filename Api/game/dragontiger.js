@@ -7,7 +7,7 @@ class DragonTigerGame {
         this.io = io;
         this.roomName = roomName;
         this.currentPhase = 'betting';
-        this.winList = [1, 2, 3, 3, 1,2,1,3];
+        this.winList = [1, 2, 3, 3, 1, 2, 1, 3];
 
         this.dragonBet = 0;
         this.tigerBet = 0;
@@ -78,7 +78,7 @@ class DragonTigerGame {
         this.dragonBet = 0;
         this.tigerBet = 0;
         this.tieBet = 0
-        this.io.to(this.roomName).emit('phase_change', { phase: 'betting', winList:this.winList});
+        this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList,betting_remaing: this.bettingTimer?.remaining,});
         console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
@@ -93,13 +93,13 @@ class DragonTigerGame {
 
     startPausePhase() {
         this.currentPhase = 'pause';
-        this.io.to(this.roomName).emit('phase_change', { phase: 'pause' });
+        this.io.to(this.roomName).emit('OnTimeUp', { phase: 'pause' });
         console.log(`Pause phase started in room: ${this.roomName}`);
         const { dragonCardIndex, tigerCardIndex, winner } = this.selectWinningCards();
 
 
         // Emit the result to all clients immediately
-        this.io.to(this.roomName).emit('game_result', {
+        this.io.to(this.roomName).emit('OnWinNo', {
             dragonCardIndex,
             tigerCardIndex,
             winner
@@ -113,7 +113,6 @@ class DragonTigerGame {
                 this.bettingTimer.reset(0);
             }
             this.timerRunning = false;
-            this.io.to(this.roomName).emit('reset_timer', { phase: 'pause_end' });
             this.startGame();
         });
 
@@ -167,7 +166,7 @@ class DragonTigerGame {
     }
     syncPlayer(socket, player) {
         // Send current game state to the player
-        this.io.to(socket.id).emit('syncState', {
+        this.io.to(socket.id).emit('OnCurrentTimer', {
             gameType: 'DragonTiger',
             room: this.roomName,
             currentPhase: this.currentPhase,
@@ -176,10 +175,36 @@ class DragonTigerGame {
             total_players: this.players.size,
             betting_remaing: this.bettingTimer?.remaining,
             pause_remaing: this.pauseTimer?.remaining,
-            winList:this.winList
+            winList: this.winList
 
         });
         this.onBetPlaced(socket);
+        this.onleaveRoom(socket);
+    }
+    onleaveRoom(socket) {
+        socket.on('onleaveRoom', function (data) {
+            try {
+                console.log('OnleaveRoom--Anar')
+                socket.leave(this.roomName);
+                socket.removeAllListeners('OnBetsPlaced');
+
+
+                socket.removeAllListeners('OnWinNo');
+                socket.removeAllListeners('OnTimeUp');
+                socket.removeAllListeners('OnTimerStart');
+                socket.removeAllListeners('OnCurrentTimer');
+                socket.removeAllListeners('onleaveRoom');
+
+
+
+                // playerManager.RemovePlayer(socket.id);
+                socket.emit('onleaveRoom', {
+                    success: `successfully leave ${this.roomName} game.`,
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        });
     }
 }
 
