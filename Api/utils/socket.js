@@ -91,6 +91,9 @@ let onConnection = (socket) => {
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
         state[roomName]['codeObj'].syncPlayer(socket,d);
         state[roomName]['codeObj'].startGame();
+      }else{
+        state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+        state[roomName]['codeObj'].syncPlayer(socket,d);
       }
         break;
       case gameName.crash:
