@@ -107,7 +107,7 @@ class DragonTigerGame {
 
         this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
             console.log(remaining);
-            if(remaining == 7){
+            if(remaining == 3){
                 console.log('reseting');
                 this.io.to(this.roomName).emit('OnReset', { phase: 'reset' });
 
