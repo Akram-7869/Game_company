@@ -13,7 +13,7 @@ class DragonTigerGame {
         this.tigerBet = 0;
         this.tieBet = 0;
         this.bettingTime = 20; // 20 seconds
-        this.pauseTime = 5; // 5 seconds
+        this.pauseTime = 8; // 5 seconds
         this.players = new Set();
         this.timerRunning = false; // To track if the timer is running
         this.staticDeck = [
@@ -109,15 +109,25 @@ class DragonTigerGame {
             console.log(remaining);
             //  this.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });
         }, () => {
-            if (this.bettingTimer) {
-                this.bettingTimer.reset(0);
-            }
-            this.timerRunning = false;
-            this.startGame();
+             this.resetTimers();
+            this.io.to(this.roomName).emit('OnReset', { phase: 'reset' });
+            
+            setTimeout(()=>this.startGame(), 2000);
         });
 
         this.pauseTimer.startTimer();
     }
+
+    resetTimers() {
+        if (this.bettingTimer) {
+            this.bettingTimer.reset(0);
+        }
+        if (this.pauseTimer) {
+            this.pauseTimer.reset(0);
+        }
+        this.timerRunning = false;
+    }
+
     updatePlayers(players) {
         this.players = players;
     }
