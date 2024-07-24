@@ -86,10 +86,12 @@ let onConnection = (socket) => {
         state[roomName]['codeObj'].startGame();
         break;
       case gameName.dragon_tiger:
+        if (!state[roomName]['codeObj']) {
         state[roomName]['codeObj'] = new DragonTigerGame(roomName, io);
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
         state[roomName]['codeObj'].syncPlayer(socket,d);
         state[roomName]['codeObj'].startGame();
+      }
         break;
       case gameName.crash:
         state[roomName]['codeObj'] = new AviatorGame(roomName, io);
