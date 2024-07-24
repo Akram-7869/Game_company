@@ -13,7 +13,7 @@ class DragonTigerGame {
         this.tigerBet = 0;
         this.tieBet = 0;
         this.bettingTime = 20; // 20 seconds
-        this.pauseTime = 7; // 5 seconds
+        this.pauseTime = 10; // 5 seconds
         this.players = new Set();
         this.timerRunning = false; // To track if the timer is running
         this.staticDeck = [
