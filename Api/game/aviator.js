@@ -14,15 +14,24 @@ class AviatorGame {
         this.blastDelay = 3; // 3 seconds
         this.players = new Set();
         this.altitude = 1.00;
+        this.round=0;
         this.totalPayout = 0;
         this.winList = ['1X','2X','3X','4X','5X'];
     }
 
     startGame() {
-        if (this.bettingTimer) return; // Prevent multiple starts
-
+        if (this.timerRunning) return; // Prevent multiple timers
+        this.timerRunning = true;
         this.currentPhase = 'betting';
-        this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting' });
+        this.bets = [];
+        this.totalBets = 0;
+        this.altitude = 1.00;
+        this.totalPayout = 0;
+
+
+        this.round +=1;
+        this.currentPhase = 'betting';
+        this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer.remaining,round:this.round });
         console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
@@ -194,7 +203,11 @@ class AviatorGame {
             postion: this.players.indexOf(socket),
             total_players: this.players.size,
             betting_remaing: this.bettingTimer?.remaining,
-             winList: this.winList
+            pause_remaing: this.pauseTimer?.remaining,
+
+             winList: this.winList,
+             round:this.round
+
 
         });
         this.OnBetsPlaced(socket);
@@ -211,7 +224,8 @@ class AviatorGame {
             total_players: this.players.size,
             betting_remaing: this.bettingTimer?.remaining,
             pause_remaing: this.flightTimer?.remaining,
-            winList: this.winList
+            winList: this.winList,
+            round:this.round
 
         });
     });
