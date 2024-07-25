@@ -155,6 +155,50 @@ class AviatorGame {
         this.io.to(this.roomName).emit('player_left', { id: socket.id });
         console.log(`Player ${socket.id} left room ${this.roomName}`);
     }
+    onleaveRoom(socket) {
+        socket.on('onleaveRoom', function (data) {
+            try {
+                console.log('OnleaveRoom--Anar')
+                socket.leave(this.roomName);
+                socket.removeAllListeners('OnBetsPlaced');
+                socket.removeAllListeners('OnCashOut');
+                socket.removeAllListeners('OnFlightBlast');
+
+
+                socket.removeAllListeners('OnWinNo');
+                socket.removeAllListeners('OnTimeUp');
+                socket.removeAllListeners('OnTimerStart');
+                socket.removeAllListeners('OnCurrentTimer');
+                socket.removeAllListeners('onleaveRoom');
+
+
+
+                // playerManager.RemovePlayer(socket.id);
+                socket.emit('onleaveRoom', {
+                    success: `successfully leave ${this.roomName} game.`,
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        });
+    }
+    syncPlayer(socket, player) {
+        // Send current game state to the player
+        this.io.to(socket.id).emit('OnCurrentTimer', {
+            gameType: 'Crash',
+            room: this.roomName,
+            currentPhase: this.currentPhase,
+            player: player,
+            postion: this.players.indexOf(socket),
+            total_players: this.players.size,
+            betting_remaing: this.bettingTimer?.remaining,
+             winList: this.winList
+
+        });
+        this.OnBetsPlaced(socket);
+        this.onleaveRoom(socket);
+        this.OnCashOut(socket);
+    }
 }
 
 module.exports = AviatorGame;

@@ -126,7 +126,7 @@ class TambolaGame {
     this.totalAmount +=  player.amount; 
     // Send current game state to the player
     this.io.to(playerId).emit('syncState', {
-      gameType: 'tambola',
+      gameType: 'Tambola',
       room: this.room,
       numbers: Array.from(this.numbers),
       claimed: this.claimed,

@@ -64,6 +64,22 @@ class TeenpattiGame {
         this.players.clear();
         this.gameState = 'waiting';
     }
+    syncPlayer(socket, player) {
+        // Send current game state to the player
+        // this.io.to(socket.id).emit('OnCurrentTimer', {
+        //     gameType: 'TeenPatti',
+        //     room: this.roomName,
+        //     currentPhase: this.currentPhase,
+        //     player: player,
+        //     postion: this.players.indexOf(socket),
+        //     total_players: this.players.size,
+        //     betting_remaing: this.bettingTimer?.remaining,
+        //     winList: this.winList
+
+        // });
+        // this.onBetPlaced(socket);
+        // this.onleaveRoom(socket);
+    }
 }
 
 module.exports = TeenpattiGame;
