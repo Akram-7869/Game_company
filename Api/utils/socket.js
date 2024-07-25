@@ -47,20 +47,21 @@ let onConnection = (socket) => {
     if (userSocketMap[userId]) {
       const playerRoom = userSocketMap[userId].room;
       console.log(playerRoom, roomName, userSocketMap);
-      if (playerRoom === roomName) {
-        console.log('not registering');
-        socket.emit('joinRoomError', { message: 'You are already in this room' });
-
-        return;
-      } else {
-        socket.leave(playerRoom);
-        userLeave({ userId, room: playerRoom })
+      if (playerRoom !== roomName) {
+        if(playerRoom){
+          socket.leave(playerRoom);
+          userLeave({ userId, room: playerRoom });
+          console.log('leave previous room', roomName);
+        }
+      
+        
+        console.log('join room', roomName);
+        joinRoom(socket, userId, roomName, dataParsed);
+        socket.join(roomName);
       }
     }
 
-    // console.log('room', roomName);
-    joinRoom(socket, userId, roomName, dataParsed);
-    socket.join(roomName);
+   
 
     let data = {
       roomName, users: getRoomLobbyUsers(roomName, lobbyId),
@@ -102,11 +103,15 @@ let onConnection = (socket) => {
         }
         break;
       case gameName.crash:
+        if (!state[roomName]['codeObj']) {
         state[roomName]['codeObj'] = new AviatorGame(roomName, io);
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
         state[roomName]['codeObj'].syncPlayer(socket.id,d);
-
         state[roomName]['codeObj'].startGame();
+        }else{
+          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+        }
         break;
     }
 
