@@ -31,16 +31,17 @@ class AviatorGame {
 
         this.round +=1;
         this.currentPhase = 'betting';
-        this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer.remaining,round:this.round });
-        console.log(`Betting phase started in room: ${this.roomName}`);
-
+       
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
             this.io.to(this.roomName).emit('betting_tick', { remainingTime: remaining });
         }, () => {
             this.startFlightPhase();
         });
+        this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer?.remaining,round:this.round });
+        console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer.startTimer();
+        
     }
 
     startFlightPhase() {
