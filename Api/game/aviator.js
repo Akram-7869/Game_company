@@ -160,12 +160,12 @@ class AviatorGame {
     onleaveRoom(socket) {
         socket.on('onleaveRoom', function (data) {
             try {
-                console.log('OnleaveRoom--Anar')
+                console.log('OnleaveRoom--Aviatot')
                 socket.leave(this.roomName);
                 socket.removeAllListeners('OnBetsPlaced');
                 socket.removeAllListeners('OnCashOut');
                 socket.removeAllListeners('OnFlightBlast');
-
+                socket.removeAllListeners('OnCurrentStatus');
 
                 socket.removeAllListeners('OnWinNo');
                 socket.removeAllListeners('OnTimeUp');

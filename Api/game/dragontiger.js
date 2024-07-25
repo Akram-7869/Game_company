@@ -31,6 +31,7 @@ class DragonTigerGame {
         this.winList = [1, 2, 3, 3, 1, 2, 1,3];
 
         this.dragonBet = 0;
+        this.round=0;
         this.tigerBet = 0;
         this.tieBet = 0;
         this.bettingTime = 20; // 20 seconds
@@ -97,8 +98,9 @@ class DragonTigerGame {
         this.currentPhase = 'betting';
         this.dragonBet = 0;
         this.tigerBet = 0;
-        this.tieBet = 0
-        DragonTigerGame.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer?.remaining, });
+        this.tieBet = 0;
+        this.round+=1;
+        DragonTigerGame.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer?.remaining,round:this.round });
         console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
@@ -208,7 +210,8 @@ class DragonTigerGame {
             total_players: this.players.size,
             betting_remaing: this.bettingTimer?.remaining,
             pause_remaing: this.pauseTimer?.remaining,
-            winList: this.winList
+            winList: this.winList,
+            round:this.round
 
         });
         this.onBetPlaced(socket);
@@ -218,9 +221,11 @@ class DragonTigerGame {
     onleaveRoom(socket) {
         socket.on('onleaveRoom', function (data) {
             try {
-                console.log('OnleaveRoom--Anar')
+                console.log('OnleaveRoom--dragon')
                 socket.leave(this.roomName);
                 socket.removeAllListeners('OnBetsPlaced');
+                socket.removeAllListeners('OnCurrentStatus');
+
 
 
                 socket.removeAllListeners('OnWinNo');
@@ -228,6 +233,7 @@ class DragonTigerGame {
                 socket.removeAllListeners('OnTimerStart');
                 socket.removeAllListeners('OnCurrentTimer');
                 socket.removeAllListeners('onleaveRoom');
+
 
 
 
@@ -249,7 +255,8 @@ class DragonTigerGame {
                 total_players: this.players.size,
                 betting_remaing: this.bettingTimer?.remaining,
                 pause_remaing: this.pauseTimer?.remaining,
-                winList: this.winList
+                winList: this.winList,
+                round:this.round
 
             });
         });
