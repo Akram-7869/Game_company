@@ -22,6 +22,7 @@ let onConnection = (socket) => {
     // Store the mapping in the userSocketMap
     userSocketMap[userId]['socket_id'] = socket.id;
   });
+  
   socket.on('join', async (d) => {
     console.log('join', d);
     let dataParsed = d;// JSON.parse(d);
@@ -47,21 +48,20 @@ let onConnection = (socket) => {
     if (userSocketMap[userId]) {
       const playerRoom = userSocketMap[userId].room;
       console.log(playerRoom, roomName, userSocketMap);
-      if (playerRoom !== roomName) {
-        if(playerRoom){
-          socket.leave(playerRoom);
-          userLeave({ userId, room: playerRoom });
-          console.log('leave previous room', roomName);
-        }
-      
-        
-        console.log('join room', roomName);
-        joinRoom(socket, userId, roomName, dataParsed);
-        socket.join(roomName);
+      if (playerRoom === roomName) {
+        console.log('not registering');
+        socket.emit('joinRoomError', { message: 'You are already in this room' });
+
+        return;
+      } else {
+        socket.leave(playerRoom);
+        userLeave({ userId, room: playerRoom })
       }
     }
 
-   
+    // console.log('room', roomName);
+    joinRoom(socket, userId, roomName, dataParsed);
+    socket.join(roomName);
 
     let data = {
       roomName, users: getRoomLobbyUsers(roomName, lobbyId),
@@ -107,6 +107,7 @@ let onConnection = (socket) => {
         state[roomName]['codeObj'] = new AviatorGame(roomName, io);
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
         state[roomName]['codeObj'].syncPlayer(socket.id,d);
+
         state[roomName]['codeObj'].startGame();
         }else{
           state[roomName]['codeObj'].updatePlayers(state[roomName].players);
@@ -116,7 +117,13 @@ let onConnection = (socket) => {
     }
 
   });
+  socket.on('rejoin', async (d) => {
+    console.log('join', d);
+    let dataParsed = d;// JSON.parse(d);
+    let { roomId } = dataParsed;
+    state[roomId]['codeObj'].rejoin(socket);
 
+  });
   socket.on('lobbyStat', (d) => {
     let { userId, lobbyId } = d;//JSON.parse(d);
     let cnt = 0;

@@ -218,6 +218,20 @@ class DragonTigerGame {
             }
         });
     }
+    rejoin(socket){
+        socket.on('OnCurrentStatus', (d) => {
+        this.io.to(socket.id).emit('OnCurrentStatus', {
+            gameType: 'DragonTiger',
+            room: this.roomName,
+            currentPhase: this.currentPhase,
+            total_players: this.players.size,
+            betting_remaing: this.bettingTimer?.remaining,
+            pause_remaing: this.pauseTimer?.remaining,
+            winList: this.winList
+
+        });
+    });
+    }
 }
 
 module.exports = DragonTigerGame;
