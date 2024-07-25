@@ -83,8 +83,9 @@ let onConnection = (socket) => {
         if (!state[roomName]['codeObj']) {
         state[roomName]['codeObj'] = new TambolaGame(io, roomName);
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-        state[roomName]['codeObj'].syncPlayer(socket.id, d);
+  
         state[roomName]['codeObj'].startGame();
+        state[roomName]['codeObj'].syncPlayer(socket.id, d);
         }else{
           state[roomName]['codeObj'].updatePlayers(state[roomName].players);
           state[roomName]['codeObj'].syncPlayer(socket, d);
@@ -94,8 +95,9 @@ let onConnection = (socket) => {
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new DragonTigerGame(roomName, io);
           state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-          state[roomName]['codeObj'].syncPlayer(socket, d);
+          
           state[roomName]['codeObj'].startGame();
+          state[roomName]['codeObj'].syncPlayer(socket, d);
         } else {
           state[roomName]['codeObj'].updatePlayers(state[roomName].players);
           state[roomName]['codeObj'].syncPlayer(socket, d);
@@ -105,10 +107,9 @@ let onConnection = (socket) => {
         if (!state[roomName]['codeObj']) {
         state[roomName]['codeObj'] = new AviatorGame(roomName, io);
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-        state[roomName]['codeObj'].syncPlayer(socket.id,d);
-
         state[roomName]['codeObj'].startGame();
-        }else{
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+         }else{
           state[roomName]['codeObj'].updatePlayers(state[roomName].players);
           state[roomName]['codeObj'].syncPlayer(socket, d);
         }
