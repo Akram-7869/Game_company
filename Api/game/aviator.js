@@ -204,7 +204,7 @@ class AviatorGame {
             postion: this.players.indexOf(socket),
             total_players: this.players.size,
             betting_remaing: this.bettingTimer?.remaining,
-            pause_remaing: this.pauseTimer?.remaining,
+            pause_remaing: this.flightTimer?.remaining,
 
              winList: this.winList,
              round:this.round
