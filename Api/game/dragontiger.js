@@ -39,7 +39,6 @@ class DragonTigerGame {
         this.players = new Set();
         this.timerRunning = false; // To track if the timer is running
 
-        
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
             console.log(remaining);
             DragonTigerGame.io.to(this.roomName).emit('betting_tick', { remainingTime: remaining });
