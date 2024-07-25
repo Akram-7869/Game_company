@@ -39,24 +39,6 @@ class DragonTigerGame {
         this.players = new Set();
         this.timerRunning = false; // To track if the timer is running
 
-        this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
-            console.log(remaining);
-            DragonTigerGame.io.to(this.roomName).emit('betting_tick', { remainingTime: remaining });
-        }, () => {
-            this.startPausePhase();
-        });
-
-        this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
-            console.log(remaining);
-            if (remaining == 2) {
-                console.log('reseting');
-                DragonTigerGame.io.to(this.roomName).emit('OnReset', { phase: 'reset' });
-
-            }
-            //  DragonTigerGame.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });
-        }, () => {
-            this.resetTimers();
-        });
 
     }
 
@@ -121,7 +103,13 @@ class DragonTigerGame {
         DragonTigerGame.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer?.remaining,round:this.round });
         console.log(`Betting phase started in room: ${this.roomName}`);
 
-       
+        this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
+            console.log(remaining);
+            DragonTigerGame.io.to(this.roomName).emit('betting_tick', { remainingTime: remaining });
+        }, () => {
+            this.startPausePhase();
+        });
+
         this.bettingTimer.startTimer();
     }
 
@@ -139,7 +127,17 @@ class DragonTigerGame {
             winner
         });
 
-        
+        this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
+            console.log(remaining);
+            if (remaining == 2) {
+                console.log('reseting');
+                DragonTigerGame.io.to(this.roomName).emit('OnReset', { phase: 'reset' });
+
+            }
+            //  DragonTigerGame.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });
+        }, () => {
+            this.resetTimers();
+        });
 
         this.pauseTimer.startTimer();
     }
