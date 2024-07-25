@@ -28,7 +28,7 @@ class DragonTigerGame {
         DragonTigerGame.io = io;
         this.roomName = roomName;
         this.currentPhase = 'betting';
-        this.winList = [1, 2, 3, 3, 1, 2, 1, 3];
+        this.winList = [1, 2, 3, 3, 1, 2, 1, 3,2,1];
 
         this.dragonBet = 0;
         this.tigerBet = 0;
@@ -116,9 +116,8 @@ class DragonTigerGame {
         DragonTigerGame.io.to(this.roomName).emit('OnTimeUp', { phase: 'pause' });
         console.log(`Pause phase started in room: ${this.roomName}`);
         const { dragonCardIndex, tigerCardIndex, winner } = this.selectWinningCards();
-
-        this.winList.push(winner);
         this.winList.shift();
+        this.winList.push(winner);
         // Emit the result to all clients immediately
         DragonTigerGame.io.to(this.roomName).emit('OnWinNo', {
             dragonCardIndex,
