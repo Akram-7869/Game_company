@@ -28,7 +28,7 @@ class DragonTigerGame {
         DragonTigerGame.io = io;
         this.roomName = roomName;
         this.currentPhase = 'betting';
-        this.winList = [1, 2, 3, 3, 1, 2, 1, 3,2,1];
+        this.winList = [1, 2, 3, 3, 1, 2, 1,3];
 
         this.dragonBet = 0;
         this.tigerBet = 0;
