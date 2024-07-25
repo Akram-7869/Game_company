@@ -80,10 +80,15 @@ let onConnection = (socket) => {
     io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
     switch (lobby.mode) {
       case gameName.tambola:
+        if (!state[roomName]['codeObj']) {
         state[roomName]['codeObj'] = new TambolaGame(io, roomName);
         state[roomName]['codeObj'].updatePlayers(state[roomName].players);
         state[roomName]['codeObj'].syncPlayer(socket.id, d);
         state[roomName]['codeObj'].startGame();
+        }else{
+          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+        }
         break;
       case gameName.dragon_tiger:
         if (!state[roomName]['codeObj']) {
@@ -98,8 +103,8 @@ let onConnection = (socket) => {
         break;
       case gameName.crash:
         state[roomName]['codeObj'] = new AviatorGame(roomName, io);
-        // state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-        //  state[roomName]['codeObj'].syncPlayer(socket.id,d);
+        state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+        state[roomName]['codeObj'].syncPlayer(socket.id,d);
 
         state[roomName]['codeObj'].startGame();
         break;

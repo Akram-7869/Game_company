@@ -1,5 +1,3 @@
-const { state } = require('../utils/JoinRoom');
-
 const Timer = require("./Timer");
 
 class DragonTigerGame {
@@ -53,19 +51,19 @@ class DragonTigerGame {
                 dragonCardIndex = Math.floor(Math.random() * 52);
                 tigerCardIndex = Math.floor(Math.random() * 52);
             } while (this.staticDeck[dragonCardIndex].cardNo <= this.staticDeck[tigerCardIndex].cardNo);
-            winner = 'Dragon';
+            winner = 1;
         } else if (tigerPayout <= dragonPayout && tigerPayout <= tiePayout) {
             do {
                 dragonCardIndex = Math.floor(Math.random() * 52);
                 tigerCardIndex = Math.floor(Math.random() * 52);
             } while (this.staticDeck[tigerCardIndex].cardNo <= this.staticDeck[dragonCardIndex].cardNo);
-            winner = 'Tiger';
+            winner = 2;
         } else {
             do {
                 dragonCardIndex = Math.floor(Math.random() * 52);
                 tigerCardIndex = Math.floor(Math.random() * 52);
             } while (this.staticDeck[dragonCardIndex].cardNo !== this.staticDeck[tigerCardIndex].cardNo);
-            winner = 'Tie';
+            winner = 3;
         }
         return { dragonCardIndex, tigerCardIndex, winner };
     }
@@ -97,7 +95,8 @@ class DragonTigerGame {
         console.log(`Pause phase started in room: ${this.roomName}`);
         const { dragonCardIndex, tigerCardIndex, winner } = this.selectWinningCards();
 
-
+        this.winList.push(winner);
+        this.winList.shift();
         // Emit the result to all clients immediately
         this.io.to(this.roomName).emit('OnWinNo', {
             dragonCardIndex,

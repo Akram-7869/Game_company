@@ -16,6 +16,8 @@ class TambolaGame {
     };
     this.players = [];
     this.gameStarted = false;
+    this.totalTicket= 0;
+    this.totalAmount=0;
   }
 
   updatePlayers(players) {
@@ -29,7 +31,7 @@ class TambolaGame {
     const players = this.players;
     players.forEach(playerId => {
       const ticket = this.generateTicket();
-      this.io.to(playerId.socket_id).emit('gameStart', { gameType: 'tambola', room: this.room, ticket });
+      this.io.to(playerId.socket_id).emit('gameStart', { gameType: 'tambola', room: this.room, ticket , totalTicket:0  });
     });
 
     // Start the game logic here (e.g., drawing numbers)
@@ -91,12 +93,37 @@ class TambolaGame {
 
     return ticket;
   }
+  onBetPlaced(socket) {
+    socket.removeAllListeners('onBetPlaced');
+
+    socket.on('onBetPlaced', (d) => {
+
+        const { boxNo, amount } = d;
+        switch (boxNo) {
+            case 1:
+                this.dragonBet += amount;
+                break;
+            case 2:
+                this.tigerBet += amount;
+                break;
+            case 3:
+                this.tieBet += amount;
+                break;
+
+        }
+
+        this.io.to(this.roomName).emit('onBetPlaced', d);
+
+    });
+}
 
   randomNumberInRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   syncPlayer(playerId,player) {
+    this.totalTicket +=  player.playerTickets; 
+    this.totalAmount +=  player.amount; 
     // Send current game state to the player
     this.io.to(playerId).emit('syncState', {
       gameType: 'tambola',
@@ -104,8 +131,10 @@ class TambolaGame {
       numbers: Array.from(this.numbers),
       claimed: this.claimed,
       gameStarted: this.gameStarted,
-      player:player
+      player:player,
+      totalTicket:this.totalTicket
     });
+    
   }
 }
 
