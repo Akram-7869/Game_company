@@ -15,7 +15,7 @@ class AviatorGame {
         this.players = new Set();
         this.altitude = 1.00;
         this.totalPayout = 0;
-
+        this.winList = ['1X','2X','3X','4X','5X'];
     }
 
     startGame() {
@@ -136,7 +136,9 @@ class AviatorGame {
     getRandomMultiplier() {
         return (1 + Math.random() * 4).toFixed(2); // Random multiplier between 1 and 5
     }
-
+    updatePlayers(players) {
+        this.players = players;
+    }
     addPlayer(socket) {
         if (this.currentPhase === 'betting') {
             this.players.add(socket.id);
@@ -198,6 +200,21 @@ class AviatorGame {
         this.OnBetsPlaced(socket);
         this.onleaveRoom(socket);
         this.OnCashOut(socket);
+        this.OnCurrentStatus(socket);
+    }
+    OnCurrentStatus(socket){
+        socket.on('OnCurrentStatus', (d) => {
+        this.io.to(socket.id).emit('OnCurrentStatus', {
+            gameType: 'DragonTiger',
+            room: this.roomName,
+            currentPhase: this.currentPhase,
+            total_players: this.players.size,
+            betting_remaing: this.bettingTimer?.remaining,
+            pause_remaing: this.flightTimer?.remaining,
+            winList: this.winList
+
+        });
+    });
     }
 }
 
