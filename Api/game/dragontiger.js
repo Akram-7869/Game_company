@@ -192,6 +192,7 @@ class DragonTigerGame {
         });
         this.onBetPlaced(socket);
         this.onleaveRoom(socket);
+        this.OnCurrentStatus(socket);
     }
     onleaveRoom(socket) {
         socket.on('onleaveRoom', function (data) {
@@ -218,7 +219,7 @@ class DragonTigerGame {
             }
         });
     }
-    rejoin(socket){
+    OnCurrentStatus(socket){
         socket.on('OnCurrentStatus', (d) => {
         this.io.to(socket.id).emit('OnCurrentStatus', {
             gameType: 'DragonTiger',

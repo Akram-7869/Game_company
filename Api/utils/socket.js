@@ -22,7 +22,6 @@ let onConnection = (socket) => {
     // Store the mapping in the userSocketMap
     userSocketMap[userId]['socket_id'] = socket.id;
   });
-  
   socket.on('join', async (d) => {
     console.log('join', d);
     let dataParsed = d;// JSON.parse(d);
@@ -117,13 +116,7 @@ let onConnection = (socket) => {
     }
 
   });
-  socket.on('rejoin', async (d) => {
-    console.log('join', d);
-    let dataParsed = d;// JSON.parse(d);
-    let { roomId } = dataParsed;
-    state[roomId]['codeObj'].rejoin(socket);
 
-  });
   socket.on('lobbyStat', (d) => {
     let { userId, lobbyId } = d;//JSON.parse(d);
     let cnt = 0;
