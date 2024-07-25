@@ -9,7 +9,7 @@ class AviatorGame {
         this.currentPhase = 'betting';
         this.bets = [];
         this.totalBets = 0;
-        this.bettingTime = 20; // 20 seconds
+        this.bettingTime = 10; // 20 seconds
         this.cashoutTime = 15; // 15 seconds
         this.blastDelay = 3; // 3 seconds
         this.players = new Set();

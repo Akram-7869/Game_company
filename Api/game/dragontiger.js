@@ -104,7 +104,7 @@ class DragonTigerGame {
         console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
-            console.log(remaining);
+           // console.log(remaining);
             DragonTigerGame.io.to(this.roomName).emit('betting_tick', { remainingTime: remaining });
         }, () => {
             this.startPausePhase();
