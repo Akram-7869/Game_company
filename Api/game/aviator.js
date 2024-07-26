@@ -93,8 +93,6 @@ class AviatorGame {
         this.startGame();
     }
     OnBetsPlaced(socket, amount) {
-        let WinX = 0.00;
-
         socket.on("OnBetsPlaced", async (data) => {
             if (this.currentPhase === 'betting') {
                 this.bets.push({ id: socket.id, amount });
