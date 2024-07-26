@@ -69,7 +69,7 @@ class AviatorGame {
         this.flightTimer = new Timer(this.cashoutTime, (remaining) => {
 
             this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
-            this.altitude += 0.01;
+            this.altitude += 0.10;
         }, () => {
             this.triggerBlastEvent();
         });
