@@ -149,19 +149,19 @@ class RolletGame {
     }
     syncPlayer(socket, player) {
         // Send current game state to the player
-        RolletGame.io.to(socket.id).emit('OnCurrentTimer', {
-            gameType: 'Roulette',
-            room: this.roomName,
-            currentPhase: this.currentPhase,
-            player: player,
-            postion: this.players.indexOf(socket),
-            total_players: this.players.size,
-            betting_remaing: this.bettingTimer?.remaining,
-            pause_remaing: this.pauseTimer?.remaining,
-            winList: this.winList,
-            round: this.round
+        // RolletGame.io.to(socket.id).emit('OnCurrentTimer', {
+        //     gameType: 'Roulette',
+        //     room: this.roomName,
+        //     currentPhase: this.currentPhase,
+        //     player: player,
+        //     postion: this.players.indexOf(socket),
+        //     total_players: this.players.size,
+        //     betting_remaing: this.bettingTimer?.remaining,
+        //     pause_remaing: this.pauseTimer?.remaining,
+        //     winList: this.winList,
+        //     round: this.round
 
-        });
+        // });
         this.onBetPlaced(socket);
         this.onleaveRoom(socket);
         this.OnCurrentStatus(socket);
