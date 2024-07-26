@@ -76,41 +76,31 @@ class TambolaGame {
   }
 
   generateTicket() {
-    const ticket = Array.from({ length: 3 }, () => Array(9).fill(null));
+    // const ticket = Array.from({ length: 3 }, () => Array(9).fill(null));
 
-    const columns = Array.from({ length: 9 }, (_, i) => i);
-    this.shuffle(columns);
+    // const columns = Array.from({ length: 9 }, (_, i) => i);
+    // this.shuffle(columns);
 
-    for (let row = 0; row < 3; row++) {
-      const numbers = Array.from({ length: 5 }, () => this.randomNumberInRange(row * 10 + 1, (row + 1) * 10));
-      this.shuffle(numbers);
-      for (let col = 0; col < 9; col++) {
-        if (numbers.length && columns.includes(col)) {
-          ticket[row][col] = numbers.pop();
-        }
-      }
-    }
+    // for (let row = 0; row < 3; row++) {
+    //   const numbers = Array.from({ length: 5 }, () => this.randomNumberInRange(row * 10 + 1, (row + 1) * 10));
+    //   this.shuffle(numbers);
+    //   for (let col = 0; col < 9; col++) {
+    //     if (numbers.length && columns.includes(col)) {
+    //       ticket[row][col] = numbers.pop();
+    //     }
+    //   }
+    // }
 
-    return ticket;
+   // return ticket;
   }
   onBetPlaced(socket) {
     socket.removeAllListeners('onBetPlaced');
 
     socket.on('onBetPlaced', (d) => {
 
-        const { boxNo, amount } = d;
-        switch (boxNo) {
-            case 1:
-                this.dragonBet += amount;
-                break;
-            case 2:
-                this.tigerBet += amount;
-                break;
-            case 3:
-                this.tieBet += amount;
-                break;
-
-        }
+        const { playerTickets, amount } = d;
+        this.totalTicket += playerTickets; 
+        this.totalAmount +=  amount; 
 
         this.io.to(this.roomName).emit('onBetPlaced', d);
 
@@ -122,8 +112,7 @@ class TambolaGame {
   }
 
   syncPlayer(playerId,player) {
-    this.totalTicket +=  player.playerTickets; 
-    this.totalAmount +=  player.amount; 
+  
     // Send current game state to the player
     this.io.to(playerId).emit('syncState', {
       gameType: 'Tambola',

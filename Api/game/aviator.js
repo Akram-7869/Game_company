@@ -17,6 +17,7 @@ class AviatorGame {
         this.round=0;
         this.totalPayout = 0;
         this.winList = ['1X','2X','3X','4X','5X'];
+        this.timerInterval=null;
     }
 
     startGame() {
@@ -83,18 +84,11 @@ class AviatorGame {
         console.log(`Blast event triggered in room: ${this.roomName}`);
         // Clear bets after blast
         this.bets = [];
-
-        setTimeout(() => {
+        this.timerInterval = new Timer(this.blastDelay, (remaining) => {}, () => {
             this.resetTimers();
-        }, this.blastDelay * 1000);
+        });
     }
     resetTimers() {
-        if (this.bettingTimer) {
-            this.bettingTimer.reset(0);
-        }
-        if (this.flightTimer) {
-            this.flightTimer.reset(0);
-        }
         this.timerRunning = false;
         this.startGame();
     }

@@ -143,12 +143,6 @@ class DragonTigerGame {
     }
 
     resetTimers() {
-        if (this.bettingTimer) {
-            this.bettingTimer.reset(0);
-        }
-        if (this.pauseTimer) {
-            this.pauseTimer.reset(0);
-        }
         this.timerRunning = false;
         this.startGame();
     }

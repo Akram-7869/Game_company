@@ -1,5 +1,5 @@
- class Timer  {
-    constructor(delay , onTick,callback) {
+class Timer {
+    constructor(delay, onTick, callback) {
         this.onTick = onTick; // Callback for each tick
         this.callback = callback;
         this.remaining = delay;
@@ -10,15 +10,16 @@
 
     startTimer() {
         this.start = 0;
-         this.countdown();
+        this.countdown();
     }
 
     countdown() {
         if (this.remaining <= 0) {
             this.callback();
+            this.reset(0);
             return;
         }
-         this.timerId = setTimeout(() => {
+        this.timerId = setTimeout(() => {
             if (!this.paused) {
                 this.onTick(this.remaining);
 
@@ -32,8 +33,8 @@
         if (!this.paused) {
             this.paused = true;
             clearTimeout(this.timerId);
-         //   this.remaining -= Date.now() - this.start;
-            console.log( 'Timer paused.');
+            //   this.remaining -= Date.now() - this.start;
+            console.log('Timer paused.');
         }
     }
 
@@ -46,7 +47,7 @@
     resume() {
         if (this.paused) {
             this.paused = false;
-           // this.start = 0;
+            // this.start = 0;
             console.log('Timer resumed.');
             this.countdown();
         }
