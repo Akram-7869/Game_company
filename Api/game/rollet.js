@@ -54,7 +54,7 @@ class RolletGame {
         console.log(`Pause phase started in room: ${this.roomName}`);
         let betWin= this.getKeyWithMinValue(this.betList)
         this.winList.shift();
-        this.winList.push(winner);
+        this.winList.push(betWin);
 
         // Emit the result to all clients immediately
 
@@ -200,7 +200,7 @@ class RolletGame {
     OnCurrentStatus(socket) {
         socket.on('OnCurrentStatus', (d) => {
             socket.emit('OnCurrentStatus', {
-                gameType: 'DragonTiger',
+                gameType: 'Roulette',
                 room: this.roomName,
                 currentPhase: this.currentPhase,
                 total_players: this.players.size,
