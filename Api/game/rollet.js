@@ -150,7 +150,7 @@ class RolletGame {
     syncPlayer(socket, player) {
         // Send current game state to the player
         RolletGame.io.to(socket.id).emit('OnCurrentTimer', {
-            gameType: 'DragonTiger',
+            gameType: 'Roulette',
             room: this.roomName,
             currentPhase: this.currentPhase,
             player: player,
