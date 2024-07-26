@@ -188,21 +188,21 @@ class AviatorGame {
     }
     syncPlayer(socket, player) {
         // Send current game state to the player
-        this.io.to(socket.id).emit('OnCurrentTimer', {
-            gameType: 'Crash',
-            room: this.roomName,
-            currentPhase: this.currentPhase,
-            player: player,
-            postion: this.players.indexOf(socket),
-            total_players: this.players.size,
-            betting_remaing: this.bettingTimer?.remaining,
-            pause_remaing: this.flightTimer?.remaining,
+        // this.io.to(socket.id).emit('OnCurrentTimer', {
+        //     gameType: 'Crash',
+        //     room: this.roomName,
+        //     currentPhase: this.currentPhase,
+        //     player: player,
+        //     postion: this.players.indexOf(socket),
+        //     total_players: this.players.size,
+        //     betting_remaing: this.bettingTimer?.remaining,
+        //     pause_remaing: this.flightTimer?.remaining,
 
-             winList: this.winList,
-             round:this.round
+        //      winList: this.winList,
+        //      round:this.round
 
 
-        });
+        // });
         this.OnBetsPlaced(socket);
         this.onleaveRoom(socket);
         this.OnCashOut(socket);

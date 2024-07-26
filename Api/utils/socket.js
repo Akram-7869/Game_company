@@ -102,7 +102,7 @@ let onConnection = (socket) => {
           state[roomName]['codeObj'].startGame();
           let updatedD = { ...d, gameType: gameName.dragon_tiger ,  room: roomName ,status:'success'};
           socket.emit('join',updatedD);
-          // state[roomName]['codeObj'].syncPlayer(socket, d);
+          state[roomName]['codeObj'].syncPlayer(socket, d);
         } else {
           state[roomName]['codeObj'].updatePlayers(state[roomName].players);
           state[roomName]['codeObj'].syncPlayer(socket, d);
@@ -116,7 +116,7 @@ let onConnection = (socket) => {
           state[roomName]['codeObj'].startGame();
           let updatedD = { ...d, gameType: gameName.crash,  room: roomName ,status:'success' };
           socket.emit('join',updatedD);
-          // state[roomName]['codeObj'].syncPlayer(socket, d);
+           state[roomName]['codeObj'].syncPlayer(socket, d);
         } else {
           state[roomName]['codeObj'].updatePlayers(state[roomName].players);
           state[roomName]['codeObj'].syncPlayer(socket, d);
@@ -130,7 +130,7 @@ let onConnection = (socket) => {
           state[roomName]['codeObj'].startGame();
           let updatedD = { ...d, gameType: gameName.rouletee ,  room: roomName ,status:'success' };
           socket.emit('join',updatedD);
-          // state[roomName]['codeObj'].syncPlayer(socket, d);
+          state[roomName]['codeObj'].syncPlayer(socket, d);
         } else {
           state[roomName]['codeObj'].updatePlayers(state[roomName].players);
           state[roomName]['codeObj'].syncPlayer(socket, d);
@@ -143,7 +143,7 @@ let onConnection = (socket) => {
           let updatedD = { ...d, gameType: gameName.teen_patti  ,  room: roomName ,status:'success'};
           socket.emit('join',updatedD);
           state[roomName]['codeObj'].startGame();
-          // state[roomName]['codeObj'].syncPlayer(socket, d);
+          state[roomName]['codeObj'].syncPlayer(socket, d);
         } else {
           state[roomName]['codeObj'].updatePlayers(state[roomName].players);
           // state[roomName]['codeObj'].syncPlayer(socket, d);
