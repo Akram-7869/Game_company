@@ -57,11 +57,9 @@ class RolletGame {
         this.winList.push(betWin);
 
         // Emit the result to all clients immediately
+ 
 
-             let { room } = d; //JSON.parse(d);
-            console.log('getBetData', room);
-
-            let data = { room: room, betWin}
+            let data = { room: this.roomName, betWin}
             console.log('getBetData', data);
             this.betList = this.defaultRolletValue();        
             RolletGame.io.to(this.roomName).emit('OnWinNo', data);
