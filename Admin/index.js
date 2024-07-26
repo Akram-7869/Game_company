@@ -1,31 +1,31 @@
-var app = require('express')();
+const app = require('express')();
 
-var express = require('express');
-var path = require('path');
-var http = require('http').Server(app);
+const express = require('express');
+const path = require('path');
+const http = require('http').Server(app);
 const morgan = require('morgan');
-var validator = require('express-validator');
+const validator = require('express-validator');
 
 const dotenv = require('dotenv');
-// Load env vars
+// Load env consts
 dotenv.config({ path: './config/config.env' });
 
 // import controller
-var AuthController = require('./controllers/AuthController');
 
-var SettingController = require('./controllers/SettingController');
+const SettingController = require('./controllers/SettingController');
 // import Router file
-var adminRoutes = require('./routers/admin');
-var siteRoutes = require('./routers/site');
+const adminRoutes = require('./routers/admin');
+const influencerRoutes = require('./routers/influencer');
 
-var session = require('express-session');
+const siteRoutes = require('./routers/site');
+
+const session = require('express-session');
 const fileUpload = require('express-fileupload');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 
-var flash = require('connect-flash');
-var i18n = require("i18n-express");
-const { siteDate, siteData } = require('./middleware/auth');
-
+const flash = require('connect-flash');
+const i18n = require("i18n-express");
+ 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
  // app.use(morgan('dev'));
@@ -38,7 +38,7 @@ app.use(fileUpload({
 }));
 
 //////app.use(bodyParser.json());
-//var urlencodeParser = bodyParser.urlencoded({ extended: true });
+//const urlencodeParser = bodyParser.urlencoded({ extended: true });
 //app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(session({
   key: 'user_sid',
@@ -53,7 +53,7 @@ app.use(flash());
 app.use(i18n({
   translationsPath: path.join(__dirname, 'i18n'), // <--- use here. Specify translations files path.
   siteLangs: ["es", "en", "de", "ru", "it", "fr"],
-  textsVarName: 'translation'
+  textsconstName: 'translation'
 }));
 
 
@@ -62,17 +62,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.use(SettingController.getSiteData);
-// apply controller
-//AuthController(app);
-app.use('/', siteRoutes);
+ app.use('/', siteRoutes);
 //For set layouts of html view
-var expressLayouts = require('express-ejs-layouts');
+const expressLayouts = require('express-ejs-layouts');
 app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
 // Define All Route 
 //pageRouter(app);
 app.use('/admin', adminRoutes);
+app.use('/influencer', influencerRoutes);
+
 
 
 const PORT = process.env.PORT;
