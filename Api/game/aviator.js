@@ -30,9 +30,9 @@ class AviatorGame {
 
 
         this.round +=1;
-        this.currentPhase = 'betting';
-       
+        
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
+            console.log(remaining);
             this.io.to(this.roomName).emit('betting_tick', { remainingTime: remaining });
         }, () => {
             this.startFlightPhase();
