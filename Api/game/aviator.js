@@ -11,7 +11,7 @@ class AviatorGame {
         this.totalBets = 0;
         this.bettingTime = 10; // 20 seconds
         this.cashoutTime = 15; // 15 seconds
-        this.blastDelay = 3; // 3 seconds
+        this.blastDelay = 2; // 3 seconds
         this.players = new Set();
         this.altitude = 1.00;
         this.round=0;

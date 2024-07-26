@@ -9,6 +9,8 @@ const Tournament = require('../models/Tournament');
 const TambolaGame = require('../game/tomblagame');
 const DragonTigerGame = require('../game/dragontiger');
 const AviatorGame = require('../game/aviator');
+const RolletGame = require('../game/rollet');
+const TeenpattiGame = require('../game/teenpatti');
 
 
 let io;
@@ -106,6 +108,30 @@ let onConnection = (socket) => {
       case gameName.crash:
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new AviatorGame(roomName, io);
+          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+
+          state[roomName]['codeObj'].startGame();
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+        } else {
+          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+        }
+        break;
+      case gameName.rouletee:
+        if (!state[roomName]['codeObj']) {
+          state[roomName]['codeObj'] = new RolletGame(roomName, io);
+          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+
+          state[roomName]['codeObj'].startGame();
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+        } else {
+          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+        }
+        break;
+      case gameName.teen_patti:
+        if (!state[roomName]['codeObj']) {
+          state[roomName]['codeObj'] = new TeenpattiGame(roomName, io);
           state[roomName]['codeObj'].updatePlayers(state[roomName].players);
 
           state[roomName]['codeObj'].startGame();
