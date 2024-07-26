@@ -86,7 +86,7 @@ class AviatorGame {
         this.bets = [];
         this.timerInterval = new Timer(this.blastDelay, (remaining) => {}, () => {
             this.resetTimers();
-        });
+        }).startTimer();
     }
     resetTimers() {
         this.timerRunning = false;
