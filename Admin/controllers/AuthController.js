@@ -3,6 +3,8 @@ var bodyParser = require('body-parser');
 var urlencodeParser = bodyParser.urlencoded({ extended: false });
 const asyncHandler = require('../middleware/async');
 const { callApi, api_url, redirect } = require('../helper/common');
+const querystring = require('querystring');
+
 let apiUrl = api_url;
 var validator = require('express-validator');
 
@@ -123,7 +125,143 @@ exports.page = asyncHandler(async (req, res, next) => {
 			res.render('Page/dynamic', r.data.data.one);
 		}).catch(error => { })
 });
+exports.authRegister = asyncHandler(async (req, res, next) => {
+	res.locals = { title: 'Register' };
+	res.render('Auth/auth-register', { 'message': req.flash('message'), 'error': req.flash('error') });
 
+
+});
+exports.postRegister = asyncHandler(async (req, res, next) => {
+	axios.post(apiUrl + '/auth/register', {
+		name: req.body.name,
+		email: req.body.email,
+		password: req.body.password,
+		phone: req.body.phone,
+		// country: req.body.country,
+		// state: req.body.state,
+		// city: req.body.city,
+
+
+		type: req.body.type,
+
+	})
+		.then(r => {
+			// Assign value in session
+			if (!r.data.success) {
+				req.flash('error', 'Incorrect email or password!');
+				res.redirect(process.env.ADMIN_URL + '/login');
+				return;
+			}
+			req.session.user = r.data;
+			//req.app.locals['user'] = r.data;
+			res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
+
+		})
+		.catch(error => {
+
+		})
+
+
+
+});
+// Google OAuth Configuration
+const GOOGLE_CLIENT_ID = '514412197159-hh4og8hglvjr4kc4b60chpd8p19ku0g5.apps.googleusercontent.com';
+const GOOGLE_CLIENT_SECRET = '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';
+const GOOGLE_REDIRECT_URI = 'http://localhost:8000/google/callback';
+
+// Google Auth
+exports.getGoogle = asyncHandler(async (req, res, next) =>{
+  const scope = [
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email'
+  ].join(' ');
+  
+ let   accountType= req.query.accountType || 'infulencer'
+
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&scope=${scope}&state=${accountType}`;
+
+  res.redirect(url);
+});
+exports.googleCallback = asyncHandler(async (req, res, next) => {
+		const { code, state} = req.query;
+	  
+		try {
+		  // Exchange code for access token
+		  const { data } = await axios.post('https://oauth2.googleapis.com/token', querystring.stringify({
+			code,
+			client_id: GOOGLE_CLIENT_ID,
+			client_secret: GOOGLE_CLIENT_SECRET,
+			redirect_uri: GOOGLE_REDIRECT_URI,
+			grant_type: 'authorization_code'
+		  }));
+	  
+		  const { access_token } = data;
+	  
+		  // Fetch user information
+		  const { data: userInfo } = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${access_token}`);
+	  
+		  const { id: googleId, email } = userInfo;
+		  console.log(userInfo,state);
+	  
+		  // let user = await User.findOne({ googleId });
+	  
+		  // if (user) {
+		  //   // User exists
+		  //   req.session.userId = user._id;
+		  //   req.flash('success_msg', 'You are logged in');
+		  //   res.redirect('/dashboard');
+		  // } else {
+		  //   // Create new user
+		  //   user = new User({
+		  //     googleId,
+		  //     email,
+		  //     accountType: 'type1', // or 'type2', depending on your logic
+		  //   });
+	  
+		  //   await user.save();
+	  
+		  //   req.session.userId = user._id;
+		  //   req.flash('success_msg', 'You are now registered and logged in');
+		  //   res.redirect('/dashboard');
+		  // }
+		} catch (err) {
+		  console.error(err);
+		  req.flash('error_msg', 'Something went wrong');
+		  res.redirect('/auth/login');
+		}
+	  
+	axios.post(apiUrl + '/auth/register', {
+		name: req.body.name,
+		email: req.body.email,
+		password: req.body.password,
+		phone: req.body.phone,
+		// country: req.body.country,
+		// state: req.body.state,
+		// city: req.body.city,
+
+
+		type: req.body.type,
+
+	})
+		.then(r => {
+			// Assign value in session
+			if (!r.data.success) {
+				req.flash('error', 'Incorrect email or password!');
+				res.redirect(process.env.ADMIN_URL + '/login');
+				return;
+			}
+			req.session.user = r.data;
+			//req.app.locals['user'] = r.data;
+			res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
+
+		})
+		.catch(error => {
+
+		})
+
+
+
+});
 // module.exports = function (app) {
 
 // 	// Inner Auth
