@@ -30,139 +30,225 @@
 
         <!--- Sidemenu -->
         <div id="sidebar-menu">
-            <!-- Left Menu Start -->
-            <ul class="metismenu list-unstyled" id="side-menu">
-                <!-- <li class="menu-title"><%=translation.Menu%></li> -->
+            <%=role%>
+                <!-- Left Menu Start -->
 
-                <li>
-                    <a href="<%=process.env.ADMIN_URL%>/admin/dashboard">
-                        <!-- <i class="uil-home-alt"></i><span class="badge rounded-pill bg-primary float-end">01</span> -->
-                        <span>
-                            <%=translation.Dashboard%>
-                        </span>
-                    </a>
-                </li>
+                <ul class="metismenu list-unstyled" id="side-menu">
+                    <!-- <li class="menu-title"><%=translation.Menu%></li> -->
+                    <% if (role==='influencer' ) { %>
+                        <li>
+                            <a href="<%=process.env.ADMIN_URL%>/influencer/dashboard">
+                                <!-- <i class="uil-home-alt"></i><span class="badge rounded-pill bg-primary float-end">01</span> -->
+                                <span>
+                                    <%=translation.Dashboard%>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="bx uil-game-structure"></i>
+                                <span>Tournament</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
 
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="uil-user-circle"></i>
-                        <span>Player</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/player">Player List</a></li>
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/player/banned">Player Banned</a></li>
-                        <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/playerold">Player Migration</a></li> -->
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx uil-game-structure"></i>
-                        <span>Tournament</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
+                                <li><a href="<%=process.env.ADMIN_URL%>/admin/tournament">Tournament
+                                        List</a></li>
 
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/tournament">Tournament List</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="uil-chart"></i>
+                                <span>Leader Board</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li><a href="<%=process.env.ADMIN_URL%>/admin/leaderboard">Leader Board
+                                        List</a></li>
+                                <li><a href="<%=process.env.ADMIN_URL%>/admin/gamemanager">Game Package</a>
+                                </li>
+                                <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/playerhistory">Player History</a></li> -->
 
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="uil-chart"></i>
-                        <span>Leader Board</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/leaderboard">Leader Board List</a></li>
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/gamemanager">Game Package</a></li>
-                        <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/playerhistory">Player History</a></li> -->
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="uil-chart"></i>
+                                <span>Reports</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li><a href="<%=process.env.ADMIN_URL%>/admin/report/player">player</a></li>
+                                <li><a href="<%=process.env.ADMIN_URL%>/admin/report/payment">payment</a>
+                                </li>
+                                <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/report/tds">TDS REPORT</a></li>
+            <li><a href="<%=process.env.ADMIN_URL%>/admin/report/admincommission">AdminCommission</a></li>
+            <li><a href="<%=process.env.ADMIN_URL%>/admin/report/gst">GST REPORT</a></li> -->
 
-                    </ul>
-                </li>
 
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="uil-wallet"></i>
-                        <span>Payment</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/wallet">wallet</a></li>
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/transaction">history</a></li>
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/payout">payout</a></li>
+                            </ul>
+                        </li>
+                        <% } else if (role==='franchise' ) { %>
+                            <li>
+                                <a href="<%=process.env.ADMIN_URL%>/franchise/dashboard">
+                                    <!-- <i class="uil-home-alt"></i><span class="badge rounded-pill bg-primary float-end">01</span> -->
+                                    <span>
+                                        <%=translation.Dashboard%>
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="uil-chart"></i>
+                                    <span>Reports</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="<%=process.env.ADMIN_URL%>/admin/report/player">player</a></li>
+                                    <li><a href="<%=process.env.ADMIN_URL%>/admin/report/payment">payment</a>
+                                    </li>
+                                    <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/report/tds">TDS REPORT</a></li>
+                <li><a href="<%=process.env.ADMIN_URL%>/admin/report/admincommission">AdminCommission</a></li>
+                <li><a href="<%=process.env.ADMIN_URL%>/admin/report/gst">GST REPORT</a></li> -->
 
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="uil-megaphone"></i>
-                        <span>Ads</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/banner">Banner</a></li>
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/faq">Faq</a></li>
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/coupon">Coupon</a></li>
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/posts">Posts</a></li>
 
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx uil-streering"></i>
-                        <span>Controls</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/bot">Bot</a></li> -->
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/version">Version</a></li>
+                                </ul>
+                            </li>
 
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="uil-comments-alt"></i>
-                        <span>Support</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/chat">chat</a></li>  -->
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/ticket">Ticket</a></li>
+                            <% } else if (role==='admin' ) { %>
 
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="uil-users-alt"></i>
-                        <span>Staff</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/manager">Managers</a></li>
+                               
+                                    <li>
+                                        <a href="<%=process.env.ADMIN_URL%>/admin/dashboard">
+                                            <!-- <i class="uil-home-alt"></i><span class="badge rounded-pill bg-primary float-end">01</span> -->
+                                            <span>
+                                                <%=translation.Dashboard%>
+                                            </span>
+                                        </a>
+                                    </li>
 
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="uil-chart"></i>
-                        <span>Reports</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/report/player">player</a></li>
-                        <li><a href="<%=process.env.ADMIN_URL%>/admin/report/payment">payment</a></li>
-                        <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/report/tds">TDS REPORT</a></li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                            <i class="uil-user-circle"></i>
+                                            <span>Player</span>
+                                        </a>
+                                        <ul class="sub-menu" aria-expanded="false">
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/player">Player List</a></li>
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/player/banned">Player
+                                                    Banned</a></li>
+                                            <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/playerold">Player Migration</a></li> -->
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                            <i class="bx uil-game-structure"></i>
+                                            <span>Tournament</span>
+                                        </a>
+                                        <ul class="sub-menu" aria-expanded="false">
+
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/tournament">Tournament
+                                                    List</a></li>
+
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                            <i class="uil-chart"></i>
+                                            <span>Leader Board</span>
+                                        </a>
+                                        <ul class="sub-menu" aria-expanded="false">
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/leaderboard">Leader Board
+                                                    List</a></li>
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/gamemanager">Game Package</a>
+                                            </li>
+                                            <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/playerhistory">Player History</a></li> -->
+
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                            <i class="uil-wallet"></i>
+                                            <span>Payment</span>
+                                        </a>
+                                        <ul class="sub-menu" aria-expanded="false">
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/wallet">wallet</a></li>
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/transaction">history</a></li>
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/payout">payout</a></li>
+
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                            <i class="uil-megaphone"></i>
+                                            <span>Ads</span>
+                                        </a>
+                                        <ul class="sub-menu" aria-expanded="false">
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/banner">Banner</a></li>
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/faq">Faq</a></li>
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/coupon">Coupon</a></li>
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/posts">Posts</a></li>
+
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                            <i class="bx uil-streering"></i>
+                                            <span>Controls</span>
+                                        </a>
+                                        <ul class="sub-menu" aria-expanded="false">
+                                            <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/bot">Bot</a></li> -->
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/version">Version</a></li>
+
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                            <i class="uil-comments-alt"></i>
+                                            <span>Support</span>
+                                        </a>
+                                        <ul class="sub-menu" aria-expanded="false">
+                                            <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/chat">chat</a></li>  -->
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/ticket">Ticket</a></li>
+
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                            <i class="uil-users-alt"></i>
+                                            <span>Staff</span>
+                                        </a>
+                                        <ul class="sub-menu" aria-expanded="false">
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/manager">Managers</a></li>
+
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                            <i class="uil-chart"></i>
+                                            <span>Reports</span>
+                                        </a>
+                                        <ul class="sub-menu" aria-expanded="false">
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/report/player">player</a></li>
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/report/payment">payment</a>
+                                            </li>
+                                            <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/report/tds">TDS REPORT</a></li>
                         <li><a href="<%=process.env.ADMIN_URL%>/admin/report/admincommission">AdminCommission</a></li>
                         <li><a href="<%=process.env.ADMIN_URL%>/admin/report/gst">GST REPORT</a></li> -->
 
 
-                    </ul>
-                </li>
-                <li class="menu-title">Setting</li>
-                <!-- <li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-title">Setting</li>
+                                    <!-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="uil-cog"></i>
                         <span>Admin Setting</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false"> -->
-                <li><a href="<%=process.env.ADMIN_URL%>/admin/site">Site Setting</a></li>
-                <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/logo">Logo</a></li>
+                                    <li><a href="<%=process.env.ADMIN_URL%>/admin/site">Site Setting</a></li>
+                                    <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/logo">Logo</a></li>
                         <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/support-mail">Support Mail</a></li>
                         <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/firebase-setting">Firebase</a></li>
                          <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/2step-auth-setting">2step Authentication</a></li> -->
-                <!-- 
+                                    <!-- 
                     </ul>
                 </li>
                 <li>
@@ -171,11 +257,11 @@
                         <span>Pyment Gateway</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false"> -->
-                <li><a href="<%=process.env.ADMIN_URL%>/admin/payment">Payment Gateway</a></li>
-                <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/razorpay-setting">Razor Pay</a></li>
+                                    <li><a href="<%=process.env.ADMIN_URL%>/admin/payment">Payment Gateway</a></li>
+                                    <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/razorpay-setting">Razor Pay</a></li>
                           <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/payu-setting">Pay U money</a></li>
                          -->
-                <!-- </ul>
+                                    <!-- </ul>
                 </li>
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -183,13 +269,13 @@
                         <span>Sms Gateway</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false"> -->
-                <li><a href="<%=process.env.ADMIN_URL%>/admin/smsgateway">Sms Gateway</a></li>
-                <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/localtext-setting">Localtext</a></li> -->
-                <!-- 
+                                    <li><a href="<%=process.env.ADMIN_URL%>/admin/smsgateway">Sms Gateway</a></li>
+                                    <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/setting/localtext-setting">Localtext</a></li> -->
+                                    <!-- 
                     </ul>
                 </li> -->
 
-                <!-- <li>
+                                    <!-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="uil-chart"></i>
                         <span>Pages</span>
@@ -201,8 +287,9 @@
 
             </ul>
             </li> -->
+            <% } %>
 
-            </ul>
+                </ul>
         </div>
         <!-- Sidebar -->
     </div>

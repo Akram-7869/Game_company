@@ -3,6 +3,9 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 //const sendEmail = require('../utils/sendEmail');
 const Player = require('../models/Player');
+const Influencer = require('../models/Influencer');
+const Franchise = require('../models/Franchise');
+
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
 const Setting = require('../models/Setting');
@@ -17,33 +20,7 @@ const { makeid, setkey, getKey } = require('../utils/utils');
 const { OAuth2Client } = require('google-auth-library');
 
 exports.test = asyncHandler(async (req, res, next) => {
-  // const row = await Setting.findOne({ type: 'PAYMENT', name: 'ZERO' });
-  // const url = 'https://upimoney.co.in/api/transaction/query?token='+row.SECRET_KEY ;
-  // data = {
-  //   "apitxnid": '65d0a9ff8628c4cd0bfe51f7',
-  //   "product": "payout",
-  // };
-
-  // axios.post(url,  data , {
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   }
-  // })
-  //   .then(async function (response) {
-
-  //     console.log(response.data, 'hook-reponse');
-  //     // await handleSuccess(apitxnid,response.data);
-  //     return res.status(200).json({
-  //       success: true,
-  //       data: {}
-  //     });
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error.data);
-  //     return next(
-  //       new ErrorResponse(`Try again`)
-  //     );
-  //   });
+ 
 });
 
 // @desc      Register user
@@ -158,9 +135,9 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
   });
 
 });
-function generateName() {
+function generateName(pre='Cherry') {
   const randomTwoDigitNumber = Math.floor(Math.random() * 90) + 10; // Generates a random number between 10 and 99
-  return `Cherry_${randomTwoDigitNumber}`;
+  return `${pre}_${randomTwoDigitNumber}`;
 }
 
 // @desc      Register user
@@ -293,6 +270,64 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   //await smsOtp(phone, vcode, sms.one.TEMPLATE_ID, sms.one.AUTHKEY);
   //subscribeToTopic(firebaseToken);
   sendTokenResponse(player, 200, res);
+});
+exports.webRegisterEmail = asyncHandler(async (req, res, next) => {
+  let {id, email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode = '', stateName = '', latitude = 0, longitude = 0,state } = req.body;
+  console.log(req.body);
+  
+
+  if (!email || !state ) {
+    return next(
+      new ErrorResponse(`select email`)
+    );
+  }
+  let user;
+  let displayName ='';
+  if(state ==='influencer'){
+    user = await Influencer.findOne({ 'email': email , role: state, googleid:id});
+    displayName= generateName('IN');
+  } else if(state ==='franchise'){
+    user = await Franchise.findOne({ 'email': email , role: state,googleid:id});
+    displayName= generateName('FR');
+ }
+ 
+  if (!user) {
+    console.log('influencerRegisterEmail-new');
+    email = req.body['email'];
+    firstName = req.body['name'];
+    picture = req.body['picture'];
+    let googleid = req.body['id'];
+
+
+    // create new influencer
+    let addamount = 0;
+    let data = {
+      displayName:displayName,
+      firstName,
+      'email': email,
+      'picture': picture,
+      'googleid': googleid,
+      'countryCode': countryCode,
+      'refer_code': makeid(6),
+      'balance': addamount,
+      'deposit': addamount,
+      stateCode,
+      stateName,
+      longitude,
+      latitude
+    };
+    // Create user
+    if(state ==='influencer'){
+      user =  await Influencer.create(data);
+    } else if(state ==='franchise'){
+      user =  await Influencer.create(data);
+   }
+  }
+  
+  if(user){
+    console.log(user,'user-token');
+    sendTokenResponse(user, 200, res);
+   }
 });
 // @desc      Verify phone
 // @route     POST /api/v1/auth/register

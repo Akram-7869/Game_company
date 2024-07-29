@@ -7,17 +7,24 @@ class TambolaGame {
     this.numbers = new Set();
     this.numbersArray = this.generateNumbers();
     this.claimed = {
-      upperRow: false,
-      lowerRow: false,
-      fullHouse: false,
-      middle: false,
-      fourcorner: false,
-      earlyfive: false
+      upperRow: 0,
+      lowerRow: 0,
+      fullHouse: 0,
+      middle: 0,
+      fourcorner: 0,
+      earlyfive: 0,
+      upperRowTotal: 0,
+      lowerRowTotal: 0,
+      fullHouseTotal: 0,
+      middleTotal: 0,
+      fourcornerTotal: 0,
+      earlyfiveToal: 0
     };
-    this.players = [];
+
+    this.players = new Map();
     this.gameStarted = false;
-    this.totalTicket= 0;
-    this.totalAmount=0;
+    this.totalTicket = 0;
+    this.totalAmount = 0;
   }
 
   updatePlayers(players) {
@@ -28,11 +35,10 @@ class TambolaGame {
     if (this.gameStarted) return; // Prevent multiple starts
 
     this.gameStarted = true;
-    const players = this.players;
-    players.forEach(playerId => {
+    for (let value of this.players.values()) {
       const ticket = this.generateTicket();
-      this.io.to(playerId.socket_id).emit('gameStart', { gameType: 'tambola', room: this.room, ticket , totalTicket:0  });
-    });
+      this.io.to(value.socket_id).emit('gameStart', { gameType: 'tambola', room: this.room, ticket, totalTicket: 0 });
+    };
 
     // Start the game logic here (e.g., drawing numbers)
     this.startGameLogic();
@@ -46,7 +52,7 @@ class TambolaGame {
         clearInterval(intervalId);
         this.io.to(this.room).emit('tambolaEnd', { message: 'All numbers have been drawn' });
       } else {
-         console.log(`newnumber`)
+        console.log(`newnumber`)
         this.io.to(this.room).emit('newNumber', { gameType: 'tambola', room: this.room, number });
       }
     }, 30000); // Draw a number every second
@@ -91,40 +97,91 @@ class TambolaGame {
     //   }
     // }
 
-   // return ticket;
+    // return ticket;
   }
   onBetPlaced(socket) {
     socket.removeAllListeners('onBetPlaced');
 
     socket.on('onBetPlaced', (d) => {
 
-        const { playerTickets, amount } = d;
-        this.totalTicket += playerTickets; 
-        this.totalAmount +=  amount; 
+      const { playerTickets, amount } = d;
+      this.totalTicket += playerTickets;
+      this.totalAmount += amount;
 
-        this.io.to(this.roomName).emit('onBetPlaced', d);
+      this.io.to(this.roomName).emit('onBetPlaced', d);
 
     });
-}
+  }
 
   randomNumberInRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  syncPlayer(playerId,player) {
-  
+  syncPlayer(socket, player) {
+
     // Send current game state to the player
-    this.io.to(playerId).emit('syncState', {
-      gameType: 'Tambola',
-      room: this.room,
-      numbers: Array.from(this.numbers),
-      claimed: this.claimed,
-      gameStarted: this.gameStarted,
-      player:player,
-      totalTicket:this.totalTicket
-    });
-    
+    // this.io.to(playerId).emit('syncState', {
+    //   gameType: 'Tambola',
+    //   room: this.room,
+    //   numbers: Array.from(this.numbers),
+    //   claimed: this.claimed,
+    //   gameStarted: this.gameStarted,
+    //   player:player,
+    //   totalTicket:this.totalTicket
+    // });
+    this.players.set(player.userId, socket);
+
+    this.onBetPlaced(socket);
+    this.onleaveRoom(socket);
+    this.OnCurrentStatus(socket);
   }
+
+
+  onleaveRoom(socket) {
+    socket.on('onleaveRoom', function (data) {
+      try {
+        console.log('OnleaveRoom--tambola')
+        socket.leave(this.roomName);
+        socket.removeAllListeners('OnBetsPlaced');
+        socket.removeAllListeners('OnCurrentStatus');
+
+
+
+        socket.removeAllListeners('OnWinNo');
+        socket.removeAllListeners('OnTimeUp');
+        socket.removeAllListeners('OnTimerStart');
+        socket.removeAllListeners('OnCurrentTimer');
+        socket.removeAllListeners('onleaveRoom');
+
+
+
+
+        // playerManager.RemovePlayer(socket.id);
+        socket.emit('onleaveRoom', {
+          success: `successfully leave ${this.roomName} game.`,
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  }
+
+
+  OnCurrentStatus(socket) {
+    socket.on('OnCurrentStatus', (d) => {
+      this.io.to(socket.id).emit('OnCurrentStatus', {
+        gameType: 'Tambola',
+        room: this.room,
+        numbers: Array.from(this.numbers),
+        claimed: this.claimed,
+        gameStarted: this.gameStarted,
+        // player:player,
+        totalTicket: this.totalTicket
+      });
+    });
+  }
+
+
 }
 
 module.exports = TambolaGame;

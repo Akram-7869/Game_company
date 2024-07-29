@@ -12,7 +12,7 @@ var axios = require("axios");
 exports.login = asyncHandler(async (req, res, next) => {
 	//app.get('/login', function (req, res) {
 	res.locals = { title: 'Login', adminUrl: process.env.ADMIN_URL };
-	res.render('Auth/auth-login', { 'message': req.flash('message'), 'error': req.flash('error') });
+	res.render('Auth/auth-login', { layout:false,'message': req.flash('message'), 'error': req.flash('error') });
 	//});
 });
 
@@ -28,7 +28,9 @@ exports.postLogin = asyncHandler(async (req, res, next) => {
 				res.redirect(process.env.ADMIN_URL + '/login');
 				return;
 			}
-			req.session.user = r.data;
+			//req.session.user = r.data;
+			res.cookie('token', r.data.token, { httpOnly: true });
+
 			//req.app.locals['user'] = r.data;
 			res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
 
@@ -40,7 +42,7 @@ exports.postLogin = asyncHandler(async (req, res, next) => {
 
 });
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
-	res.render('Auth/auth-forgot-password', { 'message': req.flash('message'), 'error': req.flash('error') });
+	res.render('Auth/auth-forgot-password', { layout:false,'message': req.flash('message'), 'error': req.flash('error') });
 
 });
 exports.postForgotPassword = asyncHandler(async (req, res, next) => {
@@ -131,39 +133,7 @@ exports.authRegister = asyncHandler(async (req, res, next) => {
 
 
 });
-exports.postRegister = asyncHandler(async (req, res, next) => {
-	axios.post(apiUrl + '/auth/register', {
-		name: req.body.name,
-		email: req.body.email,
-		password: req.body.password,
-		phone: req.body.phone,
-		// country: req.body.country,
-		// state: req.body.state,
-		// city: req.body.city,
-
-
-		type: req.body.type,
-
-	})
-		.then(r => {
-			// Assign value in session
-			if (!r.data.success) {
-				req.flash('error', 'Incorrect email or password!');
-				res.redirect(process.env.ADMIN_URL + '/login');
-				return;
-			}
-			req.session.user = r.data;
-			//req.app.locals['user'] = r.data;
-			res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
-
-		})
-		.catch(error => {
-
-		})
-
-
-
-});
+ 
 // Google OAuth Configuration
 const GOOGLE_CLIENT_ID = '514412197159-hh4og8hglvjr4kc4b60chpd8p19ku0g5.apps.googleusercontent.com';
 const GOOGLE_CLIENT_SECRET = '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';
@@ -176,7 +146,7 @@ exports.getGoogle = asyncHandler(async (req, res, next) =>{
     'https://www.googleapis.com/auth/userinfo.email'
   ].join(' ');
   
- let   accountType= req.query.accountType || 'infulencer'
+ let   accountType= req.query.accountType || 'influencer'
 
   const url = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&scope=${scope}&state=${accountType}`;
 
@@ -201,7 +171,25 @@ exports.googleCallback = asyncHandler(async (req, res, next) => {
 		  const { data: userInfo } = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${access_token}`);
 	  
 		  const { id: googleId, email } = userInfo;
-		  console.log(userInfo,state);
+ 		  axios.post(apiUrl + '/auth/register-web/', {...userInfo, state})
+			.then(r => {
+				// Assign value in session
+				if (!r.data.success) {
+					req.flash('error', 'Incorrect email or password!');
+					res.redirect(process.env.ADMIN_URL + '/login');
+					return;
+				}
+				//req.session.user = r.data;
+				res.cookie('token', r.data.token, { httpOnly: true });
+ 				//req.app.locals['user'] = r.data;
+				res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
+	
+			})
+			.catch(error => {
+				req.flash('error_msg', 'Something went wrong');
+		  		res.redirect('/');
+	
+			})
 	  
 		  // let user = await User.findOne({ googleId });
 	  
@@ -227,37 +215,10 @@ exports.googleCallback = asyncHandler(async (req, res, next) => {
 		} catch (err) {
 		  console.error(err);
 		  req.flash('error_msg', 'Something went wrong');
-		  res.redirect('/auth/login');
+		  res.redirect('/');
 		}
 	  
-	axios.post(apiUrl + '/auth/register', {
-		name: req.body.name,
-		email: req.body.email,
-		password: req.body.password,
-		phone: req.body.phone,
-		// country: req.body.country,
-		// state: req.body.state,
-		// city: req.body.city,
-
-
-		type: req.body.type,
-
-	})
-		.then(r => {
-			// Assign value in session
-			if (!r.data.success) {
-				req.flash('error', 'Incorrect email or password!');
-				res.redirect(process.env.ADMIN_URL + '/login');
-				return;
-			}
-			req.session.user = r.data;
-			//req.app.locals['user'] = r.data;
-			res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
-
-		})
-		.catch(error => {
-
-		})
+	
 
 
 

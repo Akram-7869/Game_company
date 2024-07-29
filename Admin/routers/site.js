@@ -11,7 +11,6 @@ router.get('/login', authCtrl.login);
 router.post('/post-login', authCtrl.postLogin);
 
 router.get('/register', authCtrl.authRegister);
-router.post('/post-register', authCtrl.postRegister);
 
 router.get('/forgot-password', authCtrl.forgotPassword);
 router.post('/post-forgot-password', authCtrl.postForgotPassword);
@@ -29,8 +28,8 @@ router.get('/google/callback', authCtrl.googleCallback );
 
 router.post('/page:name', authCtrl.page);
 
-router.get('/', (req, res) => {
-    // Redirect to the login page
-    res.redirect('/login');
-});
+// router.get('/', (req, res) => {
+//     // Redirect to the login page
+//     res.redirect('/login');
+// });
 module.exports = router;

@@ -84,68 +84,46 @@ let onConnection = (socket) => {
       case gameName.tambola:
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new TambolaGame(io, roomName);
-          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-
           state[roomName]['codeObj'].startGame();
-          state[roomName]['codeObj'].syncPlayer(socket.id, d);
-        } else {
-          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-          state[roomName]['codeObj'].syncPlayer(socket, d);
-        }
+         } 
+
+        state[roomName]['codeObj'].syncPlayer(socket, d);
+        socket.emit('join',{ ...d, gameType: gameName.tambola ,  room: roomName ,status:'success'});
         break;
       case gameName.dragon_tiger:
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new DragonTigerGame(roomName, io);
-          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-
           state[roomName]['codeObj'].startGame();
-          state[roomName]['codeObj'].syncPlayer(socket, d);
-        } else {
-          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-          state[roomName]['codeObj'].syncPlayer(socket, d);
-        }
-         socket.emit('join',{ ...d, gameType: gameName.dragon_tiger ,  room: roomName ,status:'success'});
+        }  
+        state[roomName]['codeObj'].syncPlayer(socket, d);
+        socket.emit('join',{ ...d, gameType: gameName.dragon_tiger ,  room: roomName ,status:'success'});
         break;
       case gameName.crash:
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new AviatorGame(roomName, io);
-          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-
           state[roomName]['codeObj'].startGame();
-         
-           state[roomName]['codeObj'].syncPlayer(socket, d);
-        } else {
-          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-          state[roomName]['codeObj'].syncPlayer(socket, d);
-        }
-         socket.emit('join',{ ...d, gameType: gameName.crash,  room: roomName ,status:'success' });
+        } 
+        state[roomName]['codeObj'].syncPlayer(socket, d);
+        socket.emit('join',{ ...d, gameType: gameName.crash,  room: roomName ,status:'success' });
         break;
       case gameName.rouletee:
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new RolletGame(roomName, io);
-          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-
           state[roomName]['codeObj'].startGame();
           
-          state[roomName]['codeObj'].syncPlayer(socket, d);
-        } else {
-          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-          state[roomName]['codeObj'].syncPlayer(socket, d);
-        }
-        
-         socket.emit('join',{ ...d, gameType: gameName.rouletee ,  room: roomName ,status:'success' });
+        }           
+        state[roomName]['codeObj'].syncPlayer(socket, d);
+        socket.emit('join',{ ...d, gameType: gameName.rouletee ,  room: roomName ,status:'success' });
         break;
       case gameName.teen_patti:
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new TeenpattiGame(roomName, io);
-          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+          // state[roomName]['codeObj'].updatePlayers(state[roomName].players);
          
           state[roomName]['codeObj'].startGame();
           state[roomName]['codeObj'].syncPlayer(socket, d);
-        } else {
-          state[roomName]['codeObj'].updatePlayers(state[roomName].players);
-          state[roomName]['codeObj'].syncPlayer(socket, d);
-        }
+        }  
+        state[roomName]['codeObj'].syncPlayer(socket, d);
         socket.emit('join',{ ...d, gameType: gameName.teen_patti  ,  room: roomName ,status:'success'});
         break;
     }

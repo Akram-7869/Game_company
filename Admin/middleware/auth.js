@@ -1,14 +1,19 @@
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('./async');
-//const ErrorResponse = require('../utils/errorResponse');
+const ErrorResponse = require('../helper/errorResponse');
 //const Player = require('../models/Player');
 // Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
   // //console.log('auth',req.session);
-  if (!req.session.user) {
+  req.app.locals['role'] ='';
+  if (!req.cookies.token) {
     console.log('auth-session-not-found');
     res.redirect(process.env.ADMIN_URL + '/login');
   } else {
+    const decoded = jwt.decode(  req.cookies.token, { complete: true });
+     req.role=decoded.payload.role;
+     req.app.locals['role'] = decoded.payload.role;
+    //decoded.payload.exp
     next();
   }
 

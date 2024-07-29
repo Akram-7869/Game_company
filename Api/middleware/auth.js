@@ -2,7 +2,12 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('./async');
 const ErrorResponse = require('../utils/errorResponse');
 const Player = require('../models/Player');
+const Influencer = require('../models/Influencer');
+const Franchise = require('../models/Franchise');
 const User = require('../models/User');
+
+
+
 var mongoose = require('mongoose');
 
 // Protect routes
@@ -29,26 +34,44 @@ exports.protect = asyncHandler(async (req, res, next) => {
   try {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.role === 'player') {
-      let x = res.app.get('site_setting')
-      if (x.one.maintenance === 'on') {
-        return next(new ErrorResponse('Site is in down', 503));
-      }
-      req.player = await Player.findById(decoded.id);
-      if (req.player.status === 'banned') {
-        return next(new ErrorResponse('Account is banned'));
-      }
-    } else {
-      req.staff = await User.findById(decoded.id);
-      if (req.staff.status !== 'active') {
-        return next(new ErrorResponse('Account is' + req.staff.status));
-      }
+    switch (decoded.role) {
+      case 'player':
+        let x = res.app.get('site_setting')
+        if (x.one.maintenance === 'on') {
+          return next(new ErrorResponse('Site is in down', 503));
+        }
+        req.player = await Player.findById(decoded.id);
+        if (req.player.status === 'banned') {
+          return next(new ErrorResponse('Account is banned'));
+        }
 
+        break;
+      case 'influencer':
+        req.user = await Influencer.findById(decoded.id);
+        if (req.user.status == 'inactive') {
+          return next(new ErrorResponse('Account is' + req.user.status));
+        }
+        break;
+      case 'frenchise':
+        req.user = await Franchise.findById(decoded.id);
+        if (req.user.status == 'inactive') {
+          return next(new ErrorResponse('Account is' + req.user.status));
+        }
+        break;
+
+
+      default:
+        req.staff = await User.findById(decoded.id);
+        if (req.staff.status !== 'active') {
+          return next(new ErrorResponse('Account is' + req.staff.status));
+        }
+        break;
     }
 
 
     next();
   } catch (err) {
+    console.log(err);
     return next(new ErrorResponse('Not authorized to access this route'));
   }
 });
@@ -79,7 +102,7 @@ exports.maintenance_chk = (req, res, next) => {
 exports.header_chk = (req, res, next) => {
   let { "x-app-name": appName } = req.headers;
   if (appName !== '1256') {
-    console.log('api-errro',appName);
+    console.log('api-errro', appName);
     // return next(new ErrorResponse('', 200));
   }
   next();
