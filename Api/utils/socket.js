@@ -183,7 +183,8 @@ let onConnection = (socket) => {
   //chat_message
   socket.on('chat_message', (d) => {
     let { room } = d;
-    socket.to(room).emit('chat_message', d);
+    console.log(d);
+    io.in(room).emit('chat_message', d);
   });
 
   // Runs when client disconnects

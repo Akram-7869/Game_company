@@ -97,6 +97,8 @@ router.route('/version/:id').get(versionCtrl.getVersion).post(versionCtrl.update
 
 router.route('/tournament').get(tournamentCtrl.listTournament); router.route('/tournament/data').post(tournamentCtrl.getTournaments);
 router.route('/tournament/add').get(tournamentCtrl.addTournament).post(tournamentCtrl.createTournaments);
+router.route('/tournament/infulencer/:id').get(tournamentCtrl.getInfluencerTournament);
+
 router.route('/tournament/:id').get(tournamentCtrl.getTournament).post(tournamentCtrl.updateTournament).delete(tournamentCtrl.deleteTournament);
 
 router.route('/coupon').get(couponCtrl.listCoupon); router.route('/coupon/data').post(couponCtrl.getCoupons);

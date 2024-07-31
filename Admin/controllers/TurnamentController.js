@@ -22,6 +22,18 @@ exports.getTournament = asyncHandler(async (req, res, next) => {
 });
 
 
+exports.getInfluencerTournament = asyncHandler(async (req, res, next) => {
+    res.locals = { title: 'Tournament' };
+    callApi(req).get(apiUrl + req.params.id)
+        .then(r => {
+            res.locals = { title: 'Tournament' };
+            res.render('Tournament/influencer', { row: r.data.data });
+        })
+        .catch(error => {
+
+        })
+});
+
 exports.updateTournament = asyncHandler(async (req, res, next) => {
 
     callApi(req).post(apiUrl + req.params.id, req.body)

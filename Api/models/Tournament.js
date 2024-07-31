@@ -59,7 +59,7 @@ const TournamentSchema = new mongoose.Schema({
     },
     influencerId: {
         type: mongoose.Schema.ObjectId,
-        ref: 'User',
+        ref: 'Influencer',
     },
     active: {
         type: Boolean,

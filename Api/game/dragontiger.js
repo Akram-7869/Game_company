@@ -235,6 +235,7 @@ class DragonTigerGame {
                 socket.emit('onleaveRoom', {
                     success: `successfully leave ${this.roomName} game.`,
                 });
+                
             } catch (err) {
                 console.log(err);
             }

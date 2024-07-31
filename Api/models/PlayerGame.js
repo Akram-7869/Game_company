@@ -16,6 +16,10 @@ const PlayerGameSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Tournaments'
   },
+  influencerId: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Influencer'
+  },
   gameType: {
     type: String,
     default: 'paid',
@@ -74,9 +78,7 @@ const PlayerGameSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  players: {
-    type: String,
-  },
+  players: {},
   status: {
     type: String,
     default: 'init'
