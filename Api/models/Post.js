@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 var dataTables = require('mongoose-datatables')
 
 const PostSchema = new mongoose.Schema({
-    player: { type: mongoose.Schema.Types.ObjectId, ref: 'Players', required: true },
+    owner: { type: mongoose.Schema.Types.ObjectId, required: true },
+    diplayName:{type: String},
     imageId: {type: String},
-    title: { type: String },
+    description: { type: String },
     status: { type: String },
 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Players' }],

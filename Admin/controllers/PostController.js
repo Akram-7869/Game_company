@@ -1,6 +1,8 @@
 const asyncHandler = require('../middleware/async');
 let axios = require("axios");
 const { callApi, api_url } = require('../helper/common');
+const fs = require('fs');
+
 let apiUrl = api_url + '/posts/';
 
 exports.postList = asyncHandler(async (req, res, next) => {
@@ -20,7 +22,7 @@ exports.getPosts = asyncHandler(async (req, res, next) => {
   });
 exports.getPost = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Post', apiUrl, image_url: process.env.IMAGE_URL };
-      axios.get(apiUrl + req.params.id)
+      callApi(req).get(apiUrl + req.params.id)
             .then(r => {
                   res.locals = { title: 'Post' };
                   res.render('Post/edit', { row: r.data.data });
@@ -33,7 +35,7 @@ exports.getPost = asyncHandler(async (req, res, next) => {
 
 exports.updatePost = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Post' };
-      axios.post(apiUrl + req.params.id, req.body)
+      callApi(req).post(apiUrl + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
                   req.flash('message', 'Data save');
@@ -43,7 +45,7 @@ exports.updatePost = asyncHandler(async (req, res, next) => {
 });
 exports.editPost = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Post', apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/post' };
-      axios.get(apiUrl + req.params.id, req.body)
+      callApi(req).get(apiUrl + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
 
@@ -78,7 +80,7 @@ exports.deletePost = asyncHandler(async (req, res, next) => {
 
 exports.getPost = asyncHandler(async (req, res, next) => {
 
-      axios.post(apiUrl, { ...req.body })
+      callApi(req).post(apiUrl, { ...req.body })
             .then(r => {
                   // Assign value in session
 
@@ -96,7 +98,7 @@ exports.getPost = asyncHandler(async (req, res, next) => {
 
 
 exports.postAdd = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Post', 'apiUrl': apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/post', image_url: process.env.IMAGE_URL };
+      res.locals = { title: 'Post', 'apiUrl': apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/posts', image_url: process.env.IMAGE_URL };
 
       res.render('Post/add', { row: {} });
 });
@@ -104,16 +106,16 @@ exports.postAdd = asyncHandler(async (req, res, next) => {
 
 exports.createPost = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Post' };
+ 
       //console.log('creating-image', req.files);
 
-      axios.post(apiUrl, { body: req.body, file: req.files })
+
+      callApi(req).post(apiUrl+'add',  { body: req.body, file:req.files.file })
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Post' };
                   req.flash('message', 'Data save');
-                  res.redirect(process.env.ADMIN_URL + '/admin/post');
-
-
+                  res.redirect(process.env.ADMIN_URL + '/admin/posts');
             })
             .catch(error => {
                   //   
@@ -121,7 +123,6 @@ exports.createPost = asyncHandler(async (req, res, next) => {
                   req.flash('error', 'Data not updated');
 
             })
-      res.render('Post/list', { row: {} });
-});
+      });
 
 

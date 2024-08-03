@@ -41,7 +41,7 @@
                     </div>-->
                             <form action="" enctype="multipart/form-data" method="POST">
                                 <div class="mb-3">
-                                    <label class="form-label">title</label>
+                                    <label class="form-label">Description</label>
                                     <input type="text" id="title" name="title" value="<%=row.title?row.title:'' %>"
                                         class="form-control" required placeholder="title" />
                                 </div>
@@ -57,13 +57,13 @@
 
                                         </select>
                                     </div>
-                                </div> -->
+                                </div> 
                                 <!-- <div class="mb-3">
                                     <label class="form-label">Type</label>
                                     <div class="col-md-10">
                                         <select id="bannerType" class="form-select" name="bannerType" required>
-                                            <!-- <option value="banner" <%=row.bannerType==='banner' ?'selected':'' %>>Banner
-                                            </option> -->
+                                             <option value="banner" <%=row.bannerType==='banner' ?'selected':'' %>>Banner
+                                            </option> 
                                             <option value="fullscreen" <%=row.bannerType==='fullscreen' ?'selected':''
                                                 %>
                                                 >FullScreen
@@ -113,7 +113,7 @@
                 <!-- Sweet alert init js
 <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
                 <script>
-                    let url = '<%= apiUrl + "add" %>'
+                    let url = '<%= indexUrl + "/add" %>'
                     Dropzone.options.myDropzone = {
                         url: url,
                         autoProcessQueue: false,

@@ -74,6 +74,10 @@ exports.getPost = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Posts
 // @access    Private/Admin
 exports.createPost = asyncHandler(async (req, res, next) => {
+  console.log(req.body,req.files,req.user,req.player);
+
+  let owner=  req.staff._id;
+  let displayname=req.staff.firstName;
   if (!req.files) {}
   let filename;
   if (req.files) {
@@ -82,8 +86,9 @@ exports.createPost = asyncHandler(async (req, res, next) => {
   }
 
   let post = {
-    player:req.player._id ,
-    title: req.body.title,
+    owner:owner ,
+    displayname,
+    description: req.body.title,
     status: 'active',
     imageId: filename,
     postType: req.body.postType
@@ -112,7 +117,7 @@ exports.updatePost = asyncHandler(async (req, res, next) => {
 
 
   let filename;
-  let fieldsToUpdate = { title: req.body.title, status: req.body.status, postType: req.body.postType };
+  let fieldsToUpdate = { descripton: req.body.title, status: req.body.status, postType: req.body.postType };
   if (req.files) {
     filename = '/img/post/' + req.files.file.name;
     let filePath = path.resolve(__dirname, '../../assets/' + row.imageId);

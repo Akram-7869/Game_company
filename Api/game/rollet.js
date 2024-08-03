@@ -125,7 +125,7 @@ class RolletGame {
                         }
                     }
                 }
-                socket.emit('onBetPlaced', d);
+                RolletGame.io.to(this.roomName).emit('onBetPlaced', d);
         });
     }
 
