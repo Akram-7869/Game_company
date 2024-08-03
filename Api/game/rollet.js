@@ -11,7 +11,7 @@ class RolletGame {
         this.round = 0;
         this.dragonBet = 0;
         this.bettingTime = 20; // 20 seconds
-        this.pauseTime = 9; // 5 seconds
+        this.pauseTime = 12; // 5 seconds
         this.players = new Set();
         this.timerRunning = false; // To track if the timer is running
 
