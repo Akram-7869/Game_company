@@ -31,10 +31,10 @@ exports.getPosts = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.getPostFeed = asyncHandler(async (req, res, next) => {
 
-  const posts = await Post.find({status:'active'});
-  
+  const posts = await Post.find({ status: 'active' });
+
   //.populate('likes', 'firstName').populate('player', 'firstName').populate('comments.player', 'firstName');
- 
+
   res.status(200).json({
     success: true,
     data: posts
@@ -42,8 +42,8 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
 });
 exports.getPostLikes = asyncHandler(async (req, res, next) => {
 
-  const posts = await Post.findOne({status:'active'}).populate('likes', 'firstName').populate('player', 'firstName');
- 
+  const posts = await Post.findOne({ status: 'active' }).populate('likes', 'firstName').populate('player', 'firstName');
+
   res.status(200).json({
     success: true,
     data: posts
@@ -51,8 +51,8 @@ exports.getPostLikes = asyncHandler(async (req, res, next) => {
 });
 exports.getPostComments = asyncHandler(async (req, res, next) => {
 
-  const posts = await Post.findOne({status:'active'}).populate('comments.player', 'firstName');
- 
+  const posts = await Post.findOne({ status: 'active' }).populate('comments.player', 'firstName');
+
   res.status(200).json({
     success: true,
     data: posts
@@ -74,24 +74,32 @@ exports.getPost = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/Posts
 // @access    Private/Admin
 exports.createPost = asyncHandler(async (req, res, next) => {
-  console.log(req.body,req.files,req.user,req.player);
-
-  let owner=  req.staff._id;
-  let displayname=req.staff.firstName;
-  if (!req.files) {}
-  let filename;
-  if (req.files) {
-    filename = '/img/post/' + req.files.file.name;
-    uploadFile(req, filename, res);
+  console.log(req.body,'-----------', req.files, );
+  let{files,title,filename}=req.body;
+  let owner = ''; let displayname = 'Cherry_0101'; let profileImage = process.env.API_URI + '/assets/img/logo/profile_default.png';
+  if (req.role =='player') {
+    owner = req.player._id;
+    displayname=req.player.firstName;
+  } else if (req.role =='influencer') {
+     owner = req.user._id;
+     displayname=req.user.displayname;
+  }else if (req.role =='admin' || req.role =='manager') {
+    owner = req.staff._id;
+    displayname=req.staff.displayname;
   }
 
+ 
+  if (!files) { }
+  
+
   let post = {
-    owner:owner ,
+    owner: owner,
     displayname,
     description: req.body.title,
-    status: 'active',
+    status:req.body.status,
     imageId: filename,
-    postType: req.body.postType
+    postType: req.body.postType,
+    profileImage
   }
 
   const row = await Post.create(post);
@@ -179,11 +187,11 @@ exports.commentOnPost = asyncHandler(async (req, res, next) => {
   }
   const comment = {
     content: req.body.content,
-     player: req.player._id
+    player: req.player._id
   };
-   let  post = await Post.updateOne(
+  let post = await Post.updateOne(
     { _id: req.params.id },
-    { $addToSet: { comments: comment} }
+    { $addToSet: { comments: comment } }
   )
   res.status(200).json({
     success: true,

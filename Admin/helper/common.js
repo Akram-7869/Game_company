@@ -1,4 +1,7 @@
 var axios = require("axios");
+const fs = require('fs');
+const path = require("path");
+
 exports.callApi = (req) => {
   axios.defaults.headers.common = { 'Authorization': `Bearer ${req.cookies.token}` }
   return axios;
@@ -7,6 +10,34 @@ exports.api_url = process.env.API_URL;
 
 exports.adminUi = (s) => {
   return process.env.ADMIN_URL + s
+}
+exports.uploadFile = (req, filename, res)=> {
+  let sampleFile;
+  let uploadPath;
+  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+  sampleFile = req.files.file;
+
+  uploadPath = path.resolve(__dirname, '../../assets/' + filename);
+
+  // Use the mv() method to place the file somewhere on your server
+  req.files.file.mv(uploadPath, function (err) {
+     if (err)
+        return res.status(500).send(err);
+     // res.send('File uploaded!');
+  });
+
+}
+
+exports.deletDiskFile= (filePath  )=> {
+
+  fs.exists(filePath, function (exists) {
+     if (exists) {
+        console.log('File exists. Deleting now ...');
+        fs.unlinkSync(filePath);
+     } else {
+        console.log('File not found, so not deleting.');
+     }
+  });
 }
 exports.stateList = [{ type: 'state', code: 'IN-AP', name: 'Andhra Pradesh' },
 { type: 'state', code: 'IN-AR', name: 'Arunachal Pradesh' },

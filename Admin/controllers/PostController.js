@@ -1,7 +1,6 @@
 const asyncHandler = require('../middleware/async');
 let axios = require("axios");
-const { callApi, api_url } = require('../helper/common');
-const fs = require('fs');
+const { callApi, api_url, uploadFile } = require('../helper/common');
 
 let apiUrl = api_url + '/posts/';
 
@@ -11,15 +10,15 @@ exports.postList = asyncHandler(async (req, res, next) => {
 });
 exports.getPosts = asyncHandler(async (req, res, next) => {
       callApi(req).post(apiUrl, { ...req.body })
-          .then(r => {
-              // Assign value in session
-              res.status(200).json(r.data);
-          })
-          .catch(error => {
-              //   req.flash('error', 'Incorrect email or password!');
-          })
-  
-  });
+            .then(r => {
+                  // Assign value in session
+                  res.status(200).json(r.data);
+            })
+            .catch(error => {
+                  //   req.flash('error', 'Incorrect email or password!');
+            })
+
+});
 exports.getPost = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Post', apiUrl, image_url: process.env.IMAGE_URL };
       callApi(req).get(apiUrl + req.params.id)
@@ -106,11 +105,18 @@ exports.postAdd = asyncHandler(async (req, res, next) => {
 
 exports.createPost = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Post' };
- 
-      //console.log('creating-image', req.files);
+      let { title } = req.body;
+
+      console.log('creating-image', req.files);
+      const file = req.files.file;
 
 
-      callApi(req).post(apiUrl+'add',  { body: req.body, file:req.files.file })
+      let filename;
+      if (file) {
+            filename = '/img/post/' + file.name;
+            uploadFile(req, filename, res);
+      }
+      callApi(req).post(apiUrl + 'add', { filename, title })
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Post' };
@@ -123,6 +129,6 @@ exports.createPost = asyncHandler(async (req, res, next) => {
                   req.flash('error', 'Data not updated');
 
             })
-      });
+});
 
 
