@@ -80,6 +80,14 @@ exports.createPost = asyncHandler(async (req, res, next) => {
   if (req.role =='player') {
     owner = req.player._id;
     displayname=req.player.firstName;
+    if (!files) { }
+    const file = req.files.file;
+    let filename;
+    if (file) {
+          filename = '/img/post/' + file.name;
+          uploadFile(req, filename, res);
+    }
+  
   } else if (req.role =='influencer') {
      owner = req.user._id;
      displayname=req.user.displayname;
@@ -89,7 +97,6 @@ exports.createPost = asyncHandler(async (req, res, next) => {
   }
 
  
-  if (!files) { }
   
 
   let post = {
