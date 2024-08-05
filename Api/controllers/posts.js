@@ -77,12 +77,13 @@ exports.createPost = asyncHandler(async (req, res, next) => {
   console.log(req.body,'-----------', req.files, );
   let{files,title,filename}=req.body;
   let owner = ''; let displayname = 'Cherry_0101'; let profileImage = process.env.API_URI + '/assets/img/logo/profile_default.png';
+  
   if (req.role =='player') {
     owner = req.player._id;
     displayname=req.player.firstName;
     if (!files) { }
     const file = req.files.file;
-    let filename;
+   
     if (file) {
           filename = '/img/post/' + file.name;
           uploadFile(req, filename, res);
