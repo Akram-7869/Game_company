@@ -81,7 +81,7 @@ exports.createPost = asyncHandler(async (req, res, next) => {
   
   if (req.role =='player') {
     owner = req.player._id;
-    displayname=req.player.firstName;
+    // displayname=req.player.firstName;
     if (!files) { }
     const file = req.files.file;
    
