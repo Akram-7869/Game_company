@@ -76,7 +76,8 @@ exports.getPost = asyncHandler(async (req, res, next) => {
 exports.createPost = asyncHandler(async (req, res, next) => {
   console.log(req.body,'-----------', req.files, );
   let{files,description,filename, displayname, profileImage}=req.body;
-  let owner = '';  let profileImage = process.env.API_URI + '/assets/img/logo/profile_default.png';
+  let owner = '';   
+  profileImage = process.env.API_URI + '/assets/img/logo/profile_default.png';
   
   if (req.role =='player') {
     owner = req.player._id;
