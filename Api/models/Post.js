@@ -19,7 +19,7 @@ const PostSchema = new mongoose.Schema({
 });
 
 PostSchema.plugin(dataTables);
-PostSchema.virtual('postUrl').get(function () { return process.env.API_URI  + this.imageId; });
+PostSchema.virtual('postImageUrl').get(function () { return process.env.API_URI  + this.imageId; });
 PostSchema.virtual('likeCount').get(function() {
     return this.likes.length;
   });
