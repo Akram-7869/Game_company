@@ -75,12 +75,12 @@ exports.getPost = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.createPost = asyncHandler(async (req, res, next) => {
   console.log(req.body,'-----------', req.files, );
-  let{files,title,filename}=req.body;
-  let owner = ''; let displayname = 'Cherry_0101'; let profileImage = process.env.API_URI + '/assets/img/logo/profile_default.png';
+  let{files,title,filename, displayname}=req.body;
+  let owner = '';  let profileImage = process.env.API_URI + '/assets/img/logo/profile_default.png';
   
   if (req.role =='player') {
     owner = req.player._id;
-    displayname=req.player.firstName;
+ //   displayname=req.player.firstName;
     if (!files) { }
     const file = req.files.file;
    
@@ -103,7 +103,7 @@ exports.createPost = asyncHandler(async (req, res, next) => {
   let post = {
     owner: owner,
     displayname,
-    description: req.body.title,
+    description: title,
     status:req.body.status,
     imageId: filename,
     postType: req.body.postType,
