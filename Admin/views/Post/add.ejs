@@ -42,8 +42,8 @@
                             <form action="" enctype="multipart/form-data" method="POST">
                                 <div class="mb-3">
                                     <label class="form-label">Description</label>
-                                    <input type="text" id="title" name="title" value="<%=row.title?row.title:'' %>"
-                                        class="form-control" required placeholder="title" />
+                                    <input type="text" id="desc" name="description" value="<%=row.description?row.description:'' %>"
+                                        class="form-control" required placeholder="description" />
                                 </div>
                                 <!-- <div class="mb-3">
                                     <label class="form-label">Location</label>
@@ -147,7 +147,7 @@
 
                             //send all the form data along with the files:
                             this.on("sending", function (data, xhr, formData) {
-                                formData.append("title", $("#title").val());
+                                formData.append("description", $("#desc").val());
                                 // formData.append("bannerType", $("#bannerType").val());
                                 // formData.append("location", $("#location").val());
                                 formData.append("status", $("#statustxt").val());

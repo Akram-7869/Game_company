@@ -11,6 +11,8 @@ const DragonTigerGame = require('../game/dragontiger');
 const AviatorGame = require('../game/aviator');
 const RolletGame = require('../game/rollet');
 const TeenpattiGame = require('../game/teenpatti');
+const LudoGame = require('../game/ludo');
+
 
 
 let io;
@@ -81,6 +83,15 @@ let onConnection = (socket) => {
     io.to(roomName).emit('res', { ev: 'join', data });
     io.emit('res', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
      switch (lobby.mode) {
+      case gameName.ludo:
+        if (!state[roomName]['codeObj']) {
+          state[roomName]['codeObj'] = new LudoGame(io, roomName);
+          state[roomName]['codeObj'].startGame();
+         } 
+
+        state[roomName]['codeObj'].syncPlayer(socket, d);
+        socket.emit('join',{ ...d, gameType: gameName.ludo ,  room: roomName ,status:'success','playerPosition': 0});
+        break;
       case gameName.tambola:
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new TambolaGame(io, roomName);

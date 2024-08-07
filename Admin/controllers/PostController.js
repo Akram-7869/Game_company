@@ -105,7 +105,7 @@ exports.postAdd = asyncHandler(async (req, res, next) => {
 
 exports.createPost = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Post' };
-      let { title } = req.body;
+      let { description, status } = req.body;
 
       console.log('creating-image', req.files);
       const file = req.files.file;
@@ -116,7 +116,7 @@ exports.createPost = asyncHandler(async (req, res, next) => {
             filename = '/img/post/' + file.name;
             uploadFile(req, filename, res);
       }
-      callApi(req).post(apiUrl + 'add', { filename, title })
+      callApi(req).post(apiUrl + 'add', { filename, description, status })
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Post' };
