@@ -27,6 +27,7 @@ class TambolaGame {
     this.totalTicket = 0;
     this.totalAmount = 0;
     this.roomJoinTimers=null;
+    this.bettingTimer=null;
   }
 
   updatePlayers(players) {
@@ -129,7 +130,7 @@ class TambolaGame {
       this.totalTicket += playerTickets;
       this.totalAmount += amount;
 
-      this.io.to(this.roomName).emit('onBetPlaced', d);
+      this.io.to(this.room).emit('onBetPlaced', d);
 
     });
   }
