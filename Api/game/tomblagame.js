@@ -35,7 +35,10 @@ class TambolaGame {
   setupGame() {
     if (this.roomJoinTimers) return; // Prevent multiple starts
 
-    this.currentPhase = 'createdroom';
+    this.currentPhase = 'joining';
+ 
+    this.io.to(this.room).emit('OnTimerStart', { phase: 'joining', joining_remaing: this.bettingTimer?.remaining});
+
     this.roomJoinTimers =  new Timer(30, (remaining) => {
         this.io.to(this.room).emit('join_tick', { remaining });
     }, () => {
@@ -54,8 +57,11 @@ class TambolaGame {
     //   const ticket = this.generateTicket();
     //   this.io.to(value.socket_id).emit('gameStart', { gameType: 'tambola', room: this.room, ticket, totalTicket: 0 });
     // };
+    this.currentPhase = 'started';
 
     // Start the game logic here (e.g., drawing numbers)
+    this.io.to(this.room).emit('OnTimeUp', { phase: 'started' });
+
     this.startGameLogic();
   }
 
@@ -190,6 +196,8 @@ class TambolaGame {
         numbers: Array.from(this.numbers),
         claimed: this.claimed,
         gameStarted: this.gameStarted,
+        joining_remaing: this.bettingTimer?.remaining,
+        currentPhase:this.currentPhase,
         // player:player,
         totalTicket: this.totalTicket
       });
