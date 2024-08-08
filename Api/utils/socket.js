@@ -96,7 +96,7 @@ let onConnection = (socket) => {
       case gameName.tambola:
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new TambolaGame(io, roomName);
-          state[roomName]['codeObj'].startGame();
+          state[roomName]['codeObj'].setupGame();
          } 
 
         state[roomName]['codeObj'].syncPlayer(socket, d);
