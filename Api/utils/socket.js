@@ -100,7 +100,7 @@ let onConnection = (socket) => {
          } 
 
         state[roomName]['codeObj'].syncPlayer(socket, d);
-        socket.emit('join',{ ...d, gameType: gameName.tambola ,  room: roomName ,status:'success'});
+        socket.emit('join',{ ...d, gameType: gameName.tambola ,  room: roomName ,status:'success'  });
         break;
       case gameName.dragon_tiger:
         if (!state[roomName]['codeObj']) {

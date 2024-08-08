@@ -1,4 +1,5 @@
 // const {state ,publicRoom, userSocketMap} = require('../utils/JoinRoom');
+const Timer = require("./Timer");
 
 class TambolaGame {
   constructor(io, room) {
@@ -25,20 +26,34 @@ class TambolaGame {
     this.gameStarted = false;
     this.totalTicket = 0;
     this.totalAmount = 0;
+    this.roomJoinTimers=null;
   }
 
   updatePlayers(players) {
     this.players = players;
   }
+  setupGame() {
+    if (this.roomJoinTimers) return; // Prevent multiple starts
 
+    this.currentPhase = 'createdroom';
+    this.roomJoinTimers =  new Timer(30, (remaining) => {
+        this.io.to(this.room).emit('join_tick', { remaining });
+    }, () => {
+        this.startGame();
+    });
+
+    this.roomJoinTimers.startTimer();
+    console.log(`Game started in room: ${this.room}`);
+    
+}
   startGame() {
     if (this.gameStarted) return; // Prevent multiple starts
 
     this.gameStarted = true;
-    for (let value of this.players.values()) {
-      const ticket = this.generateTicket();
-      this.io.to(value.socket_id).emit('gameStart', { gameType: 'tambola', room: this.room, ticket, totalTicket: 0 });
-    };
+    // for (let value of this.players.values()) {
+    //   const ticket = this.generateTicket();
+    //   this.io.to(value.socket_id).emit('gameStart', { gameType: 'tambola', room: this.room, ticket, totalTicket: 0 });
+    // };
 
     // Start the game logic here (e.g., drawing numbers)
     this.startGameLogic();
