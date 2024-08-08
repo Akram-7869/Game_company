@@ -90,7 +90,8 @@ let onConnection = (socket) => {
          } 
 
         state[roomName]['codeObj'].syncPlayer(socket, d);
-        socket.emit('join',{ ...d, gameType: gameName.ludo ,  room: roomName ,status:'success','playerPosition': 0});
+        state[roomName]['codeObj'].updatePlayers(state[roomName]['players']);
+        socket.emit('join',{ ...d, gameType: gameName.ludo ,  room: roomName ,status:'success','playerPosition': 0, players: state[roomName]['players']});
         break;
       case gameName.tambola:
         if (!state[roomName]['codeObj']) {

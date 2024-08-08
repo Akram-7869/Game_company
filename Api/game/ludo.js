@@ -5,18 +5,21 @@ class LudoGame {
         this.io = io;
         this.roomName = roomName;
         this.maxPlayers = maxPlayers;
-        this.players = new Set();
+        this.players = [];
         this.bots = new Set();
         this.playerSockets = {};
         this.turnOrder = [];
         this.currentTurnIndex = 0;
-        this.gameState = 'waiting'; // possible states: waiting, playing, finished
+        this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.timer = null;
         this.roomJoinTimers = null;
         this.currentPhase = 'createdroom';
         this.bettingTimer=null;
         this.pauseTimer=null;
-
+        this.round=0;
+        this.bettingTime = 20; // 20 seconds
+        this.pauseTime = 9; // 5 seconds
+ 
 
 
         
@@ -42,15 +45,14 @@ class LudoGame {
     }
     syncPlayer(socket, player) {
         // Send current game state to the player
-        this.players.set(player.userId, socket);
-
+        // this.players.push({...player, socket});
         this.onleaveRoom(socket);
         this.OnCurrentStatus(socket);
      }
     setupGame() {
         if (this.roomJoinTimers) return; // Prevent multiple starts
 
-        this.gameState = 'createdroom';
+        this.currentPhase = 'createdroom';
         this.roomJoinTimers =  new Timer(30, (remaining) => {
             this.io.to(this.roomName).emit('join_tick', { remaining });
         }, () => {
@@ -112,7 +114,20 @@ class LudoGame {
     startGame() {
         if (this.bettingTimer) return; // Prevent multiple starts
 
-        this.gameState = 'playing';
+        this.currentPhase = 'playing';
+        this.round+=1;
+        this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', betting_remaing: this.bettingTimer?.remaining,round:this.round });
+        console.log(`Betting phase started in room: ${this.roomName}`);
+
+        this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
+           // console.log(remaining);
+            this.io.to(this.roomName).emit('play_tick', { remainingTime: remaining });
+        }, () => {
+          //  this.startPausePhase();
+        });
+
+        this.bettingTimer.startTimer();
+
         this.turnOrder = [...this.players, ...this.bots];
         this.io.to(this.roomName).emit('game_start', { players: this.turnOrder });
         console.log(`Game started in room: ${this.roomName}`);
@@ -120,7 +135,7 @@ class LudoGame {
     }
 
     nextTurn() {
-        if (this.gameState !== 'playing') return;
+        if (this.currentPhase !== 'playing') return;
 
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
         this.io.to(this.roomName).emit('turn_start', { player: currentPlayer });
@@ -164,7 +179,7 @@ class LudoGame {
     }
 
     endGame() {
-        this.gameState = 'finished';
+        this.currentPhase = 'finished';
         this.io.to(this.roomName).emit('game_end', { message: 'Game has ended.' });
         console.log(`Game ended in room: ${this.roomName}`);
         this.resetGame();
@@ -175,7 +190,7 @@ class LudoGame {
         this.bots.clear();
         this.turnOrder = [];
         this.currentTurnIndex = 0;
-        this.gameState = 'waiting';
+        this.currentPhase = 'waiting';
         if (this.timer) {
             this.timer.pause();
         }
