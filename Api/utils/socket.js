@@ -86,7 +86,7 @@ let onConnection = (socket) => {
       case gameName.ludo:
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new LudoGame(io, roomName);
-          state[roomName]['codeObj'].startGame();
+          state[roomName]['codeObj'].setupGame();
          } 
 
         state[roomName]['codeObj'].syncPlayer(socket, d);

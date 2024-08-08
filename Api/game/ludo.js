@@ -1,3 +1,5 @@
+const Timer = require("./Timer");
+
 class LudoGame {
     constructor(io, roomName, maxPlayers = 4) {
         this.io = io;
@@ -10,15 +12,21 @@ class LudoGame {
         this.currentTurnIndex = 0;
         this.gameState = 'waiting'; // possible states: waiting, playing, finished
         this.timer = null;
+        this.roomJoinTimers = null;
+        this.currentPhase = 'createdroom';
+        this.bettingTimer=null;
+        this.pauseTimer=null;
+
+
+
+        
     }
 
     addPlayer(socket) {
         if (this.players.size + this.bots.size < this.maxPlayers) {
             this.players.add(socket.id);
             this.playerSockets[socket.id] = socket;
-            socket.join(this.roomName);
-            this.io.to(this.roomName).emit('player_joined', { id: socket.id });
-            console.log(`Player ${socket.id} joined room ${this.roomName}`);
+             console.log(`Player ${socket.id} joined room ${this.roomName}`);
         } else {
             socket.emit('error', 'Room is full.');
         }
@@ -32,7 +40,75 @@ class LudoGame {
             console.log(`Bot ${botId} added to room ${this.roomName}`);
         }
     }
+    syncPlayer(socket, player) {
+        // Send current game state to the player
+        this.players.set(player.userId, socket);
 
+        this.onleaveRoom(socket);
+        this.OnCurrentStatus(socket);
+     }
+    setupGame() {
+        if (this.roomJoinTimers) return; // Prevent multiple starts
+
+        this.gameState = 'createdroom';
+        this.roomJoinTimers =  new Timer(30, (remaining) => {
+            this.io.to(this.roomName).emit('join_tick', { remaining });
+        }, () => {
+            this.startGameWithBots();
+        });
+
+        this.roomJoinTimers.startTimer();
+        console.log(`Game started in room: ${this.roomName}`);
+        
+    }
+
+    startGameWithBots(){
+        this.startGame();
+    }
+    onleaveRoom(socket) {
+        socket.on('onleaveRoom', function (data) {
+            try {
+                console.log('OnleaveRoom--dragon')
+                socket.leave(this.roomName);
+                socket.removeAllListeners('OnBetsPlaced');
+                socket.removeAllListeners('OnCurrentStatus');
+
+
+
+                socket.removeAllListeners('OnWinNo');
+                socket.removeAllListeners('OnTimeUp');
+                socket.removeAllListeners('OnTimerStart');
+                socket.removeAllListeners('OnCurrentTimer');
+                socket.removeAllListeners('onleaveRoom');
+
+
+
+
+                // playerManager.RemovePlayer(socket.id);
+                socket.emit('onleaveRoom', {
+                    success: `successfully leave ${this.roomName} game.`,
+                });
+                
+            } catch (err) {
+                console.log(err);
+            }
+        });
+    }
+    OnCurrentStatus(socket) {
+        socket.on('OnCurrentStatus', (d) => {
+            this.io.to(socket.id).emit('OnCurrentStatus', {
+                gameType: 'DragonTiger',
+                room: this.roomName,
+                currentPhase: this.currentPhase,
+                total_players: this.players.size,
+                betting_remaing: this.bettingTimer?.remaining,
+                pause_remaing: this.pauseTimer?.remaining,
+             //   winList: this.winList,
+              //  round:this.round
+
+            });
+        });
+    }
     startGame() {
         if (this.bettingTimer) return; // Prevent multiple starts
 
