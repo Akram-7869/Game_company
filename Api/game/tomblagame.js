@@ -28,6 +28,17 @@ class TambolaGame {
     this.totalAmount = 0;
     this.roomJoinTimers=null;
     this.bettingTimer=null;
+    this.prizeDistribution = {
+      top: 0.15,
+      middle: 0.15,
+      bottom: 0.15,
+      earlyFive: 0.05,
+      fourCorners: 0.15,
+      fullHouse: 0.35
+    };
+    this.adminCommission = 0.2;
+    this.intervalId = null;
+    this.currentPhase = 'joining';
   }
 
   updatePlayers(players) {
@@ -40,7 +51,7 @@ class TambolaGame {
  
     this.io.to(this.room).emit('OnTimerStart', { phase: 'joining', joining_remaing: this.bettingTimer?.remaining});
 
-    this.roomJoinTimers =  new Timer(30, (remaining) => {
+    this.roomJoinTimers =  new Timer(10, (remaining) => {
         this.io.to(this.room).emit('join_tick', { remaining });
     }, () => {
         this.startGame();
@@ -61,23 +72,24 @@ class TambolaGame {
     this.currentPhase = 'started';
 
     // Start the game logic here (e.g., drawing numbers)
-    this.io.to(this.room).emit('OnTimeUp', { phase: 'started' });
-
+    this.io.to(this.room).emit('OnTimeUp', { phase: 'started' });s
     this.startGameLogic();
   }
 
   startGameLogic() {
     console.log(`Tambola game started in room: ${this.room}`);
-    const intervalId = setInterval(() => {
+    this.intervalId  = setInterval(() => {
+      if (this.currentPhase === 'paused') return; // Skip drawing numbers if game is paused
+
       const number = this.drawNumber();
       if (number === null) {
-        clearInterval(intervalId);
+        clearInterval(this.intervalId);
         this.io.to(this.room).emit('tambolaEnd', { message: 'All numbers have been drawn' });
       } else {
         console.log(`newnumber`)
         this.io.to(this.room).emit('newNumber', { gameType: 'tambola', room: this.room, number });
       }
-    }, 30000); // Draw a number every second
+    }, 10000); // Draw a number every second
   }
 
   generateNumbers() {
@@ -125,7 +137,7 @@ class TambolaGame {
     socket.removeAllListeners('onBetPlaced');
 
     socket.on('onBetPlaced', (d) => {
-
+console.log('onBetPlaced',d);
       const { playerTickets, amount } = d;
       this.totalTicket += playerTickets;
       this.totalAmount += amount;
@@ -156,6 +168,7 @@ class TambolaGame {
     this.onBetPlaced(socket);
     this.onleaveRoom(socket);
     this.OnCurrentStatus(socket);
+    this.OnClaimReward(socket);
   }
 
 
@@ -166,17 +179,11 @@ class TambolaGame {
         socket.leave(this.roomName);
         socket.removeAllListeners('OnBetsPlaced');
         socket.removeAllListeners('OnCurrentStatus');
+        socket.removeAllListeners('OnClaimReward');
 
-
-
-        socket.removeAllListeners('OnWinNo');
         socket.removeAllListeners('OnTimeUp');
         socket.removeAllListeners('OnTimerStart');
-        socket.removeAllListeners('OnCurrentTimer');
         socket.removeAllListeners('onleaveRoom');
-
-
-
 
         // playerManager.RemovePlayer(socket.id);
         socket.emit('onleaveRoom', {
@@ -203,6 +210,53 @@ class TambolaGame {
         totalTicket: this.totalTicket
       });
     });
+  }
+  OnClaimReward(socket) {
+    socket.on('OnClaimReward', (d) => {
+      console.log('OnClaimReward',d);
+
+      // Pause the game
+      this.currentPhase = 'paused';
+      this.io.to(this.room).emit('gamePaused', { message: 'Game paused to validate claims.' });
+
+      const rewardType = d.rewardType; // 'top', 'middle', 'bottom', 'earlyFive', 'fourCorners', or 'fullHouse'
+      const rewardAmount = this.calculateReward(rewardType);
+
+      if (rewardAmount > 0) {
+        this.claimed[rewardType] += 1;
+        this.claimed[`${rewardType}Total`] += rewardAmount;
+        this.io.to(socket.id).emit('OnClaimReward', {
+          success: true,
+          rewardType,
+          rewardAmount,
+          claimed: this.claimed
+        });
+      } else {
+        this.io.to(socket.id).emit('OnClaimReward', {
+          success: false,
+          message: 'Invalid claim or reward already distributed.'
+        });
+      }
+
+      // Check if any prizes are left
+      const prizesLeft = Object.keys(this.claimed).some(
+        key => key.endsWith('Total') && this.claimed[key] === 0
+      );
+
+      if (!prizesLeft) {
+        this.currentPhase = 'ended';
+        clearInterval(this.intervalId); // Stop the number drawing interval
+        this.io.to(this.room).emit('gameEnded', { message: 'All prizes claimed, game ended.' });
+      } else {
+        this.currentPhase = 'started';
+        this.io.to(this.room).emit('gameResumed', { message: 'Game resumed.' });
+      }
+    });
+  }
+
+  calculateReward(rewardType) {
+    const totalAfterCommission = this.totalAmount * (1 - this.adminCommission);
+    return totalAfterCommission * this.prizeDistribution[rewardType];
   }
 
 
