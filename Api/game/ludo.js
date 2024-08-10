@@ -96,6 +96,9 @@ class LudoGame {
             }
         });
     }
+    updatePlayers(players) {
+        this.players = players;
+      }
     OnCurrentStatus(socket) {
         socket.on('OnCurrentStatus', (d) => {
             this.io.to(socket.id).emit('OnCurrentStatus', {
