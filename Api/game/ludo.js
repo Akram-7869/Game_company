@@ -99,10 +99,10 @@ class LudoGame {
     OnCurrentStatus(socket) {
         socket.on('OnCurrentStatus', (d) => {
             this.io.to(socket.id).emit('OnCurrentStatus', {
-                gameType: 'DragonTiger',
+                gameType: 'Ludo',
                 room: this.roomName,
                 currentPhase: this.currentPhase,
-                total_players: this.players.size,
+                players: this.players,
                 betting_remaing: this.bettingTimer?.remaining,
                 pause_remaing: this.pauseTimer?.remaining,
              //   winList: this.winList,

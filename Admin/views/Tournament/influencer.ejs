@@ -653,22 +653,25 @@ var io = io(server);
           const form = document.getElementById('form');
           const input = document.getElementById('input');
           const messages = document.getElementById('messages');
+          let room='';
           let data={
             userId:"kka", lobbyId:"65c38ed7e4ab182b20abce43", maxp : 4
           }
           form.addEventListener('submit', function (e) {
             e.preventDefault();
             if (input.value) {
-              io.emit('chat_message', {...data, message:input.value});
+              io.emit('chat_message', {...data, message:input.value,room});
               input.value = '';
             }
           });
          
           io.emit('join', data);
+          io.on('join', function (msg) {
+            room=msg.room;
+          });
 
           io.on('chat_message', function (msg) {
-            debugger
-            const item = document.createElement('li');
+             const item = document.createElement('li');
             item.textContent = msg;
             messages.appendChild(item);
             window.scrollTo(0, document.body.scrollHeight);

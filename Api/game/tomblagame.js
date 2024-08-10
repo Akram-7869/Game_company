@@ -72,7 +72,7 @@ class TambolaGame {
     this.currentPhase = 'started';
 
     // Start the game logic here (e.g., drawing numbers)
-    this.io.to(this.room).emit('OnTimeUp', { phase: 'started' });s
+    this.io.to(this.room).emit('OnTimeUp', { phase: 'started' });
     this.startGameLogic();
   }
 
