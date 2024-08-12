@@ -19,10 +19,6 @@ class LudoGame {
         this.round = 0;
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 9; // 5 seconds
-
-
-
-
     }
 
     addPlayer(socket) {
@@ -130,7 +126,8 @@ class LudoGame {
         this.currentPlayerIndex = 0;
          this.currentPhase = 'playing';
         this.round += 1;
-        this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', betting_remaing: this.bettingTimer?.remaining, round: this.round });
+        this.turnOrder = [...this.getPlayers(), ...this.getBots()];
+        this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', betting_remaing: this.bettingTimer?.remaining, round: this.round, players: this.turnOrder });
         console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
@@ -142,7 +139,7 @@ class LudoGame {
 
         this.bettingTimer.startTimer();
 
-        this.turnOrder = [...this.getPlayers(), ...this.getBots()];
+   
         this.io.to(this.roomName).emit('game_start', { players: this.turnOrder });
         console.log(`Game started in room: ${this.roomName}`);
         this.nextTurn();
