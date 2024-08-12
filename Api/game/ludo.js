@@ -61,7 +61,7 @@ class LudoGame {
             this.io.to(this.roomName).emit('join_tick', { remaining });
             if(remaining === 5){
                 this.addBot();
-                this.turnOrder = [...this.getPlayers(), ...this.getBots()];
+              
 
                 this.emitJoinPlayer();
             }
@@ -75,6 +75,7 @@ class LudoGame {
 
     }
     emitJoinPlayer() {
+        this.turnOrder = [...this.getPlayers(), ...this.getBots()];
         this.io.to(this.roomName).emit('join_players', { players: this.turnOrder });
     }
 
