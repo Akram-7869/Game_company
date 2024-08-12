@@ -90,7 +90,6 @@ let onConnection = (socket) => {
          } 
 
         state[roomName]['codeObj'].syncPlayer(socket, d);
-        state[roomName]['codeObj'].updatePlayers(state[roomName]['players']);
         socket.emit('join',{ ...d, gameType: gameName.ludo ,  room: roomName ,status:'success'});
         state[roomName]['codeObj'].emitJoinPlayer();
         break;
