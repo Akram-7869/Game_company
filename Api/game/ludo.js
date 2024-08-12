@@ -45,6 +45,8 @@ class LudoGame {
         
             while (this.players.size < this.maxPlayers) {
                 const botId = `${this.players.size + 1}-bot`;
+                bot['userId']=botId;
+                bot['name']=botId;
                 this.bots.set(botId, { player: bot });
                 console.log(`Bot ${botId} added to room ${this.roomName}`);
             }
@@ -63,7 +65,7 @@ class LudoGame {
         if (this.roomJoinTimers) return; // Prevent multiple starts
 
         this.currentPhase = 'createdroom';
-        this.roomJoinTimers = new Timer(30, (remaining) => {
+        this.roomJoinTimers = new Timer(10, (remaining) => {
             this.io.to(this.roomName).emit('join_tick', { remaining });
             if(remaining === 5){
                 this.addBot();
@@ -166,7 +168,7 @@ class LudoGame {
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
 
         // Set timer for the next turn
-        this.timer = new Timer(20, (remaining) => {
+        this.timer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining,currentTurnIndex: this.currentTurnIndex });
         }, () => {
             this.nextTurn();
