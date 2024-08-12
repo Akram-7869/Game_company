@@ -110,8 +110,11 @@ class LudoGame {
                 socket.removeAllListeners('OnTimeUp');
                 socket.removeAllListeners('OnTimerStart');
                 socket.removeAllListeners('onleaveRoom');
-                let obj = this.players.get(PlayerID); // Get the object
-                obj.player.playerStatus = 'Left';                // Modify the object
+                if(this.players.has(PlayerID)){
+                      let obj = this.players.get(PlayerID); // Get the object
+                obj.player.playerStatus = 'Left';  
+                }
+                            // Modify the object
             
                 // playerManager.RemovePlayer(socket.id);
                 socket.emit('onleaveRoom', {
