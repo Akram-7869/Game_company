@@ -45,7 +45,7 @@ class LudoGame {
         
             // while (this.players.size < this.maxPlayers) {
                 const botId = `${this.players.size + 1}-bot`;
-            //     bot['userId']=botId;
+                 bot['userId']=botId;
             //     bot['name']=botId;
                 this.bots.set(botId, { player: bot });
                 console.log(`Bot ${botId} added to room ${this.roomName}`);
@@ -60,7 +60,10 @@ class LudoGame {
         this.players.set(player.userId, { player, socket, lives: 3, position: -1 });
         this.onleaveRoom(socket);
         this.OnCurrentStatus(socket);
+        this.OnMovePasa(socket);
+        this.OnRollDice(socket);
     }
+
     setupGame() {
         if (this.roomJoinTimers) return; // Prevent multiple starts
 
@@ -88,18 +91,23 @@ class LudoGame {
 
     onleaveRoom(socket) {
         socket.on('onleaveRoom', function (data) {
+            let {PlayerID}=data;
             try {
                 console.log('OnleaveRoom--dragon')
                 socket.leave(this.roomName);
                 socket.removeAllListeners('OnBetsPlaced');
                 socket.removeAllListeners('OnCurrentStatus');
+                socket.removeAllListeners('OnMovePasa');
+                socket.removeAllListeners('OnRollDice');
+
 
                 socket.removeAllListeners('OnWinNo');
                 socket.removeAllListeners('OnTimeUp');
                 socket.removeAllListeners('OnTimerStart');
-                socket.removeAllListeners('OnCurrentStatus');
                 socket.removeAllListeners('onleaveRoom');
-
+                let obj = this.players.get(PlayerID); // Get the object
+                obj.player.playerStatus = 'Left';                // Modify the object
+            
                 // playerManager.RemovePlayer(socket.id);
                 socket.emit('onleaveRoom', {
                     success: `successfully leave ${this.roomName} game.`,
@@ -116,6 +124,24 @@ class LudoGame {
     }
     getBots() {
         return Array.from(this.bots.values()).map(value => value.player);
+    }
+    OnMovePasa(socket) {
+        socket.on('OnMovePasa', (d) => {
+            let {PlayerID, key, steps}=d;
+            
+            let obj = this.players.get(PlayerID); // Get the object
+            obj.player[key] = steps; 
+            this.io.to(this.roomName).emit('OnMovePasa', d);
+        });
+    }
+    OnRollDice(socket) {
+        socket.on('OnRollDice', (d) => {
+            this.io.to(this.roomName).emit('OnRollDice', {
+                dice: Math.floor(Math.random() * 6) + 1
+                
+
+            });
+        });
     }
     OnCurrentStatus(socket) {
         socket.on('OnCurrentStatus', (d) => {
@@ -216,6 +242,7 @@ class LudoGame {
             this.timer.pause();
         }
     }
+    
 }
 
 module.exports = LudoGame;
