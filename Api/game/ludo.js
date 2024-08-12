@@ -2,11 +2,8 @@ const Timer = require("./Timer");
 
 class LudoGame {
     constructor(io, roomName, maxPlayers = 4) {
-        this.io = io;
-        this.roomName = roomName;
-        this.maxPlayers = maxPlayers;
-        this.players = new Map();
-        this.bots = new Map();
+        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;
+        this.players = new Map();this.bots = new Map();
         this.playerSockets = {};
         this.turnOrder = [];
         this.currentTurnIndex = 0;
@@ -89,7 +86,7 @@ class LudoGame {
 
     }
     emitJoinPlayer() {
-        console.log(this.players, this.bots);
+        console.log('players:',this.players.size,'Bots: ', this.bots.size);
         this.turnOrder = [...this.getPlayers(), ...this.getBots()];
         this.io.to(this.roomName).emit('join_players', { players: this.turnOrder });
     }
@@ -97,6 +94,7 @@ class LudoGame {
     onleaveRoom(socket) {
         socket.on('onleaveRoom', function (data) {
             let { PlayerID } = data;
+            console.log(data,'onleaveRoom');
             try {
                 console.log('OnleaveRoom--ludo')
                 socket.leave(this.roomName);
