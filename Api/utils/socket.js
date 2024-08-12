@@ -85,7 +85,7 @@ let onConnection = (socket) => {
      switch (lobby.mode) {
       case gameName.ludo:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new LudoGame(io, roomName);
+          state[roomName]['codeObj'] = new LudoGame(io, roomName, maxp);
           state[roomName]['codeObj'].setupGame();
          } 
 
