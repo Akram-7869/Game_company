@@ -36,16 +36,25 @@ class LudoGame {
     }
 
     addBot() {
+        let bot = {
+              userId: 'b656d926053f8b7693896509',
+              name: 'Tester-bot',
+               balance: '575.79',
+               lobbyId: '66613de5980bf75b5ec9abb4',
+               maxp: 2,
+               type:'bot',
+               avtar: 'http://174.138.52.41/assets/img/logo/profile_default.png'
+             }
         if (this.players.size + this.bots.size < this.maxPlayers) {
-            const botId = `bot_${this.bots.size + 1}`;
-            this.bots.set(botId, { player: {} });
+            const botId = 'b656d926053f8b7693896509';
+            this.bots.set(botId, { player: bot });
 
             console.log(`Bot ${botId} added to room ${this.roomName}`);
         }
     }
     syncPlayer(socket, player) {
         // Send current game state to the player
-        this.players.set(player.userId, { player, socket });
+        this.players.set(player.userId, { player, socket,lives: 3, position: -1 });
         this.onleaveRoom(socket);
         this.OnCurrentStatus(socket);
     }
@@ -117,8 +126,9 @@ class LudoGame {
     }
     startGame() {
         if (this.bettingTimer) return; // Prevent multiple starts
-
-        this.currentPhase = 'playing';
+        this.addBot();
+        this.currentPlayerIndex = 0;
+         this.currentPhase = 'playing';
         this.round += 1;
         this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', betting_remaing: this.bettingTimer?.remaining, round: this.round });
         console.log(`Betting phase started in room: ${this.roomName}`);
