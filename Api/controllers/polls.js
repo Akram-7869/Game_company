@@ -12,7 +12,7 @@ const { uploadFile, deletDiskFile } = require('../utils/utils');
 // @route     GET /api/v1/auth/Polls
 // @access    Private/Admin
 exports.getPolls = asyncHandler(async (req, res, next) => {
-    ;
+    
     Poll.dataTables({
         limit: req.body.length,
         skip: req.body.start,

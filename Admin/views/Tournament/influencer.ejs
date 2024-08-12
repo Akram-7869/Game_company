@@ -1,61 +1,84 @@
 <%- contentFor('HeaderCss') %>
   <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
   <style>
+     
+    .number-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .number-box {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #f4f4f4;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .number-box.highlighted {
+      background-color: yellow;
+    }
+  
     .sso-hidden {
-  display: block;
-}
+      display: block;
+    }
 
-.banner {
-  padding: 0;
-  background-color: #52575c;
-  color: white;
-}
+    .banner {
+      padding: 0;
+      background-color: #52575c;
+      color: white;
+    }
 
-.banner-text {
-  padding: 8px 20px;
-  margin: 0;
-}
+    .banner-text {
+      padding: 8px 20px;
+      margin: 0;
+    }
 
 
-#join-form {
-  margin-top: 10px;
-}
+    #join-form {
+      margin-top: 10px;
+    }
 
-.tips {
-  font-size: 12px;
-  margin-bottom: 2px;
-  color: gray;
-}
+    .tips {
+      font-size: 12px;
+      margin-bottom: 2px;
+      color: gray;
+    }
 
-.join-info-text {
-  margin-bottom: 2px;
-}
+    .join-info-text {
+      margin-bottom: 2px;
+    }
 
-input {
-  width: 100%;
-  margin-bottom: 2px;
-}
+    input {
+      width: 100%;
+      margin-bottom: 2px;
+    }
 
-.player {
-  width: 480px;
-  height: 320px;
-}
+    .player {
+      width: 480px;
+      height: 320px;
+    }
 
-.player-name {
-  margin: 8px 0;
-}
+    .player-name {
+      margin: 8px 0;
+    }
 
-#success-alert, #success-alert-with-token {
-  display: none;
-}
+    #success-alert,
+    #success-alert-with-token {
+      display: none;
+    }
 
-@media (max-width: 640px) {
-  .player {
-    width: 320px;
-    height: 240px;
-  }
-}
-
+    @media (max-width: 640px) {
+      .player {
+        width: 320px;
+        height: 240px;
+      }
+    }
   </style>
   <%- contentFor('breadcrumb') %>
 
@@ -82,78 +105,79 @@ input {
 
     <%- contentFor('body') %>
 
-    <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
-      <strong>Congratulations!</strong><span> You can invite others to watch your live by click </span><a href=""
-        target="_blank">here</a>
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-  
-    <div class="container">
-      <form id="join-form" name="join-form">
-        <div class="row join-info-group">
-          <div class="col-sm sso-hidden">
-            <p class="join-info-text">AppID</p>
-            <input id="appid" type="text" placeholder="enter appid">
-            <p class="tips">If you don`t know what is your appid, checkout <a
-                href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#a-nameappidaapp-id">this</a>
-            </p>
-          </div>
-          <div class="col-sm sso-hidden">
-            <p class="join-info-text">Token(optional)</p>
-            <input id="token" type="text" placeholder="enter token">
-            <p class="tips">If you don`t know what is your token, checkout <a
-                href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#a-namekeyadynamic-key">this</a>
-            </p>
-          </div>
-          <div class="col-sm">
-            <p class="join-info-text">Channel</p>
-            <input id="channel" type="text" placeholder="enter channel name" required>
-            <p class="tips">If you don`t know what is your channel, checkout <a
-                href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#channel">this</a></p>
-          </div>
-          <div class="col-sm">
-            <p class="join-info-text">User ID(optional)</p>
-            <input id="uid" type="text" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"
-              onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Enter the user ID">
-          </div>
-        </div>
-  
-        <div class="button-group">
-          <button id="host-join" type="submit" class="btn btn-primary btn-sm">Join as host</button>
-          <div class="btn-group">
-            <button id="audience-join" type="button" class="btn btn-primary btn-sm" data-toggle="dropdown"
-              aria-haspopup="true" aria-expanded="false">
-              Join as audience
-            </button>
-            <div class="audience dropdown-menu">
-              <a id="lowLatency" class="dropdown-item" label="Interactive Live Streaming Standard" href="#">Interactive
-                Live Streaming Standard</a>
-              <a id="ultraLowLatency" class="dropdown-item" label="Interactive Live Streaming Premium"
-                href="#">Interactive Live Streaming Premium</a>
+      <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Congratulations!</strong><span> You can invite others to watch your live by click </span><a href=""
+          target="_blank">here</a>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="container">
+        <form id="join-form" name="join-form">
+          <div class="row join-info-group">
+            <div class="col-sm sso-hidden">
+              <p class="join-info-text">AppID</p>
+              <input id="appid" type="text" placeholder="enter appid">
+              <p class="tips">If you don`t know what is your appid, checkout <a
+                  href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#a-nameappidaapp-id">this</a>
+              </p>
+            </div>
+            <div class="col-sm sso-hidden">
+              <p class="join-info-text">Token(optional)</p>
+              <input id="token" type="text" placeholder="enter token">
+              <p class="tips">If you don`t know what is your token, checkout <a
+                  href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#a-namekeyadynamic-key">this</a>
+              </p>
+            </div>
+            <div class="col-sm">
+              <p class="join-info-text">Channel</p>
+              <input id="channel" type="text" placeholder="enter channel name" required>
+              <p class="tips">If you don`t know what is your channel, checkout <a
+                  href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#channel">this</a></p>
+            </div>
+            <div class="col-sm">
+              <p class="join-info-text">User ID(optional)</p>
+              <input id="uid" type="text" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"
+                onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Enter the user ID">
             </div>
           </div>
-          <button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Leave</button>
-        </div>
-  
-      </form>
-      <!-- Single button -->
-      <div class="row video-group">
-        <div class="col">
-          <p id="local-player-name" class="player-name"></p>
-          <div id="local-player" class="player"></div>
-        </div>
-        <div class="w-100"></div>
-        <div class="col">
-          <div id="remote-playerlist"></div>
-        </div>
-      </div>
-  
-    </div>
 
-     
- 
+          <div class="button-group">
+            <button id="host-join" type="submit" class="btn btn-primary btn-sm">Join as host</button>
+            <div class="btn-group">
+              <button id="audience-join" type="button" class="btn btn-primary btn-sm" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Join as audience
+              </button>
+              <div class="audience dropdown-menu">
+                <a id="lowLatency" class="dropdown-item" label="Interactive Live Streaming Standard"
+                  href="#">Interactive
+                  Live Streaming Standard</a>
+                <a id="ultraLowLatency" class="dropdown-item" label="Interactive Live Streaming Premium"
+                  href="#">Interactive Live Streaming Premium</a>
+              </div>
+            </div>
+            <button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Leave</button>
+          </div>
+
+        </form>
+        <!-- Single button -->
+        <div class="row video-group">
+          <div class="col">
+            <p id="local-player-name" class="player-name"></p>
+            <div id="local-player" class="player"></div>
+          </div>
+          <div class="w-100"></div>
+          <div class="col">
+            <div id="remote-playerlist"></div>
+          </div>
+        </div>
+
+      </div>
+
+
+
 
       <div class="container">
 
@@ -358,6 +382,30 @@ input {
           <div class="card">
             <div class="p-3 px-lg-4 border-bottom">
               <div class="row">
+                  <!-- Numbers Declared Grid -->
+    <div class="numbers-declared">
+      <h2>Numbers Declared</h2>
+      <div id="declaredNumbersGrid" class="number-grid">
+        <!-- Numbers 1 to 90 will be populated here -->
+      </div>
+    </div>
+
+    <!-- Rewards -->
+    <div class="rewards">
+      <h2>Rewards</h2>
+      <ul id="rewardsList">
+        <!-- Rewards will be populated here -->
+      </ul>
+    </div>
+
+    <!-- Available Rewards -->
+    <div class="available-rewards">
+      <h2>Available Rewards</h2>
+      <ul id="availableRewardsList">
+        <!-- Available rewards will be populated here -->
+      </ul>
+    </div>
+  </div>
                 <div class="col-md-4 col-6">
 
                 </div>
@@ -401,36 +449,11 @@ input {
 
             <div class="px-lg-2">
               <div class="chat-conversation p-3">
-                <ul class="list-unstyled mb-0" data-simplebar style="max-height: 455px;">
+                <ul id="messageList" class="list-unstyled mb-0" data-simplebar style="max-height: 455px;">
                   <li class="chat-day-title">
                     <div class="title">Today</div>
                   </li>
-                  <li>
-                    <div class="conversation-list">
-                      <div class="ctext-wrap">
-                        <div class="ctext-wrap-content">
-                          <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">John Howard</a> <span
-                              class="d-inline-block font-size-12 text-muted ms-2">10:00</span></h5>
-                          <p class="mb-0">
-                            Good morning everyone !
-                          </p>
-                        </div>
-                        <div class="dropdown align-self-start">
-                          <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <i class="uil uil-ellipsis-v"></i>
-                          </a>
-                          <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Copy</a>
-                            <a class="dropdown-item" href="#">Save</a>
-                            <a class="dropdown-item" href="#">Forward</a>
-                            <a class="dropdown-item" href="#">Delete</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
 
-                  </li>
 
                   <li class="right">
                     <div class="conversation-list">
@@ -442,7 +465,7 @@ input {
                             Good morning everyone !
                           </p>
                         </div>
-                        <div class="dropdown align-self-start">
+                        <!-- <div class="dropdown align-self-start">
                           <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
                             <i class="uil uil-ellipsis-v"></i>
@@ -453,182 +476,37 @@ input {
                             <a class="dropdown-item" href="#">Forward</a>
                             <a class="dropdown-item" href="#">Delete</a>
                           </div>
-                        </div>
+                        </div> -->
                       </div>
                     </div>
 
                   </li>
 
-                  <li>
-                    <div class="conversation-list">
-                      <div class="ctext-wrap">
-                        <div class="ctext-wrap-content">
-                          <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">Galen Rizo</a> <span
-                              class="d-inline-block font-size-12 text-muted ms-2">10:04</span></h5>
-                          <p class="mb-0">
-                            Hello!
-                          </p>
-                        </div>
-                        <div class="dropdown align-self-start">
-                          <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <i class="uil uil-ellipsis-v"></i>
-                          </a>
-                          <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Copy</a>
-                            <a class="dropdown-item" href="#">Save</a>
-                            <a class="dropdown-item" href="#">Forward</a>
-                            <a class="dropdown-item" href="#">Delete</a>
-                          </div>
-                        </div>
-                      </div>
 
-                      <div class="ctext-wrap">
-                        <div class="ctext-wrap-content">
-                          <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">Galen Rizo</a> <span
-                              class="d-inline-block font-size-12 text-muted ms-2">10:04</span></h5>
-                          <p class="mb-0">
-                            What about our next meeting?
-                          </p>
-                        </div>
-                        <div class="dropdown align-self-start">
-                          <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <i class="uil uil-ellipsis-v"></i>
-                          </a>
-                          <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Copy</a>
-                            <a class="dropdown-item" href="#">Save</a>
-                            <a class="dropdown-item" href="#">Forward</a>
-                            <a class="dropdown-item" href="#">Delete</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                  </li>
-
-                  <li>
-                    <div class="conversation-list">
-                      <div class="ctext-wrap">
-                        <div class="ctext-wrap-content">
-                          <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">John Howard</a> <span
-                              class="d-inline-block font-size-12 text-muted ms-2">10:06</span></h5>
-                          <p class="mb-0">
-                            Next meeting tomorrow 10.00AM
-                          </p>
-                        </div>
-                        <div class="dropdown align-self-start">
-                          <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <i class="uil uil-ellipsis-v"></i>
-                          </a>
-                          <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Copy</a>
-                            <a class="dropdown-item" href="#">Save</a>
-                            <a class="dropdown-item" href="#">Forward</a>
-                            <a class="dropdown-item" href="#">Delete</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                  </li>
-
-                  <li class="right">
-                    <div class="conversation-list">
-                      <div class="ctext-wrap">
-                        <div class="ctext-wrap-content">
-                          <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">Marcus</a> <span
-                              class="d-inline-block font-size-12 text-muted ms-2">10:02</span></h5>
-                          <p class="mb-0">
-                            Wow that's great
-                          </p>
-                        </div>
-                        <div class="dropdown align-self-start">
-                          <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <i class="uil uil-ellipsis-v"></i>
-                          </a>
-                          <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Copy</a>
-                            <a class="dropdown-item" href="#">Save</a>
-                            <a class="dropdown-item" href="#">Forward</a>
-                            <a class="dropdown-item" href="#">Delete</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-
-                  <li>
-                    <div class="conversation-list">
-                      <div class="ctext-wrap">
-                        <div class="ctext-wrap-content">
-                          <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">John Howard</a> <span
-                              class="d-inline-block font-size-12 text-muted ms-2">10:06</span></h5>
-                          <p class="mb-0">
-                            img-1.jpg & img-2.jpg images for a New Projects
-                          </p>
-
-                          <ul class="list-inline message-img mt-3  mb-0">
-                            <li class="list-inline-item message-img-list">
-                              <a class="d-inline-block m-1" href="">
-                                <img src="public/assets/images/small/img-1.jpg" alt="" class="rounded img-thumbnail">
-                              </a>
-                            </li>
-
-                            <li class="list-inline-item message-img-list">
-                              <a class="d-inline-block m-1" href="">
-                                <img src="public/assets/images/small/img-2.jpg" alt="" class="rounded img-thumbnail">
-                              </a>
-                            </li>
-                          </ul>
-                        </div>
-                        <div class="dropdown align-self-start">
-                          <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <i class="uil uil-ellipsis-v"></i>
-                          </a>
-                          <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Copy</a>
-                            <a class="dropdown-item" href="#">Save</a>
-                            <a class="dropdown-item" href="#">Forward</a>
-                            <a class="dropdown-item" href="#">Delete</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
                 </ul>
               </div>
             </div>
+            <form id="form" action="">
+              <div class="p-3 chat-input-section">
+                <div class="row">
+                  <div class="col">
+                    <div class="position-relative">
+                      <input id="input" type="text" class="form-control chat-input rounded"
+                        placeholder="Enter Message...">
 
-            <div class="p-3 chat-input-section">
-              <div class="row">
-                <div class="col">
-                  <div class="position-relative">
-                    <input type="text" class="form-control chat-input rounded" placeholder="Enter Message...">
-
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <button type="submit" class="btn btn-primary chat-send w-md waves-effect waves-light"><span
+                        class="d-none d-sm-inline-block me-2">Send</span> <i
+                        class="mdi mdi-send float-end"></i></button>
                   </div>
                 </div>
-                <div class="col-auto">
-                  <button type="submit" class="btn btn-primary chat-send w-md waves-effect waves-light"><span
-                      class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send float-end"></i></button>
-                </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
-
-      <ul id="messages"></ul>
-      <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>Send</button>
-      </form>
-    
-
-
       <%- contentFor('FooterJs') %>
 
         <!-- parsleyjs -->
@@ -644,37 +522,112 @@ input {
         <!-- Sweet alert init js
   <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
         <script>
-            let socketId;
+          let socketId;
 
-var server = "http://localhost:3000";
+          var server = "http://localhost:3000";
 
-var io = io(server);
- 
+          var io = io(server);
+
           const form = document.getElementById('form');
           const input = document.getElementById('input');
           const messages = document.getElementById('messages');
-          let room='';
-          let data={
-            userId:"kka", lobbyId:"65c38ed7e4ab182b20abce43", maxp : 4
+          let room = '';
+          let data = {
+            userId: "kka", lobbyId: "65c38ed7e4ab182b20abce43", maxp: 4
           }
           form.addEventListener('submit', function (e) {
             e.preventDefault();
             if (input.value) {
-              io.emit('chat_message', {...data, message:input.value,room});
+              io.emit('chat_message', { ...data, message: input.value, room });
               input.value = '';
             }
           });
-         
+
           io.emit('join', data);
           io.on('join', function (msg) {
-            room=msg.room;
+            room = msg.room;
+            io.emit('OnCurrentStatus', { room });
+          });
+
+          io.on('OnCurrentStatus', function (data) {
+            const messageList = document.getElementById('messageList');
+            messageList.innerHTML = ''; // Clear the list first
+
+            data?.messages?.forEach(function (msg) {
+              const newMessage = document.createElement('li');
+              newMessage.innerHTML = `
+          <div class="conversation-list">
+            <div class="ctext-wrap">
+              <div class="ctext-wrap-content">
+                <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">${msg.username}</a> 
+                  <span class="d-inline-block font-size-12 text-muted ms-2">${msg.time}</span></h5>
+                <p class="mb-0">${msg.message}</p>
+              </div>
+            </div>
+          </div>
+        `;
+              messageList.appendChild(newMessage);
+            });
+
+            // Scroll to the bottom after populating the list
+            window.scrollTo(0, document.body.scrollHeight);
+
+            const declaredNumbersDiv = document.getElementById('declaredNumbers');
+      const rewardsList = document.getElementById('rewardsList');
+      const availableRewardsList = document.getElementById('availableRewardsList');
+
+     // Highlight declared numbers
+     data.numbers.forEach(function(number) {
+        const numberElement = document.getElementById(`number-${number}`);
+        if (numberElement) {
+          numberElement.classList.add('highlighted');
+        }
+      });
+
+      // Populate rewards given
+      rewardsList.innerHTML = '';
+      data.claimed?.forEach(function(reward) {
+        const rewardItem = document.createElement('li');
+        rewardItem.textContent = `${reward.type}: ${reward.winner}`;
+        rewardsList.appendChild(rewardItem);
+      });
+
+      // // Populate available rewards
+      // availableRewardsList.innerHTML = '';
+      // data.availableRewards.forEach(function(reward) {
+      //   const rewardItem = document.createElement('li');
+      //   rewardItem.textContent = `${reward.type}: ${reward.amount}`;
+      //   availableRewardsList.appendChild(rewardItem);
+      // });
+
+
+
+
+
+
+
+
+
+
+
           });
 
           io.on('chat_message', function (msg) {
-             const item = document.createElement('li');
-            item.textContent = msg;
-            messages.appendChild(item);
-            window.scrollTo(0, document.body.scrollHeight);
+            const messageList = document.getElementById('messageList');
+            const newMessage = document.createElement('li');
+            newMessage.innerHTML = `
+        <div class="conversation-list">
+          <div class="ctext-wrap">
+            <div class="ctext-wrap-content">
+              <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">${msg.username}</a> 
+                <span class="d-inline-block font-size-12 text-muted ms-2">${msg.time}</span></h5>
+              <p class="mb-0">${msg.message}</p>
+            </div>
+          </div>
+        </div>
+      `;
+            messageList.appendChild(newMessage);
+            window.scrollTo(0, document.body.scrollHeight);  // Scroll to the bottom
           });
           $(function () {
             $('#winner').change(function () {
@@ -707,7 +660,40 @@ var io = io(server);
               ))
             }
           }
+          function initializeNumberGrid() {
+      const declaredNumbersGrid = document.getElementById('declaredNumbersGrid');
+      for (let i = 1; i <= 90; i++) {
+        const numberElement = document.createElement('div');
+        numberElement.classList.add('number-box');
+        numberElement.id = `number-${i}`;
+        numberElement.textContent = i;
+        declaredNumbersGrid.appendChild(numberElement);
+      }
+    }
 
+    // Call the function to initialize the grid when the page loads
+    initializeNumberGrid();
+
+// Handle 'number_declared' event
+io.on('number', function(data) {
+      // Highlight the newly declared number
+      const numberElement = document.getElementById(`number-${data.number}`);
+      if (numberElement) {
+        numberElement.classList.add('highlighted');
+      }
+
+      // Update rewards given
+      const rewardsList = document.getElementById('rewardsList');
+      rewardsList.innerHTML = '';
+      data.rewardsGiven.forEach(function(reward) {
+        const rewardItem = document.createElement('li');
+        rewardItem.textContent = `${reward.type}: ${reward.winner}`;
+        rewardsList.appendChild(rewardItem);
+      });
+
+      // Scroll to the bottom to show the latest updates
+      window.scrollTo(0, document.body.scrollHeight);
+    });
         </script>
 
         <%- contentFor('BottomJs') %>
