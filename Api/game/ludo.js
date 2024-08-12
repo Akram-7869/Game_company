@@ -33,7 +33,7 @@ class LudoGame {
 
     addBot() {
         let bot = {
-            userId: 'b656d926053f8b7693896509',
+            userId: '1-bot',
             name: 'Tester-bot',
             balance: '575.79',
             lobbyId: '66613de5980bf75b5ec9abb4',
