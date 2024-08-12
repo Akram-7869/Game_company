@@ -61,13 +61,11 @@ class LudoGame {
             this.io.to(this.roomName).emit('join_tick', { remaining });
             if(remaining === 5){
                 this.addBot();
-              
-
                 this.emitJoinPlayer();
             }
 
         }, () => {
-            this.startGameWithBots();
+            this.startGame();
         });
 
         this.roomJoinTimers.startTimer();
@@ -80,9 +78,6 @@ class LudoGame {
         this.io.to(this.roomName).emit('join_players', { players: this.turnOrder });
     }
 
-    startGameWithBots() {
-            this.startGame();
-    }
     onleaveRoom(socket) {
         socket.on('onleaveRoom', function (data) {
             try {
@@ -107,9 +102,7 @@ class LudoGame {
             }
         });
     }
-    updatePlayers(players) {
-        this.players = players;
-    }
+    
     getPlayers() {
         return Array.from(this.players.values()).map(value => value.player);
     }
@@ -134,8 +127,7 @@ class LudoGame {
     }
     startGame() {
         if (this.bettingTimer) return; // Prevent multiple starts
-        this.addBot();
-        this.currentPlayerIndex = 0;
+     
         this.currentPhase = 'playing';
         this.round += 1;
         this.turnOrder = [...this.getPlayers(), ...this.getBots()];
@@ -169,7 +161,7 @@ class LudoGame {
 
         // Set timer for the next turn
         this.timer = new Timer(20, (remaining) => {
-            this.io.to(this.roomName).emit('turn_tick', { remaining });
+            this.io.to(this.roomName).emit('turn_tick', { remaining,currentTurnIndex: this.currentTurnIndex });
         }, () => {
             this.nextTurn();
         });

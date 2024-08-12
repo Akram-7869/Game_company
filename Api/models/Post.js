@@ -3,7 +3,7 @@ var dataTables = require('mongoose-datatables')
 
 const PostSchema = new mongoose.Schema({
     owner: { type: mongoose.Schema.Types.ObjectId, required: true },
-    diplayName:{type: String},
+    displayName:{type: String},
     profileImage:{type: String},
     imageId: {type: String},
     description: { type: String },

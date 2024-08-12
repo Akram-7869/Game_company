@@ -75,7 +75,7 @@ exports.getPost = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.createPost = asyncHandler(async (req, res, next) => {
   console.log(req.body,'-----------', req.files, );
-  let{files,description,filename, diplayName='', profileImage, status='active'}=req.body;
+  let{files,description,filename, displayName='', profileImage, status='active'}=req.body;
   let owner = '';   
   let defaultFprofileImage = process.env.API_URI + '/assets/img/logo/profile_default.png';
   
@@ -92,10 +92,10 @@ exports.createPost = asyncHandler(async (req, res, next) => {
   
   } else if (req.role =='influencer') {
      owner = req.user._id;
-     diplayName=req.user.displayname;
+     displayName=req.user.displayname;
   }else if (req.role =='admin' || req.role =='manager') {
     owner = req.staff._id;
-    diplayName=req.staff.displayname;
+    displayName=req.staff.displayname;
   }
 
  
@@ -103,7 +103,7 @@ exports.createPost = asyncHandler(async (req, res, next) => {
 
   let post = {
     owner: owner,
-    diplayName,
+    displayName,
     description: description,
     status:status,
     imageId: filename,
