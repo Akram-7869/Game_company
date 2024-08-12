@@ -39,6 +39,11 @@ class LudoGame {
             lobbyId: '66613de5980bf75b5ec9abb4',
             maxp: 2,
             type: 'bot',
+            pasa_1:0,
+            pasa_2:0,
+            pasa_3:0,
+            pasa_4:0,
+            playerStatus:'joined',
             avtar: 'http://174.138.52.41/assets/img/logo/profile_default.png'
         }
         if (this.players.size + this.bots.size < this.maxPlayers) {
