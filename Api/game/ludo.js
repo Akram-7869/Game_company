@@ -79,15 +79,7 @@ class LudoGame {
     }
 
     startGameWithBots() {
-        this.botJoinTimers = new Timer(5, (remaining) => {
-            this.turnOrder = [...this.getPlayers(), ...this.getBots()];
-
-            this.io.to(this.roomName).emit('bot_tick', { remaining });
-        }, () => {
             this.startGame();
-        });
-
-        this.botJoinTimers.startTimer();
     }
     onleaveRoom(socket) {
         socket.on('onleaveRoom', function (data) {
