@@ -42,10 +42,16 @@ class LudoGame {
             avtar: 'http://174.138.52.41/assets/img/logo/profile_default.png'
         }
         if (this.players.size + this.bots.size < this.maxPlayers) {
-            const botId = 'b656d926053f8b7693896509';
-            this.bots.set(botId, { player: bot });
-            console.log(`Bot ${botId} added to room ${this.roomName}`);
+        
+            while (this.players.size < this.maxPlayers) {
+                const botId = `${this.players.size + 1}-bot`;
+                this.bots.set(botId, { player: bot });
+                console.log(`Bot ${botId} added to room ${this.roomName}`);
+            }
+            
+           
         }
+       
     }
     syncPlayer(socket, player) {
         // Send current game state to the player
@@ -131,7 +137,7 @@ class LudoGame {
         this.currentPhase = 'playing';
         this.round += 1;
         this.turnOrder = [...this.getPlayers(), ...this.getBots()];
-        console.log(`Betting phase started in room: ${this.roomName}`);
+    
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
             // console.log(remaining);
