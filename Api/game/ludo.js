@@ -75,6 +75,7 @@ class LudoGame {
 
     }
     emitJoinPlayer() {
+        console.log(this.players, this.bots);
         this.turnOrder = [...this.getPlayers(), ...this.getBots()];
         this.io.to(this.roomName).emit('join_players', { players: this.turnOrder });
     }
