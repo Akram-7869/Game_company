@@ -46,7 +46,7 @@ class LudoGame {
             // while (this.players.size < this.maxPlayers) {
                 const botId = `${this.players.size + 1}-bot`;
                  bot['userId']=botId;
-            //     bot['name']=botId;
+                 bot['name']=botId;
                 this.bots.set(botId, { player: bot });
                 console.log(`Bot ${botId} added to room ${this.roomName}`);
             // }
