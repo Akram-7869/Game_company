@@ -53,9 +53,9 @@ let onConnection = (socket) => {
       console.log(playerRoom, roomName, userSocketMap);
       if (playerRoom === roomName) {
         console.log('not registering');
-        socket.emit('joinRoomError', { message: 'You are already in this room' });
+       // socket.emit('joinRoomError', { message: 'You are already in this room' });
 
-        return;
+       // return;
       } else {
         socket.leave(playerRoom);
         userLeave({ userId, room: playerRoom })
