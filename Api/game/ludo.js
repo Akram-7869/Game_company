@@ -43,7 +43,7 @@ class LudoGame {
         }
         console.log(this.players.size,'bot-',this.bots.size,'max',this.maxPlayers  )
         if (this.players.size + this.bots.size < this.maxPlayers) {
-            let botNumber =this.players.size -this.maxPlayers;
+            let botNumber =this.maxPlayers-this.players.size ;
              for (let i=0;i<botNumber;i++) {
             const botId = `${this.players.size + 1}-bot`;
             bot['userId'] = botId;
