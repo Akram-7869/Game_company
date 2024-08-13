@@ -1,13 +1,15 @@
 const Timer = require("./Timer");
+const { state, publicRoom, userSocketMap, tokenMiddleware, gameName, sleep, userLeave, getRoomLobbyUsers, getRoomUsers, joinRoom, arraymove, getKeyWithMinValue, defaultRolletValue } = require('../utils/JoinRoom');
 
 class LudoGame {
-    constructor(io, roomName, maxPlayers = 4) {
+    constructor(io, roomName, maxPlayers ,lobbyId) {
         this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;
         this.players = new Map();this.bots = new Map();
          this.turnOrder = [];
         this.currentTurnIndex = 0;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.timer = null;
+        this.lobbyId = lobbyId;
         this.roomJoinTimers = null;
         this.currentPhase = 'createdroom';
         this.bettingTimer = null;
@@ -118,6 +120,7 @@ class LudoGame {
         });
 
         this.roomJoinTimers.startTimer();
+        publicRoom[this.lobbyId]['played']=true;
         console.log(`Game started in room: ${this.roomName}`);
 
     }

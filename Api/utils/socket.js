@@ -38,7 +38,7 @@ let onConnection = (socket) => {
 
     let roomName = '';
 
-    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp ) {
+    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
       roomName = publicRoom[lobbyId]['roomName'];
       console.log('join-exisitng', roomName);
     } else {
@@ -85,7 +85,7 @@ let onConnection = (socket) => {
     switch (lobby.mode) {
       case gameName.ludo:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new LudoGame(io, roomName, maxp);
+          state[roomName]['codeObj'] = new LudoGame(io, roomName, maxp, lobbyId);
           state[roomName]['codeObj'].setupGame();
         }
 
