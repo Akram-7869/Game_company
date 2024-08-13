@@ -49,7 +49,7 @@ class LudoGame {
             bot['name'] = botId;
             this.bots.set(botId, { player: bot });
             console.log(`Bot ${botId} added to room ${this.roomName}`);
-            // }
+             }
 
 
         }
