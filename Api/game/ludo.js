@@ -4,8 +4,7 @@ class LudoGame {
     constructor(io, roomName, maxPlayers = 4) {
         this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;
         this.players = new Map();this.bots = new Map();
-        this.playerSockets = {};
-        this.turnOrder = [];
+         this.turnOrder = [];
         this.currentTurnIndex = 0;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.timer = null;
@@ -21,8 +20,7 @@ class LudoGame {
     addPlayer(socket) {
         if (this.players.size + this.bots.size < this.maxPlayers) {
             this.players.add(socket.id);
-            this.playerSockets[socket.id] = socket;
-            console.log(`Player ${socket.id} joined room ${this.roomName}`);
+             console.log(`Player ${socket.id} joined room ${this.roomName}`);
         } else {
             socket.emit('error', 'Room is full.');
         }
@@ -92,10 +90,10 @@ class LudoGame {
     }
 
     onleaveRoom(socket) {
-        socket.on('onleaveRoom', function (data) {
+        socket.on('onleaveRoom',  (data)=> {
             let { PlayerID } = data;
             console.log(data,'onleaveRoom');
-            try {
+            
                 console.log('OnleaveRoom--ludo')
                 socket.leave(this.roomName);
                 socket.removeAllListeners('OnBetsPlaced');
@@ -119,9 +117,7 @@ class LudoGame {
                     success: `successfully leave ${this.roomName} game.`,
                 });
 
-            } catch (err) {
-                console.log(err);
-            }
+             
         });
     }
 
