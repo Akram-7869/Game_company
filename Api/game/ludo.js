@@ -41,6 +41,7 @@ class LudoGame {
             playerStatus: 'joined',
             avtar: 'http://174.138.52.41/assets/img/logo/profile_default.png'
         }
+        console.log(this.players.size,'bot-',this.bots.size,'max',this.maxPlayers  )
         if (this.players.size + this.bots.size < this.maxPlayers) {
             let botNumber =this.players.size -this.maxPlayers;
              for (let i=0;i<botNumber;i++) {
