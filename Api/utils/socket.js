@@ -38,7 +38,7 @@ let onConnection = (socket) => {
 
     let roomName = '';
 
-    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
+    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp ) {
       roomName = publicRoom[lobbyId]['roomName'];
       console.log('join-exisitng', roomName);
     } else {
@@ -53,9 +53,9 @@ let onConnection = (socket) => {
       console.log(playerRoom, roomName, userSocketMap);
       if (playerRoom === roomName) {
         console.log('not registering');
-       // socket.emit('joinRoomError', { message: 'You are already in this room' });
+        socket.emit('joinRoomError', { message: 'You are already in this room' });
 
-       // return;
+        return;
       } else {
         socket.leave(playerRoom);
         userLeave({ userId, room: playerRoom })
