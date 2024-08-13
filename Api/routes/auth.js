@@ -9,6 +9,8 @@ router.post('/player/register', maintenance_chk, authCtrl.playerRegister);
 router.post('/player/registeremail', maintenance_chk, authCtrl.playerRegisterEmail);
 router.post('/register-web', maintenance_chk, authCtrl.webRegisterEmail);
 
+router.post('/influencer/register', maintenance_chk, authCtrl.registerInfluencer);
+
 router.get('/maintanance', maintenance_chk, authCtrl.maintanance);
 //router.get('/test', authCtrl.test);
 router.post('/player/verify', maintenance_chk, authCtrl.verifyPhoneCode);

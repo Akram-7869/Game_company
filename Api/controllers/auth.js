@@ -329,6 +329,48 @@ exports.webRegisterEmail = asyncHandler(async (req, res, next) => {
     sendTokenResponse(user, 200, res);
    }
 });
+exports.registerInfluencer = asyncHandler(async (req, res, next) => {
+  let {password, email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode = '', stateName = '', latitude = 0, longitude = 0,state } = req.body;
+  console.log(req.body);
+  
+
+  if (!email ) {
+    return next(
+      new ErrorResponse(`select email`)
+    );
+  }
+  let user;
+  let displayName ='';
+    user = await Influencer.findOne({ 'email': email });
+  if (!user) {
+    console.log('influencerRegisterEmail-new');
+    displayName= generateName('IN');
+
+    email = req.body['email'];
+    firstName = req.body['username'];
+    // create new influencer
+    let addamount = 0;
+    let data = {
+      displayName:displayName,
+      firstName,
+      'email': email,
+      // 'picture': picture,
+      // 'googleid': googleid,
+      'countryCode': countryCode,
+      'refer_code': makeid(6),
+      'balance': addamount,
+      'deposit': addamount,
+      stateCode,
+      stateName,
+      longitude,
+      latitude,
+      password
+    };
+    // Create user
+      user =  await Influencer.create(data);
+      sendTokenResponse(user, 200, res);
+  }
+});
 // @desc      Verify phone
 // @route     POST /api/v1/auth/register
 // @access    Public
@@ -429,17 +471,20 @@ const sendTokenResponse = (user, statusCode, res) => {
     options.secure = true;
   }
 
+let d= {
+  success: true,
+  token,
+  playerId: user._id,
+  role:user.role,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  email: user.email
+}
+console.log(d, 'sssssssssss');
   res
     .status(statusCode)
     //.cookie('token', token, options)
-    .json({
-      success: true,
-      token,
-      playerId: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email
-    });
+    .json(d);
 };
 
 
@@ -447,15 +492,25 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @route     POST /api/v1/auth/login
 // @access    Public
 exports.login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password,role} = req.body;
   // Validate emil & password
-  if (!email || !password) {
+  if (!email || !password || !role) {
     return next(new ErrorResponse('Please provide an email and password'));
   }
 
   // Check for user
-  const user = await User.findOne({ email }).select('+password');
-
+  let user ;
+switch (role) {
+  case 'influencer':
+     user = await Influencer.findOne({ email }).select('+password');
+    break;
+    case 'frenchise':
+       user = await Franchise.findOne({ email }).select('+password');
+    break;
+    case 'admin':
+       user = await User.findOne({ email }).select('+password');
+    break;
+}
   if (!user) {
     return next(new ErrorResponse('Invalid credentials'));
   }

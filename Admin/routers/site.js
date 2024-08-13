@@ -10,7 +10,10 @@ const authCtrl = require('../controllers/AuthController');
 router.get('/login', authCtrl.login);
 router.post('/post-login', authCtrl.postLogin);
 
-router.get('/register', authCtrl.authRegister);
+router.get('/register/influencer', authCtrl.authRegister);
+router.post('/register/influencer', authCtrl.createInfluencer);
+router.get('/register/frenchise', authCtrl.authRegister);
+
 
 router.get('/forgot-password', authCtrl.forgotPassword);
 router.post('/post-forgot-password', authCtrl.postForgotPassword);

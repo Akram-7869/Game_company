@@ -20,8 +20,10 @@ exports.postLogin = asyncHandler(async (req, res, next) => {
 	axios.post(apiUrl + '/auth/login', {
 		email: req.body.email,
 		password: req.body.password,
+		role:req.body.role
 	})
 		.then(r => {
+			console.log(r);
 			// Assign value in session
 			if (!r.data.success) {
 				req.flash('error', 'Incorrect email or password!');
@@ -32,7 +34,12 @@ exports.postLogin = asyncHandler(async (req, res, next) => {
 			res.cookie('token', r.data.token, { httpOnly: true });
 
 			//req.app.locals['user'] = r.data;
-			res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
+			if(r.data.role ==='admin'){
+				res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
+			}else{
+				res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
+			}
+ 			
 
 		})
 		.catch(error => {
@@ -129,7 +136,31 @@ exports.page = asyncHandler(async (req, res, next) => {
 });
 exports.authRegister = asyncHandler(async (req, res, next) => {
 	res.locals = { title: 'Register' };
-	res.render('Auth/auth-register', { 'message': req.flash('message'), 'error': req.flash('error') });
+	res.render('Auth/auth-register', { layout:false, 'message': req.flash('message'), 'error': req.flash('error') });
+
+
+});
+exports.createInfluencer = asyncHandler(async (req, res, next) => {
+	res.locals = { title: 'Manager' };
+	console.log(apiUrl + '/influencer/register', req.body)
+	axios.post(apiUrl + '/auth/influencer/register', req.body)
+		  .then(r => {
+				// Assign value in session
+				res.locals = { title: 'Manager-edit' };
+				req.flash('message', 'Data save');
+				res.redirect(process.env.ADMIN_URL + '/admin/influencer/dashboard');
+
+		  })
+		  .catch(error => {
+
+
+				req.flash('error', 'Data not updated');
+
+		  })
+});
+exports.authRegisterFrencise = asyncHandler(async (req, res, next) => {
+	res.locals = { title: 'Register' };
+	res.render('Auth/auth-register', { layout:false, 'message': req.flash('message'), 'error': req.flash('error') });
 
 
 });
