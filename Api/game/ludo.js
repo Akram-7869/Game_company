@@ -121,6 +121,7 @@ class LudoGame {
 
         this.roomJoinTimers.startTimer();
         publicRoom[this.lobbyId]['played']=true;
+        console.log(publicRoom[this.lobbyId]['played'], 'fff')
         console.log(`Game started in room: ${this.roomName}`);
 
     }
