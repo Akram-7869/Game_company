@@ -202,6 +202,7 @@ class LudoGame {
 
         socket.on('OnNextTurn', (d) => {
             let {currentTurnIndex}=d;
+            console.log(d,'OnNextTurn');
             this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
             this.io.to(this.roomName).emit('OnNextTurn', {
                 gameType: 'Ludo',
