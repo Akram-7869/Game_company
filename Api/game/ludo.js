@@ -190,7 +190,8 @@ class LudoGame {
     }
 
     OnNextTurn(socket) {
-        if (this.currentPhase !== 'playing') return;
+        console.log('OnNextTurn');
+        // if (this.currentPhase !== 'playing') return;
 
         // const currentPlayer = this.turnOrder[this.currentTurnIndex];
         // this.io.to(this.roomName).emit('turn_start', { player: currentPlayer });
