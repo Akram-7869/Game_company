@@ -63,8 +63,42 @@ class LudoGame {
         this.OnCurrentStatus(socket);
         this.OnMovePasa(socket);
         this.OnRollDice(socket);
+        this.OnNextTurn(socket)
         }
       
+    }
+
+    onleaveRoom(socket) {
+        socket.on('onleaveRoom',  (data)=> {
+            let { PlayerID } = data;
+            console.log(data,'onleaveRoom');
+            
+                console.log('OnleaveRoom--ludo')
+                socket.leave(this.roomName);
+                socket.removeAllListeners('OnBetsPlaced');
+                socket.removeAllListeners('OnCurrentStatus');
+                socket.removeAllListeners('OnMovePasa');
+                socket.removeAllListeners('OnRollDice');
+                socket.removeAllListeners('OnNextTurn');
+
+
+                socket.removeAllListeners('OnWinNo');
+                socket.removeAllListeners('OnTimeUp');
+                socket.removeAllListeners('OnTimerStart');
+                socket.removeAllListeners('onleaveRoom');
+                if (this.players.has(PlayerID)) {
+                    let obj = this.players.get(PlayerID); // Get the object
+                    obj.player.playerStatus = 'Left';
+                }
+                // Modify the object
+
+                // playerManager.RemovePlayer(socket.id);
+                socket.emit('onleaveRoom', {
+                    success: `successfully leave ${this.roomName} game.`,
+                });
+
+             
+        });
     }
 
     setupGame() {
@@ -92,37 +126,7 @@ class LudoGame {
         this.io.to(this.roomName).emit('join_players', { players: this.turnOrder });
     }
 
-    onleaveRoom(socket) {
-        socket.on('onleaveRoom',  (data)=> {
-            let { PlayerID } = data;
-            console.log(data,'onleaveRoom');
-            
-                console.log('OnleaveRoom--ludo')
-                socket.leave(this.roomName);
-                socket.removeAllListeners('OnBetsPlaced');
-                socket.removeAllListeners('OnCurrentStatus');
-                socket.removeAllListeners('OnMovePasa');
-                socket.removeAllListeners('OnRollDice');
-
-
-                socket.removeAllListeners('OnWinNo');
-                socket.removeAllListeners('OnTimeUp');
-                socket.removeAllListeners('OnTimerStart');
-                socket.removeAllListeners('onleaveRoom');
-                if (this.players.has(PlayerID)) {
-                    let obj = this.players.get(PlayerID); // Get the object
-                    obj.player.playerStatus = 'Left';
-                }
-                // Modify the object
-
-                // playerManager.RemovePlayer(socket.id);
-                socket.emit('onleaveRoom', {
-                    success: `successfully leave ${this.roomName} game.`,
-                });
-
-             
-        });
-    }
+    
 
     getPlayers() {
         return Array.from(this.players.values()).map(value => value.player);
@@ -183,29 +187,37 @@ class LudoGame {
 
         this.io.to(this.roomName).emit('game_start', { players: this.turnOrder });
         console.log(`Game started in room: ${this.roomName}`);
-        this.nextTurn();
+        //this.nextTurn();
     }
 
-    nextTurn() {
+    OnNextTurn(socket) {
         if (this.currentPhase !== 'playing') return;
 
-        const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        this.io.to(this.roomName).emit('turn_start', { player: currentPlayer });
+        // const currentPlayer = this.turnOrder[this.currentTurnIndex];
+        // this.io.to(this.roomName).emit('turn_start', { player: currentPlayer });
 
-        if (this.bots.has(currentPlayer)) {
-            this.botMove(currentPlayer);
-        }
+        // if (this.bots.has(currentPlayer)) {
+        //     this.botMove(currentPlayer);
+        // }
 
-        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-
-        // Set timer for the next turn
-        this.timer = new Timer(15, (remaining) => {
-            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
-        }, () => {
-            this.nextTurn();
+        socket.on('OnNextTurn', (d) => {
+            let {currentTurnIndex}=d;
+            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+            this.io.to(this.roomName).emit('OnNextTurn', {
+                gameType: 'Ludo',
+                room: this.roomName,
+                currentPhase: this.currentPhase,
+                currentTurnIndex: this.currentTurnIndex,
+            });
         });
+        // Set timer for the next turn
+        // this.timer = new Timer(15, (remaining) => {
+        //     this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
+        // }, () => {
+        //    // this.nextTurn();
+        // });
 
-        this.timer.startTimer();
+        // this.timer.startTimer();
     }
 
     botMove(botId) {
