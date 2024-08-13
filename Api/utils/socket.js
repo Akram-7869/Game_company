@@ -182,7 +182,6 @@ let onConnection = (socket) => {
   //leave
   socket.on('leave', (d) => {
     let { room, userId } = d;
-
     userLeave(d);
     socket.leave(room);
     let data = {
@@ -191,7 +190,6 @@ let onConnection = (socket) => {
     };
     console.log('leave-', d, data);
     io.to(room).emit('res', { ev: 'leave', data });
-    socket.emit('onleaveRoom',{PlayerID:userId});
   });
   //chat_message
   socket.on('chat_message', (d) => {

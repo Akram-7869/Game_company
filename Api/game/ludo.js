@@ -57,11 +57,14 @@ class LudoGame {
     }
     syncPlayer(socket, player) {
         // Send current game state to the player
-        this.players.set(player.userId, { player, socket, lives: 3, position: -1 });
+        if(!this.players.has(player.userId)){
+              this.players.set(player.userId, { player, socket, lives: 3, position: -1 });
         this.onleaveRoom(socket);
         this.OnCurrentStatus(socket);
         this.OnMovePasa(socket);
         this.OnRollDice(socket);
+        }
+      
     }
 
     setupGame() {
@@ -83,8 +86,8 @@ class LudoGame {
         console.log(`Game started in room: ${this.roomName}`);
 
     }
-    emitJoinPlayer() {
-        console.log('players:',this.players.size,'Bots: ', this.bots.size);
+    emitJoinPlayer(socket) {
+        console.log('players:',this.players,'Bots: ', this.bots);
         this.turnOrder = [...this.getPlayers(), ...this.getBots()];
         this.io.to(this.roomName).emit('join_players', { players: this.turnOrder });
     }
