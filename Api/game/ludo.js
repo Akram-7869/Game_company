@@ -45,10 +45,10 @@ class LudoGame {
         if (this.players.size + this.bots.size < this.maxPlayers) {
             let botNumber =this.maxPlayers-this.players.size ;
              for (let i=0;i<botNumber;i++) {
-            const botId = `${i + 1}-bot`;
+            let botId = `${i + 1}-bot`;
             bot['userId'] = botId;
             bot['name'] = botId;
-            this.bots.set(botId, { player: bot });
+            this.bots.set(botId, { player: {...bot,userId:botId, name:botId } });
             console.log(`Bot ${botId} added to room ${this.roomName}`);
              }
 
