@@ -12,14 +12,14 @@ class TambolaGame {
       lowerRow: 0,
       fullHouse: 0,
       middle: 0,
-      fourcorner: 0,
-      earlyfive: 0,
+      fourCorner: 0,
+      earlyFive: 0,
       upperRowTotal: 0,
       lowerRowTotal: 0,
       fullHouseTotal: 0,
       middleTotal: 0,
       fourcornerTotal: 0,
-      earlyfiveToal: 0
+      earlyFiveToal: 0
     };
 
     this.players = new Map();
@@ -138,9 +138,9 @@ class TambolaGame {
 
     socket.on('onBetPlaced', (d) => {
 console.log('onBetPlaced',d);
-      const { playerTickets, amount } = d;
+      const { playerTickets, betAmount } = d;
       this.totalTicket += playerTickets;
-      this.totalAmount += amount;
+      this.totalAmount += betAmount;
 
       this.io.to(this.room).emit('onBetPlaced', d);
 
@@ -163,7 +163,13 @@ console.log('onBetPlaced',d);
     //   player:player,
     //   totalTicket:this.totalTicket
     // });
-    this.players.set(player.userId, socket);
+    if(!this.players.has(player.userId)){
+      const { playerTickets, betAmount } = player;
+      this.totalTicket += playerTickets;
+      this.totalAmount += betAmount;
+      this.players.set(player.userId, socket);
+    }
+    
 
     this.onBetPlaced(socket);
     this.onleaveRoom(socket);
