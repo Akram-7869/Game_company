@@ -6,7 +6,7 @@ const Tournament = require('../models/Tournament');
 // @route     GET /api/v1/auth/Tournaments
 // @access    Private/Admin
 exports.getTournaments = asyncHandler(async (req, res, next) => {
-    ;
+    
     Tournament.dataTables({
         limit: req.body.length,
         skip: req.body.start,
