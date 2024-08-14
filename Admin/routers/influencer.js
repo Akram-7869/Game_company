@@ -3,12 +3,17 @@ const router = express.Router({ mergeParams: true });
 const { protect } = require('../middleware/auth');
 
 const dashCtl = require('../controllers/Dashboard');
+const tournCtl = require('../controllers/TurnamentController');
+
 
 
 router.use(protect);
 
 // Route for login page
 router.route('/dashboard').get(dashCtl.dashBoardView);
+router.route('/tournament').get(tournCtl.listInfluencerTournament);
+router.route('/tournament/data').post(tournCtl.getInfluencerTournaments);
+router.route('/tournament/join/:id').get(tournCtl.getInfluencerTournament);
 
 // router.get('/login', authCtrl.login);
 // router.post('/post-login', authCtrl.postLogin);

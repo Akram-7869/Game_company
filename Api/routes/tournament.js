@@ -4,8 +4,8 @@ const {
     getTournament,
     getTournaments,
     updateTournament,
-    deleteTournament
-
+    deleteTournament,
+    getInfluencerTournaments,
 } = require('../controllers/tournament');
 
 
@@ -16,6 +16,8 @@ router.use(protect);
 
 router.route('/add').post(createTournament);
 router.route('/').post(getTournaments);
+router.route('/influencer-list').post(getInfluencerTournaments);
+
 
 router
     .route('/:id')

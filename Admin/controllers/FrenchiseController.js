@@ -1,21 +1,21 @@
 const asyncHandler = require('../middleware/async');
-const { callApi, api_url, redirect } = require('../helper/common');
+const { callApi, api_url, stateList } = require('../helper/common');
 var apiUrl = api_url + '/frenchises/';
 
 
 exports.listFrenchise = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Frenchise' };
       res.render('Frenchise/list', { 'message': req.flash('message'), 'error': req.flash('error') });
 });
 
 
 exports.getFrenchise = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Frenchise' };
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
 
                   res.locals = { title: 'Frenchise' };
-                  res.render('Frenchise/edit', { row: r.data.data });
+                  res.render('Frenchise/edit', { row: r.data.data ,stateList});
             })
             .catch(error => {
 
@@ -25,7 +25,7 @@ exports.getFrenchise = asyncHandler(async (req, res, next) => {
 
 exports.updateFrenchise = asyncHandler(async (req, res, next) => {
 
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Frenchise' };
       callApi(req).put(apiUrl + req.params.id, req.body)
             .then(r => {
                   if (r.data.success) {
@@ -89,7 +89,7 @@ exports.getFrenchises = asyncHandler(async (req, res, next) => {
 
 exports.addFrenchise = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Frenchise' };
-      res.render('Frenchise/add', { row: {} });
+      res.render('Frenchise/add', { row: {},stateList });
 });
 
 
@@ -136,7 +136,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
 exports.updatePassword = asyncHandler(async (req, res, next) => {
 
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Frenchise' };
       callApi(req).post(apiUrl + 'resetpassword', req.body)
             .then(r => {
                   // Assign value in session

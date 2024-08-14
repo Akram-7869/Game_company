@@ -26,7 +26,7 @@ exports.postLogin = asyncHandler(async (req, res, next) => {
 			console.log(r);
 			// Assign value in session
 			if (!r.data.success) {
-				req.flash('error', 'Incorrect email or password!');
+				req.flash('error', 'Wrong password. Please try again!');
 				res.redirect(process.env.ADMIN_URL + '/login');
 				return;
 			}

@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0">Manager</h4>
+                    <h4 class="mb-0"><%- title %></h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
@@ -59,6 +59,19 @@
                         <label class="form-label">Password</label>
                         <input type="password" name="password" value="" class="form-control"  placeholder="Password min 6 letter"/>
                     </div> -->
+                                <div class="mb-3">
+                                    <label class="form-label">State</label>
+                                    <div class="col-md-10">
+                                        <select class="form-select" id="stateCode" name="stateCode">
+                                            <option value=''>All</option>
+                                            <% stateList.forEach(item=> { %>
+                                                <option value="<%=item.code%>">
+                                                    <%=item.name%>
+                                                </option>
+                                                <% })%>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
                                     <div class="col-md-10">
