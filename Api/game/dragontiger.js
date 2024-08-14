@@ -24,10 +24,10 @@ class DragonTigerGame {
         { cardNo: 10, color: 4 }, { cardNo: 11, color: 4 }, { cardNo: 12, color: 4 }, { cardNo: 13, color: 4 },
         { cardNo: 14, color: 4 }
     ];
-    constructor(roomName, io) {
+    constructor(io, roomName, maxPlayers ,lobbyId) {
+        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;
         DragonTigerGame.io = io;
-        this.roomName = roomName;
-        this.currentPhase = 'betting';
+         this.currentPhase = 'betting';
         this.winList = [1, 2, 3, 3, 1, 2, 1,3];
 
         this.dragonBet = 0;

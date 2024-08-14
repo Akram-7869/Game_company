@@ -7,6 +7,10 @@ const transactionCotroller = require('../controllers/TransactionController');
 const bannerControler = require('../controllers/BannerController');
 const settingCtrl = require('../controllers/SettingController');
 const managerCtrl = require('../controllers/ManagerController');
+const influencerCtrl = require('../controllers/InfluencerController');
+const frenchiseCtrl = require('../controllers/FrenchiseController');
+
+
 const botCtrl = require('../controllers/BotController');
 const ticketCtrl = require('../controllers/TicketController');
 const versionCtrl = require('../controllers/VersionController');
@@ -28,6 +32,22 @@ const router = express.Router({ mergeParams: true });
 
 //var upload = multer({ storage: storage })
 router.use(protect);
+
+
+router.route('/frechise').get(frenchiseCtrl.listFrenchise); router.route('/frechise/data').post(frenchiseCtrl.getFrenchises);
+//router.route('/frechise/view/:id').get(  showFrenchiseView);
+router.route('/frechise/restpassword').get(frenchiseCtrl.resetPassword).post(frenchiseCtrl.updatePassword);
+router.route('/frechise/add').get(frenchiseCtrl.addFrenchise).post(frenchiseCtrl.createFrenchises);
+router.route('/frechise/:id').get(frenchiseCtrl.getFrenchise).post(frenchiseCtrl.updateFrenchise).delete(frenchiseCtrl.deleteFrenchise);
+
+
+router.route('/influencer').get(influencerCtrl.listInfluencer); router.route('/influencer/data').post(influencerCtrl.getInfluencers);
+//router.route('/influencer/view/:id').get(  showInfluencerView);
+router.route('/influencer/restpassword').get(influencerCtrl.resetPassword).post(influencerCtrl.updatePassword);
+router.route('/influencer/add').get(influencerCtrl.addInfluencer).post(influencerCtrl.createInfluencers);
+router.route('/influencer/:id').get(influencerCtrl.getInfluencer).post(influencerCtrl.updateInfluencer).delete(influencerCtrl.deleteInfluencer);
+
+
 
 router.route('/faq').get(faqCtrl.faqList); 
 router.route('/faq/data').post(faqCtrl.getFaqs);

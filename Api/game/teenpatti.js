@@ -1,6 +1,6 @@
 class TeenpattiGame {
-    constructor(io, roomName) {
-        this.io = io;
+    constructor(io, roomName, maxPlayers ,lobbyId) {
+        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;
         this.roomName = roomName;
         this.players = new Set();
         this.gameState = 'waiting'; // possible states: waiting, playing, finished

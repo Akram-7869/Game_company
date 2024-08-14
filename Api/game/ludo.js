@@ -3,13 +3,13 @@ const { state, publicRoom, userSocketMap, tokenMiddleware, gameName, sleep, user
 
 class LudoGame {
     constructor(io, roomName, maxPlayers ,lobbyId) {
-        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;
+        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;
+
         this.players = new Map();this.bots = new Map();
          this.turnOrder = [];
         this.currentTurnIndex = 0;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.timer = null;
-        this.lobbyId = lobbyId;
         this.roomJoinTimers = null;
         this.currentPhase = 'createdroom';
         this.bettingTimer = null;
@@ -120,7 +120,7 @@ class LudoGame {
         });
 
         this.roomJoinTimers.startTimer();
-        publicRoom[this.lobbyId]['played']=true;
+        
         console.log(publicRoom[this.lobbyId]['played'], 'fff')
         console.log(`Game started in room: ${this.roomName}`);
 
@@ -175,7 +175,7 @@ class LudoGame {
     }
     startGame() {
         if (this.bettingTimer) return; // Prevent multiple starts
-
+        publicRoom[this.lobbyId]['played']=true;
         this.currentPhase = 'playing';
         this.round += 1;
         this.turnOrder = [...this.getPlayers(), ...this.getBots()];

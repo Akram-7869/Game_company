@@ -3,10 +3,9 @@
 const Timer = require("./Timer");
 
 class AviatorGame {
-    constructor(roomName, io) {
-        this.io = io;
-        this.roomName = roomName;
-        this.currentPhase = 'betting';
+    constructor(io, roomName, maxPlayers ,lobbyId) {
+        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;
+         this.currentPhase = 'betting';
         this.bets = [];
         this.totalBets = 0;
         this.bettingTime = 10; // 20 seconds

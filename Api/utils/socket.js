@@ -19,6 +19,8 @@ let io;
 
 let onConnection = (socket) => {
   console.log('contedt', socket.id);
+  socket.emit('onleaveRoom', { PlayerID: 'testPlayerId' });
+
   //socket.join('notification_channel');
   socket.on('associateUserId', (d) => {
     let dataParsed = d;// JSON.parse(d);
@@ -95,7 +97,7 @@ let onConnection = (socket) => {
         break;
       case gameName.tambola:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new TambolaGame(io, roomName);
+          state[roomName]['codeObj'] = new TambolaGame(io, roomName, maxp, lobbyId);
           state[roomName]['codeObj'].setupGame();
         }
 
@@ -104,7 +106,7 @@ let onConnection = (socket) => {
         break;
       case gameName.dragon_tiger:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new DragonTigerGame(roomName, io);
+          state[roomName]['codeObj'] = new DragonTigerGame(io, roomName, maxp, lobbyId);
           state[roomName]['codeObj'].startGame();
         }
         state[roomName]['codeObj'].syncPlayer(socket, d);
@@ -112,7 +114,7 @@ let onConnection = (socket) => {
         break;
       case gameName.crash:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new AviatorGame(roomName, io);
+          state[roomName]['codeObj'] = new AviatorGame(io, roomName, maxp, lobbyId);
           state[roomName]['codeObj'].startGame();
         }
         state[roomName]['codeObj'].syncPlayer(socket, d);
@@ -120,7 +122,7 @@ let onConnection = (socket) => {
         break;
       case gameName.rouletee:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new RolletGame(roomName, io);
+          state[roomName]['codeObj'] = new RolletGame(io, roomName, maxp, lobbyId);
           state[roomName]['codeObj'].startGame();
 
         }
@@ -129,8 +131,7 @@ let onConnection = (socket) => {
         break;
       case gameName.teen_patti:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new TeenpattiGame(roomName, io);
-          // state[roomName]['codeObj'].updatePlayers(state[roomName].players);
+          state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobbyId);
 
           state[roomName]['codeObj'].startGame();
           state[roomName]['codeObj'].syncPlayer(socket, d);

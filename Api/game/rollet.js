@@ -3,7 +3,8 @@ const Timer = require("./Timer");
 class RolletGame {
     static io;
 
-    constructor(roomName, io) {
+    constructor(io, roomName, maxPlayers ,lobbyId) {
+        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;
         RolletGame.io = io;
         this.roomName = roomName;
         this.currentPhase = 'betting';

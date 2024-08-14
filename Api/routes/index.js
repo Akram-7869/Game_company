@@ -23,6 +23,8 @@ const bannertext = require('./bannertext');
 const JoinRoom = require('../utils/JoinRoom');
 const posts = require('./posts');
 const faqs = require('./faqs');
+const frenchises = require('./frenchises');
+const influencers = require('./influencers');
 
 
 
@@ -47,6 +49,8 @@ router.use('/api/v1/gamemanager', gamemanager);
 router.use('/api/v1/bannertext', bannertext);
 router.use('/api/v1/posts', posts);
 router.use('/api/v1/faqs', faqs);
+router.use('/api/v1/frenchises', frenchises);
+router.use('/api/v1/influencers', influencers);
 
 
 

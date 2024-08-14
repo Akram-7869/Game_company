@@ -2,9 +2,8 @@
 const Timer = require("./Timer");
 
 class TambolaGame {
-  constructor(io, room) {
-    this.io = io;
-    this.room = room;
+  constructor(io, roomName, maxPlayers ,lobbyId) {
+    this.io = io;this.room = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;    this.io = io;
     this.numbers = new Set();
     this.numbersArray = this.generateNumbers();
     this.claimed = {
