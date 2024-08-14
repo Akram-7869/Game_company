@@ -1,4 +1,5 @@
 // const {state ,publicRoom, userSocketMap} = require('../utils/JoinRoom');
+const { publicRoom } = require("../utils/JoinRoom");
 const Timer = require("./Timer");
 
 class TambolaGame {
@@ -62,7 +63,7 @@ class TambolaGame {
 }
   startGame() {
     if (this.gameStarted) return; // Prevent multiple starts
-
+    publicRoom[this.lobbyId]['played']=true;
     this.gameStarted = true;
     // for (let value of this.players.values()) {
     //   const ticket = this.generateTicket();
