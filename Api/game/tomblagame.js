@@ -228,16 +228,16 @@ console.log('onBetPlaced',d);
       this.io.to(this.room).emit('gamePaused', { message: 'Game paused to validate claims.' });
 
       const rewardType = d.ClaimType; // 'top', 'middle', 'bottom', 'earlyFive', 'fourCorners', or 'fullHouse'
-      const rewardAmount = this.calculateReward(rewardType);
+     // const rewardAmount = this.calculateReward(rewardType);
 
-      if (rewardAmount > 0) {
+      if (d.rewardAmount > 0) {
         this.claimed[rewardType] += 1;
         this.claimed[`${rewardType}Total`] += d.rewardAmount;
         this.io.to(socket.id).emit('OnClaimReward', {
           success: true,
           rewardType,
           name:d.name,
-          rewardAmount,
+          rewardAmount:d.rewardAmount,
           claimed: this.claimed
         });
       } else {
