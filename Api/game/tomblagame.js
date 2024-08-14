@@ -79,6 +79,8 @@ class TambolaGame {
   startGameLogic() {
     console.log(`Tambola game started in room: ${this.room}`);
     let delay = 10;
+    let delayMicrosec = delay*1000;
+
     this.intervalId  = setInterval(() => {
       if (this.currentPhase === 'paused') return; // Skip drawing numbers if game is paused
 
@@ -90,7 +92,7 @@ class TambolaGame {
         console.log(`newnumber`)
         this.io.to(this.room).emit('newNumber', { gameType: 'tambola', room: this.room, number , intervel:delay, playerCount:this.players.size});
       }
-    }, delay*1000); // Draw a number every second
+    }, delayMicrosec); // Draw a number every second
   }
 
   generateNumbers() {
