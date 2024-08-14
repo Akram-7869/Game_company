@@ -92,12 +92,15 @@ class LudoGame {
                 if (this.players.has(PlayerID)) {
                     let obj = this.players.get(PlayerID); // Get the object
                     obj.player.playerStatus = 'Left';
+                    this.turnOrder = [...this.getPlayers(), ...this.getBots()];
+
                 }
                 // Modify the object
 
                 // playerManager.RemovePlayer(socket.id);
-                socket.emit('onleaveRoom', {
-                    success: `successfully leave ${this.roomName} game.`,
+                this.io.to(this.roomName).emit('onleaveRoom', {
+                    players: this.turnOrder,
+
                 });
 
              
@@ -151,9 +154,8 @@ class LudoGame {
     OnRollDice(socket) {
         socket.on('OnRollDice', (d) => {
             this.io.to(this.roomName).emit('OnRollDice', {
-                dice: Math.floor(Math.random() * 6) + 1
-
-
+                dice: Math.floor(Math.random() * 6) + 1,
+                currentTurnIndex :this.currentTurnIndex
             });
         });
     }
