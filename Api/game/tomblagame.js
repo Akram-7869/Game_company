@@ -213,7 +213,9 @@ console.log('onBetPlaced',d);
         joining_remaing: this.bettingTimer?.remaining,
         currentPhase:this.currentPhase,
         // player:player,
-        totalTicket: this.totalTicket
+        totalTicket: this.totalTicket,
+        totalAmount: this.totalAmount
+
       });
     });
   }
@@ -225,15 +227,16 @@ console.log('onBetPlaced',d);
       this.currentPhase = 'paused';
       this.io.to(this.room).emit('gamePaused', { message: 'Game paused to validate claims.' });
 
-      const rewardType = d.rewardType; // 'top', 'middle', 'bottom', 'earlyFive', 'fourCorners', or 'fullHouse'
+      const rewardType = d.ClaimType; // 'top', 'middle', 'bottom', 'earlyFive', 'fourCorners', or 'fullHouse'
       const rewardAmount = this.calculateReward(rewardType);
 
       if (rewardAmount > 0) {
         this.claimed[rewardType] += 1;
-        this.claimed[`${rewardType}Total`] += rewardAmount;
+        this.claimed[`${rewardType}Total`] += d.rewardAmount;
         this.io.to(socket.id).emit('OnClaimReward', {
           success: true,
           rewardType,
+          name:d.name,
           rewardAmount,
           claimed: this.claimed
         });
