@@ -96,7 +96,7 @@ class TambolaGame {
   }
 
   generateNumbers() {
-    const numbersArray = Array.from({ length: 5 }, (_, i) => i + 1);
+    const numbersArray = Array.from({ length: 90 }, (_, i) => i + 1);
     this.shuffle(numbersArray);
     return numbersArray;
   }
