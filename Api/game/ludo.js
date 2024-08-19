@@ -66,7 +66,9 @@ class LudoGame {
         this.OnCurrentStatus(socket);
         this.OnMovePasa(socket);
         this.OnRollDice(socket);
-        this.OnNextTurn(socket)
+        this.OnNextTurn(socket);
+        this.OnKillEvent(socket);
+
         }
       
     }
@@ -83,6 +85,8 @@ class LudoGame {
                 socket.removeAllListeners('OnMovePasa');
                 socket.removeAllListeners('OnRollDice');
                 socket.removeAllListeners('OnNextTurn');
+                socket.removeAllListeners('OnKillEvent');
+
 
 
                 socket.removeAllListeners('OnWinNo');
