@@ -17,6 +17,7 @@ class LudoGame {
         this.round = 0;
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 9; // 5 seconds
+        this.lastDiceValue = 6;
     }
 
     addPlayer(socket) {
@@ -155,10 +156,13 @@ class LudoGame {
             this.io.to(this.roomName).emit('OnMovePasa', d);
         });
     }
+    
     OnRollDice(socket) {
+        
         socket.on('OnRollDice', (d) => {
+            this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
             this.io.to(this.roomName).emit('OnRollDice', {
-                dice: Math.random() < 0.5 ? 1 : 6,// Math.floor(Math.random() * 6) + 1,
+                dice:  this.lastDiceValue,// Math.floor(Math.random() * 6) + 1,
                 currentTurnIndex :this.currentTurnIndex
             });
         });
@@ -273,7 +277,6 @@ class LudoGame {
     }
     OnKillEvent(socket) {
         socket.on('OnKillEvent', (d) => {
-            let { PlayerID, key, RoomId } = d;
             this.io.to(this.roomName).emit('OnKillEvent', d);
         });
     }
