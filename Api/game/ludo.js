@@ -154,7 +154,7 @@ class LudoGame {
     OnRollDice(socket) {
         socket.on('OnRollDice', (d) => {
             this.io.to(this.roomName).emit('OnRollDice', {
-                dice: Math.floor(Math.random() * 6) + 1,
+                dice: Math.random() < 0.5 ? 1 : 6,// Math.floor(Math.random() * 6) + 1,
                 currentTurnIndex :this.currentTurnIndex
             });
         });
