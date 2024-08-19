@@ -267,6 +267,12 @@ class LudoGame {
             this.timer.pause();
         }
     }
+    OnKillEvent(socket) {
+        socket.on('OnKillEvent', (d) => {
+            let { PlayerID, key, RoomId } = d;
+            this.io.to(this.roomName).emit('OnMovePasa', d);
+        });
+    }
 
 }
 

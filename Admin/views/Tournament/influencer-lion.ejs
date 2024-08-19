@@ -1,13 +1,13 @@
 <%- contentFor('HeaderCss') %>
   <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
   <style>
-     
     .number-grid {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
       gap: 10px;
       margin-top: 20px;
     }
+
     .number-box {
       width: 40px;
       height: 40px;
@@ -20,10 +20,11 @@
       font-weight: bold;
       font-size: 18px;
     }
+
     .number-box.highlighted {
       background-color: yellow;
     }
-  
+
     .sso-hidden {
       display: block;
     }
@@ -381,67 +382,67 @@
         <div class="w-100 user-chat mt-4 mt-sm-0 ms-lg-1">
           <div class="card">
             <div class="p-3 px-lg-4 border-bottom">
-               
-                <div class="col-md-4 col-6">
 
-                </div>
-                <div class="col-md-8 col-6">
-                  <ul class="list-inline user-chat-nav text-end mb-0">
-                    <li class="list-inline-item">
-                      <div class="dropdown">
-                        <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false">
-                          <i class="uil uil-search"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-md">
-                          <form class="p-2">
-                            <div>
-                              <input type="text" class="form-control rounded" placeholder="Search...">
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </li>
+              <div class="col-md-4 col-6">
 
-
-                    <li class="list-inline-item">
-                      <div class="dropdown">
-                        <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false">
-                          <i class="uil uil-ellipsis-h"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end">
-                          <a class="dropdown-item" href="#">Profile</a>
-                          <a class="dropdown-item" href="#">Archive</a>
-                          <a class="dropdown-item" href="#">Muted</a>
-                          <a class="dropdown-item" href="#">Delete</a>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
               </div>
-            </div>
-
-            <div class="px-lg-2">
-              <div class="chat-conversation p-3">
-                <ul id="messageList" class="list-unstyled mb-0" data-simplebar style="max-height: 455px;">
-                  <li class="chat-day-title">
-                    <div class="title">Today</div>
+              <div class="col-md-8 col-6">
+                <ul class="list-inline user-chat-nav text-end mb-0">
+                  <li class="list-inline-item">
+                    <div class="dropdown">
+                      <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <i class="uil uil-search"></i>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-end dropdown-menu-md">
+                        <form class="p-2">
+                          <div>
+                            <input type="text" class="form-control rounded" placeholder="Search...">
+                          </div>
+                        </form>
+                      </div>
+                    </div>
                   </li>
 
 
-                  <li class="right">
-                    <div class="conversation-list">
-                      <div class="ctext-wrap">
-                        <div class="ctext-wrap-content">
-                          <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">Marcus</a> <span
-                              class="d-inline-block font-size-12 text-muted ms-2">10:02</span></h5>
-                          <p class="mb-0">
-                            Good morning everyone !
-                          </p>
-                        </div>
-                        <!-- <div class="dropdown align-self-start">
+                  <li class="list-inline-item">
+                    <div class="dropdown">
+                      <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <i class="uil uil-ellipsis-h"></i>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="#">Profile</a>
+                        <a class="dropdown-item" href="#">Archive</a>
+                        <a class="dropdown-item" href="#">Muted</a>
+                        <a class="dropdown-item" href="#">Delete</a>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="px-lg-2">
+            <div class="chat-conversation p-3">
+              <ul id="messageList" class="list-unstyled mb-0" data-simplebar style="max-height: 455px;">
+                <li class="chat-day-title">
+                  <div class="title">Today</div>
+                </li>
+
+
+                <li class="right">
+                  <div class="conversation-list">
+                    <div class="ctext-wrap">
+                      <div class="ctext-wrap-content">
+                        <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">Marcus</a> <span
+                            class="d-inline-block font-size-12 text-muted ms-2">10:02</span></h5>
+                        <p class="mb-0">
+                          Good morning everyone !
+                        </p>
+                      </div>
+                      <!-- <div class="dropdown align-self-start">
                           <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
                             <i class="uil uil-ellipsis-v"></i>
@@ -453,35 +454,34 @@
                             <a class="dropdown-item" href="#">Delete</a>
                           </div>
                         </div> -->
-                      </div>
-                    </div>
-
-                  </li>
-
-
-                </ul>
-              </div>
-            </div>
-            <form id="form" action="">
-              <div class="p-3 chat-input-section">
-                <div class="row">
-                  <div class="col">
-                    <div class="position-relative">
-                      <input id="input" type="text" class="form-control chat-input rounded"
-                        placeholder="Enter Message...">
-
                     </div>
                   </div>
-                  <div class="col-auto">
-                    <button type="submit" class="btn btn-primary chat-send w-md waves-effect waves-light"><span
-                        class="d-none d-sm-inline-block me-2">Send</span> <i
-                        class="mdi mdi-send float-end"></i></button>
+
+                </li>
+
+
+              </ul>
+            </div>
+          </div>
+          <form id="form" action="">
+            <div class="p-3 chat-input-section">
+              <div class="row">
+                <div class="col">
+                  <div class="position-relative">
+                    <input id="input" type="text" class="form-control chat-input rounded"
+                      placeholder="Enter Message...">
+
                   </div>
                 </div>
+                <div class="col-auto">
+                  <button type="submit" class="btn btn-primary chat-send w-md waves-effect waves-light"><span
+                      class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send float-end"></i></button>
+                </div>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
+      </div>
       </div>
       <%- contentFor('FooterJs') %>
 
@@ -501,25 +501,25 @@
         <script>
           let socketId;
 
-         // var server = "http://174.138.52.41/socket.io/?EIO=3&transport=websocket";
+          // var server = "http://174.138.52.41/socket.io/?EIO=3&transport=websocket";
 
           var io = io("ws://174.138.52.41", {
-    transports: ['websocket'],
-    query: "EIO=3&transport=websocket"
-});;
+            transports: ['websocket'],
+            query: "EIO=3&transport=websocket"
+          });;
 
           const form = document.getElementById('form');
           const input = document.getElementById('input');
           const messages = document.getElementById('messages');
           let room = 'riqvJ';
-const data = {
-    userId: "kka",
-    firstName:'kamlesh',
-    lobbyId: "666045af980bf75b5ec9ab43",
-    maxp: 99999
-};
+          const data = {
+            userId: "kka",
+            firstName: 'kamlesh',
+            lobbyId: "666045af980bf75b5ec9ab43",
+            maxp: 99999
+          };
 
-          
+
           form.addEventListener('submit', function (e) {
             e.preventDefault();
             if (input.value) {
@@ -528,14 +528,14 @@ const data = {
             }
           });
           io.on('connect', () => {
-        console.log('Connected to server');
-        io.emit('join', {...data, gameType:'sfsf', room});
-    });
-    io.on('join', function (msg) {
-        room = msg.room;
-        console.log('Joined room:', room);
-        io.emit('OnCurrentStatus', { room });
-    });
+            console.log('Connected to server');
+            io.emit('join', { ...data, gameType: 'sfsf', room });
+          });
+          io.on('join', function (msg) {
+            room = msg.room;
+            console.log('Joined room:', room);
+            io.emit('OnCurrentStatus', { room });
+          });
 
           io.on('OnCurrentStatus', function (data) {
             const messageList = document.getElementById('messageList');
@@ -560,10 +560,10 @@ const data = {
             // Scroll to the bottom after populating the list
             window.scrollTo(0, document.body.scrollHeight);
 
-       
 
-   
-      
+
+
+
 
 
 
@@ -606,47 +606,47 @@ const data = {
             }
             return false;
           }
-           
+
           function initializeNumberGrid() {
-     
-      
-    }
 
-    // Call the function to initialize the grid when the page loads
-    initializeNumberGrid();
 
-// Handle 'number_declared' event
-io.on('number', function(data) {
-      // Highlight the newly declared number
-      const numberElement = document.getElementById(`number-${data.number}`);
-      if (numberElement) {
-        numberElement.classList.add('highlighted');
-      }
+          }
 
-      // Update rewards given
-      const rewardsList = document.getElementById('rewardsList');
-      rewardsList.innerHTML = '';
-      data.rewardsGiven.forEach(function(reward) {
-        const rewardItem = document.createElement('li');
-        rewardItem.textContent = `${reward.type}: ${reward.winner}`;
-        rewardsList.appendChild(rewardItem);
-      });
+          // Call the function to initialize the grid when the page loads
+          initializeNumberGrid();
 
-      // Scroll to the bottom to show the latest updates
-      window.scrollTo(0, document.body.scrollHeight);
-    });
-    function compressMessage(message) {
-    const encoder = new TextEncoder();
-    const messageBytes = encoder.encode(message);
-    const compressedBytes = pako.gzip(messageBytes);
-    return btoa(String.fromCharCode(...compressedBytes));
-}
-function decompressMessage(compressedMessage) {
-    const compressedBytes = Uint8Array.from(atob(compressedMessage), c => c.charCodeAt(0));
-    const decompressedBytes = pako.ungzip(compressedBytes);
-    const decoder = new TextDecoder('utf-8');
-    return decoder.decode(decompressedBytes);
-}
+          // Handle 'number_declared' event
+          io.on('number', function (data) {
+            // Highlight the newly declared number
+            const numberElement = document.getElementById(`number-${data.number}`);
+            if (numberElement) {
+              numberElement.classList.add('highlighted');
+            }
+
+            // Update rewards given
+            const rewardsList = document.getElementById('rewardsList');
+            rewardsList.innerHTML = '';
+            data.rewardsGiven.forEach(function (reward) {
+              const rewardItem = document.createElement('li');
+              rewardItem.textContent = `${reward.type}: ${reward.winner}`;
+              rewardsList.appendChild(rewardItem);
+            });
+
+            // Scroll to the bottom to show the latest updates
+            window.scrollTo(0, document.body.scrollHeight);
+          });
+          function compressMessage(message) {
+            const encoder = new TextEncoder();
+            const messageBytes = encoder.encode(message);
+            const compressedBytes = pako.gzip(messageBytes);
+            return btoa(String.fromCharCode(...compressedBytes));
+          }
+          function decompressMessage(compressedMessage) {
+            const compressedBytes = Uint8Array.from(atob(compressedMessage), c => c.charCodeAt(0));
+            const decompressedBytes = pako.ungzip(compressedBytes);
+            const decoder = new TextDecoder('utf-8');
+            return decoder.decode(decompressedBytes);
+          }
         </script>
 
         <%- contentFor('BottomJs') %>
