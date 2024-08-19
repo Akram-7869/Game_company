@@ -274,7 +274,7 @@ class LudoGame {
     OnKillEvent(socket) {
         socket.on('OnKillEvent', (d) => {
             let { PlayerID, key, RoomId } = d;
-            this.io.to(this.roomName).emit('OnMovePasa', d);
+            this.io.to(this.roomName).emit('OnKillEvent', d);
         });
     }
 
