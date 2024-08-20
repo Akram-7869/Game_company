@@ -206,7 +206,7 @@ class LudoGame {
     nextTurn(socket) {
         console.log('OnNextTurn-binding');   
             console.log(d,'OnNextTurn');
-            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+           
             this.io.to(this.roomName).emit('OnNextTurn', {
                 gameType: 'Ludo',
                 room: this.roomName,
@@ -218,6 +218,7 @@ class LudoGame {
         this.timer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
         }, () => {
+            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
            this.nextTurn();
         });
 
