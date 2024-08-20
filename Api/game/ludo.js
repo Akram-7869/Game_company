@@ -68,6 +68,7 @@ class LudoGame {
         this.OnMovePasa(socket);
         this.OnRollDice(socket);
         this.OnKillEvent(socket);
+        this.OnContinueTurn(socket);
 
         }
       
@@ -86,6 +87,8 @@ class LudoGame {
                 socket.removeAllListeners('OnRollDice');
                 socket.removeAllListeners('OnNextTurn');
                 socket.removeAllListeners('OnKillEvent');
+                socket.removeAllListeners('OnContinueTurn');
+
 
 
 
@@ -161,6 +164,7 @@ class LudoGame {
         socket.on('OnRollDice', (d) => {
             this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
             this.io.to(this.roomName).emit('OnRollDice', {
+            
                 dice:  this.lastDiceValue,// Math.floor(Math.random() * 6) + 1,
                 currentTurnIndex :this.currentTurnIndex
             });
@@ -203,6 +207,7 @@ class LudoGame {
     }
 
     nextTurn(socket) {
+        this.currentPhase = 'createdroom';
         console.log('OnNextTurn-binding');              
             this.io.to(this.roomName).emit('OnNextTurn', {
                 gameType: 'Ludo',
@@ -221,6 +226,21 @@ class LudoGame {
 
         this.timer.startTimer();
     }
+    OnContinueTurn(socket) {
+        socket.on('OnContinueTurn', (d) => {
+            let {currentTurnIndex, canContinue}=d;
+            if(canContinue ===true){
+                this.timer?.reset(0);
+                this.timer?.startTimer();
+            }else{
+                this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+                this.nextTurn();
+            }
+            
+            this.io.to(this.roomName).emit('OnContinueTurn', d);
+        });
+    }
+
 
     botMove(botId) {
         // Simulate bot move
