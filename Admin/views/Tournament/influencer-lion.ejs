@@ -106,13 +106,12 @@
 
     <%- contentFor('body') %>
 
-      <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
-        <strong>Congratulations!</strong><span> You can invite others to watch your live by click </span><a href=""
-          target="_blank">here</a>
+      <!-- <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Congratulations!</strong><span> You can invite others to watch your live by click </span> 
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-      </div>
+      </div> -->
 
       <div class="container">
         <form id="join-form" name="join-form">
@@ -130,52 +129,45 @@
             <div class="col-sm">
               <p class="join-info-text">Channel</p>
               <input id="channel" type="text" placeholder="enter channel name" required readonly>
-               
+              <div class="button-group">
+                <button id="host-join" type="submit" class="btn btn-primary btn-sm">Join as host</button>
+                <!-- <div class="btn-group">
+                  <button id="audience-join" type="button" class="btn btn-primary btn-sm" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Join as audience
+                  </button>
+                  <div class="audience dropdown-menu">
+                    <a id="lowLatency" class="dropdown-item" label="Interactive Live Streaming Standard"
+                      href="#">Interactive
+                      Live Streaming Standard</a>
+                    <a id="ultraLowLatency" class="dropdown-item" label="Interactive Live Streaming Premium"
+                      href="#">Interactive Live Streaming Premium</a>
+                  </div>
+                </div> -->
+                <button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Leave</button>
+              </div>
             </div>
             <div class="col-sm d-block d-none">
               <p class="join-info-text">User ID(optional)</p>
               <input id="uid" type="text" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"
                 onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Enter the user ID">
             </div>
+            
+    
           </div>
 
-          <div class="button-group">
-            <button id="host-join" type="submit" class="btn btn-primary btn-sm">Join as host</button>
-            <div class="btn-group">
-              <button id="audience-join" type="button" class="btn btn-primary btn-sm" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                Join as audience
-              </button>
-              <div class="audience dropdown-menu">
-                <a id="lowLatency" class="dropdown-item" label="Interactive Live Streaming Standard"
-                  href="#">Interactive
-                  Live Streaming Standard</a>
-                <a id="ultraLowLatency" class="dropdown-item" label="Interactive Live Streaming Premium"
-                  href="#">Interactive Live Streaming Premium</a>
-              </div>
-            </div>
-            <button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Leave</button>
-          </div>
+          
 
         </form>
         <!-- Single button -->
-        <div class="row video-group">
-          <div class="col">
-            <p id="local-player-name" class="player-name"></p>
-            <div id="local-player" class="player"></div>
-          </div>
-          <div class="w-100"></div>
-          <div class="col">
-            <div id="remote-playerlist"></div>
-          </div>
-        </div>
-
+        
       </div>
 
 
 
 
       <div class="container">
+        <iframe src="/game/index.html" width="100%" height="600px" frameborder="0"></iframe>
 
       </div>
 
@@ -183,7 +175,7 @@
         <div class="chat-leftsidebar card">
           <div class="p-3 px-4">
             <div class="d-flex align-items-start">
-              <div class="row video-group">
+              <div class="row video-group col-sm">
                 <div class="col">
                   <p id="local-player-name" class="player-name"></p>
                   <div id="local-player" class="player"></div>
@@ -196,14 +188,14 @@
             </div>
           </div>
 
-          <div class="p-3">
+          <!-- <div class="p-3">
             <div class="search-box chat-search-box">
               <div class="position-relative">
                 <input type="text" class="form-control bg-light border-light rounded" placeholder="Search...">
                 <i class="uil uil-search search-icon"></i>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <div class="pb-3">
             <div data-simplebar style="max-height: 470px;">
@@ -375,49 +367,7 @@
         <!-- end chat-leftsidebar -->
 
         <div class="w-100 user-chat mt-4 mt-sm-0 ms-lg-1">
-          <div class="card">
-            <div class="p-3 px-lg-4 border-bottom">
-
-              <div class="col-md-4 col-6">
-
-              </div>
-              <div class="col-md-8 col-6">
-                <ul class="list-inline user-chat-nav text-end mb-0">
-                  <li class="list-inline-item">
-                    <div class="dropdown">
-                      <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        <i class="uil uil-search"></i>
-                      </button>
-                      <div class="dropdown-menu dropdown-menu-end dropdown-menu-md">
-                        <form class="p-2">
-                          <div>
-                            <input type="text" class="form-control rounded" placeholder="Search...">
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </li>
-
-
-                  <li class="list-inline-item">
-                    <div class="dropdown">
-                      <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        <i class="uil uil-ellipsis-h"></i>
-                      </button>
-                      <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="#">Profile</a>
-                        <a class="dropdown-item" href="#">Archive</a>
-                        <a class="dropdown-item" href="#">Muted</a>
-                        <a class="dropdown-item" href="#">Delete</a>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          
 
           <div class="px-lg-2">
             <div class="chat-conversation p-3">
@@ -430,13 +380,13 @@
                 <li class="right">
                   <div class="conversation-list">
                     <div class="ctext-wrap">
-                      <div class="ctext-wrap-content">
+                      <!-- <div class="ctext-wrap-content">
                         <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">Marcus</a> <span
                             class="d-inline-block font-size-12 text-muted ms-2">10:02</span></h5>
                         <p class="mb-0">
                           Good morning everyone !
                         </p>
-                      </div>
+                      </div> -->
                       <!-- <div class="dropdown align-self-start">
                           <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
