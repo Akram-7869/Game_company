@@ -9,7 +9,7 @@ class LudoGame {
          this.turnOrder = [];
         this.currentTurnIndex = 0;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
-        this.timer = null;
+        this.turnTimer = null;
         this.roomJoinTimers = null;
         this.currentPhase = 'createdroom';
         this.bettingTimer = null;
@@ -207,6 +207,9 @@ class LudoGame {
     }
 
     nextTurn(socket) {
+        if (this.turnTimer) {
+            this.turnTimer?.reset(15);
+        }
          console.log('OnNextTurn-binding');              
             this.io.to(this.roomName).emit('OnNextTurn', {
                 gameType: 'Ludo',
@@ -216,22 +219,21 @@ class LudoGame {
             });
     
       //  Set timer for the next turn
-        this.timer = new Timer(15, (remaining) => {
+        this.turnTimer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
         }, () => {
             this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
            this.nextTurn();
         });
 
-        this.timer.startTimer();
+        this.turnTimer.startTimer();
     }
     OnContinueTurn(socket) {
         socket.on('OnContinueTurn', (d) => {
             let {currentTurnIndex, canContinue}=d;  
-            this.timer?.reset(15);
+            this.turnTimer?.reset(15);
             if(canContinue ===true){
-              
-                this.timer?.startTimer();
+                this.turnTimer?.startTimer();
             }else{
                 this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
                 this.nextTurn();
@@ -277,8 +279,8 @@ class LudoGame {
         this.turnOrder = [];
         this.currentTurnIndex = 0;
         this.currentPhase = 'waiting';
-        if (this.timer) {
-            this.timer.pause();
+        if (this.turnTimer) {
+            this.turnTimer.pause();
         }
     }
     OnKillEvent(socket) {
