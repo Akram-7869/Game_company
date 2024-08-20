@@ -42,6 +42,14 @@ const FranchiseSchema = new mongoose.Schema({
     minlength: 6,
     select: false
   },
+  countryCode: {
+    type: String,
+    required: true,
+  },
+  stateCode: {
+    type: String
+  },
+
   resetPasswordToken: String,
   resetPasswordExpire: Date,
   createdAt: {

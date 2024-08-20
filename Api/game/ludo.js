@@ -201,22 +201,11 @@ class LudoGame {
         this.bettingTimer.startTimer();
         this.io.to(this.roomName).emit('game_start', { players: this.turnOrder });
         console.log(`Game started in room: ${this.roomName}`);
-        //this.nextTurn();
+        this.nextTurn();
     }
 
-    OnNextTurn(socket) {
-        console.log('OnNextTurn-binding');
-        // if (this.currentPhase !== 'playing') return;
-
-        // const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        // this.io.to(this.roomName).emit('turn_start', { player: currentPlayer });
-
-        // if (this.bots.has(currentPlayer)) {
-        //     this.botMove(currentPlayer);
-        // }
-
-        socket.on('OnNextTurn', (d) => {
-            let {currentTurnIndex}=d;
+    nextTurn(socket) {
+        console.log('OnNextTurn-binding');   
             console.log(d,'OnNextTurn');
             this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
             this.io.to(this.roomName).emit('OnNextTurn', {
@@ -225,15 +214,15 @@ class LudoGame {
                 currentPhase: this.currentPhase,
                 currentTurnIndex: this.currentTurnIndex,
             });
+    
+      //  Set timer for the next turn
+        this.timer = new Timer(15, (remaining) => {
+            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
+        }, () => {
+           this.nextTurn();
         });
-        // Set timer for the next turn
-        // this.timer = new Timer(15, (remaining) => {
-        //     this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
-        // }, () => {
-        //    // this.nextTurn();
-        // });
 
-        // this.timer.startTimer();
+        this.timer.startTimer();
     }
 
     botMove(botId) {

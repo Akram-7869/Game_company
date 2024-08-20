@@ -5,9 +5,6 @@ const PlayerGameSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Players'
   },
-  opponentId: {
-    type: String
-  },
   gameId: {
     type: String
 
@@ -17,6 +14,10 @@ const PlayerGameSchema = new mongoose.Schema({
     ref: 'Tournaments'
   },
   influencerId: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Influencer'
+  },
+  frenchiseId: {
     type: mongoose.Schema.ObjectId,
     ref: 'Influencer'
   },
@@ -58,10 +59,6 @@ const PlayerGameSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  gameOnline: {
-    type: Boolean,
-    default: true
-  },
   isBot: {
     type: Boolean,
     default: false
@@ -74,15 +71,7 @@ const PlayerGameSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  playerCount: {
-    type: Number,
-    default: 0
-  },
   players: {},
-  status: {
-    type: String,
-    default: 'init'
-  }
 
 }, {
   timestamps: true,
