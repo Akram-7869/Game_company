@@ -152,9 +152,8 @@ class LudoGame {
     OnMovePasa(socket) {
         socket.on('OnMovePasa', (d) => {
             let { PlayerID, key, steps } = d;
-
             let obj = this.players.get(PlayerID); // Get the object
-            obj.player[key] = steps;
+            obj.player[key] = obj.player[key] + steps;
             this.io.to(this.roomName).emit('OnMovePasa', d);
         });
     }
@@ -206,7 +205,7 @@ class LudoGame {
 
     }
 
-    nextTurn(socket) {
+    startTurnTimer(socket) {
         if (this.turnTimer) {
             this.turnTimer?.reset(15);
         }
@@ -222,11 +221,27 @@ class LudoGame {
         this.turnTimer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
         }, () => {
-            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-           this.nextTurn();
+            this.handleTurnTimeout();
         });
 
         this.turnTimer.startTimer();
+    }
+    handleTurnTimeout(socket) {
+        const currentPlayer = this.turnOrder[this.currentTurnIndex];
+        const playerObj = this.players.get(currentPlayer.userId);
+
+        if (playerObj) {
+            playerObj.lives -= 1;
+           // this.io.to(this.roomName).emit('player_lost_life', { playerId: currentPlayer.userId, lives: playerObj.lives });
+
+            if (playerObj.lives <= 0) {
+                playerObj.status = 'left';
+               // this.players.delete(currentPlayer.userId);
+               // this.io.to(this.roomName).emit('player_left', { playerId: currentPlayer.userId });
+            }
+        }
+
+        this.nextTurn();
     }
     OnContinueTurn(socket) {
         socket.on('OnContinueTurn', (d) => {
@@ -235,12 +250,27 @@ class LudoGame {
             if(canContinue ===true){
                 this.turnTimer?.startTimer();
             }else{
-                this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-                this.nextTurn();
+                 this.nextTurn();
             }
             
             this.io.to(this.roomName).emit('OnContinueTurn', d);
         });
+    }
+    
+    nextTurn() {
+        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+        const currentPlayer = this.turnOrder[this.currentTurnIndex];
+
+        if (this.players.has(currentPlayer.userId) && currentPlayer.status !== 'left') {
+          //  this.io.to(this.roomName).emit('turn_start', { player: currentPlayer });
+            if (this.bots.has(currentPlayer.userId)) {
+              //  this.botMove(currentPlayer.userId);
+            } else {
+                this.startTurnTimer();
+            }
+        } else {
+            this.nextTurn(); // Skip to the next player if the current player has left
+        }
     }
 
 

@@ -116,28 +116,23 @@
 
       <div class="container">
         <form id="join-form" name="join-form">
-          <div class="row join-info-group">
-            <div class="col-sm sso-hidden">
+          <div class="row join-info-group ">
+            <div class="col-sm sso-hidden d-none" >
               <p class="join-info-text">AppID</p>
-              <input id="appid" type="text" placeholder="enter appid">
-              <p class="tips">If you don`t know what is your appid, checkout <a
-                  href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#a-nameappidaapp-id">this</a>
-              </p>
+              <input id="appid" type="text" value="<%=agodaAppId%>" placeholder="enter appid" readonly>
+             
             </div>
-            <div class="col-sm sso-hidden">
+            <div class="col-sm sso-hidden d-none">
               <p class="join-info-text">Token(optional)</p>
-              <input id="token" type="text" placeholder="enter token">
-              <p class="tips">If you don`t know what is your token, checkout <a
-                  href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#a-namekeyadynamic-key">this</a>
-              </p>
+              <input id="token" type="text"  placeholder="enter token">
+               
             </div>
             <div class="col-sm">
               <p class="join-info-text">Channel</p>
-              <input id="channel" type="text" placeholder="enter channel name" required>
-              <p class="tips">If you don`t know what is your channel, checkout <a
-                  href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#channel">this</a></p>
+              <input id="channel" type="text" placeholder="enter channel name" required readonly>
+               
             </div>
-            <div class="col-sm">
+            <div class="col-sm d-block d-none">
               <p class="join-info-text">User ID(optional)</p>
               <input id="uid" type="text" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"
                 onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Enter the user ID">
@@ -533,6 +528,7 @@
           });
           io.on('join', function (msg) {
             room = msg.room;
+            $("#channel").val(room);
             console.log('Joined room:', room);
             io.emit('OnCurrentStatus', { room });
           });

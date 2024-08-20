@@ -26,11 +26,11 @@ exports.getTournament = asyncHandler(async (req, res, next) => {
 });
 
 exports.getInfluencerTournament = asyncHandler(async (req, res, next) => {
-    res.locals = { title: 'Tournament', apiUrl };
+    res.locals = { title: 'Tournament', apiUrl  };
     callApi(req).get(apiUrl + req.params.id)
         .then(r => {
             res.locals = { title: 'Tournament' };
-            res.render('Tournament/influencer-lion', { row: r.data.data});
+            res.render('Tournament/influencer-lion', { row: r.data.data, agodaAppId:'0f62fbaad9c446a3b1b7be2ba203be49'});
         })
         .catch(error => {
 
