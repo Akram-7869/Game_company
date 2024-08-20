@@ -204,9 +204,7 @@ class LudoGame {
     }
 
     nextTurn(socket) {
-        console.log('OnNextTurn-binding');   
-            console.log(d,'OnNextTurn');
-           
+        console.log('OnNextTurn-binding');              
             this.io.to(this.roomName).emit('OnNextTurn', {
                 gameType: 'Ludo',
                 room: this.roomName,
