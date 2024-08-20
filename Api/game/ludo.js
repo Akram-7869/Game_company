@@ -227,9 +227,10 @@ class LudoGame {
     }
     OnContinueTurn(socket) {
         socket.on('OnContinueTurn', (d) => {
-            let {currentTurnIndex, canContinue}=d;
+            let {currentTurnIndex, canContinue}=d;  
+            this.timer?.reset(15);
             if(canContinue ===true){
-                this.timer?.reset(0);
+              
                 this.timer?.startTimer();
             }else{
                 this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
