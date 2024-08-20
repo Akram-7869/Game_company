@@ -67,7 +67,6 @@ class LudoGame {
         this.OnCurrentStatus(socket);
         this.OnMovePasa(socket);
         this.OnRollDice(socket);
-        this.OnNextTurn(socket);
         this.OnKillEvent(socket);
 
         }
