@@ -190,17 +190,16 @@ class LudoGame {
         this.turnOrder = [...this.getPlayers(), ...this.getBots()];
 
 
-        this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
+        this.bettingTimer = new Timer(3, (remaining) => {
             // console.log(remaining);
-            this.io.to(this.roomName).emit('play_tick', { remainingTime: remaining });
+            //this.io.to(this.roomName).emit('play_tick', { remainingTime: remaining });
         }, () => {
             //  this.startPausePhase();
-        });
+            this.nextTurn();
 
-        this.bettingTimer.startTimer();
-        this.io.to(this.roomName).emit('game_start', { players: this.turnOrder });
+        }).startTimer();
         console.log(`Game started in room: ${this.roomName}`);
-        this.nextTurn();
+
     }
 
     nextTurn(socket) {
