@@ -210,7 +210,7 @@ exports.addBank = asyncHandler(async (req, res, next) => {
   let { bankName, bankAccount, bankIfc, bankAddress, bankAccountHolder } = req.body;
   let fieldsToUpdate = { bankName, bankAccount, bankIfc, bankAddress, bankAccountHolder };
   let player;
-  if ( !bankAccount || !bankIfc  || !bankAccountHolder) {
+  if (!bankAccount || !bankIfc || !bankAccountHolder) {
     return next(
       new ErrorResponse(`All fields are requied`)
     );
@@ -644,7 +644,7 @@ exports.deletePlayerData = asyncHandler(async (req, res, next) => {
   });
 });
 
- 
+
 
 // @desc      Delete Player
 // @route     DELETE /api/v1/auth/Players/:id
@@ -688,7 +688,7 @@ exports.setPin = asyncHandler(async (req, res, next) => {
 
 
   // Check for user
-  user = await Player.findByIdAndUpdate(req.player._id, { 'password': pin }, {
+  let user = await Player.findByIdAndUpdate(req.player._id, { 'password': pin }, {
     new: true,
     runValidators: true
   });
@@ -836,7 +836,7 @@ exports.won = asyncHandler(async (req, res, next) => {
 
 
   let betAmout = parseFloat(amount) + parseFloat(adminCommision);
-    betAmout = parseFloat(betAmout).toFixed(2);
+  betAmout = parseFloat(betAmout).toFixed(2);
   let playerGame = {
     'playerId': req.player._id,
     'amountWon': amount,
@@ -864,55 +864,38 @@ exports.won = asyncHandler(async (req, res, next) => {
   let tran = await Transaction.create(tranData);
   player = await tran.creditPlayerWinings(amount);
 
- 
+
   let commisonInf = {
-       'gameId': gameId
+    'gameId': gameId
   }
-  if(tournament.influencerId){
+  if (tournament.influencerId) {
     commisonInf['ownerId'] = tournament.influencerId;
     commisonInf['influencerCommission'] = adminCommision * 0.7;
-    // const result = await Transaction.aggregate([
-    //   {
-    //     $match: {
-    //       logType: 'influencer_gift',
-    //       gameId: gameId,
 
-    //     }
-    //   },
-    //   {
-    //     $group: {
-    //       _id: null, // We don't need to group by any specific field, so we set _id to null
-    //       totalAmount: { $sum: '$amount' } // Sum the amount field
-    //     }
-    //   }
-    // ]);
-    
-    // const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
- 
-    // commisonInf['giftRecevied'] = totalAmount;
-     await Influencer.findByIdAndUpdate(tournament.influencerId,  { $inc: { 
-      totalBalance: commisonInf['influencerCommission'],
-      totalCommissions:  commisonInf['influencerCommission'] ,
-      // totalGifts:totalAmount
-    } });
+    await Influencer.findByIdAndUpdate(tournament.influencerId, {
+      $inc: {
+        totalBalance: commisonInf['influencerCommission'],
+        totalCommissions: commisonInf['influencerCommission']
+      }
+    });
 
- 
+
   }
 
-  if(player.stateCode){
-  let frenchiseDoc =  await  Franchise.findOne({stateCode:player.stateCode, status:'active'});
-  if(frenchiseDoc){
-    commisonInf['ownerId'] = frenchiseDoc._id;
-    commisonInf['franchiseCommission'] = adminCommision * 0.3;
-    await frenchiseDoc.findByIdAndUpdate(frenchiseDoc._id,  { $inc: { totalBalance: commisonInf['franchiseCommission'],totalCommissions:commisonInf['franchiseCommission']  } });
+  if (player.stateCode) {
+    let frenchiseDoc = await Franchise.findOne({ stateCode: player.stateCode, status: 'active' });
+    if (frenchiseDoc) {
+      commisonInf['ownerId'] = frenchiseDoc._id;
+      commisonInf['franchiseCommission'] = adminCommision * 0.3;
+      await frenchiseDoc.findByIdAndUpdate(frenchiseDoc._id, { $inc: { totalBalance: commisonInf['franchiseCommission'], totalCommissions: commisonInf['franchiseCommission'] } });
 
-  } 
+    }
   }
 
 
 
   await Commission.create(commisonInf);
- 
+
 
   Dashboard.totalIncome(betAmout, amount, adminCommision);
   await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'playerId': req.player._id }, playerGame);
@@ -1032,14 +1015,14 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   }
 
 
-  let playerGame = await PlayerGame.findOne({ playerId: req.player._id, gameId }).select({ _id: 1 ,influencerId:1}).lean();
+  let playerGame = await PlayerGame.findOne({ playerId: req.player._id, gameId }).select({ _id: 1, influencerId: 1 }).lean();
   if (playerGame) {
     await PlayerGame.findOneAndUpdate({ playerId: req.player._id, gameId }, { $inc: { amountBet: amount } });
   } else {
-    let tournament = await Tournament.findById(tournamentId );
-    let c = { playerId: req.player._id, gameId, amountBet: amount, tournamentId, influencerId:tournament.influencerId }
+    let tournament = await Tournament.findById(tournamentId);
+    let c = { playerId: req.player._id, gameId, amountBet: amount, tournamentId, influencerId: tournament.influencerId }
     console.log('c', c)
-    playerGame= await PlayerGame.create(c);
+    playerGame = await PlayerGame.create(c);
   }
   let tranData = {
     'playerId': req.player._id,
@@ -1075,10 +1058,12 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
 
 
   if (req.body.logType === 'influencer_gift') {
-    await Influencer.findByIdAndUpdate(playerGame.influencerId,  { $inc: { 
-      totalBalance: amount,
-      totalGifts:amount
-    } });
+    await Influencer.findByIdAndUpdate(playerGame.influencerId, {
+      $inc: {
+        totalBalance: amount,
+        totalGifts: amount
+      }
+    });
 
   }
   res.status(200).json({
@@ -1129,7 +1114,7 @@ exports.debitBonus = asyncHandler(async (req, res, next) => {
 
   let tran = await Transaction.create(tranData);
 
- let player = await tran.debitPlayerBonus(amount);
+  let player = await tran.debitPlayerBonus(amount);
   res.status(200).json({
     success: true,
     data: player
@@ -1813,7 +1798,7 @@ exports.getWinnerfeed = asyncHandler(async (req, res, next) => {
 });
 exports.getWinnertop = asyncHandler(async (req, res, next) => {
 
-  const winners = await Player.find({ status: 'active' }).sort({"balance": -1 }).limit(10).select({ '_id': 0, 'firstName': 1, 'picture': 1, 'balance': 1 });
+  const winners = await Player.find({ status: 'active' }).sort({ "balance": -1 }).limit(10).select({ '_id': 0, 'firstName': 1, 'picture': 1, 'balance': 1 });
 
   let x = winners;
   res.status(200).json({
