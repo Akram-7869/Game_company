@@ -13,7 +13,6 @@ const CommissionSchema = new mongoose.Schema({
     
     playerId: {
         type: mongoose.Schema.ObjectId,
-        required: true,
         ref: 'Players'
     },
     
