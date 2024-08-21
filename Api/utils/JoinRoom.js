@@ -283,11 +283,9 @@ let defaultRolletValue = () => {
     socket['room'] = room;
     socket['userId'] = playerId;
     socket['lobbyId'] = d.lobbyId;
-    let user = { room, 'socket_id': socket.id };
+    let user = { room, 'socket_id': socket.id,role:d.role, lobbyId:d.lobbyId };
     if(d.role ==='influencer'){
       socket['role'] = d.influencer;
-
-      user= {...user , role:d.role, lobbyId:d.lobbyId}
     }
     userSocketMap[playerId] = user;
     d['socket_id'] = socket.id;

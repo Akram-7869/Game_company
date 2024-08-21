@@ -84,9 +84,9 @@ let onConnection = (socket) => {
      // io.emit('influencer_matches', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
      const validIds = Object.entries(userSocketMap)
     .filter(([playerId, user]) => user.role === 'influencer')
-    .map(([userId, user]) => user.tournamentId);
+    .map(([userId, user]) => user.lobbyId);
 
-    let influencers = await Tournament.find({tournamentId: { $in: validIds }}).populate('influencerId', 'displayName');
+    let influencers = await Tournament.find({_id: { $in: validIds }, tournamentType:'influencer'}).populate('influencerId', 'displayName');
 
       setkey('influencer_matches',influencers );
 
