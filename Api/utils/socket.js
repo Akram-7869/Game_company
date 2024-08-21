@@ -203,6 +203,14 @@ let onConnection = (socket) => {
     console.log(d);
     io.in(room).emit('chat_message', d);
   });
+  socket.on('influencer_matches', (d) => {
+    let { room } = d;
+    const influencers = Object.entries(userSocketMap)
+    .filter(([playerId, user]) => user.role === 'influencer')
+    .map(([userId, user]) => ({ userId, ...user }));
+     io.emit('influencer_matches', {influencers});
+    io.to(socket.id).emit('influencer_matches', {influencers});
+  });
   socket.on('emoji_message', (d) => {
     let { room } = d;
     console.log(d);
