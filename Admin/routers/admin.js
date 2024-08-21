@@ -20,6 +20,8 @@ const couponCtrl = require('../controllers/CouponController');
 const bannerTextCtrl = require('../controllers/BannerTextController');
 const postCtrl = require('../controllers/PostController');
 const faqCtrl = require('../controllers/FaqController');
+const commissionCtrl = require('../controllers/CommissionController');
+
 
 
 const pollCtrl = require('../controllers/PollController');
@@ -32,7 +34,8 @@ const router = express.Router({ mergeParams: true });
 
 //var upload = multer({ storage: storage })
 router.use(protect);
-
+router.route('/commission').get(commissionCtrl.commissionList);
+router.route('/commission/data').post(commissionCtrl.getCommissions);
 
 router.route('/frechise').get(frenchiseCtrl.listFrenchise); router.route('/frechise/data').post(frenchiseCtrl.getFrenchises);
 //router.route('/frechise/view/:id').get(  showFrenchiseView);

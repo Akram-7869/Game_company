@@ -34,7 +34,37 @@ exports.getCommissions = asyncHandler(async (req, res, next) => {
             })
 
 });
+exports.frenchiseCommList = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Commission' };
+      res.render('Commission/frenchise')
+});
+exports.frenchiseCommData = asyncHandler(async (req, res, next) => {
 
+      callApi(req).post(apiUrl, { ...req.body })
+              .then(r => {
+                    // Assign value in session
+                    res.status(200).json(r.data);
+              })
+              .catch(error => {
+                    //   req.flash('error', 'Incorrect email or password!');
+              })
+  });
+
+  exports.influencerCommList = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Commission' };
+      res.render('Commission/influencer')
+});
+exports.influencerCommData = asyncHandler(async (req, res, next) => {
+
+      callApi(req).post(apiUrl, { ...req.body })
+              .then(r => {
+                    // Assign value in session
+                    res.status(200).json(r.data);
+              })
+              .catch(error => {
+                    //   req.flash('error', 'Incorrect email or password!');
+              })
+  });
 
 exports.getAddForm = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Player-edit' };

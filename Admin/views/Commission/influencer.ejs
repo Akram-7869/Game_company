@@ -198,7 +198,7 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "<%=process.env.ADMIN_URL%>/admin/commission/data", type: "post",
+                                url: "<%=process.env.ADMIN_URL%>/influencer/commission/data", type: "post",
                                 data: function (d) {
                                     d['s_date'] = $('#s_date').val();
                                     d['e_date'] = $('#e_date').val();
@@ -229,7 +229,7 @@
                                 },
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        let a = '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/commission/edit/'
+                                        let a = '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/influencer/commission/edit/'
                                             + full._id + '"><i class="uil uil-history font-size-18"></i></a>';
 
                                         a += ' <a class="px-3 text-danger" onclick="delRec(\''
