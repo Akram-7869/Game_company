@@ -1,12 +1,12 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const User = require('../models/Franchise');
+const Franchise = require('../models/Franchise');
 
 // @desc      Get all users
 // @route     GET /api/v1/auth/users
 // @access    Private/Admin
-exports.getUsers = asyncHandler(async (req, res, next) => {
-  User.dataTables({
+exports.getFranchises = asyncHandler(async (req, res, next) => {
+  Franchise.dataTables({
     limit: req.body.length,
     skip: req.body.start,
     select: { 'firstName': 1, 'phone': 1, 'email': 1, 'status': 1, 'createdAt': 1, 'role': 1 },
@@ -25,8 +25,8 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 // @desc      Get single user
 // @route     GET /api/v1/auth/users/:id
 // @access    Private/Admin
-exports.getUser = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+exports.getFranchise = asyncHandler(async (req, res, next) => {
+  const user = await Franchise.findById(req.params.id);
 
   res.status(200).json({
     success: true,
@@ -37,14 +37,15 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 // @desc      Create user
 // @route     POST /api/v1/auth/users
 // @access    Private/Admin
-exports.createUser = asyncHandler(async (req, res, next) => {
+exports.createFranchise = asyncHandler(async (req, res, next) => {
   if (req.body.role === 'superadmin') {
     return next(
       new ErrorResponse(
-        `User ${req.user.id} is not authorized to update provider ${provider._id}`)
+        `Franchise ${req.user.id} is not authorized to update provider ${provider._id}`)
     );
   }
-  const user = await User.create(req.body);
+  console.log(req.body)
+  const user = await Franchise.create(req.body);
 
   res.status(201).json({
     success: true,
@@ -55,11 +56,11 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 // @desc      Update user
 // @route     PUT /api/v1/auth/users/:id
 // @access    Private/Admin
-exports.updateUser = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+exports.updateFranchise = asyncHandler(async (req, res, next) => {
+  const user = await Franchise.findById(req.params.id);
   if (!user) {
     return next(
-      new ErrorResponse(`User  not found`)
+      new ErrorResponse(`Franchise  not found`)
     );
   }
   //  Make sure user is provider owner
@@ -67,7 +68,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
     if (req.staff.role == user.role && user.id !== req.staff.id) {
       return next(
         new ErrorResponse(
-          `User  is not authorized to update`)
+          `Franchise  is not authorized to update`)
       );
     }
 
@@ -75,14 +76,14 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
     if (user.role == 'superadmin') {
       return next(
         new ErrorResponse(
-          `User  is not authorized to update`)
+          `Franchise  is not authorized to update`)
       );
     }
 
   } else if (user.id !== req.staff.id) {
     return next(
       new ErrorResponse(
-        `User  is not authorized to update`)
+        `Franchise  is not authorized to update`)
     );
   }
 
@@ -102,17 +103,17 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 // @desc      Delete user
 // @route     DELETE /api/v1/auth/users/:id
 // @access    Private/Admin
-exports.deleteUser = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+exports.deleteFranchise = asyncHandler(async (req, res, next) => {
+  const user = await Franchise.findById(req.params.id);
 
   // Make sure user is provider owner
   if (user.role === 'superadmin') {
     return next(
       new ErrorResponse(
-        `User is not authorized`)
+        `Franchise is not authorized`)
     );
   }
-  await User.findByIdAndDelete(req.params.id);
+  await Franchise.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
     success: true,
@@ -127,7 +128,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   let user = req.staff;
   if (!user) {
     return next(
-      new ErrorResponse(`User  not found`)
+      new ErrorResponse(`Franchise  not found`)
     );
   }
   //  Make sure user is provider owner
@@ -144,10 +145,10 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
   } else {
     // Check for user
-    user = await User.findById(user._id).select('+password');
+    user = await Franchise.findById(user._id).select('+password');
 
     if (!user) {
-      return next(new ErrorResponse('User not found'));
+      return next(new ErrorResponse('Franchise not found'));
     }
 
     // Check if password matches

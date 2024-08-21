@@ -1,5 +1,7 @@
 <%- contentFor('HeaderCss') %>
   <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="/public/gameshtml/css/main.css">
+  <link rel="stylesheet" href="/public/gameshtml/css/dragonTiger.css">
   <style>
     .number-grid {
       display: grid;
@@ -167,7 +169,28 @@
 
 
       <div class="container">
-        <iframe src="/game/index.html" width="100%" height="600px" frameborder="0"></iframe>
+        <div id="game-container">
+          <div id="timer">Time: <span id="time-remaining">0</span></div>
+          <div id="cards-container">
+              <div id="dragon-card" class="card"></div>
+              <div id="tiger-card" class="card"></div>
+          </div>
+          <div id="board">
+              <div id="dragon-area" class="bet-area">
+                  <img src="/public/gameshtml/assets/dragonTiger/DragonBox.png" alt="Dragon Box">
+                  <div class="bet-amount">Bet: <span id="dragon-bet">0</span></div>
+              </div>
+              <div id="tie-area" class="bet-area">
+                  <img src="/public/gameshtml/assets/dragonTiger/TieBox.png" alt="Tie Box">
+                  <div class="bet-amount">Bet: <span id="tie-bet">0</span></div>
+              </div>
+              <div id="tiger-area" class="bet-area">
+                  <img src="/public/gameshtml/assets/dragonTiger/TigerBox.png" alt="Tiger Box">
+                  <div class="bet-amount">Bet: <span id="tiger-bet">0</span></div>
+              </div>
+          </div>
+          <div id="history-container"></div>
+      </div>
 
       </div>
 
@@ -440,6 +463,9 @@
         <script src="/public/assets/js/game/basicMute.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.4/pako.min.js"></script>
+        <script src="/public/gameshtml/js/socketHandler.js"></script>
+        <script src="/public/gameshtml/js/dragonTiger.js"></script>
+        <!-- <script src="/public/gameshtml/js/main.js"></script> -->
 
         <!-- Sweet alert init js
   <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
@@ -475,6 +501,7 @@
           io.on('connect', () => {
             console.log('Connected to server');
             io.emit('join', { ...data, gameType: 'sfsf', room });
+            initializeSocket(io,'sfsf')
           });
           io.on('join', function (msg) {
             room = msg.room;

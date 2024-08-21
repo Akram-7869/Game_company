@@ -100,7 +100,7 @@ exports.createFrenchises = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Frenchise-edit' };
                   req.flash('message', 'Data save');
-                  res.redirect(process.env.ADMIN_URL + '/admin/manager');
+                  res.redirect(process.env.ADMIN_URL + '/admin/frechise');
 
             })
             .catch(error => {

@@ -75,7 +75,7 @@
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
                                 <li><a href="<%=process.env.ADMIN_URL%>/influencer/transaction">history</a></li>
-
+                                <li><a href="<%=process.env.ADMIN_URL%>/influencer/commission">commission</a></li>
                             </ul>
                         </li>
                         <% } else if (role==='franchise' ) { %>
@@ -94,6 +94,8 @@
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
                                     <li><a href="<%=process.env.ADMIN_URL%>/franchise/transaction">history</a></li>
+                                    <li><a href="<%=process.env.ADMIN_URL%>/franchise/commission">commission</a></li>
+
 
                                 </ul>
                             </li>
@@ -168,9 +170,13 @@
                                         </a>
                                         <ul class="sub-menu" aria-expanded="false">
                                             <li><a href="<%=process.env.ADMIN_URL%>/admin/banner">Banner</a></li>
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/bannertext">Banner Text</a></li>
+
                                             <li><a href="<%=process.env.ADMIN_URL%>/admin/faq">Faq</a></li>
-                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/coupon">Coupon</a></li>
+                                            <!-- <li><a href="<%=process.env.ADMIN_URL%>/admin/coupon">Coupon</a></li> -->
                                             <li><a href="<%=process.env.ADMIN_URL%>/admin/posts">Posts</a></li>
+                                            <li><a href="<%=process.env.ADMIN_URL%>/admin/poll">Poll</a></li>
+
 
                                         </ul>
                                     </li>

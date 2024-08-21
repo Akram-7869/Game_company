@@ -33,8 +33,8 @@ const FranchiseSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['influencer'],
-    default: 'influencer'
+    enum: ['franchise'],
+    default: 'franchise'
   },
   password: {
     type: String,
@@ -44,10 +44,22 @@ const FranchiseSchema = new mongoose.Schema({
   },
   countryCode: {
     type: String,
-    required: true,
+  },
+  totalBalance: {
+    type: Number,
+    default: 0
+  },
+  totalCommissions: {
+    type: Number,
+    default: 0
+  },
+  commissionPending: {
+    type: Number,
+    default: 0
   },
   stateCode: {
-    type: String
+    type: String,
+    required: true,
   },
 
   resetPasswordToken: String,

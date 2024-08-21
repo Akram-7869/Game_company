@@ -1,23 +1,22 @@
 const express = require('express');
-const userCtrl = require('../controllers/frenchises');
+const frenchiseCtrl = require('../controllers/frenchises');
 
-const User = require('../models/Franchise');
-
+ 
 const router = express.Router({ mergeParams: true });
 
 const { protect, authorize } = require('../middleware/auth');
 
 router.use(protect);
 //router.use(authorize('admin', 'superadmin'));
-router.route('/resetpassword').post(userCtrl.resetPassword);
-router.route('/add').post(userCtrl.createUser);
-router.route('/').post(userCtrl.getUsers);
+router.route('/resetpassword').post(frenchiseCtrl.resetPassword);
+router.route('/add').post(frenchiseCtrl.createFranchise);
+router.route('/').post(frenchiseCtrl.getFranchises);
 
 
 router
   .route('/:id')
-  .get(userCtrl.getUser)
-  .put(userCtrl.updateUser)
-  .delete(userCtrl.deleteUser);
+  .get(frenchiseCtrl.getFranchise)
+  .put(frenchiseCtrl.updateFranchise)
+  .delete(frenchiseCtrl.deleteFranchise);
 
 module.exports = router;

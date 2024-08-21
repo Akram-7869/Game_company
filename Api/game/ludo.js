@@ -18,6 +18,7 @@ class LudoGame {
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 9; // 5 seconds
         this.lastDiceValue = 6;
+        this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
     }
 
     addPlayer(socket) {
@@ -37,10 +38,10 @@ class LudoGame {
             lobbyId: '66613de5980bf75b5ec9abb4',
             maxp: 2,
             type: 'bot',
-            pasa_1: 0,
-            pasa_2: 0,
-            pasa_3: 0,
-            pasa_4: 0,
+            pasa_1: -1,
+            pasa_2: -1,
+            pasa_3: -1,
+            pasa_4: -1,
             playerStatus: 'joined',
             avtar: 'http://174.138.52.41/assets/img/logo/profile_default.png'
         }

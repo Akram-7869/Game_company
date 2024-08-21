@@ -1,0 +1,359 @@
+<%- contentFor('HeaderCss') %>
+    <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+    <%- contentFor('breadcrumb') %>
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">Transaction Edit</h4>
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item active"><a href="<%=process.env.ADMIN_URL%>/admin/payout">Payout
+                                    List</a></li>
+                            <li class="breadcrumb-item active">Edit</li>
+                        </ol>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <%- contentFor('body') %>
+
+
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <!--  <h4 class="card-title">Validation type</h4>
+                <p class="card-title-desc"> </p> -->
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#settings1" role="tab">
+                                        <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                                        <span class="d-none d-sm-block">Transactions</span>
+                                    </a>
+                                </li>
+                                <!--    <li class="nav-item">
+                                    <a class="nav-link " data-bs-toggle="tab" href="#home1" role="tab">
+                                        <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                        <span class="d-none d-sm-block">Home</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#profile1" role="tab">
+                                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                        <span class="d-none d-sm-block">Profile</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#messages1" role="tab">
+                                        <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                        <span class="d-none d-sm-block">Change Status</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#settings1" role="tab">
+                                        <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                                        <span class="d-none d-sm-block">Transactions</span>
+                                    </a>
+                                </li> -->
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content p-3 text-muted">
+                                <div class="tab-pane " id="home1" role="tabpanel">
+                                    <p class="mb-0">
+                                        <!-- <form class="custom-validation" action="" onsubmit="false" method="POST" name="player"  enctype="application/x-www-form-urlencoded"> -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Phone</label>
+                                        <input readonly type="text" name="" value="<%=row.phone?row.phone:'' %>"
+                                            class="form-control" required placeholder="Phone" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Wallet Balance</label>
+                                        <input readonly type="text" name="" value="<%=row.balance?row.balance:'' %>"
+                                            class="form-control" required placeholder="Balance" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Kyc Status</label>
+                                        <input readonly type="text" name="" value="<%=row.kycStatus?row.kycStatus:'' %>"
+                                            class="form-control" required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Status</label>
+                                        <input readonly type="text" name="" value="<%=row.status?row.status:'' %>"
+                                            class="form-control" required />
+                                    </div>
+
+                                    <!-- </form> -->
+                                    </p>
+                                </div>
+                                <div class="tab-pane" id="profile1" role="tabpanel">
+                                    <p class="mb-0">
+                                    <form class="custom-validation" action="" onsubmit="handleSubmit(this)"
+                                        method="POST" name="player" enctype="application/x-www-form-urlencoded">
+                                        <div class="mb-3">
+                                            <label class="form-label">Name</label>
+                                            <input type="text" name="firstName"
+                                                value="<%=row.firstName?row.firstName:'' %>" class="form-control"
+                                                required placeholder="" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" name="email" value="<%=row.email?row.email:'' %>"
+                                                class="form-control" required parsley-type="email"
+                                                placeholder="Enter a valid e-mail" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Date Of Birth</label>
+
+                                            <input class="form-control" name="dob" type="date"
+                                                value="<%=row.dob?row.dob:'' %>" id="example-date-input" required
+                                                placeholder="date od birth">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Country</label>
+                                            <input type="text" name="country" value="<%=row.country?row.country:'' %>"
+                                                class="form-control" required placeholder="Country" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Pan Card</label>
+                                            <input type="text" name="panNumber"
+                                                value="<%=row.panNumber?row.panNumber:'' %>" class="form-control"
+                                                required data-parsley-type="alphanum" placeholder="Enter only digits" />
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Adhar Card</label>
+                                            <input type="text" name="aadharNumber"
+                                                value="<%=row.aadharNumber?row.aadharNumber:'' %>" class="form-control"
+                                                required data-parsley-type="digits" placeholder="Enter only digits" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Gender</label>
+                                            <div>
+                                                <select class="form-select" name="kycStatus" required>
+                                                    <option value=""></option>
+                                                    <option value="male" <%=row.kycStatus==='Male' ?'selected':'' %>
+                                                        >male</option>
+                                                    <option value="female" <%=row.kycStatus==='Female' ?'selected':'' %>
+                                                        >female</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Kyc Status</label>
+                                            <div class="col-md-10">
+                                                <select class="form-select" name="kycStatus" required>
+                                                    <option value="notverified" <%=row.kycStatus==='notverified'
+                                                        ?'selected':'' %>>notverified</option>
+                                                    <option value="verified" <%=row.kycStatus==='verified'
+                                                        ?'selected':'' %>>verified</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                <button type="submit"
+                                                    class="btn btn-primary waves-effect waves-light me-1">
+                                                    Submit
+                                                </button>
+                                                <button type="reset" class="btn btn-secondary waves-effect">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    </p>
+                                </div>
+                                <div class="tab-pane" id="messages1" role="tabpanel">
+                                    <p class="mb-0">
+                                    <form class="custom-validation"
+                                        action="<%=process.env.ADMIN_URL%>/admin/player/status/<%=row._id %>"
+                                        onsubmit="handleSubmit(this)" method="POST" name="player"
+                                        enctype="application/x-www-form-urlencoded">
+
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Status</label>
+                                            <div class="col-md-10">
+                                                <select class="form-select" name="status" required>
+                                                    <option value="inactive" <%=row.status==='inactive' ?'selected':''
+                                                        %>>inactive</option>
+                                                    <option value="active" <%=row.status==='active' ?'selected':'' %>
+                                                        >active</option>
+                                                    <option value="banned" <%=row.status==='banned' ?'selected':'' %>
+                                                        >banned</option>
+                                                    <option value="deleted" <%=row.status==='deleted' ?'selected':'' %>
+                                                        >deleted</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                <button type="submit"
+                                                    class="btn btn-primary waves-effect waves-light me-1">
+                                                    Change Status
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                    </form>
+                                    </p>
+                                </div>
+                                <div class="tab-pane active" id="settings1" role="tabpanel">
+                                    <p class="mb-0">
+                                    <form class="custom-validation"
+                                        action="<%=process.env.ADMIN_URL%>/admin/payout/edit/<%=row._id %>"
+                                        onsubmit="handleSubmit(this)" method="POST" name="player"
+                                        enctype="application/x-www-form-urlencoded">
+
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Amount</label>
+                                            <input readonly type="text" name="amount" value="<%= row.amount %>"
+                                                class="form-control" required placeholder="Amount Requested" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Withdraw:</label>
+                                            <% for (const key in row.withdraw) { %>
+                                                <ul>
+                                                    <li>
+                                                        <%=`${key}: ${row.withdraw[key]}`%>
+                                                    </li>
+                                                </ul>
+                                                <% }%>
+                                        </div>
+                                        <% if(row.logType==='deposit' ) {%>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Image </label>
+                                                <img width=100 src="<%= process.env.IMAGE_URL + row.imageUrl %>">
+
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Payment ID </label>
+                                                <%=row.paymentId%>
+
+                                            </div>
+                                            <% } %>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Note </label>
+                                                    <textarea name="note" value="" class="form-control" required
+                                                        placeholder="Transaction id  ..."><%=row.note%></textarea>
+                                                </div>
+                                                <div class="mb-3">
+
+                                                    <p>
+                                                        <label class="form-label"> paymentStatus</label>
+                                                        <%=row.paymentStatus%>
+                                                    </p>
+                                                    <p>
+                                                        <label class="form-label"> logType</label>
+                                                        <%=row.logType%>
+                                                    </p>
+                                                    <p>
+                                                        <label class="form-label"> Created : </label>
+                                                       
+                                                            <%=moment(row.createdAt).format('DD-MM-YYYY HH:mm:ss');%> 
+                                                    </p>
+                                                    <p>
+                                                        <label class="form-label"> Updated : </label>
+                                                        
+                                                      
+                                                                <%=moment(row.updatedAt).format('DD-MM-YYYY HH:mm:ss');%>
+                                                    </p>
+                                                    <p>
+                                                        <label class="form-label"> Status</label>
+                                                        <%=row.status%>
+                                                    </p>
+
+                                                    <label class="form-label">Change Transaction Status</label>
+                                                    <div class="col-md-10">
+                                                        <select class="form-select" name="paymentStatus" required>
+                                                            <option value="PROCESSING"
+                                                                <%=row.paymentStatus==='PROCESSING' ?'selected':'' %>
+                                                                >Processing</option>
+                                                            <option value="SUCCESS" <%=row.paymentStatus==='SUCCESS'
+                                                                ?'selected':'' %>
+                                                                >Approve</option>
+                                                            <option value="DECLINED" <%=row.paymentStatus==='DECLINED'
+                                                                ?'selected':'' %>>Declined</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Gateway Response</label>
+                                                    <% for (items of row.gateWayResponse) { %>
+                                                        <ul>
+                                                            <li>
+                                                                <%=` ${items}`%>
+                                                            </li>
+                                                        </ul>
+                                                        <% }%>
+                                                </div>
+                                                <!-- <div class="mb-3">
+                                            <label class="form-label">For</label>
+                                            <div class="col-md-10">
+                                                <select class="form-select" name="logType" required>
+                                                    <option value="bonus" <%=row.status==='bonus' ?'selected':'' %>
+                                                        >bonus</option>
+                                                    <option value="adjustment" <%=row.status==='adjustment'
+                                                        ?'selected':'' %>
+                                                        >adjustment</option>
+
+                                                </select>
+                                            </div>
+                                        </div> -->
+
+
+                                                <div>
+                                                    <div>
+                                                        <button type="submit"
+                                                            class="btn btn-primary waves-effect waves-light me-1">
+                                                            Submit
+                                                        </button>
+
+                                                    </div>
+                                                </div>
+                                    </form>
+                                    </p>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div> <!-- end col -->
+
+
+            </div> <!-- end row -->
+
+            <%- contentFor('FooterJs') %>
+
+                <!-- parsleyjs -->
+                <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
+
+                <script src="/public/assets/js/pages/form-validation.init.js"></script>
+                <!-- Sweet Alerts js -->
+                <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <!-- Sweet alert init js
+<script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
+                <script>
+                    function handleSubmit(params) {
+                        if (params.checkValidity()) {
+                            Swal.showLoading();
+                        }
+
+                    }
+                </script>
+                <%- contentFor('BottomJs') %>

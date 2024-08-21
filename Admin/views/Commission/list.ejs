@@ -1,0 +1,244 @@
+<%- contentFor('HeaderCss') %>
+
+    <!-- DataTables -->
+    <link href="/public/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/public/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+
+    <!-- Responsive datatable examples -->
+    <link href="/public/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+
+    <%- contentFor('breadcrumb') %>
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">
+                        <%- title %>
+                    </h4>
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item active">
+                                <%- title %> List
+                            </li>
+                        </ol>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <%- contentFor('body') %>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div>
+                                        <form class="d-inline-flex mb-3">
+                                            <label class="form-check-label my-2 me-2"
+                                                for="order-selectinput">Status</label>
+                                            <select class="form-select" id="status-filter">
+                                                <option value="" selected>All</option>
+                                                 <option value="processing" >Processing</option>
+                                                <option value="complete">complete</option>
+                                             </select>
+                                            <label class="form-check-label my-2 me-2"
+                                                for="order-selectinput">Logtype</label>
+                                            <select class="form-select" id="logtype-filter">
+                                                <option value=""selected>All</option>
+
+                                                <option value="deposit">Commission</option>
+                                                <option value="withdraw" >Gift</option>
+
+                                            </select>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="float-end">
+                                        <div class=" mb-3">
+                                            <div class="input-daterange input-group" id="datepicker6"
+                                                data-date-format="yyyy-mm-dd" data-date-autoclose="true"
+                                                data-provide="datepicker" data-date-container='#datepicker6'>
+                                                <input type="text" id="s_date" class="form-control text-start"
+                                                    placeholder="From" name="From"  data-date-format="yyyy-mm-dd"/>
+                                                <input type="text" id="e_date" class="form-control text-start"
+                                                    placeholder="To" name="To" data-date-format="yyyy-mm-dd" />
+
+                                                <!-- <button type="button" id="filter" class="btn btn-primary"><i
+                                                        class="mdi mdi-filter-variant"></i></button> -->
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap"
+                                style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Srno</th>
+                                        <th>First name</th>
+                                        <th>Email</th>
+                                        <th>Amount</th>
+                                        <th>Type</th>
+                                        <th>Taxable</th>
+                                        <th>TDS</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> <!-- end col -->
+            </div> <!-- end row -->
+            <%- contentFor('FooterJs') %>
+
+                <!-- Required datatable js -->
+                <script src="/public/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+                <script src="/public/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+                <!-- Buttons examples -->
+                <script src="/public/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+                <script src="/public/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+                <script src="/public/assets/libs/jszip/jszip.min.js"></script>
+                <script src="/public/assets/libs/pdfmake/build/pdfmake.min.js"></script>
+                <script src="/public/assets/libs/pdfmake/build/vfs_fonts.js"></script>
+                <script src="/public/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+                <script src="/public/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+                <script src="/public/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+                <script src="/public/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+
+                <!-- Responsive examples -->
+                <script src="/public/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+                <script
+                    src="/public/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+                <!-- Datatable init js
+<script src="/public/assets/js/pages/datatables.init.js"></script> -->
+                <!-- Sweet Alerts js -->
+                <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <script src="/public/assets/libs/moment/moment.js"></script>
+                <%- contentFor('BottomJs') %>
+                    <script>
+                        var minDate, maxDate;
+                        let day= new Date();
+                        let nextDay = new Date(day);
+                            nextDay.setDate(day.getDate() + 1);
+                        $("#s_date").datepicker("setDate", day); 
+                        $("#e_date").datepicker("setDate", nextDay); 
+                        function delRec(id) {
+                            let r = confirm('Want to pay ?');
+
+                            if (r && id) {
+                                handleDel(id);
+                            }
+                        }
+                        function handleDel(id) {
+                            Swal.showLoading();
+                            return $.ajax({
+                                type: 'POST',
+                                url: '<%=process.env.ADMIN_URL%>/admin/payout/approve/' + id,
+                                success: (results) => {
+                                    Swal.close();
+                                    if (results.success) {
+                                        alert(results.data.status + ' ' + results.data.message);
+
+                                    } else {
+                                        alert(results.error);
+
+                                    }
+                                    location.reload();
+                                },
+                                error: (err) => {
+                                    alert('Error While Approving');
+                                    location.reload();
+
+                                }
+                            });
+                        }
+                        function view(id) {
+                            alert(id);
+                        }
+                        var i = 1;
+                        var oTable = $('#listsetting').DataTable({
+                            initComplete: function () {
+                                var input = $('.dataTables_filter input').unbind(),
+                                    self = this.api(),
+                                    $searchButton = $('<button>')
+                                        .text('search')
+                                        .click(function () {
+                                            // self.column(1).search('ccccccccccccccc').draw();
+                                            self.search(input.val()).draw();
+                                        }),
+                                    $clearButton = $('<button>')
+                                        .text('clear')
+                                        .click(function () {
+                                            input.val('');
+                                            $searchButton.click();
+                                        })
+                                $('.dataTables_filter').append($searchButton, $clearButton);
+                            },
+                            "processing": true,
+                            "serverSide": true,
+                            "ajax": {
+                                url: "<%=process.env.ADMIN_URL%>/influencer/commission/data", type: "post",
+                                data: function (d) {
+                                    d['s_date'] = $('#s_date').val();
+                                    d['e_date'] = $('#e_date').val();
+                                    // d['id'] =status-filter;
+                                    d['paymentStatus'] = $('#status-filter').val();
+                                    d['logType'] = $('#logtype-filter').val();
+                                    return d;
+                                }
+                            },
+                            "columns": [
+                                {
+                                    data: null, "render": function (data, type, full, meta) {
+                                        return meta.row + 1;
+                                    }
+                                },
+                                { data: 'playerId.firstName', "defaultContent": "" },
+                                { data: 'playerId.email', "defaultContent": "" },
+                                { data: 'amount', "defaultContent": "" },
+                                { data: 'logType', "defaultContent": "" },
+                                { data: 'taxableAmount', "defaultContent": "" },
+                                { data: 'tds', "defaultContent": "" },
+                                { data: 'totalAmount', "defaultContent": "" },
+                                { data: 'paymentStatus', "defaultContent": "" },
+                                {
+                                    data: 'createdAt', render: function (data) {
+                                        return moment(data).format('DD-MM-YYYY h:mm a');
+                                    }
+                                },
+                                {
+                                    data: null, "render": function (data, type, full, meta) {
+                                        let a = '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/influencer/commission/edit/'
+                                            + full._id + '"><i class="uil uil-history font-size-18"></i></a>';
+
+                                        a += ' <a class="px-3 text-danger" onclick="delRec(\''
+                                            + full._id + '\')"><i class="uil uil-wallet font-size-18"></i></a> '
+
+                                        return a;
+                                    }
+                                },
+                            ]
+                        });
+                      
+                    </script>

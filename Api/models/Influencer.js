@@ -21,7 +21,7 @@ const InfluencerSchema = new mongoose.Schema({
     type: String,
 
   },
-  
+
   phone: {
     type: String,
 
@@ -52,6 +52,30 @@ const InfluencerSchema = new mongoose.Schema({
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
+  totalBalance: {
+    type: Number,
+    default: 0
+  },
+  giftPending: {
+    type: Number,
+    default: 0
+  },
+  commissionPending: {
+    type: Number,
+    default: 0
+  },
+  totalGifts: {
+    type: Number,
+    default: 0
+  },
+  totalCommissions: {
+    type: Number,
+    default: 0
+  },
+  totalWithdrawals: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now

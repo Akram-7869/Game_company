@@ -25,6 +25,8 @@ const posts = require('./posts');
 const faqs = require('./faqs');
 const frenchises = require('./frenchises');
 const influencers = require('./influencers');
+const commission = require('./commission');
+
 
 
 
@@ -51,6 +53,8 @@ router.use('/api/v1/posts', posts);
 router.use('/api/v1/faqs', faqs);
 router.use('/api/v1/frenchises', frenchises);
 router.use('/api/v1/influencers', influencers);
+router.use('/api/v1/commissions', commission);
+
 
 
 
