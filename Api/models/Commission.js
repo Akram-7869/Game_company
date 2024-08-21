@@ -37,9 +37,8 @@ const CommissionSchema = new mongoose.Schema({
     gameId: {
         type: String,
     },
-    amount: {
+    betTotal: {
         type: Number,
-        required: true
     },
     currency: {
         type: String,
