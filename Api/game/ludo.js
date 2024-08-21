@@ -45,7 +45,6 @@ class LudoGame {
             playerStatus: 'joined',
             avtar: 'http://174.138.52.41/assets/img/logo/profile_default.png'
         }
-        console.log(this.players.size,'bot-',this.bots.size,'max',this.maxPlayers  )
         if (this.players.size + this.bots.size < this.maxPlayers) {
             let botNumber =this.maxPlayers-this.players.size ;
              for (let i=0;i<botNumber;i++) {
@@ -60,6 +59,12 @@ class LudoGame {
         }
 
     }
+    
+
+
+
+
+
     syncPlayer(socket, player) {
         // Send current game state to the player
         if(!this.players.has(player.userId)){
@@ -267,29 +272,116 @@ class LudoGame {
         this.nextTurn();
     }
 
-    endGame() {
+     
+    endGame(reason) {
         this.currentPhase = 'finished';
-        this.io.to(this.roomName).emit('game_end', { message: 'Game has ended.' });
+        const winner = this.getWinner();
+        this.io.to(this.roomName).emit('game_end', { 
+            message: 'Game has ended.',
+            reason: reason,
+            winner: winner ? winner.userId : null
+        });
         console.log(`Game ended in room: ${this.roomName}`);
         this.resetGame();
     }
 
-    resetGame() {
-        this.players.clear();
-        this.bots.clear();
-        this.turnOrder = [];
-        this.currentTurnIndex = 0;
-        this.currentPhase = 'waiting';
-        if (this.turnTimer) {
-            this.turnTimer.pause();
-        }
-    }
+  
     OnKillEvent(socket) {
         socket.on('OnKillEvent', (d) => {
             this.io.to(this.roomName).emit('OnKillEvent', d);
         });
     }
 
+
+
+    handlePlayerContinueTurn(socket, data) {
+        let { canContinue } = data;
+        if (this.turnTimer) {
+            this.turnTimer.reset(15);
+        }
+        if (canContinue) {
+            if (this.turnTimer) {
+                this.turnTimer.startTimer();
+            }
+        } else {
+            this.nextTurn();
+        }
+        this.io.to(this.roomName).emit('OnContinueTurn', data);
+    }
+ 
+    handlePlayerLeave(socket, data) {
+        let { PlayerID } = data;
+        socket.leave(this.roomName);
+        if (this.players.has(PlayerID)) {
+            let obj = this.players.get(PlayerID);
+            obj.player.playerStatus = 'Left';
+            this.players.delete(PlayerID);
+            this.updateTurnOrder();
+        }
+        this.io.to(this.roomName).emit('onleaveRoom', {
+            players: this.getTurnOrder(),
+        });
+        this.checkGameStatus();
+    }
+ 
+    updateTurnOrder() {
+        this.turnOrder = this.getTurnOrder();
+        if (this.currentTurnIndex >= this.turnOrder.length) {
+            this.currentTurnIndex = 0;
+        }
+    }
+ 
+    getTurnOrder() {
+        return [...this.getPlayers(), ...this.getBots()];
+    }
+    checkGameStatus() {
+        if (this.players.size === 0) {
+            this.endGame('All players left');
+        } else if (this.isGameOver()) {
+            this.endGame('Game completed');
+        }
+    }
+    isGameOver() {
+        return this.turnOrder.some(player => 
+            player.pasa_1 === 56 && player.pasa_2 === 56 && player.pasa_3 === 56 && player.pasa_4 === 56
+        );
+    }
+
+    getWinner() {
+        return this.turnOrder.find(player => 
+            player.pasa_1 === 56 && player.pasa_2 === 56 && player.pasa_3 === 56 && player.pasa_4 === 56
+        );
+    }
+ 
+    resetGame() {
+        this.players.clear();
+        this.bots.clear();
+        this.turnOrder = [];
+        this.currentTurnIndex = 0;
+        this.currentPhase = 'waiting';
+        this.round = 0;
+        this.isGameReady = false;
+        if (this.turnTimer) {
+            this.turnTimer.pause();
+        }
+        if (this.roomJoinTimers) {
+            this.roomJoinTimers.pause();
+        }
+        if (this.bettingTimer) {
+            this.bettingTimer.pause();
+        }
+    }
+ 
+    setBotDifficulty(difficulty) {
+        if (['easy', 'medium', 'hard'].includes(difficulty)) {
+            this.botDifficulty = difficulty;
+            console.log(`Bot difficulty set to ${difficulty} for room ${this.roomName}`);
+        } else {
+            console.error(`Invalid bot difficulty: ${difficulty}`);
+        }
+    }
+ 
+  
 }
 
 module.exports = LudoGame;

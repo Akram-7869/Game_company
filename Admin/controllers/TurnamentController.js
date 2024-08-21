@@ -30,7 +30,8 @@ exports.getInfluencerTournament = asyncHandler(async (req, res, next) => {
     callApi(req).get(apiUrl + req.params.id)
         .then(r => {
             res.locals = { title: 'Tournament' };
-            res.render('Tournament/influencer-lion', { row: r.data.data, agodaAppId:'0f62fbaad9c446a3b1b7be2ba203be49'});
+            const sessionData = req.session.user;
+            res.render('Tournament/influencer-lion', { row: r.data.data, agodaAppId:'0f62fbaad9c446a3b1b7be2ba203be49', user:req.session.user});
         })
         .catch(error => {
 

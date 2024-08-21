@@ -30,7 +30,7 @@ exports.postLogin = asyncHandler(async (req, res, next) => {
 				res.redirect(process.env.ADMIN_URL + '/login');
 				return;
 			}
-			//req.session.user = r.data;
+			req.session.user = r.data;
 			res.cookie('token', r.data.token, { httpOnly: true });
 
 			//req.app.locals['user'] = r.data;

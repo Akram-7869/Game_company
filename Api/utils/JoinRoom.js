@@ -283,7 +283,13 @@ let defaultRolletValue = () => {
     socket['room'] = room;
     socket['userId'] = playerId;
     socket['lobbyId'] = d.lobbyId;
-    userSocketMap[playerId] = { room, 'socket_id': socket.id };
+    let user = { room, 'socket_id': socket.id, role:d.role, lobbyId:d.loobyId, name:d.name };
+    if(d.role ==='influencer'){
+      socket['role'] = d.influencer;
+
+      user= {...user , role:d.role, lobbyId:d.loobyId, name:d.name}
+    }
+    userSocketMap[playerId] = user;
     d['socket_id'] = socket.id;
     let index = -1;
     if (state[room]) {
@@ -316,16 +322,20 @@ let defaultRolletValue = () => {
   
   let userLeave = (s) => {
     console.log('leav-func')
-    if (state[s.room] && state[s.room].players.length !== -1) {
-      //delete state[s.room].players[s.userId];
-      const index = state[s.room].players.findIndex(user => user.userId === s.userId);
-      if (index !== -1) {
-        state[s.room].players.splice(index, 1);
-      }
+    
+    if (state[s.room]) {
+
       if (userSocketMap[s.userId]) {
-        userSocketMap[s.userId]['room'] = null;
+        delete userSocketMap[s.userId];
       }
-  
+
+      if(state[s.room].players.length !== 0){
+        const index = state[s.room].players.findIndex(user => user.userId === s.userId);
+        if (index !== -1) {
+          state[s.room].players.splice(index, 1);
+        }
+      }
+      
     }
   
     // for (let r in state) {

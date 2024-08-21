@@ -472,9 +472,9 @@
         <script>
           let socketId;
 
-          // var server = "http://174.138.52.41/socket.io/?EIO=3&transport=websocket";
+          // var server = "wss://daemon.cherrygames.io";
 
-          var io = io("wss://daemon.cherrygames.io", {
+          var io = io("ws://localhost:3000", {
             transports: ['websocket'],
             query: "EIO=3&transport=websocket"
           });;
@@ -482,11 +482,12 @@
           const form = document.getElementById('form');
           const input = document.getElementById('input');
           const messages = document.getElementById('messages');
-          let room = 'riqvJ';
+          let room = '';
           const data = {
-            userId: "kka",
-            firstName: 'kamlesh',
-            lobbyId: "666045af980bf75b5ec9ab43",
+            userId: "<%= row.influencerId%>",
+            firstName: "<%= user?.firstName %>",
+            lobbyId: "<%= row._id%>",
+            role: "<%= row.tournamentType %>",
             maxp: 99999
           };
 
