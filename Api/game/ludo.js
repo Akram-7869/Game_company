@@ -2,11 +2,11 @@ const Timer = require("./Timer");
 const { state, publicRoom, userSocketMap, tokenMiddleware, gameName, sleep, userLeave, getRoomLobbyUsers, getRoomUsers, joinRoom, arraymove, getKeyWithMinValue, defaultRolletValue } = require('../utils/JoinRoom');
 
 class LudoGame {
-    constructor(io, roomName, maxPlayers ,lobbyId) {
-        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;
+    constructor(io, roomName, maxPlayers, lobbyId) {
+        this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.lobbyId = lobbyId;
 
-        this.players = new Map();this.bots = new Map();
-         this.turnOrder = [];
+        this.players = new Map(); this.bots = new Map();
+        this.turnOrder = [];
         this.currentTurnIndex = 0;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.turnTimer = null;
@@ -18,108 +18,51 @@ class LudoGame {
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 9; // 5 seconds
         this.lastDiceValue = 6;
+        this.botMoveDelay = 1000;
         this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
+        this.isGameReady = false;
     }
-
-    addPlayer(socket) {
-        if (this.players.size + this.bots.size < this.maxPlayers) {
-            this.players.add(socket.id);
-             console.log(`Player ${socket.id} joined room ${this.roomName}`);
-        } else {
-            socket.emit('error', 'Room is full.');
-        }
-    }
-
-    addBot() {
-        let bot = {
-            userId: '1-bot',
-            name: 'Tester-bot',
-            balance: '575.79',
-            lobbyId: '66613de5980bf75b5ec9abb4',
-            maxp: 2,
-            type: 'bot',
-            pasa_1: -1,
-            pasa_2: -1,
-            pasa_3: -1,
-            pasa_4: -1,
-            playerStatus: 'joined',
-            avtar: 'http://174.138.52.41/assets/img/logo/profile_default.png'
-        }
-        if (this.players.size + this.bots.size < this.maxPlayers) {
-            let botNumber =this.maxPlayers-this.players.size ;
-             for (let i=0;i<botNumber;i++) {
-            let botId = `${i + 1}-bot`;
-            bot['userId'] = botId;
-            bot['name'] = botId;
-            this.bots.set(botId, { player: {...bot,userId:botId, name:botId } });
-            console.log(`Bot ${botId} added to room ${this.roomName}`);
-             }
-
-
-        }
-
-    }
-    
-
-
-
-
 
     syncPlayer(socket, player) {
         // Send current game state to the player
-        if(!this.players.has(player.userId)){
-              this.players.set(player.userId, { player, socket, lives: 3, position: -1 });
-        this.onleaveRoom(socket);
-        this.OnCurrentStatus(socket);
-        this.OnMovePasa(socket);
-        this.OnRollDice(socket);
-        this.OnKillEvent(socket);
-        this.OnContinueTurn(socket);
+        if (!this.players.has(player.userId)) {
+            this.players.set(player.userId, { player, socket, lives: 3, position: -1 });
+            this.setupPlayerListeners(socket)
 
         }
-      
+
     }
-
-    onleaveRoom(socket) {
-        socket.on('onleaveRoom',  (data)=> {
-            let { PlayerID } = data;
-            console.log(data,'onleaveRoom');
-            
-                console.log('OnleaveRoom--ludo')
-                socket.leave(this.roomName);
-                socket.removeAllListeners('OnBetsPlaced');
-                socket.removeAllListeners('OnCurrentStatus');
-                socket.removeAllListeners('OnMovePasa');
-                socket.removeAllListeners('OnRollDice');
-                socket.removeAllListeners('OnNextTurn');
-                socket.removeAllListeners('OnKillEvent');
-                socket.removeAllListeners('OnContinueTurn');
-
-
-
-
-                socket.removeAllListeners('OnWinNo');
-                socket.removeAllListeners('OnTimeUp');
-                socket.removeAllListeners('OnTimerStart');
-                socket.removeAllListeners('onleaveRoom');
-                if (this.players.has(PlayerID)) {
-                    let obj = this.players.get(PlayerID); // Get the object
-                    obj.player.playerStatus = 'Left';
-                    this.turnOrder = [...this.getPlayers(), ...this.getBots()];
-
+    checkAndAddBots() {
+        const totalPlayers = this.players.size + this.bots.size;
+        if (totalPlayers < this.maxPlayers && this.players.size > 0) {
+            const botsToAdd = this.maxPlayers - totalPlayers;
+            this.addBots(botsToAdd);
+        }
+        if (totalPlayers === this.maxPlayers) {
+            this.isGameReady = true;
+            this.emitJoinPlayer();
+        }
+    }
+    addBots(count) {
+        for (let i = 0; i < count; i++) {
+            //let botId = `bot-${this.bots.size + 1}`;
+            let botId = `${i + 1}-bot`;
+            this.bots.set(botId, {
+                player: {
+                    userId: botId,
+                    name: `Bot ${this.bots.size + 1}`,
+                    balance: '1000',
+                    lobbyId: this.lobbyId,
+                    maxp: this.maxPlayers,
+                    type: 'bot',
+                    pasa_1: -1, pasa_2: -1, pasa_3: -1, pasa_4: -1,
+                    playerStatus: 'joined',
+                    avtar: 'http://example.com/bot-avatar.png'
                 }
-                // Modify the object
-
-                // playerManager.RemovePlayer(socket.id);
-                this.io.to(this.roomName).emit('onleaveRoom', {
-                    players: this.turnOrder,
-
-                });
-
-             
-        });
+            });
+            console.log(`Bot ${botId} added to room ${this.roomName}`);
+        }
     }
-
     setupGame() {
         if (this.roomJoinTimers) return; // Prevent multiple starts
 
@@ -127,27 +70,27 @@ class LudoGame {
         this.roomJoinTimers = new Timer(10, (remaining) => {
             this.io.to(this.roomName).emit('join_tick', { remaining });
             if (remaining === 5) {
-                this.addBot();
-                this.emitJoinPlayer();
+                this.checkAndAddBots();
             }
 
         }, () => {
-            this.startGame();
+            if (this.isGameReady) {
+                this.startGame();
+            } else {
+                console.log("Not enough players to start the game.");
+                this.io.to(this.roomName).emit('game_cancelled', { reason: 'Not enough players' });
+            }
         });
 
         this.roomJoinTimers.startTimer();
-        
-        console.log(publicRoom[this.lobbyId]['played'], 'fff')
         console.log(`Game started in room: ${this.roomName}`);
 
     }
-    emitJoinPlayer(socket) {
-        console.log('players:',this.players,'Bots: ', this.bots);
-        this.turnOrder = [...this.getPlayers(), ...this.getBots()];
-        this.io.to(this.roomName).emit('join_players', { players: this.turnOrder });
+    emitJoinPlayer() {
+        this.io.to(this.roomName).emit('join_players', { players: this.getTurnOrder() });
     }
 
-    
+
 
     getPlayers() {
         return Array.from(this.players.values()).map(value => value.player);
@@ -155,46 +98,37 @@ class LudoGame {
     getBots() {
         return Array.from(this.bots.values()).map(value => value.player);
     }
-    OnMovePasa(socket) {
-        socket.on('OnMovePasa', (d) => {
-            let { PlayerID, key, steps } = d;
+    handlePlayerMove(socket, data) {
+        let { PlayerID, key, steps } = data;
+        let playerObj = this.players.get(PlayerID);
+        if (playerObj && playerObj.player[key] !== undefined) {
+            playerObj.player[key] += steps;
+            this.io.to(this.roomName).emit('OnMovePasa', data);
+        }
+    }
 
-            let obj = this.players.get(PlayerID); // Get the object
-            obj.player[key] = steps;
-            this.io.to(this.roomName).emit('OnMovePasa', d);
+
+    handlePlayerRollDice(socket) {
+        this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
+        // this.lastDiceValue = Math.floor(Math.random() * 6) + 1;
+        this.io.to(this.roomName).emit('OnRollDice', {
+            dice: this.lastDiceValue,
+            currentTurnIndex: this.currentTurnIndex
         });
     }
-    
-    OnRollDice(socket) {
-        
-        socket.on('OnRollDice', (d) => {
-            this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
-            this.io.to(this.roomName).emit('OnRollDice', {
-            
-                dice:  this.lastDiceValue,// Math.floor(Math.random() * 6) + 1,
-                currentTurnIndex :this.currentTurnIndex
-            });
-        });
-    }
-    OnCurrentStatus(socket) {
-        socket.on('OnCurrentStatus', (d) => {
-            this.io.to(socket.id).emit('OnCurrentStatus', {
-                gameType: 'Ludo',
-                room: this.roomName,
-                currentPhase: this.currentPhase,
-                players: this.turnOrder,
-                currentTurnIndex: this.currentTurnIndex,
-                betting_remaing: this.bettingTimer?.remaining,
-                pause_remaing: this.pauseTimer?.remaining,
-                //   winList: this.winList,
-                //  round:this.round
-
-            });
+    sendCurrentStatus(socket) {
+        socket.emit('OnCurrentStatus', {
+            gameType: 'Ludo',
+            room: this.roomName,
+            currentPhase: this.currentPhase,
+            players: this.turnOrder,
+            currentTurnIndex: this.currentTurnIndex,
+            betting_remaing: this.bettingTimer?.remaining,
         });
     }
     startGame() {
         if (this.bettingTimer) return; // Prevent multiple starts
-        publicRoom[this.lobbyId]['played']=true;
+        publicRoom[this.lobbyId]['played'] = true;
         this.currentPhase = 'playing';
         this.round += 1;
         this.turnOrder = [...this.getPlayers(), ...this.getBots()];
@@ -213,41 +147,244 @@ class LudoGame {
     }
 
     nextTurn(socket) {
-        if (this.turnTimer) {
-            this.turnTimer?.reset(15);
+        //     if (this.turnTimer) {
+        //         this.turnTimer?.reset(15);
+        //     }
+        //      console.log('OnNextTurn-binding');              
+        //         this.io.to(this.roomName).emit('OnNextTurn', {
+        //             gameType: 'Ludo',
+        //             room: this.roomName,
+        //             currentPhase: this.currentPhase,
+        //             currentTurnIndex: this.currentTurnIndex,
+        //         });
+
+        //   //  Set timer for the next turn
+        //     this.turnTimer = new Timer(15, (remaining) => {
+        //         this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
+        //     }, () => {
+        //         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+        //        this.nextTurn();
+        //     });
+
+        //     this.turnTimer.startTimer();
+
+        const currentPlayer = this.turnOrder[this.currentTurnIndex];
+
+        if (currentPlayer.playerStatus !== 'Left') {
+            if (currentPlayer.type === 'bot') {
+                this.botTurn(currentPlayer);
+            } else {
+                this.startTurnTimer();
+            }
+        } else {
+            this.nextTurn();
         }
-         console.log('OnNextTurn-binding');              
-            this.io.to(this.roomName).emit('OnNextTurn', {
-                gameType: 'Ludo',
-                room: this.roomName,
-                currentPhase: this.currentPhase,
-                currentTurnIndex: this.currentTurnIndex,
-            });
-    
-      //  Set timer for the next turn
+
+    }
+
+    startTurnTimer() {
+        if (this.turnTimer) {
+            this.turnTimer.reset(15);
+        }
+        this.io.to(this.roomName).emit('OnNextTurn', {
+            gameType: 'Ludo',
+            room: this.roomName,
+            currentPhase: this.currentPhase,
+            currentTurnIndex: this.currentTurnIndex,
+        });
+
         this.turnTimer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
         }, () => {
-            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-           this.nextTurn();
+            this.handleTurnTimeout();
         });
 
         this.turnTimer.startTimer();
     }
-    OnContinueTurn(socket) {
-        socket.on('OnContinueTurn', (d) => {
-            let {currentTurnIndex, canContinue}=d;  
-            this.turnTimer?.reset(15);
-            if(canContinue ===true){
-                this.turnTimer?.startTimer();
-            }else{
-                this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-                this.nextTurn();
+
+    handleTurnTimeout() {
+        const currentPlayer = this.turnOrder[this.currentTurnIndex];
+        if (this.players.has(currentPlayer.userId)) {
+            let playerObj = this.players.get(currentPlayer.userId);
+            playerObj.lives = (playerObj.lives || 3) - 1;
+            this.io.to(this.roomName).emit('player_lost_life', { playerId: currentPlayer.userId, lives: playerObj.lives });
+
+            if (playerObj.lives <= 0) {
+                playerObj.player.playerStatus = 'Left';
             }
-            
-            this.io.to(this.roomName).emit('OnContinueTurn', d);
-        });
+        }
+        this.nextTurn();
     }
+
+    botTurn(botPlayer) {
+        setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
+    }
+
+    botRollDice(botPlayer) {
+        const diceValue = Math.floor(Math.random() * 6) + 1;
+        this.io.to(this.roomName).emit('OnRollDice', {
+            dice: diceValue,
+            currentTurnIndex: this.currentTurnIndex
+        });
+
+        setTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);
+    }
+
+    botChooseMove(botPlayer, diceValue) {
+        const possibleMoves = this.getBotPossibleMoves(botPlayer, diceValue);
+        if (possibleMoves.length > 0) {
+            let chosenMove;
+            switch (this.botDifficulty) {
+                case 'easy':
+                    chosenMove = this.getRandomMove(possibleMoves);
+                    break;
+                case 'medium':
+                    chosenMove = this.getMediumMove(botPlayer, possibleMoves);
+                    break;
+                case 'hard':
+                    chosenMove = this.getHardMove(botPlayer, possibleMoves);
+                    break;
+                default:
+                    chosenMove = this.getRandomMove(possibleMoves);
+            }
+            this.executeBotMove(botPlayer, chosenMove, diceValue);
+        } else {
+            this.botEndTurn(botPlayer, false);
+        }
+    }
+
+    getBotPossibleMoves(botPlayer, diceValue) {
+        const moves = [];
+        for (let i = 1; i <= 4; i++) {
+            const tokenKey = `pasa_${i}`;
+            const currentPosition = botPlayer[tokenKey];
+            if (currentPosition === 0 && diceValue === 6) {
+                moves.push({ tokenKey, newPosition: 1 });
+            } else if (currentPosition > 0) {
+                const newPosition = currentPosition + diceValue;
+                if (newPosition <= 56) {
+                    moves.push({ tokenKey, newPosition });
+                }
+            }
+        }
+        return moves;
+    }
+
+    getRandomMove(possibleMoves) {
+        return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+    }
+
+    getMediumMove(botPlayer, possibleMoves) {
+        const killMoves = possibleMoves.filter(move => this.canKill(botPlayer, move.newPosition));
+        if (killMoves.length > 0) {
+            return this.getRandomMove(killMoves);
+        }
+        return possibleMoves.reduce((best, current) =>
+            current.newPosition > best.newPosition ? current : best
+        );
+    }
+
+    getHardMove(botPlayer, possibleMoves) {
+        const winningMoves = possibleMoves.filter(move => move.newPosition === 56);
+        if (winningMoves.length > 0) return winningMoves[0];
+
+        const killMoves = possibleMoves.filter(move => this.canKill(botPlayer, move.newPosition));
+        if (killMoves.length > 0) return this.getRandomMove(killMoves);
+
+        const safeMoves = possibleMoves.filter(move => this.isSafePosition(move.newPosition));
+        if (safeMoves.length > 0) {
+            return safeMoves.reduce((best, current) =>
+                current.newPosition > best.newPosition ? current : best
+            );
+        }
+
+        return possibleMoves.reduce((best, current) =>
+            current.newPosition > best.newPosition ? current : best
+        );
+    }
+
+    canKill(botPlayer, position) {
+        return this.turnOrder.some(player =>
+            player.userId !== botPlayer.userId &&
+            Object.values(player).some(pos => pos === position && !this.isSafePosition(position))
+        );
+    }
+
+    isSafePosition(position) {
+        const safePositions = [1, 9, 14, 22, 27, 35, 40, 48];
+        return safePositions.includes(position);
+    }
+
+    executeBotMove(botPlayer, move, diceValue) {
+        const { tokenKey, newPosition } = move;
+        botPlayer[tokenKey] = newPosition;
+
+        const moveData = {
+            PlayerID: botPlayer.userId,
+            key: tokenKey,
+            steps: diceValue,
+            newPosition: newPosition
+        };
+
+        this.io.to(this.roomName).emit('OnMovePasa', moveData);
+
+        const killed = this.checkForKills(botPlayer, newPosition);
+        if (killed) {
+            setTimeout(() => this.handleBotKill(botPlayer, killed), this.botMoveDelay);
+        } else {
+            this.botEndTurn(botPlayer, diceValue === 6);
+        }
+    }
+
+    checkForKills(botPlayer, newPosition) {
+        const killed = [];
+        this.turnOrder.forEach(player => {
+            if (player.userId !== botPlayer.userId) {
+                for (let i = 1; i <= 4; i++) {
+                    const tokenKey = `pasa_${i}`;
+                    if (player[tokenKey] === newPosition && !this.isSafePosition(newPosition)) {
+                        killed.push({ player, tokenKey });
+                    }
+                }
+            }
+        });
+        return killed.length > 0 ? killed : null;
+    }
+
+    handleBotKill(botPlayer, killed) {
+        killed.forEach(({ player, tokenKey }) => {
+            player[tokenKey] = 0;
+            this.io.to(this.roomName).emit('OnKillEvent', {
+                killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === botPlayer.userId),
+                killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
+                killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
+                killedPasaIndex: parseInt(tokenKey.split('_')[1]) - 1
+            });
+        });
+
+        this.botEndTurn(botPlayer, true);
+    }
+
+    botEndTurn(botPlayer, canContinue) {
+        this.io.to(this.roomName).emit('OnContinueTurn', {
+            PlayerID: botPlayer.userId,
+            canContinue: canContinue
+        });
+
+        if (canContinue) {
+            setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
+        } else {
+            this.nextTurn();
+        }
+    }
+    setupPlayerListeners(socket) {
+        socket.on('OnMovePasa', (data) => this.handlePlayerMove(socket, data));
+        socket.on('OnRollDice', () => this.handlePlayerRollDice(socket));
+        socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
+        socket.on('OnContinueTurn', (data) => this.handlePlayerContinueTurn(socket, data));
+        socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket, data));
+    }
+
 
 
     botMove(botId) {
@@ -272,11 +409,11 @@ class LudoGame {
         this.nextTurn();
     }
 
-     
+
     endGame(reason) {
         this.currentPhase = 'finished';
         const winner = this.getWinner();
-        this.io.to(this.roomName).emit('game_end', { 
+        this.io.to(this.roomName).emit('game_end', {
             message: 'Game has ended.',
             reason: reason,
             winner: winner ? winner.userId : null
@@ -285,7 +422,7 @@ class LudoGame {
         this.resetGame();
     }
 
-  
+
     OnKillEvent(socket) {
         socket.on('OnKillEvent', (d) => {
             this.io.to(this.roomName).emit('OnKillEvent', d);
@@ -308,7 +445,7 @@ class LudoGame {
         }
         this.io.to(this.roomName).emit('OnContinueTurn', data);
     }
- 
+
     handlePlayerLeave(socket, data) {
         let { PlayerID } = data;
         socket.leave(this.roomName);
@@ -323,14 +460,14 @@ class LudoGame {
         });
         this.checkGameStatus();
     }
- 
+
     updateTurnOrder() {
         this.turnOrder = this.getTurnOrder();
         if (this.currentTurnIndex >= this.turnOrder.length) {
             this.currentTurnIndex = 0;
         }
     }
- 
+
     getTurnOrder() {
         return [...this.getPlayers(), ...this.getBots()];
     }
@@ -342,17 +479,17 @@ class LudoGame {
         }
     }
     isGameOver() {
-        return this.turnOrder.some(player => 
+        return this.turnOrder.some(player =>
             player.pasa_1 === 56 && player.pasa_2 === 56 && player.pasa_3 === 56 && player.pasa_4 === 56
         );
     }
 
     getWinner() {
-        return this.turnOrder.find(player => 
+        return this.turnOrder.find(player =>
             player.pasa_1 === 56 && player.pasa_2 === 56 && player.pasa_3 === 56 && player.pasa_4 === 56
         );
     }
- 
+
     resetGame() {
         this.players.clear();
         this.bots.clear();
@@ -371,7 +508,7 @@ class LudoGame {
             this.bettingTimer.pause();
         }
     }
- 
+
     setBotDifficulty(difficulty) {
         if (['easy', 'medium', 'hard'].includes(difficulty)) {
             this.botDifficulty = difficulty;
@@ -380,8 +517,8 @@ class LudoGame {
             console.error(`Invalid bot difficulty: ${difficulty}`);
         }
     }
- 
-  
+
+
 }
 
 module.exports = LudoGame;
