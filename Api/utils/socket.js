@@ -1,6 +1,6 @@
 
 
-const { makeid } = require('../utils/utils');
+const { makeid ,getKey, setkey } = require('../utils/utils');
 const Player = require('../models/Player');
 
 
@@ -82,9 +82,14 @@ let onConnection = (socket) => {
     }
     if(d.role ==='influencer'){
      // io.emit('influencer_matches', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
-     const influencers = Object.entries(userSocketMap)
+     const validIds = Object.entries(userSocketMap)
     .filter(([playerId, user]) => user.role === 'influencer')
-    .map(([userId, user]) => ({ userId, ...user }));
+    .map(([userId, user]) => user.tournamentId);
+
+    let influencers = await Tournament.find({tournamentId: { $in: validIds }}).populate('influencerId', 'displayName');
+
+      setkey('influencer_matches',influencers );
+
      io.emit('influencer_matches', {influencers});
     }
    // io.to(roomName).emit('res', { ev: 'join', data });
@@ -186,8 +191,7 @@ let onConnection = (socket) => {
   //leave
   socket.on('leave', (d) => {
     let { room, userId } = d;
-    delete userSocketMap[userId];
-
+ 
     userLeave(d);
     socket.leave(room);
     let data = {
@@ -204,10 +208,7 @@ let onConnection = (socket) => {
     io.in(room).emit('chat_message', d);
   });
   socket.on('influencer_matches', (d) => {
-     const influencers = Object.entries(userSocketMap)
-    .filter(([playerId, user]) => user.role === 'influencer')
-    .map(([userId, user]) => ({ userId, ...user }));
-     io.emit('influencer_matches', {influencers});
+     const influencers =  getKey('influencer_matches')
     io.to(socket.id).emit('influencer_matches', {influencers});
   });
   socket.on('emoji_message', (d) => {
