@@ -866,7 +866,9 @@ exports.won = asyncHandler(async (req, res, next) => {
 
 
   let commisonInf = {
-    'gameId': gameId
+    'gameId': gameId,
+    'playerId': req.player._id,
+    
   }
   if (tournament.influencerId) {
     commisonInf['ownerId'] = tournament.influencerId;
