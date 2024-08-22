@@ -871,7 +871,7 @@ exports.won = asyncHandler(async (req, res, next) => {
     
   }
   if (tournament.influencerId) {
-    commisonInf['ownerId'] = tournament.influencerId;
+    commisonInf['influencerId'] = tournament.influencerId;
     commisonInf['influencerCommission'] = adminCommision * 0.7;
 
     await Influencer.findByIdAndUpdate(tournament.influencerId, {
@@ -887,7 +887,7 @@ exports.won = asyncHandler(async (req, res, next) => {
   if (player.stateCode) {
     let franchiseDoc = await Franchise.findOne({ stateCode: player.stateCode, status: 'active' });
     if (franchiseDoc) {
-      commisonInf['ownerId'] = franchiseDoc._id;
+      commisonInf['franchiseId'] = franchiseDoc._id;
       commisonInf['franchiseCommission'] = adminCommision * 0.3;
       await Franchise.findByIdAndUpdate(franchiseDoc._id, { $inc: { totalBalance: commisonInf['franchiseCommission'], totalCommissions: commisonInf['franchiseCommission'] } });
 
