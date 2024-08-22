@@ -49,7 +49,7 @@ exports.getInfluencerTournaments = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Tournaments/:id
 // @access    Private/Admin
 exports.getTournament = asyncHandler(async (req, res, next) => {
-    const row = await Tournament.findById(req.params.id);
+    const row = await Tournament.findById(req.params.id).lean();
 
     res.status(200).json({
         success: true,

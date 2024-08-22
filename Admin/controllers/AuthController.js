@@ -30,7 +30,9 @@ exports.postLogin = asyncHandler(async (req, res, next) => {
 				return;
 			}
 			req.session.user = r.data;
+			console.log(r.data);
 			res.cookie('token', r.data.token, { httpOnly: true });
+			res.cookie('firstName', r.data.firstName, { httpOnly: true });
 
 			//req.app.locals['user'] = r.data;
 			if(r.data.role ==='admin'){

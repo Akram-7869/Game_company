@@ -470,13 +470,14 @@ const sendTokenResponse = (user, statusCode, res) => {
   if (process.env.NODE_ENV === 'production') {
     options.secure = true;
   }
-
+console.log(user,'user')
 let d= {
   success: true,
   token,
   playerId: user._id,
   role:user.role,
   firstName: user.firstName,
+  displayName: user.displayName,
   lastName: user.lastName,
   email: user.email
 }
