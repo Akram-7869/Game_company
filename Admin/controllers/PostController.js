@@ -5,7 +5,7 @@ const { callApi, api_url, uploadFile } = require('../helper/common');
 let apiUrl = api_url + '/posts/';
 
 exports.postList = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Post', apiUrl, image_url: process.env.IMAGE_URL };
+      res.locals = { title: 'Post', apiUrl, image_url: process.env.IMAGE_URL ,originalUrl: req.originalUrl};
       res.render('Post/list')
 });
 exports.getPosts = asyncHandler(async (req, res, next) => {
@@ -20,7 +20,7 @@ exports.getPosts = asyncHandler(async (req, res, next) => {
 
 });
 exports.getPost = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Post', apiUrl, image_url: process.env.IMAGE_URL };
+      res.locals = { title: 'Post', 'apiUrl': apiUrl, indexUrl: handleIndexUrl(req), image_url: process.env.IMAGE_URL};
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
                   res.locals = { title: 'Post' };
@@ -38,18 +38,16 @@ exports.updatePost = asyncHandler(async (req, res, next) => {
             .then(r => {
                   // Assign value in session
                   req.flash('message', 'Data save');
-                  res.redirect(process.env.ADMIN_URL + '/admin/post');
-            })
+                  handleRedirect(req,res);
+
+             })
             .catch(error => { req.flash('error', 'Data not updated'); })
 });
 exports.editPost = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Post', apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/post' };
+      res.locals = { title: 'Post', apiUrl, indexUrl: handleIndexUrl(req) ,originalUrl: req.originalUrl };
       callApi(req).get(apiUrl + req.params.id, req.body)
             .then(r => {
                   // Assign value in session
-
-                  req.flash('message', 'Data save');
-
                   res.render('Post/edit', { row: r.data.data });
             })
             .catch(error => {
@@ -97,12 +95,25 @@ exports.getPost = asyncHandler(async (req, res, next) => {
 
 
 exports.postAdd = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Post', 'apiUrl': apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/posts', image_url: process.env.IMAGE_URL };
+      res.locals = { title: 'Post', 'apiUrl': apiUrl, indexUrl: handleIndexUrl(req), image_url: process.env.IMAGE_URL };
 
       res.render('Post/add', { row: {} });
 });
 
-
+let handleIndexUrl =(req)=>{
+      if (req.role === 'influencer'){
+     return       process.env.ADMIN_URL + '/influencer/posts';
+      }else {
+     return process.env.ADMIN_URL + '/admin/posts'
+      }
+}
+let handleRedirect =(req,res)=>{
+      if (req.role === 'influencer'){
+            res.redirect(process.env.ADMIN_URL + '/influencer/posts');
+      }else {
+      res.redirect(process.env.ADMIN_URL + '/admin/posts');
+      }
+}
 exports.createPost = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Post' };
       let { description, status } = req.body;
@@ -121,7 +132,7 @@ exports.createPost = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Post' };
                   req.flash('message', 'Data save');
-                  res.redirect(process.env.ADMIN_URL + '/admin/posts');
+                  handleRedirect(req,res);
             })
             .catch(error => {
                   //   

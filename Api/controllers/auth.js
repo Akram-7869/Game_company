@@ -504,7 +504,7 @@ switch (role) {
   case 'influencer':
      user = await Influencer.findOne({ email }).select('+password');
     break;
-    case 'frenchise':
+    case 'franchise':
        user = await Franchise.findOne({ email }).select('+password');
     break;
     case 'admin':
@@ -546,8 +546,8 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
   if (!res.app.get('bot_profile')) {
 
 
-    filename = '/img/profile-picture/';
-    filePath = path.resolve(__dirname, '../../assets/' + filename);
+    let filename = '/img/profile-picture/';
+    let filePath = path.resolve(__dirname, '../../assets/' + filename);
     let pathurl = process.env.IMAGE_URL + filename;
     //console.log(filePath);
     fs.readdirSync(filePath).forEach(file => {

@@ -8,7 +8,7 @@ const bannerControler = require('../controllers/BannerController');
 const settingCtrl = require('../controllers/SettingController');
 const managerCtrl = require('../controllers/ManagerController');
 const influencerCtrl = require('../controllers/InfluencerController');
-const frenchiseCtrl = require('../controllers/FrenchiseController');
+const franchiseCtrl = require('../controllers/franchiseController');
 
 
 const botCtrl = require('../controllers/BotController');
@@ -37,11 +37,11 @@ router.use(protect);
 router.route('/commission').get(commissionCtrl.commissionList);
 router.route('/commission/data').post(commissionCtrl.getCommissions);
 
-router.route('/frechise').get(frenchiseCtrl.listFrenchise); router.route('/frechise/data').post(frenchiseCtrl.getFrenchises);
-//router.route('/frechise/view/:id').get(  showFrenchiseView);
-router.route('/frechise/restpassword').get(frenchiseCtrl.resetPassword).post(frenchiseCtrl.updatePassword);
-router.route('/frechise/add').get(frenchiseCtrl.addFrenchise).post(frenchiseCtrl.createFrenchises);
-router.route('/frechise/:id').get(frenchiseCtrl.getFrenchise).post(frenchiseCtrl.updateFrenchise).delete(frenchiseCtrl.deleteFrenchise);
+router.route('/frechise').get(franchiseCtrl.listfranchise); router.route('/frechise/data').post(franchiseCtrl.getfranchises);
+//router.route('/frechise/view/:id').get(  showfranchiseView);
+router.route('/frechise/restpassword').get(franchiseCtrl.resetPassword).post(franchiseCtrl.updatePassword);
+router.route('/frechise/add').get(franchiseCtrl.addfranchise).post(franchiseCtrl.createfranchises);
+router.route('/frechise/:id').get(franchiseCtrl.getfranchise).post(franchiseCtrl.updatefranchise).delete(franchiseCtrl.deletefranchise);
 
 
 router.route('/influencer').get(influencerCtrl.listInfluencer); router.route('/influencer/data').post(influencerCtrl.getInfluencers);

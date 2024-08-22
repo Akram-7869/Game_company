@@ -87,7 +87,7 @@ class TambolaGame {
       const number = this.drawNumber();
       if (number === null) {
         clearInterval(this.intervalId);
-        this.io.to(this.room).emit('tambolaEnd', { message: 'All numbers have been drawn' });
+        this.io.to(this.room).emit('gameEnded', { message: 'All numbers have been drawn' });
       } else {
         console.log(`newnumber`)
         this.io.to(this.room).emit('newNumber', { gameType: 'tambola', room: this.room, number , intervel:delay, playerCount:this.players.size});

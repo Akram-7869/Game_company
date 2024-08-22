@@ -34,11 +34,11 @@ exports.getCommissions = asyncHandler(async (req, res, next) => {
             })
 
 });
-exports.frenchiseCommList = asyncHandler(async (req, res, next) => {
+exports.franchiseCommList = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Commission' };
-      res.render('Commission/frenchise')
+      res.render('Commission/franchise')
 });
-exports.frenchiseCommData = asyncHandler(async (req, res, next) => {
+exports.franchiseCommData = asyncHandler(async (req, res, next) => {
 
       callApi(req).post(apiUrl, { ...req.body })
               .then(r => {

@@ -1,21 +1,21 @@
 const asyncHandler = require('../middleware/async');
 const { callApi, api_url, stateList } = require('../helper/common');
-var apiUrl = api_url + '/frenchises/';
+var apiUrl = api_url + '/franchises/';
 
 
-exports.listFrenchise = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Frenchise' };
-      res.render('Frenchise/list', { 'message': req.flash('message'), 'error': req.flash('error') });
+exports.listfranchise = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'franchise' };
+      res.render('franchise/list', { 'message': req.flash('message'), 'error': req.flash('error') });
 });
 
 
-exports.getFrenchise = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Frenchise' };
+exports.getfranchise = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'franchise' };
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
 
-                  res.locals = { title: 'Frenchise' };
-                  res.render('Frenchise/edit', { row: r.data.data ,stateList});
+                  res.locals = { title: 'franchise' };
+                  res.render('franchise/edit', { row: r.data.data ,stateList});
             })
             .catch(error => {
 
@@ -23,9 +23,9 @@ exports.getFrenchise = asyncHandler(async (req, res, next) => {
 });
 
 
-exports.updateFrenchise = asyncHandler(async (req, res, next) => {
+exports.updatefranchise = asyncHandler(async (req, res, next) => {
 
-      res.locals = { title: 'Frenchise' };
+      res.locals = { title: 'franchise' };
       callApi(req).put(apiUrl + req.params.id, req.body)
             .then(r => {
                   if (r.data.success) {
@@ -45,11 +45,11 @@ exports.updateFrenchise = asyncHandler(async (req, res, next) => {
 });
 
 
-exports.deleteFrenchise = asyncHandler(async (req, res, next) => {
+exports.deletefranchise = asyncHandler(async (req, res, next) => {
       callApi(req).delete(apiUrl + req.params.id)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Frenchise' };
+                  res.locals = { title: 'franchise' };
                   req.flash('message', 'Data save');
                   res.redirect(process.env.ADMIN_URL + '/admin/manager');
 
@@ -69,7 +69,7 @@ exports.deleteFrenchise = asyncHandler(async (req, res, next) => {
 
 
 
-exports.getFrenchises = asyncHandler(async (req, res, next) => {
+exports.getfranchises = asyncHandler(async (req, res, next) => {
 
       callApi(req).post(apiUrl, { ...req.body })
             .then(r => {
@@ -87,18 +87,18 @@ exports.getFrenchises = asyncHandler(async (req, res, next) => {
 });
 
 
-exports.addFrenchise = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Frenchise' };
-      res.render('Frenchise/add', { row: {},stateList });
+exports.addfranchise = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'franchise' };
+      res.render('franchise/add', { row: {},stateList });
 });
 
 
-exports.createFrenchises = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Frenchise' };
+exports.createfranchises = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'franchise' };
       callApi(req).post(apiUrl + 'add', req.body)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Frenchise-edit' };
+                  res.locals = { title: 'franchise-edit' };
                   req.flash('message', 'Data save');
                   res.redirect(process.env.ADMIN_URL + '/admin/frechise');
 
@@ -111,13 +111,13 @@ exports.createFrenchises = asyncHandler(async (req, res, next) => {
             })
 });
 
-exports.showFrenchise = asyncHandler(async (req, res, next) => {
+exports.showfranchise = asyncHandler(async (req, res, next) => {
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
                   // Assign value in session
 
-                  res.locals = { title: 'Frenchise' };
-                  res.render('Frenchise/view', { row: r.data.data });
+                  res.locals = { title: 'franchise' };
+                  res.render('franchise/view', { row: r.data.data });
 
 
             })
@@ -130,17 +130,17 @@ exports.showFrenchise = asyncHandler(async (req, res, next) => {
 });
 
 exports.resetPassword = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Frenchise' };
-      res.render('Frenchise/resetpassword');
+      res.locals = { title: 'franchise' };
+      res.render('franchise/resetpassword');
 });
 
 exports.updatePassword = asyncHandler(async (req, res, next) => {
 
-      res.locals = { title: 'Frenchise' };
+      res.locals = { title: 'franchise' };
       callApi(req).post(apiUrl + 'resetpassword', req.body)
             .then(r => {
                   // Assign value in session
-                  res.locals = { title: 'Frenchise' };
+                  res.locals = { title: 'franchise' };
                   req.flash('message', 'Data save');
                   res.redirect(process.env.ADMIN_URL + '/admin/manager');
 

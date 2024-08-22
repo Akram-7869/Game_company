@@ -3,6 +3,13 @@ var dataTables = require('mongoose-datatables')
 
 const PostSchema = new mongoose.Schema({
     owner: { type: mongoose.Schema.Types.ObjectId, required: true },
+   
+  userType: {
+    type: String,
+    enum: ['player', 'admin', 'influencer'],
+    default: 'player'
+  },
+
     displayName:{type: String},
     profileImage:{type: String},
     imageId: {type: String},

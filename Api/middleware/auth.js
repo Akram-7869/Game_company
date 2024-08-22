@@ -52,7 +52,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
           return next(new ErrorResponse('Account is' + req.user.status));
         }
         break;
-      case 'frenchise':
+      case 'franchise':
         req.user = await Franchise.findById(decoded.id);
         if (req.user.status == 'inactive') {
           return next(new ErrorResponse('Account is' + req.user.status));

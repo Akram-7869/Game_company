@@ -12,7 +12,7 @@ router.post('/post-login', authCtrl.postLogin);
 
 router.get('/register/influencer', authCtrl.authRegister);
 router.post('/register/influencer', authCtrl.createInfluencer);
-router.get('/register/frenchise', authCtrl.authRegister);
+router.get('/register/franchise', authCtrl.authRegister);
 
 
 router.get('/forgot-password', authCtrl.forgotPassword);

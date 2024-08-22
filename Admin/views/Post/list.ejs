@@ -48,7 +48,7 @@
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
-                            <a type="button" href="<%=process.env.ADMIN_URL%>/admin/posts/add"
+                            <a type="button" href="<%=originalUrl%>/add"
                                 class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i>
                                 Add New Post</a>
 
@@ -119,7 +119,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '<%=process.env.ADMIN_URL%>/admin/posts/' + id,
+                                url: '<%=originalUrl%>/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -162,7 +162,7 @@
 
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/posts/'
+                                        return '<a class="px-2 text-primary" href="<%=originalUrl%>/'
                                             + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\''
                                             + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
 

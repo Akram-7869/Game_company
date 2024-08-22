@@ -65,9 +65,9 @@
                             </div>
                             <div>
                                 <h4 class="mb-1 mt-1"><span data-plugin="counterup">
-                                        <%=list.totalPlayers%>
+                                        <%=totalBalance%>
                                     </span></h4>
-                                <p class="text-muted mb-0">Total Players</p>
+                                <p class="text-muted mb-0">Total Balance</p>
                             </div>
                             <!-- <p class="text-muted mt-3 mb-0"><span class="text-success me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>2.65%</span> since last week -->
                             </p>
@@ -85,11 +85,11 @@
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%>
                                         <span data-plugin="counterup">
-                                            <%=parseInt(list.totalIncome)%>
+                                            <%=parseInt(totalGifts)%>
                                         </span>
                                 </h4>
 
-                                <p class="text-muted mb-0">Total Income</p>
+                                <p class="text-muted mb-0">Total Gift</p>
                             </div>
                             <!-- <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i class="mdi mdi-arrow-down-bold me-1"></i>0.82%</span> since last week -->
                             </p>
@@ -108,7 +108,7 @@
                             </div>
                             <div>
                                 <h4 class="mb-1 mt-1"><span data-plugin="counterup">
-                                        <%=list.livePlayers%>
+                                        <%=livePlayers%>
                                     </span></h4>
                                 <p class="text-muted mb-0">Live Player</p>
                             </div>
@@ -127,7 +127,7 @@
                                 <h4 class="mb-1 mt-1">
                                         <%=currency_symbol %> <span id="WithdrawTotal">0</span>
                                 </h4>
-                                <p class="text-muted mb-0">Withdraw Total ( <span class="days_view"></span> )</p>
+                                <p class="text-muted mb-0">Prize Total ( <span class="days_view"></span> )</p>
                             </div>
 
 
@@ -149,10 +149,10 @@
                             <div>
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%> <span data-plugin="counterup">
-                                            <%=parseInt(list.winAmount)%>
+                                            <%=parseInt(totalCommissions)%>
                                         </span>
                                 </h4>
-                                <p class="text-muted mb-0">winAmount</p>
+                                <p class="text-muted mb-0">Commison</p>
                             </div>
                             <!-- <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
                                         class="mdi mdi-arrow-down-bold me-1"></i>0.82%</span> since last week
@@ -170,7 +170,7 @@
                             <div>
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%> <span data-plugin="counterup">
-                                            <%=parseInt(list.betAmount)%>
+                                            <%=parseInt(0)%>
                                         </span>
                                 </h4>
                                 <p class="text-muted mb-0">betAmount</p>
@@ -191,7 +191,7 @@
                             <div>
                                 <h4 class="mb-1 mt-1">
                                     <span data-plugin="counterup">
-                                        <%=parseInt(list.payoutCount)%>
+                                        <%=parseInt(0)%>
                                     </span>
                                 </h4>
                                 <p class="text-muted mb-0"> Payout Count</p>
@@ -212,7 +212,7 @@
                                 <h4 class="">
                                     <%=currency_symbol%> <span id="DepositTotal">0</span>
                                 </h4>
-                                <p class="text-muted mb-0">DepositTotal ( <span class="days_view"> </span> )</p>
+                                <p class="text-muted mb-0">CommisonTotal ( <span class="days_view"> </span> )</p>
                             </div>
 
                         </div>
@@ -247,7 +247,7 @@
                             Swal.showLoading();
                             return $.ajax({
                                 type: 'POST',
-                                url: '<%=process.env.ADMIN_URL%>/admin/dashboard/total-income/',
+                                url: '<%=process.env.ADMIN_URL%>/influencer/dashboard/income/',
                                 data: {
                                     's_date': $('#s_date').val(),
                                     'e_date': $('#e_date').val()
@@ -256,10 +256,9 @@
                                     Swal.close();
                                     if (results.success) {
                                         $('.days_view').text(days_txt);
-                                        //  alert(results.data.status + ' ' + results.data.message);
-                                        $('#WithdrawTotal').val(results.data.withdrawalsTotal);
+                                         $('#WithdrawTotal').val(results.data.totalPrize);
 
-                                        $('#DepositTotal').val(results.data.depositsTotal);
+                                        $('#DepositTotal').val(results.data.totalCommission);
                                     } else {
                                         alert(results.error);
 

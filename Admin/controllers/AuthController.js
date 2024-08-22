@@ -23,7 +23,6 @@ exports.postLogin = asyncHandler(async (req, res, next) => {
 		role:req.body.role
 	})
 		.then(r => {
-			console.log(r);
 			// Assign value in session
 			if (!r.data.success) {
 				req.flash('error', 'Wrong password. Please try again!');

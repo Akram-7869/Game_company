@@ -6,9 +6,17 @@ const { protect } = require('../middleware/auth');
 
 router.use(protect);
 
-router.route('/filter/:type').post(dash.getFilterDashboard);
+router.route('/filter/dashboard').post(dash.getFilterDashboard);
+ router.route('/filter/influencer').post(dash.getInfluencerDashboard);
+ router.route('/filter/franchise').post(dash.getFranchiseDashboard);
+
+
 router.route('/chart/data').post(dash.getGraphData);
 router.route('/total-income').post(dash.totalIncome);
+router.route('/influencer-income').post(dash.influencerIncome);
+router.route('/franchise-income').post(dash.influencerIncome);
+
+
 router.route('/add').post(dash.createDashboard);
 router.route('/').post(dash.getDashboards);
 

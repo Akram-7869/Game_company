@@ -885,11 +885,11 @@ exports.won = asyncHandler(async (req, res, next) => {
   }
 
   if (player.stateCode) {
-    let frenchiseDoc = await Franchise.findOne({ stateCode: player.stateCode, status: 'active' });
-    if (frenchiseDoc) {
-      commisonInf['ownerId'] = frenchiseDoc._id;
+    let franchiseDoc = await Franchise.findOne({ stateCode: player.stateCode, status: 'active' });
+    if (franchiseDoc) {
+      commisonInf['ownerId'] = franchiseDoc._id;
       commisonInf['franchiseCommission'] = adminCommision * 0.3;
-      await frenchiseDoc.findByIdAndUpdate(frenchiseDoc._id, { $inc: { totalBalance: commisonInf['franchiseCommission'], totalCommissions: commisonInf['franchiseCommission'] } });
+      await franchiseDoc.findByIdAndUpdate(franchiseDoc._id, { $inc: { totalBalance: commisonInf['franchiseCommission'], totalCommissions: commisonInf['franchiseCommission'] } });
 
     }
   }
@@ -1023,6 +1023,10 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   } else {
     let tournament = await Tournament.findById(tournamentId);
     let c = { playerId: req.player._id, gameId, amountBet: amount, tournamentId, influencerId: tournament.influencerId }
+
+    if (req.body.logType === 'influencer_gift') {
+       c.amountBet = 0;
+    } 
     console.log('c', c)
     playerGame = await PlayerGame.create(c);
   }
@@ -1065,6 +1069,9 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
         totalBalance: amount,
         totalGifts: amount
       }
+    });
+    await playerGame.findByIdAndUpdate(playerGame._id, {
+      $inc: {amountPrize: amount}
     });
 
   }

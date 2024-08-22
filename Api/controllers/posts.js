@@ -9,19 +9,30 @@ const { uploadFile, deletDiskFile } = require('../utils/utils');
 // @route     GET /api/v1/auth/Posts
 // @access    Private/Admin
 exports.getPosts = asyncHandler(async (req, res, next) => {
+let filter ={
+  limit: req.body.length,
+  skip: req.body.start,
+  //   select:{'postUrl':1, 'createdAt':1},
+  search: {
+    value: req.body.search ? req.body.search.value : '',
+    fields: ['status']
+  },
+  find:{},
+  sort: {
+    _id: -1
+  }
+}
 
-  Post.dataTables({
-    limit: req.body.length,
-    skip: req.body.start,
-    //   select:{'postUrl':1, 'createdAt':1},
-    search: {
-      value: req.body.search ? req.body.search.value : '',
-      fields: ['status']
-    },
-    sort: {
-      _id: -1
-    }
-  }).then(function (table) {
+if(req.role == 'influencer'){
+  filter['find']['owner'] = req.user._id;
+}else if(req.role == 'player'){
+  filter['find']['owner'] = req.player._id;
+}
+
+
+
+
+  Post.dataTables(filter).then(function (table) {
     res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
   })
   //res.status(200).json(res.advancedResults);
@@ -78,7 +89,7 @@ exports.createPost = asyncHandler(async (req, res, next) => {
   let{files,description,filename, displayName='', profileImage, status='active'}=req.body;
   let owner = '';   
   let defaultFprofileImage = process.env.API_URI + '/assets/img/logo/profile_default.png';
-  
+  let userType='player';
   if (req.role =='player') {
     owner = req.player._id;
     // displayname=req.player.firstName;
@@ -89,13 +100,15 @@ exports.createPost = asyncHandler(async (req, res, next) => {
           filename = '/img/post/' + file.name;
           uploadFile(req, filename, res);
     }
-  
+    
   } else if (req.role =='influencer') {
      owner = req.user._id;
      displayName=req.user.displayname;
+     userType='influencer';
   }else if (req.role =='admin' || req.role =='manager') {
     owner = req.staff._id;
     displayName=req.staff.displayname;
+    userType='admin';
   }
 
  
@@ -108,7 +121,8 @@ exports.createPost = asyncHandler(async (req, res, next) => {
     status:status,
     imageId: filename,
     postType: req.body.postType,
-    profileImage
+    profileImage,
+    userType,
   }
 
   const row = await Post.create(post);
@@ -134,7 +148,7 @@ exports.updatePost = asyncHandler(async (req, res, next) => {
 
 
   let filename;
-  let fieldsToUpdate = { descripton: req.body.title, status: req.body.status, postType: req.body.postType };
+  let fieldsToUpdate = { description: req.body.description, status: req.body.status };
   if (req.files) {
     filename = '/img/post/' + req.files.file.name;
     let filePath = path.resolve(__dirname, '../../assets/' + row.imageId);

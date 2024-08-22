@@ -43,26 +43,17 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <div>
+                                    <!-- <div>
                                         <form class="d-inline-flex mb-3">
                                             <label class="form-check-label my-2 me-2"
                                                 for="order-selectinput">Status</label>
                                             <select class="form-select" id="status-filter">
-                                                <option value="" selected>All</option>
-                                                 <option value="processing" >Processing</option>
-                                                <option value="complete">complete</option>
-                                             </select>
-                                            <label class="form-check-label my-2 me-2"
-                                                for="order-selectinput">Logtype</label>
-                                            <select class="form-select" id="logtype-filter">
-                                                <option value=""selected>All</option>
-
-                                                <option value="deposit">Commission</option>
-                                                <option value="withdraw" >Gift</option>
-
+                                                <option selected>All</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Unpaid</option>
                                             </select>
                                         </form>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="col-md-8">
                                     <div class="float-end">
@@ -71,7 +62,7 @@
                                                 data-date-format="yyyy-mm-dd" data-date-autoclose="true"
                                                 data-provide="datepicker" data-date-container='#datepicker6'>
                                                 <input type="text" id="s_date" class="form-control text-start"
-                                                    placeholder="From" name="From"  data-date-format="yyyy-mm-dd"/>
+                                                    placeholder="From" name="From" />
                                                 <input type="text" id="e_date" class="form-control text-start"
                                                     placeholder="To" name="To" data-date-format="yyyy-mm-dd" />
 
@@ -88,12 +79,17 @@
                                 <thead>
                                     <tr>
                                         <th>Srno</th>
-                                       
-                                        <th>commission</th>
-                                        <th>gift</th>
-                                        <th>type</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
+                                        <th>Email</th>
+                                        <th>won</th>
+                                        <th>bet</th>
+                                        <th>gameName</th>
+                                        <th>gameId</th>
+                                        <th>status</th>
+                                        <th>bot</th>
+                                        <th>Note</th>
+                                        <th>Played</th>
+                                        <!-- <th>Players</th> -->
+                                        <th>pstatus</th>
                                         <!-- <th>Action</th> -->
                                     </tr>
                                 </thead>
@@ -135,38 +131,23 @@
                 <%- contentFor('BottomJs') %>
                     <script>
                         var minDate, maxDate;
-                        let day= new Date();
-                        let nextDay = new Date(day);
-                            nextDay.setDate(day.getDate() + 1);
-                        $("#s_date").datepicker("setDate", day); 
-                        $("#e_date").datepicker("setDate", nextDay); 
                         function delRec(id) {
-                            let r = confirm('Want to pay ?');
+                            let r = confirm('Want to delete?');
 
-                            if (r && id) {
+                            if (id) {
                                 handleDel(id);
                             }
                         }
                         function handleDel(id) {
-                            Swal.showLoading();
                             return $.ajax({
-                                type: 'POST',
-                                url: '<%=process.env.ADMIN_URL%>/' + id,
+                                type: 'DELETE',
+                                url: '<%=process.env.ADMIN_URL%>/admin/game/' + id,
                                 success: (results) => {
-                                    Swal.close();
-                                    if (results.success) {
-                                        alert(results.data.status + ' ' + results.data.message);
-
-                                    } else {
-                                        alert(results.error);
-
-                                    }
+                                    alert('Record Delete');
                                     location.reload();
                                 },
                                 error: (err) => {
-                                    alert('Error While Approving');
-                                    location.reload();
-
+                                    alert('Error While Deleting');
                                 }
                             });
                         }
@@ -175,6 +156,7 @@
                         }
                         var i = 1;
                         var oTable = $('#listsetting').DataTable({
+                            order: [[0, 'desc']],
                             initComplete: function () {
                                 var input = $('.dataTables_filter input').unbind(),
                                     self = this.api(),
@@ -194,29 +176,41 @@
                             },
                             "processing": true,
                             "serverSide": true,
+                            "ordering": true,
                             "ajax": {
-                                url: "<%=process.env.ADMIN_URL%>/influencer/commission/data", type: "post",
+                                url: "<%=process.env.ADMIN_URL%>/admin/game/data", type: "post",
                                 data: function (d) {
                                     d['s_date'] = $('#s_date').val();
                                     d['e_date'] = $('#e_date').val();
                                     // d['id'] =status-filter;
-                                    d['paymentStatus'] = $('#status-filter').val();
-                                    d['logType'] = $('#logtype-filter').val();
+                                    d['status'] = $('#status-filter').val();
                                     return d;
                                 }
                             },
+
                             "columns": [
                                 {
-                                    data: null, "render": function (data, type, full, meta) {
+
+                                    data: '_id', "render": function (data, type, full, meta) {
                                         return meta.row + 1;
                                     }
                                 },
-                                
-                                { data: 'influencerCommission', "defaultContent": "" },
-                                { data: 'totalGifts', "defaultContent": "" },
+                                { data: 'playerId.email', "defaultContent": "" },
+                                { data: 'amountWon', "defaultContent": "0" },
+                                { data: 'amountBet', "defaultContent": "0" },
+                                {
+                                    data: 'tournamentId.name', "defaultContent": ""
+                                },
+                                {
+                                    data: 'gameId', "defaultContent": ""
+                                },
+                                { data: 'gameStatus', "defaultContent": "lost" },
 
-                                { data: 'logType', "defaultContent": "" },
-                                { data: 'status', "defaultContent": "" },
+                                {
+                                    data: 'isBot', "defaultContent": ""
+                                },
+                                { data: 'note', "defaultContent": "WON" },
+
                                 {
                                     data: 'createdAt', render: function (data) {
                                         return moment(data).format('DD-MM-YYYY h:mm a');
@@ -224,16 +218,20 @@
                                 },
                                 // {
                                 //     data: null, "render": function (data, type, full, meta) {
-                                //         let a = '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/influencer/commission/edit/'
-                                //             + full._id + '"><i class="uil uil-history font-size-18"></i></a>';
-
-                                //         a += ' <a class="px-3 text-danger" onclick="delRec(\''
-                                //             + full._id + '\')"><i class="uil uil-wallet font-size-18"></i></a> '
-
-                                //         return a;
+                                //         let t = full.players;
+                                //         let o = '<textarea cols=70 rows=25>';
+                                //         o += t ? JSON.stringify(JSON.parse(t), undefined, 2) : '';
+                                //         o += "</textarea>";
+                                //         return o;
+                                //     }
+                                // },
+                                { data: 'status', "defaultContent": "" },
+                                // {
+                                //     data: null, "render": function (data, type, full, meta) {
+                                //         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/playerhistory/'
+                                //             + full.playerId._id + '"><i class="uil uil-history font-size-18"></i></a> ';
                                 //     }
                                 // },
                             ]
                         });
-                      
                     </script>

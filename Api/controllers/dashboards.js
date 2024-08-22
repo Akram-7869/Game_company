@@ -27,6 +27,25 @@ exports.getDashboards = asyncHandler(async (req, res, next) => {
   //res.status(200).json(res.advancedResults);
 });
 
+exports.getFranchiseDashboard = asyncHandler(async (req, res, next) => {
+ 
+  let d={
+    
+  totalCommissions: 100,
+  totalBalance:110,
+  livePlayers :req.io.engine.clientsCount
+   }
+  res.status(200).json(d);
+});
+exports.getInfluencerDashboard = asyncHandler(async (req, res, next) => {
+   let d={
+    totalGifts:10,
+    totalCommissions: 100,
+    totalBalance:110,
+    livePlayers :req.io.engine.clientsCount
+   }
+  res.status(200).json(d);
+});
 // @desc      Get single Dashboard
 // @route     GET /api/v1/auth/Dashboards/:id
 // @access    Private/Admin
@@ -165,7 +184,7 @@ const adminCommision = async () => {
 // @route     GET /api/v1/auth/Dashboards/filter/:id
 // @access    Private/Admin
 exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
-  const row = await Dashboard.findOne({ 'type': req.params.type }).lean();
+  const row = await Dashboard.findOne({ 'type': 'dashboard' }).lean();
   row['livePlayers'] = req.io.engine.clientsCount;
 
 
@@ -178,6 +197,46 @@ exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
     data: { row, graph: [] }
   });
 });
+let calIncome = async (s_date, e_date, userId ,role='influencer') => {
+  const today = new Date();
+  // Calculate tomorrow's date
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  // Set s_date to today if not provided
+  const startDate = s_date ? new Date(s_date) : today;
+  // Set e_date to tomorrow if not provided
+  const endDate = e_date ? new Date(e_date) : tomorrow;
+
+  const results = await PlayerGame.aggregate([
+    {
+      $match: {
+        s_date: startDate,
+        e_date: endDate,
+        influencerId:userId,
+ 
+      },
+    },
+    {
+      $group:
+     
+      {
+        _id: null, // Group by null to get a single result
+        totalPrize: { $sum: "$amountPrize" },
+        totalCommission: { $sum: "$amountGiven" }
+      },
+    },
+    {
+      $project: {
+        _id: 0, // Exclude _id from the result
+        totalPrize: 1,
+        totalCommission: 1
+      }
+    }
+  ]);
+  return results.length > 0 ? results[0] : { totalPrize: 0, totalCommission: 0 };
+
+
+}
 let calTotal = async (s_date, e_date) => {
   const today = new Date();
   // Calculate tomorrow's date
@@ -264,6 +323,15 @@ exports.getGraphData = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.totalIncome = asyncHandler(async (req, res, next) => {
   let c = await calTotal();
+
+  //console.log('graph', graph, req.body)
+  res.status(200).json({
+    success: true,
+    data: c
+  });
+});
+exports.influencerIncome = asyncHandler(async (req, res, next) => {
+  let c = await calIncome(req.body.s_date, req.body.e_date, req.user._id);
 
   //console.log('graph', graph, req.body)
   res.status(200).json({

@@ -152,3 +152,17 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 
             })
 });
+
+
+exports.gameList = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Leader Board' };
+      res.render('Influencer/leaderboard')
+});
+exports.gameData = asyncHandler(async (req, res, next) => {
+      callApi(req).post(apiUrlGame, { ...req.body }, { params: req.query })
+            .then(r => {
+                  res.status(200).json(r.data);
+            })
+            .catch(error => {//   req.flash('error', 'Incorrect email or password!');})
+            });
+});

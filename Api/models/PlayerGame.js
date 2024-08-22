@@ -17,7 +17,7 @@ const PlayerGameSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Influencer'
   },
-  frenchiseId: {
+  franchiseId: {
     type: mongoose.Schema.ObjectId,
     ref: 'Influencer'
   },
@@ -44,6 +44,10 @@ const PlayerGameSchema = new mongoose.Schema({
     default: 0,
   },
   amountReverse: {
+    type: Number,
+    default: 0
+  },
+  amountPrize: {
     type: Number,
     default: 0
   },
