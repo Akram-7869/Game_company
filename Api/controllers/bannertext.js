@@ -31,7 +31,7 @@ exports.getBannertexts = asyncHandler(async (req, res, next) => {
 
 exports.getBannertextList = asyncHandler(async (req, res, next) => {
     
-  let row=   Bannertext.find({status:'active'});
+  let row=  await Bannertext.find({status:'active'});
     res.status(200).json({
         success: true,
         data: row
