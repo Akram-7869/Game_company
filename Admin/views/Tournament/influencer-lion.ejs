@@ -787,7 +787,7 @@
             const messageList = document.getElementById('messageList');
             const emojiElement = document.createElement('li');
             const emojiImg = document.createElement('img');
-            emojiImg.src = /emojis/${emojiData.emojiIndex}.png;
+            emojiImg.src = `/emojis/${emojiData.emojiIndex}.png`;
             emojiImg.width = 30;
             emojiImg.height = 30;
             emojiElement.textContent = `${emojiData.firstName}: `;
