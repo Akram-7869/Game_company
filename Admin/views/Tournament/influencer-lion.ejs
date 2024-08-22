@@ -118,15 +118,15 @@
       <div class="container">
         <form id="join-form" name="join-form">
           <div class="row join-info-group ">
-            <div class="col-sm sso-hidden d-none" >
+            <div class="col-sm sso-hidden d-none">
               <p class="join-info-text">AppID</p>
               <input id="appid" type="text" value="<%=agodaAppId%>" placeholder="enter appid" readonly>
-             
+
             </div>
             <div class="col-sm sso-hidden d-none">
               <p class="join-info-text">Token(optional)</p>
-              <input id="token" type="text"  placeholder="enter token">
-               
+              <input id="token" type="text" placeholder="enter token">
+
             </div>
             <div class="col-sm">
               <p class="join-info-text">Channel</p>
@@ -154,60 +154,73 @@
               <input id="uid" type="text" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"
                 onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Enter the user ID">
             </div>
-            
-    
+
+
           </div>
 
-          
+
 
         </form>
         <!-- Single button -->
-        
+
       </div>
 
-
-
-
-      <div class="container">
-        <div id="game-container">
-          <div id="timer">Time: <span id="time-remaining">0</span></div>
-          <div id="cards-container">
-              <div id="dragon-card" class="card"></div>
-              <div id="tiger-card" class="card"></div>
+      <div class="row">
+        <div class="col-12 col-md-4">
+          <div class="">
+            <div class="row video-group col-sm">
+              <div class="col">
+                <p id="local-player-name" class="player-name"></p>
+                <div id="local-player" class="player"></div>
+              </div>
+              <div class="w-100"></div>
+              <div class="col">
+                <div id="remote-playerlist"></div>
+              </div>
+            </div>
           </div>
-          <div id="board">
-              <div id="dragon-area" class="bet-area">
+        </div>
+        <div class="col-12 col-md-8">
+          <div class="">
+            <div id="game-container">
+              <div id="timer">Time: <span id="time-remaining">0</span></div>
+              <div id="cards-container">
+                <div id="dragon-card" class="card"></div>
+                <div id="tiger-card" class="card"></div>
+              </div>
+              <div id="board">
+                <div id="dragon-area" class="bet-area">
                   <img src="/public/gameshtml/assets/dragonTiger/DragonBox.png" alt="Dragon Box">
                   <div class="bet-amount">Bet: <span id="dragon-bet">0</span></div>
-              </div>
-              <div id="tie-area" class="bet-area">
+                </div>
+                <div id="tie-area" class="bet-area">
                   <img src="/public/gameshtml/assets/dragonTiger/TieBox.png" alt="Tie Box">
                   <div class="bet-amount">Bet: <span id="tie-bet">0</span></div>
-              </div>
-              <div id="tiger-area" class="bet-area">
+                </div>
+                <div id="tiger-area" class="bet-area">
                   <img src="/public/gameshtml/assets/dragonTiger/TigerBox.png" alt="Tiger Box">
                   <div class="bet-amount">Bet: <span id="tiger-bet">0</span></div>
+                </div>
               </div>
-          </div>
-          <div id="history-container"></div>
-      </div>
+              <div id="history-container"></div>
 
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row">
+        </div>
+        <div>
+
+        </div>
       </div>
 
       <div class="d-lg-flex mb-4">
         <div class="chat-leftsidebar card">
           <div class="p-3 px-4">
             <div class="d-flex align-items-start">
-              <div class="row video-group col-sm">
-                <div class="col">
-                  <p id="local-player-name" class="player-name"></p>
-                  <div id="local-player" class="player"></div>
-                </div>
-                <div class="w-100"></div>
-                <div class="col">
-                  <div id="remote-playerlist"></div>
-                </div>
-              </div>
+
             </div>
           </div>
 
@@ -390,7 +403,7 @@
         <!-- end chat-leftsidebar -->
 
         <div class="w-100 user-chat mt-4 mt-sm-0 ms-lg-1">
-          
+
 
           <div class="px-lg-2">
             <div class="chat-conversation p-3">
@@ -450,6 +463,162 @@
           </form>
         </div>
       </div>
+
+
+
+
+
+
+
+
+      <div class="d-lg-flex">
+        <div class="chat-leftsidebar card">
+
+
+        </div>
+        <!-- end chat-leftsidebar -->
+
+        <div class="w-100 user-chat mt-4 mt-sm-0 ms-lg-1">
+          <div class="card">
+            <div class="p-3 px-lg-4 border-bottom">
+              <div class="row">
+                <div class="col-xl-4 col-7">
+                  <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 avatar-sm me-3 d-sm-block d-none">
+                      <img src="assets/images/users/avatar-2.jpg" alt="" class="img-fluid d-block rounded-circle">
+                    </div>
+                    <div class="flex-grow-1">
+                      <h5 class="font-size-14 mb-1 text-truncate"><a href="#" class="text-dark">Influencer</a></h5>
+                      <p class="text-muted text-truncate mb-0">Online</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-8 col-5">
+                  <ul class="list-inline user-chat-nav text-end mb-0">
+                    <li class="list-inline-item">
+
+                    </li>
+
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-conversation p-3 px-2" data-simplebar="init">
+              <div class="simplebar-wrapper" style="margin: -16px -8px;">
+                <div class="simplebar-height-auto-observer-wrapper">
+                  <div class="simplebar-height-auto-observer"></div>
+                </div>
+                <div class="simplebar-mask">
+                  <div class="simplebar-offset" style="right: -15.2px; bottom: 0px;">
+                    <div class="simplebar-content-wrapper" style="height: 100%; overflow: hidden scroll;">
+                      <div class="simplebar-content" style="padding: 16px 8px;">
+                        <ul id="messageList" class="list-unstyled mb-0">
+                          <!--<li class="chat-day-title">
+                            <span class="title">Today</span>
+                          </li>
+                           <li>
+                            <div class="conversation-list">
+                              <div class="ctext-wrap">
+                                <div class="ctext-wrap-content">
+                                  <h5 class="conversation-name"><a href="#" class="user-name">Jennie Sherlock</a> <span
+                                      class="time">10:00</span></h5>
+                                  <p class="mb-0">Good morning !</p>
+                                </div>
+                                <div class="dropdown align-self-start">
+                                  <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                  </a>
+                                  <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Copy</a>
+                                    <a class="dropdown-item" href="#">Save</a>
+                                    <a class="dropdown-item" href="#">Forward</a>
+                                    <a class="dropdown-item" href="#">Delete</a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                          </li> -->
+
+                          <!-- <li class="right">
+                            <div class="conversation-list">
+                                <div class="ctext-wrap">
+                                    <div class="ctext-wrap-content">
+                                        <h5 class="conversation-name"><a href="#" class="user-name">Shawn</a> <span class="time">10:02</span></h5>
+                                        <p class="mb-0">Good morning</p>
+                                    </div>
+                                    <div class="dropdown align-self-start">
+                                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="#">Copy</a>
+                                            <a class="dropdown-item" href="#">Save</a>
+                                            <a class="dropdown-item" href="#">Forward</a>
+                                            <a class="dropdown-item" href="#">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </li> -->
+
+
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="simplebar-placeholder" style="width: auto; height: 824px;"></div>
+              </div>
+              <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
+                <div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); display: none;"></div>
+              </div>
+              <div class="simplebar-track simplebar-vertical" style="visibility: visible;">
+                <div class="simplebar-scrollbar"
+                  style="height: 45px; transform: translate3d(0px, 48px, 0px); display: block;"></div>
+              </div>
+            </div>
+            <form id="form" action="">
+            <div class="p-3 border-top">
+              <div class="row">
+                <div class="col">
+                  <div class="position-relative">
+                    <input id="input" type="text" class="form-control border bg-light-subtle" placeholder="Enter Message...">
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <button type="submit" class="btn btn-primary chat-send w-md waves-effect waves-light"><span
+                      class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send float-end"></i></button>
+                </div>
+              </div>
+            </div>
+          </form>
+          </div>
+        </div>
+        <!-- end user chat -->
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       </div>
       <%- contentFor('FooterJs') %>
 
@@ -502,7 +671,7 @@
           io.on('connect', () => {
             console.log('Connected to server');
             io.emit('join', { ...data, gameType: 'sfsf', room });
-            initializeSocket(io,'sfsf')
+            initializeSocket(io, 'sfsf')
           });
           io.on('join', function (msg) {
             room = msg.room;
@@ -522,7 +691,8 @@
             <div class="ctext-wrap">
               <div class="ctext-wrap-content">
                 <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">${msg.firstName}</a> 
-                  <span class="d-inline-block font-size-12 text-muted ms-2">${msg.time}</span></h5>
+                  // <span class="d-inline-block font-size-12 text-muted ms-2">${msg.time}</span>
+                  </h5>
                 <p class="mb-0">${msg.message}</p>
               </div>
             </div>
@@ -544,7 +714,8 @@
           <div class="ctext-wrap">
             <div class="ctext-wrap-content">
               <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">${msg.firstName}</a> 
-                <span class="d-inline-block font-size-12 text-muted ms-2">${msg.time}</span></h5>
+                // <span class="d-inline-block font-size-12 text-muted ms-2">${msg.time}</span>
+                </h5>
               <p class="mb-0">${msgde}</p>
             </div>
           </div>
@@ -608,6 +779,49 @@
             const decoder = new TextDecoder('utf-8');
             return decoder.decode(decompressedBytes);
           }
+
+          socket.on('emoji_message', (emojiData) => {
+            displayEmoji(emojiData);
+        });
+          function displayEmoji(emojiData) {
+            const messageList = document.getElementById('messageList');
+            const emojiElement = document.createElement('li');
+            const emojiImg = document.createElement('img');
+            emojiImg.src = /emojis/${emojiData.emojiIndex}.png;
+            emojiImg.width = 30;
+            emojiImg.height = 30;
+            emojiElement.textContent = `${emojiData.firstName}: `;
+            emojiElement.appendChild(emojiImg);
+            messageList.appendChild(emojiElement);
+            messageList.scrollTop = chatContainer.scrollHeight;
+
+            // Create flying emoji
+            const flyingEmoji = document.createElement('img');
+            flyingEmoji.src = /emojis/${emojiData.emojiIndex}.png;
+            flyingEmoji.className = 'flying-emoji';
+            flyingEmoji.style.width = '60px';
+            flyingEmoji.style.height = '60px';
+            flyingEmoji.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+            flyingEmoji.style.top = window.innerHeight + 'px';
+            document.body.appendChild(flyingEmoji);
+
+            setTimeout(() => {
+                flyingEmoji.style.top = '-60px';
+                flyingEmoji.style.opacity = '0';
+            }, 100);
+
+            setTimeout(() => {
+                document.body.removeChild(flyingEmoji);
+            }, 2100);
+        }
+
+
+
+
+
+
+
+
         </script>
 
         <%- contentFor('BottomJs') %>

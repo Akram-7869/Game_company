@@ -207,6 +207,11 @@ let onConnection = (socket) => {
     console.log(d);
     io.in(room).emit('chat_message', d);
   });
+  socket.on('gift_message', (d) => {
+    let { room } = d;
+    console.log(d);
+    io.in(room).emit('gift_message', d);
+  });
   socket.on('influencer_matches', (d) => {
      const influencers =  getKey('influencer_matches')
     io.to(socket.id).emit('influencer_matches', {influencers});
