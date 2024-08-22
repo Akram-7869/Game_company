@@ -8,7 +8,7 @@ const bannerControler = require('../controllers/BannerController');
 const settingCtrl = require('../controllers/SettingController');
 const managerCtrl = require('../controllers/ManagerController');
 const influencerCtrl = require('../controllers/InfluencerController');
-const franchiseCtrl = require('../controllers/franchiseController');
+const franchiseCtrl = require('../controllers/FranchiseController');
 
 
 const botCtrl = require('../controllers/BotController');
