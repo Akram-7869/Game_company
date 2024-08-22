@@ -889,7 +889,7 @@ exports.won = asyncHandler(async (req, res, next) => {
     if (franchiseDoc) {
       commisonInf['ownerId'] = franchiseDoc._id;
       commisonInf['franchiseCommission'] = adminCommision * 0.3;
-      await franchiseDoc.findByIdAndUpdate(franchiseDoc._id, { $inc: { totalBalance: commisonInf['franchiseCommission'], totalCommissions: commisonInf['franchiseCommission'] } });
+      await Franchise.findByIdAndUpdate(franchiseDoc._id, { $inc: { totalBalance: commisonInf['franchiseCommission'], totalCommissions: commisonInf['franchiseCommission'] } });
 
     }
   }
@@ -1070,7 +1070,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
         totalGifts: amount
       }
     });
-    await playerGame.findByIdAndUpdate(playerGame._id, {
+    await PlayerGame.findByIdAndUpdate(playerGame._id, {
       $inc: {amountPrize: amount}
     });
 
