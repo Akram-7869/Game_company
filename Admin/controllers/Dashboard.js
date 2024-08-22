@@ -15,7 +15,7 @@ exports.dashBoardView = asyncHandler(async (req, res, next) => {
         .then(r => {
 
             
-            res.render('Dashboard/index', r.data)
+            res.render('Dashboard/influencer', r.data)
         })
         .catch(error => { req.flash('error', 'Incorrect email or password!'); })
 });
