@@ -35,7 +35,7 @@ exports.postLogin = asyncHandler(async (req, res, next) => {
 			res.cookie('firstName', r.data.firstName, { httpOnly: true });
 
 			//req.app.locals['user'] = r.data;
-			if(r.data.role ==='admin'){
+			if(r.data.role ==='admin'||r.data.role ==='superadmin'){
 				res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
 			}else{
 				res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
