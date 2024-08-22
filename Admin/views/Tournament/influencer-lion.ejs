@@ -679,7 +679,9 @@
             console.log('Joined room:', room);
             io.emit('OnCurrentStatus', { room });
           });
-
+          io.on('emoji_message', (emojiData) => {
+            displayEmoji(emojiData);
+        });
           io.on('OnCurrentStatus', function (data) {
             const messageList = document.getElementById('messageList');
             messageList.innerHTML = ''; // Clear the list first
@@ -780,9 +782,7 @@
             return decoder.decode(decompressedBytes);
           }
 
-          socket.on('emoji_message', (emojiData) => {
-            displayEmoji(emojiData);
-        });
+          
           function displayEmoji(emojiData) {
             const messageList = document.getElementById('messageList');
             const emojiElement = document.createElement('li');
