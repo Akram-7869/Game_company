@@ -292,10 +292,10 @@ class LudoGame {
         for (let i = 1; i <= 4; i++) {
             const tokenKey = `pasa_${i}`;
             const currentPosition = botPlayer[tokenKey];
-            if (currentPosition === -1 && diceValue === 6) {
-                moves.push({ tokenKey, newPosition: 0, pasaIndex: i - 1 });
+            if (currentPosition === 0 && diceValue === 6) {
+                moves.push({ tokenKey, newPosition: 1, pasaIndex: i - 1 });
             } else if (currentPosition > 0) {
-                const newPosition = currentPosition + diceValue;
+                const newPosition = parseInt(currentPosition) + parseInt(diceValue);
                 if (newPosition <= 56) {
                     moves.push({ tokenKey, newPosition, pasaIndex:i-1 });
                 }
