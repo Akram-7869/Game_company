@@ -1,5 +1,6 @@
 const Timer = require("./Timer");
 const { state, publicRoom, userSocketMap, tokenMiddleware, gameName, sleep, userLeave, getRoomLobbyUsers, getRoomUsers, joinRoom, arraymove, getKeyWithMinValue, defaultRolletValue } = require('../utils/JoinRoom');
+const { listeners } = require("../models/File");
 
 class LudoGame {
     constructor(io, roomName, maxPlayers, lobbyId) {
@@ -106,9 +107,9 @@ class LudoGame {
         return Array.from(this.bots.values()).map(value => value.player);
     }
     handlePlayerMove(socket, data) {
-        let { PlayerID, key, steps } = data;
+        let { PlayerID, steps , pasaIndex} = data;
         console.log('handlePlayerMove', data);
-
+      let  key = `pasa_${pasaIndex}`
         if (this.currentPlayer[key]) {
             this.currentPlayer[key] += steps;
             this.io.to(this.roomName).emit('OnMovePasa', data);
