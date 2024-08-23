@@ -162,7 +162,14 @@ class LudoGame {
                     currentPhase: this.currentPhase,
                     currentTurnIndex: this.currentTurnIndex,
                 });
-
+   const currentPlayer = this.turnOrder[this.currentTurnIndex];
+   if (currentPlayer.type === 'bot') {
+                    this.botTurn(currentPlayer);
+                    return;
+                } 
+                // else {
+                //     this.startTurnTimer();
+                // }
           //  Set timer for the next turn
             this.turnTimer = new Timer(15, (remaining) => {
                 this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
@@ -172,7 +179,7 @@ class LudoGame {
             });
 
             this.turnTimer.startTimer();
-        // const currentPlayer = this.turnOrder[this.currentTurnIndex];
+     
 
 
 //  console.log('in-next-index',this.currentTurnIndex);
