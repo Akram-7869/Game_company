@@ -174,7 +174,6 @@ class LudoGame {
         //     this.turnTimer.startTimer();
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
 
-        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
 
  console.log('this.currentTurnIndex',this.currentTurnIndex);
         if (currentPlayer.playerStatus !== 'Left') {
@@ -226,6 +225,8 @@ class LudoGame {
             }
             this.checkGameStatus();
         }
+        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+
         this.nextTurn();
     }
 
