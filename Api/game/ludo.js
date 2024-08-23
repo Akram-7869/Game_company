@@ -175,7 +175,7 @@ class LudoGame {
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
 
 
- console.log('this.currentTurnIndex',this.currentTurnIndex);
+ console.log('in-next-index',this.currentTurnIndex);
         if (currentPlayer.playerStatus !== 'Left') {
             if (currentPlayer.type === 'bot') {
                 this.botTurn(currentPlayer);
