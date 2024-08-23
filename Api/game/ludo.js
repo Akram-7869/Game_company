@@ -243,7 +243,8 @@ class LudoGame {
     }
 
     botRollDice(botPlayer) {
-        const diceValue = Math.floor(Math.random() * 6) + 1;
+        // const diceValue = Math.floor(Math.random() * 6) + 1;
+       let  diceValue = this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
         this.io.to(this.roomName).emit('OnRollDice', {
             dice: diceValue,
             currentTurnIndex: this.currentTurnIndex
@@ -254,6 +255,7 @@ class LudoGame {
 
     botChooseMove(botPlayer, diceValue) {
         const possibleMoves = this.getBotPossibleMoves(botPlayer, diceValue);
+        console.log('Bot-   possibleMoves',possibleMoves);
         if (possibleMoves.length > 0) {
             let chosenMove;
             switch (this.botDifficulty) {
