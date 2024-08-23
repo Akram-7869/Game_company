@@ -18,7 +18,7 @@ class LudoGame {
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 9; // 5 seconds
         this.lastDiceValue = 6;
-        this.botMoveDelay = 1000;
+        this.botMoveDelay = 3000;
         this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
     }
@@ -56,7 +56,7 @@ class LudoGame {
                     lobbyId: this.lobbyId,
                     maxp: this.maxPlayers,
                     type: 'bot',
-                    pasa_1: -1, pasa_2: -1, pasa_3: -1, pasa_4: -1,
+                    pasa_1: 0, pasa_2: 0, pasa_3: 0, pasa_4: 0,
                     playerStatus: 'joined',
                     avtar: 'http://example.com/bot-avatar.png'
                 }
@@ -91,7 +91,11 @@ class LudoGame {
         this.io.to(this.roomName).emit('join_players', { players: this.getTurnOrder() });
     }
 
-
+    getJoinedPlayers() {
+        return Array.from(this.players.values())
+            .filter(value => value.status === 'joined') // Filter players with status 'joined'
+            .map(value => value.player); // Map to get the player objects
+    }
 
     getPlayers() {
         return Array.from(this.players.values()).map(value => value.player);
@@ -216,9 +220,9 @@ class LudoGame {
             this.io.to(this.roomName).emit('player_lost_life', { playerId: currentPlayer.userId, lives: playerObj.lives });
 
             if (playerObj.lives <= 0) {
-                console.log('marking-as ledf');
                 playerObj.player.playerStatus = 'Left';
             }
+            this.checkGameStatus();
         }
         this.nextTurn();
     }
@@ -394,17 +398,6 @@ class LudoGame {
 
 
 
-    botMove(botId) {
-        // Simulate bot move
-        const move = { dice: Math.floor(Math.random() * 6) + 1 };
-        console.log(`Bot ${botId} made a move:`, move);
-        this.io.to(this.roomName).emit('bot_move', { id: botId, move });
-        // Wait for a while before proceeding to the next turn
-        setTimeout(() => {
-            this.nextTurn();
-        }, 2000);
-    }
-
     playerMove(socket, move) {
         if (this.turnOrder[this.currentTurnIndex] !== socket.id) {
             socket.emit('error', 'Not your turn.');
@@ -479,11 +472,12 @@ class LudoGame {
         return [...this.getPlayers(), ...this.getBots()];
     }
     checkGameStatus() {
-        if (this.players.size === 0) {
+        let players = this.getJoinedPlayers();
+        if (players.length === 0) {
             this.endGame('All players left');
         } else if (this.isGameOver()) {
             this.endGame('Game completed');
-        }
+        }else if()
     }
     isGameOver() {
         return this.turnOrder.some(player =>
