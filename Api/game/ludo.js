@@ -161,7 +161,7 @@ class LudoGame {
         if (this.turnTimer) {
             this.turnTimer?.reset(15);
         }
-        console.log('OnNextTurn-binding', this.currentTurnIndex, this.turnOrder);
+        console.log('OnNextTurn', this.currentTurnIndex);
         this.io.to(this.roomName).emit('OnNextTurn', {
             gameType: 'Ludo',
             room: this.roomName,
@@ -288,11 +288,11 @@ class LudoGame {
             const tokenKey = `pasa_${i}`;
             const currentPosition = botPlayer[tokenKey];
             if (currentPosition === 0 && diceValue === 6) {
-                moves.push({ tokenKey, newPosition: 1, i });
+                moves.push({ tokenKey, newPosition: 1, pasaIndex: i - 1 });
             } else if (currentPosition > 0) {
                 const newPosition = currentPosition + diceValue;
                 if (newPosition <= 56) {
-                    moves.push({ tokenKey, newPosition, i });
+                    moves.push({ tokenKey, newPosition, pasaIndex:i-1 });
                 }
             }
         }
@@ -345,16 +345,17 @@ class LudoGame {
     }
 
     executeBotMove(botPlayer, move, diceValue) {
-        const { tokenKey, newPosition, i } = move;
+        const { tokenKey, newPosition, pasaIndex } = move;
         botPlayer[tokenKey] = newPosition;
 
         const moveData = {
             PlayerID: botPlayer.userId,
             TournamentID: this.lobbyId,
             RoomId: this.roomName,
-            key: i,
+            key: this.turnOrder.findIndex(p => p.userId === botPlayer.userId) * 4 + pasaIndex,
             steps: diceValue,
-            newPosition: diceValue
+            newPosition: diceValue,
+            currentPosition: newPosition - diceValue
         };
 
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
