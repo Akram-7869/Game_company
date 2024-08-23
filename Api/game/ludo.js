@@ -58,7 +58,7 @@ class LudoGame {
                     lobbyId: this.lobbyId,
                     maxp: this.maxPlayers,
                     type: 'bot',
-                    pasa_1: 0, pasa_2: 0, pasa_3: 0, pasa_4: 0,
+                    pasa_1: -1, pasa_2: -1, pasa_3: -1, pasa_4: -1,
                     playerStatus: 'joined',
                     avtar: 'http://example.com/bot-avatar.png'
                 }
@@ -265,7 +265,7 @@ class LudoGame {
 
     botChooseMove(botPlayer, diceValue) {
         const possibleMoves = this.getBotPossibleMoves(botPlayer, diceValue);
-        console.log('Bot-possibleMoves', possibleMoves);
+       // console.log('Bot-possibleMoves', possibleMoves);
         if (possibleMoves.length > 0) {
             let chosenMove;
             switch (this.botDifficulty) {
@@ -292,7 +292,7 @@ class LudoGame {
         for (let i = 1; i <= 4; i++) {
             const tokenKey = `pasa_${i}`;
             const currentPosition = botPlayer[tokenKey];
-            if (currentPosition === 0 && diceValue === 6) {
+            if (currentPosition === -1 && diceValue === 6) {
                 moves.push({ tokenKey, newPosition: 0, pasaIndex: i - 1 });
             } else if (currentPosition > 0) {
                 const newPosition = currentPosition + diceValue;
