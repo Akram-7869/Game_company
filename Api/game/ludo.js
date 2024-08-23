@@ -106,17 +106,16 @@ class LudoGame {
         return Array.from(this.bots.values()).map(value => value.player);
     }
     handlePlayerMove(socket, data) {
-        let { PlayerID, steps, pasaIndex, key } = data;
+        let {  key ,newPosition} = data;
       
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
         let pasa_k=`pasa_${key}`;
         console.log('handlePlayerMove', data,pasa_k ,  currentPlayer);
         if (currentPlayer[pasa_k]) {
-            currentPlayer[pasa_k] =  parseInt(currentPlayer[pasa_k]) + parseInt(steps);
+            currentPlayer[pasa_k] =  newPosition;
            
         } 
-        console.log('handlePlayerMove after chage', currentPlayer);
-        this.io.to(this.roomName).emit('OnMovePasa', data);
+         this.io.to(this.roomName).emit('OnMovePasa', data);
     }
 
 
