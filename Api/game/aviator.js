@@ -38,7 +38,7 @@ class AviatorGame {
             this.startFlightPhase();
         });
         this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer?.remaining,round:this.round });
-        console.log(`Betting phase started in room: ${this.roomName}`);
+        //console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer.startTimer();
         
@@ -48,7 +48,7 @@ class AviatorGame {
         this.currentPhase = 'flight';
         let chance = 0.5;
         this.io.to(this.roomName).emit('OnTimeUp', { phase: 'flight' });
-        console.log(`Flight phase started in room: ${this.roomName}`);
+        //console.log(`Flight phase started in room: ${this.roomName}`);
 
         let maxHeight = 1;
         if (this.totalBets > 0) {

@@ -37,7 +37,7 @@ class RolletGame {
         this.tieBet = 0;
         this.round += 1;
         RolletGame.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer?.remaining, round: this.round });
-        console.log(`Betting phase started in room: ${this.roomName}`);
+       // console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
             // console.log(remaining);
@@ -66,7 +66,7 @@ class RolletGame {
             RolletGame.io.to(this.roomName).emit('OnWinNo', data);
 
         this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
-            console.log(remaining);
+          //  console.log(remaining);
             if (remaining == 2) {
                 console.log('reseting');
                 RolletGame.io.to(this.roomName).emit('OnReset', { phase: 'reset' });

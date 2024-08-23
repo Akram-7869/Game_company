@@ -36,7 +36,6 @@ class LudoGame {
         let totalPlayers = this.players.size + this.bots.size;
         if (totalPlayers < this.maxPlayers && this.players.size > 0) {
             const botsToAdd = this.maxPlayers - totalPlayers;
-            console.log('botsToAdd',botsToAdd, totalPlayers);
             this.addBots(botsToAdd);
             totalPlayers = this.players.size + this.bots.size;
         }
@@ -169,9 +168,9 @@ class LudoGame {
         //     });
 
         //     this.turnTimer.startTimer();
-
+        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
-
+ 
         if (currentPlayer.playerStatus !== 'Left') {
             if (currentPlayer.type === 'bot') {
                 this.botTurn(currentPlayer);
