@@ -115,7 +115,7 @@ class LudoGame {
         if (player && player[pasa_k] !== undefined) {
             player[pasa_k] = newPosition;
             this.io.to(this.roomName).emit('OnMovePasa', data);
-            this.updateGameState(); // New: Update game state after move
+           // this.updateGameState(); // New: Update game state after move
         }
     }
 
