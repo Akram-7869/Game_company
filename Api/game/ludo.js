@@ -195,7 +195,7 @@ class LudoGame {
         });
 
         this.turnTimer = new Timer(15, (remaining) => {
-            console.log('turn_tick', remaing);
+            console.log('turn_tick', remaining);
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
         }, () => {
             this.handleTurnTimeout();
