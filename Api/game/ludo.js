@@ -106,16 +106,16 @@ class LudoGame {
         return Array.from(this.bots.values()).map(value => value.player);
     }
     handlePlayerMove(socket, data) {
-        let { PlayerID, key ,newPosition} = data;
-      
+        let { PlayerID, key, newPosition } = data;
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        let pasa_k=`pasa_${key}`;
-        console.log('handlePlayerMove', data,pasa_k ,  currentPlayer);
+        let pasa_k = `pasa_${key}`;
+        console.log('handlePlayerMove', data, pasa_k, currentPlayer);
+        
         let player = this.turnOrder.find(p => p.userId === PlayerID);
-        if (player && player[key] !== undefined) {
-            player[key] = newPosition;
+        if (player && player[pasa_k] !== undefined) {
+            player[pasa_k] = newPosition;
             this.io.to(this.roomName).emit('OnMovePasa', data);
-
+            this.updateGameState(); // New: Update game state after move
         }
     }
 
@@ -348,19 +348,20 @@ class LudoGame {
     executeBotMove(botPlayer, move, diceValue) {
         const { tokenKey, newPosition, pasaIndex } = move;
         botPlayer[tokenKey] = newPosition;
-
+ 
         const moveData = {
             PlayerID: botPlayer.userId,
             TournamentID: this.lobbyId,
             RoomId: this.roomName,
-            key: this.turnOrder.findIndex(p => p.userId === botPlayer.userId) * 4 + pasaIndex,
+            key: pasaIndex,
             steps: diceValue,
-            newPosition: diceValue,
+            newPosition: newPosition,
             currentPosition: newPosition - diceValue
         };
-
+ 
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
-        console.log('executeBotMove', tokenKey, newPosition, move, 'moveDaata', moveData);
+        //this.updateGameState(); // New: Update game state after bot move
+ 
         const killed = this.checkForKills(botPlayer, newPosition);
         if (killed) {
             setTimeout(() => this.handleBotKill(botPlayer, killed), this.botMoveDelay);
