@@ -12,6 +12,8 @@ class LudoGame {
         this.turnTimer = null;
         this.roomJoinTimers = null;
         this.currentPhase = 'createdroom';
+        this.currentPlayer =null;
+
         this.bettingTimer = null;
         this.pauseTimer = null;
         this.round = 0;
@@ -106,9 +108,9 @@ class LudoGame {
     handlePlayerMove(socket, data) {
         let { PlayerID, key, steps } = data;
         console.log('handlePlayerMove', data);
-        let playerObj = this.players.get(PlayerID);
-        if (playerObj && playerObj.player[key] !== undefined) {
-            playerObj.player[key] += steps;
+
+        if (this.currentPlayer[key]) {
+            this.currentPlayer[key] += steps;
             this.io.to(this.roomName).emit('OnMovePasa', data);
         }
     }
@@ -163,9 +165,9 @@ class LudoGame {
                     currentPhase: this.currentPhase,
                     currentTurnIndex: this.currentTurnIndex,
                 });
-   const currentPlayer = this.turnOrder[this.currentTurnIndex];
-   if (currentPlayer.type === 'bot') {
-                    this.botTurn(currentPlayer);
+     this.currentPlayer = this.turnOrder[this.currentTurnIndex];
+   if (this.currentPlayer.type === 'bot') {
+                    this.botTurn(this.currentPlayer);
                     return;
                 } 
                 // else {
