@@ -156,7 +156,7 @@ class LudoGame {
             if (this.turnTimer) {
                 this.turnTimer?.reset(15);
             }
-             console.log('OnNextTurn-binding');              
+             console.log('OnNextTurn-binding',this.currentTurnIndex, this.turnOrder);              
                 this.io.to(this.roomName).emit('OnNextTurn', {
                     gameType: 'Ludo',
                     room: this.roomName,
