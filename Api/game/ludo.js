@@ -105,6 +105,7 @@ class LudoGame {
     }
     handlePlayerMove(socket, data) {
         let { PlayerID, key, steps } = data;
+        console.log('handlePlayerMove', data);
         let playerObj = this.players.get(PlayerID);
         if (playerObj && playerObj.player[key] !== undefined) {
             playerObj.player[key] += steps;
@@ -339,7 +340,7 @@ class LudoGame {
     executeBotMove(botPlayer, move, diceValue) {
         const { tokenKey, newPosition } = move;
         botPlayer[tokenKey] = newPosition;
-
+console.log('executeBotMove', tokenKey, newPosition,move );
         const moveData = {
             PlayerID: botPlayer.userId,
             key: tokenKey,
