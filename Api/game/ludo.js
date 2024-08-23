@@ -106,20 +106,24 @@ class LudoGame {
         return Array.from(this.bots.values()).map(value => value.player);
     }
     handlePlayerMove(socket, data) {
-        let { PlayerID, key, newPosition } = data;
-        const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        let pasa_k = `pasa_${key}`;
-        console.log('handlePlayerMove', data, pasa_k, currentPlayer);
-        
+        let { PlayerID, key, steps, currentPosition, newPosition } = data;
+        console.log('handlePlayerMove', data);
+
         let player = this.turnOrder.find(p => p.userId === PlayerID);
-        if (player && player[pasa_k] !== undefined) {
-            player[pasa_k] = newPosition;
-            this.io.to(this.roomName).emit('OnMovePasa', data);
-           // this.updateGameState(); // New: Update game state after move
+        if (player) {
+            // Calculate the pasa index from the key
+            let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
+            let pasaIndex = key % 4;
+            let pasa_k = `pasa_${pasaIndex + 1}`;
+
+            if (player[pasa_k] !== undefined) {
+                player[pasa_k] = newPosition;
+                this.io.to(this.roomName).emit('OnMovePasa', data);
+                //this.updateGameState(); // Update game state after move
+            }
         }
     }
-
-
+  
     handlePlayerRollDice(socket) {
         this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
         // this.lastDiceValue = Math.floor(Math.random() * 6) + 1;
@@ -348,20 +352,23 @@ class LudoGame {
     executeBotMove(botPlayer, move, diceValue) {
         const { tokenKey, newPosition, pasaIndex } = move;
         botPlayer[tokenKey] = newPosition;
- 
+
+        const botPlayerIndex = this.turnOrder.findIndex(p => p.userId === botPlayer.userId);
+        const key = botPlayerIndex * 4 + pasaIndex;
+console.log('botPlayerIndex',botPlayerIndex , this.currentTurnIndex)
         const moveData = {
             PlayerID: botPlayer.userId,
             TournamentID: this.lobbyId,
             RoomId: this.roomName,
-            key: pasaIndex,
+            key: key,
             steps: diceValue,
             newPosition: newPosition,
             currentPosition: newPosition - diceValue
         };
- 
+
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
-        //this.updateGameState(); // New: Update game state after bot move
- 
+        //this.updateGameState(); // Update game state after bot move
+
         const killed = this.checkForKills(botPlayer, newPosition);
         if (killed) {
             setTimeout(() => this.handleBotKill(botPlayer, killed), this.botMoveDelay);
@@ -369,6 +376,7 @@ class LudoGame {
             this.botEndTurn(botPlayer, diceValue === 6);
         }
     }
+
 
     checkForKills(botPlayer, newPosition) {
         const killed = [];
