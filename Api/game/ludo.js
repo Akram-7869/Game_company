@@ -255,7 +255,7 @@ class LudoGame {
 
     botChooseMove(botPlayer, diceValue) {
         const possibleMoves = this.getBotPossibleMoves(botPlayer, diceValue);
-        console.log('Bot-   possibleMoves',possibleMoves);
+        console.log('Bot-possibleMoves',possibleMoves);
         if (possibleMoves.length > 0) {
             let chosenMove;
             switch (this.botDifficulty) {
@@ -280,14 +280,14 @@ class LudoGame {
     getBotPossibleMoves(botPlayer, diceValue) {
         const moves = [];
         for (let i = 1; i <= 4; i++) {
-            const tokenKey = i;
+            const tokenKey = `pasa_${i}`;
             const currentPosition = botPlayer[tokenKey];
             if (currentPosition === 0 && diceValue === 6) {
-                moves.push({ tokenKey, newPosition: 1 });
+                moves.push({ tokenKey, newPosition: 1, i });
             } else if (currentPosition > 0) {
                 const newPosition = currentPosition + diceValue;
                 if (newPosition <= 56) {
-                    moves.push({ tokenKey, newPosition });
+                    moves.push({ tokenKey, newPosition ,i });
                 }
             }
         }
@@ -340,12 +340,12 @@ class LudoGame {
     }
 
     executeBotMove(botPlayer, move, diceValue) {
-        const { tokenKey, newPosition } = move;
+        const { tokenKey, newPosition ,i} = move;
         botPlayer[tokenKey] = newPosition;
 console.log('executeBotMove', tokenKey, newPosition,move );
         const moveData = {
             PlayerID: botPlayer.userId,
-            key: tokenKey,
+            key: i,
             steps: diceValue,
             newPosition: diceValue
         };
