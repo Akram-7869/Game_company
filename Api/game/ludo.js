@@ -109,7 +109,7 @@ class LudoGame {
         let { PlayerID, steps, pasaIndex, key } = data;
       
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        let pasa_k=`passa_${key}`;
+        let pasa_k=`pasa_${key}`;
         console.log('handlePlayerMove', data,pasa_k ,  currentPlayer);
         if (currentPlayer[pasa_k]) {
             currentPlayer[pasa_k] =  parseInt(currentPlayer[pasa_k]) + parseInt(steps);
