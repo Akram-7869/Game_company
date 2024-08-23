@@ -293,7 +293,7 @@ class LudoGame {
             const tokenKey = `pasa_${i}`;
             const currentPosition = botPlayer[tokenKey];
             if (currentPosition === 0 && diceValue === 6) {
-                moves.push({ tokenKey, newPosition: 1, pasaIndex: i - 1 });
+                moves.push({ tokenKey, newPosition: 0, pasaIndex: i - 1 });
             } else if (currentPosition > 0) {
                 const newPosition = currentPosition + diceValue;
                 if (newPosition <= 56) {
