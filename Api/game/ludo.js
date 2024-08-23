@@ -280,7 +280,7 @@ class LudoGame {
     getBotPossibleMoves(botPlayer, diceValue) {
         const moves = [];
         for (let i = 1; i <= 4; i++) {
-            const tokenKey = `pasa_${i}`;
+            const tokenKey = i;
             const currentPosition = botPlayer[tokenKey];
             if (currentPosition === 0 && diceValue === 6) {
                 moves.push({ tokenKey, newPosition: 1 });
@@ -347,7 +347,7 @@ console.log('executeBotMove', tokenKey, newPosition,move );
             PlayerID: botPlayer.userId,
             key: tokenKey,
             steps: diceValue,
-            newPosition: newPosition
+            newPosition: diceValue
         };
 
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
