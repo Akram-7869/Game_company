@@ -152,39 +152,39 @@ class LudoGame {
     }
 
     nextTurn(socket) {
-        //     if (this.turnTimer) {
-        //         this.turnTimer?.reset(15);
-        //     }
-        //      console.log('OnNextTurn-binding');              
-        //         this.io.to(this.roomName).emit('OnNextTurn', {
-        //             gameType: 'Ludo',
-        //             room: this.roomName,
-        //             currentPhase: this.currentPhase,
-        //             currentTurnIndex: this.currentTurnIndex,
-        //         });
-
-        //   //  Set timer for the next turn
-        //     this.turnTimer = new Timer(15, (remaining) => {
-        //         this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
-        //     }, () => {
-        //         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-        //        this.nextTurn();
-        //     });
-
-        //     this.turnTimer.startTimer();
-        const currentPlayer = this.turnOrder[this.currentTurnIndex];
-
-
- console.log('in-next-index',this.currentTurnIndex);
-        if (currentPlayer.playerStatus !== 'Left') {
-            if (currentPlayer.type === 'bot') {
-                this.botTurn(currentPlayer);
-            } else {
-                this.startTurnTimer();
+            if (this.turnTimer) {
+                this.turnTimer?.reset(15);
             }
-        } else {
-            this.nextTurn();
-        }
+             console.log('OnNextTurn-binding');              
+                this.io.to(this.roomName).emit('OnNextTurn', {
+                    gameType: 'Ludo',
+                    room: this.roomName,
+                    currentPhase: this.currentPhase,
+                    currentTurnIndex: this.currentTurnIndex,
+                });
+
+          //  Set timer for the next turn
+            this.turnTimer = new Timer(15, (remaining) => {
+                this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
+            }, () => {
+                this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+               this.nextTurn();
+            });
+
+            this.turnTimer.startTimer();
+        // const currentPlayer = this.turnOrder[this.currentTurnIndex];
+
+
+//  console.log('in-next-index',this.currentTurnIndex);
+//         if (currentPlayer.playerStatus !== 'Left') {
+//             if (currentPlayer.type === 'bot') {
+//                 this.botTurn(currentPlayer);
+//             } else {
+//                 this.startTurnTimer();
+//             }
+//         } else {
+//             this.nextTurn();
+//         }
 
     }
 
