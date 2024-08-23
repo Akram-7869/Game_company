@@ -444,6 +444,7 @@ class LudoGame {
                 this.turnTimer.startTimer();
             }
         } else {
+            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
             this.nextTurn();
         }
         this.io.to(this.roomName).emit('OnContinueTurn', data);
