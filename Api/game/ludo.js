@@ -18,8 +18,8 @@ class LudoGame {
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 9; // 5 seconds
         this.lastDiceValue = 6;
-        this.botMoveDelay = 3000;
-        this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
+        this.botMoveDelay = 1000;
+        this.botDifficulty = 'easy'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
     }
 
@@ -395,6 +395,7 @@ class LudoGame {
         if (canContinue) {
             setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
+            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
             this.nextTurn();
         }
     }
