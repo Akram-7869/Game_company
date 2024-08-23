@@ -170,7 +170,7 @@ class LudoGame {
         //     this.turnTimer.startTimer();
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
- 
+ console.log(currentPlayer);
         if (currentPlayer.playerStatus !== 'Left') {
             if (currentPlayer.type === 'bot') {
                 this.botTurn(currentPlayer);
@@ -195,6 +195,7 @@ class LudoGame {
         });
 
         this.turnTimer = new Timer(15, (remaining) => {
+            console.log('turn_tick', remaing);
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
         }, () => {
             this.handleTurnTimeout();
@@ -204,13 +205,18 @@ class LudoGame {
     }
 
     handleTurnTimeout() {
+        
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
+        console.log('handle time out',this.turnOrder, this.currentTurnIndex);
         if (this.players.has(currentPlayer.userId)) {
             let playerObj = this.players.get(currentPlayer.userId);
             playerObj.lives = (playerObj.lives || 3) - 1;
+            console.log('player_lost_life',playerObj.lives);
+
             this.io.to(this.roomName).emit('player_lost_life', { playerId: currentPlayer.userId, lives: playerObj.lives });
 
             if (playerObj.lives <= 0) {
+                console.log('marking-as ledf');
                 playerObj.player.playerStatus = 'Left';
             }
         }
