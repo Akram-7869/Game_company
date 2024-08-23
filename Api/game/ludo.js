@@ -172,6 +172,8 @@ class LudoGame {
         //     });
 
         //     this.turnTimer.startTimer();
+        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+
          const currentPlayer = this.turnOrder[this.currentTurnIndex];
  console.log('this.currentTurnIndex',this.currentTurnIndex);
         if (currentPlayer.playerStatus !== 'Left') {
