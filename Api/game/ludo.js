@@ -109,8 +109,9 @@ class LudoGame {
         let { PlayerID, steps, pasaIndex, key } = data;
         console.log('handlePlayerMove', data);
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        if (currentPlayer[key]) {
-            currentPlayer[key] += steps;
+        let pasa_k=`passa_key`;
+        if (currentPlayer[pasa_k]) {
+            currentPlayer[pasa_k] =  parseInt(currentPlayer[pasa_k]) + parseInt(steps);
             this.io.to(this.roomName).emit('OnMovePasa', data);
         }
     }
