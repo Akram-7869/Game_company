@@ -292,17 +292,20 @@ class LudoGame {
         for (let i = 1; i <= 4; i++) {
             const tokenKey = `pasa_${i}`;
             const currentPosition = botPlayer[tokenKey];
-            if (currentPosition === 0 && diceValue === 6) {
-                moves.push({ tokenKey, newPosition: 1, pasaIndex: i - 1 });
-            } else if (currentPosition > 0) {
-                const newPosition = parseInt(currentPosition) + parseInt(diceValue);
+            if (currentPosition === -1 && diceValue === 6) {
+                // Move out of home
+                moves.push({ tokenKey, newPosition: 0, pasaIndex: i - 1 });
+            } else if (currentPosition >= 0) {
+                const newPosition = currentPosition + diceValue;
                 if (newPosition <= 56) {
-                    moves.push({ tokenKey, newPosition, pasaIndex:i-1 });
+                    moves.push({ tokenKey, newPosition, pasaIndex: i - 1 });
                 }
             }
         }
         return moves;
     }
+
+
 
     getRandomMove(possibleMoves) {
         return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
@@ -348,13 +351,16 @@ class LudoGame {
         const safePositions = [1, 9, 14, 22, 27, 35, 40, 48];
         return safePositions.includes(position);
     }
-
+    getServerIndexKey(playerIndex, pasaIndex) {
+        return playerIndex * 4 + pasaIndex;
+    }
     executeBotMove(botPlayer, move, diceValue) {
         const { tokenKey, newPosition, pasaIndex } = move;
+        const currentPosition = botPlayer[tokenKey];
         botPlayer[tokenKey] = newPosition;
 
         const botPlayerIndex = this.turnOrder.findIndex(p => p.userId === botPlayer.userId);
-        const key = botPlayerIndex * 4 + pasaIndex;
+        const key = this.getServerIndexKey(botPlayerIndex, pasaIndex);
 
         const moveData = {
             PlayerID: botPlayer.userId,
@@ -363,11 +369,11 @@ class LudoGame {
             key: key,
             steps: diceValue,
             newPosition: newPosition,
-            currentPosition: parseInt(newPosition) - parseInt(diceValue)
+            currentPosition: currentPosition
         };
-        console.log('botPlayerIndex',botPlayerIndex , this.currentTurnIndex,move,'moveData', moveData)
+
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
-        //this.updateGameState(); // Update game state after bot move
+        //this.updateGameState();
 
         const killed = this.checkForKills(botPlayer, newPosition);
         if (killed) {
@@ -378,14 +384,15 @@ class LudoGame {
     }
 
 
-    checkForKills(botPlayer, newPosition) {
+   
+    checkForKills(player, newPosition) {
         const killed = [];
-        this.turnOrder.forEach(player => {
-            if (player.userId !== botPlayer.userId) {
+        this.turnOrder.forEach(otherPlayer => {
+            if (otherPlayer.userId !== player.userId) {
                 for (let i = 1; i <= 4; i++) {
                     const tokenKey = `pasa_${i}`;
-                    if (player[tokenKey] === newPosition && !this.isSafePosition(newPosition)) {
-                        killed.push({ player, tokenKey });
+                    if (otherPlayer[tokenKey] === newPosition && !this.isSafePosition(newPosition)) {
+                        killed.push({ player: otherPlayer, tokenKey });
                     }
                 }
             }
@@ -429,7 +436,17 @@ class LudoGame {
     }
 
 
-
+    handlePlayerKill(killerPlayer, killed) {
+        killed.forEach(({ player, tokenKey }) => {
+            player[tokenKey] = -1; // Send back to home
+            this.io.to(this.roomName).emit('OnKillEvent', {
+                killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === killerPlayer.userId),
+                killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
+                killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
+                killedPasaIndex: parseInt(tokenKey.split('_')[1]) - 1
+            });
+        });
+    }
     playerMove(socket, move) {
         if (this.turnOrder[this.currentTurnIndex] !== socket.id) {
             socket.emit('error', 'Not your turn.');
