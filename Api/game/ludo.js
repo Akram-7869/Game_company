@@ -36,6 +36,7 @@ class LudoGame {
         const totalPlayers = this.players.size + this.bots.size;
         if (totalPlayers < this.maxPlayers && this.players.size > 0) {
             const botsToAdd = this.maxPlayers - totalPlayers;
+            console.log('botsToAdd',botsToAdd, totalPlayers);
             this.addBots(botsToAdd);
         }
         if (totalPlayers === this.maxPlayers) {
