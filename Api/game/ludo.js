@@ -477,7 +477,7 @@ class LudoGame {
             this.endGame('All players left');
         } else if (this.isGameOver()) {
             this.endGame('Game completed');
-        }else if()
+        } 
     }
     isGameOver() {
         return this.turnOrder.some(player =>
