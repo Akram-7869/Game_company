@@ -355,7 +355,7 @@ class LudoGame {
 
         const botPlayerIndex = this.turnOrder.findIndex(p => p.userId === botPlayer.userId);
         const key = botPlayerIndex * 4 + pasaIndex;
-console.log('botPlayerIndex',botPlayerIndex , this.currentTurnIndex)
+
         const moveData = {
             PlayerID: botPlayer.userId,
             TournamentID: this.lobbyId,
@@ -363,9 +363,9 @@ console.log('botPlayerIndex',botPlayerIndex , this.currentTurnIndex)
             key: key,
             steps: diceValue,
             newPosition: newPosition,
-            currentPosition: newPosition - diceValue
+            currentPosition: parseInt(newPosition) - parseInt(diceValue)
         };
-
+        console.log('botPlayerIndex',botPlayerIndex , this.currentTurnIndex,move,'moveData', moveData)
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
         //this.updateGameState(); // Update game state after bot move
 
