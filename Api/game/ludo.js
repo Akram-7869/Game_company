@@ -13,7 +13,6 @@ class LudoGame {
         this.turnTimer = null;
         this.roomJoinTimers = null;
         this.currentPhase = 'createdroom';
-        this.currentPlayer =null;
 
         this.bettingTimer = null;
         this.pauseTimer = null;
@@ -107,11 +106,11 @@ class LudoGame {
         return Array.from(this.bots.values()).map(value => value.player);
     }
     handlePlayerMove(socket, data) {
-        let { PlayerID, steps , pasaIndex} = data;
+        let { PlayerID, steps, pasaIndex, key } = data;
         console.log('handlePlayerMove', data);
-      let  key = `pasa_${pasaIndex}`
-        if (this.currentPlayer[key]) {
-            this.currentPlayer[key] += steps;
+        const currentPlayer = this.turnOrder[this.currentTurnIndex];
+        if (currentPlayer[key]) {
+            currentPlayer[key] += steps;
             this.io.to(this.roomName).emit('OnMovePasa', data);
         }
     }
@@ -156,46 +155,46 @@ class LudoGame {
     }
 
     nextTurn(socket) {
-            if (this.turnTimer) {
-                this.turnTimer?.reset(15);
-            }
-             console.log('OnNextTurn-binding',this.currentTurnIndex, this.turnOrder);              
-                this.io.to(this.roomName).emit('OnNextTurn', {
-                    gameType: 'Ludo',
-                    room: this.roomName,
-                    currentPhase: this.currentPhase,
-                    currentTurnIndex: this.currentTurnIndex,
-                });
-     this.currentPlayer = this.turnOrder[this.currentTurnIndex];
-   if (this.currentPlayer.type === 'bot') {
-                    this.botTurn(this.currentPlayer);
-                    return;
-                } 
-                // else {
-                //     this.startTurnTimer();
-                // }
-          //  Set timer for the next turn
-            this.turnTimer = new Timer(15, (remaining) => {
-                this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
-            }, () => {
-                this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-               this.nextTurn();
-            });
+        if (this.turnTimer) {
+            this.turnTimer?.reset(15);
+        }
+        console.log('OnNextTurn-binding', this.currentTurnIndex, this.turnOrder);
+        this.io.to(this.roomName).emit('OnNextTurn', {
+            gameType: 'Ludo',
+            room: this.roomName,
+            currentPhase: this.currentPhase,
+            currentTurnIndex: this.currentTurnIndex,
+        });
+        const currentPlayer = this.turnOrder[this.currentTurnIndex];
+        if (currentPlayer.type === 'bot') {
+            this.botTurn(currentPlayer);
+            return;
+        }
+        // else {
+        //     this.startTurnTimer();
+        // }
+        //  Set timer for the next turn
+        this.turnTimer = new Timer(15, (remaining) => {
+            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
+        }, () => {
+            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+            this.nextTurn();
+        });
 
-            this.turnTimer.startTimer();
-     
+        this.turnTimer.startTimer();
 
 
-//  console.log('in-next-index',this.currentTurnIndex);
-//         if (currentPlayer.playerStatus !== 'Left') {
-//             if (currentPlayer.type === 'bot') {
-//                 this.botTurn(currentPlayer);
-//             } else {
-//                 this.startTurnTimer();
-//             }
-//         } else {
-//             this.nextTurn();
-//         }
+
+        //  console.log('in-next-index',this.currentTurnIndex);
+        //         if (currentPlayer.playerStatus !== 'Left') {
+        //             if (currentPlayer.type === 'bot') {
+        //                 this.botTurn(currentPlayer);
+        //             } else {
+        //                 this.startTurnTimer();
+        //             }
+        //         } else {
+        //             this.nextTurn();
+        //         }
 
     }
 
@@ -221,13 +220,13 @@ class LudoGame {
     }
 
     handleTurnTimeout() {
-        
+
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        console.log('handle time out',this.turnOrder, this.currentTurnIndex);
+        console.log('handle time out', this.turnOrder, this.currentTurnIndex);
         if (this.players.has(currentPlayer.userId)) {
             let playerObj = this.players.get(currentPlayer.userId);
             playerObj.lives = (playerObj.lives || 3) - 1;
-            console.log('player_lost_life',playerObj.lives);
+            console.log('player_lost_life', playerObj.lives);
 
             this.io.to(this.roomName).emit('player_lost_life', { playerId: currentPlayer.userId, lives: playerObj.lives });
 
@@ -247,7 +246,7 @@ class LudoGame {
 
     botRollDice(botPlayer) {
         // const diceValue = Math.floor(Math.random() * 6) + 1;
-       let  diceValue = this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
+        let diceValue = this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
         this.io.to(this.roomName).emit('OnRollDice', {
             dice: diceValue,
             currentTurnIndex: this.currentTurnIndex
@@ -258,7 +257,7 @@ class LudoGame {
 
     botChooseMove(botPlayer, diceValue) {
         const possibleMoves = this.getBotPossibleMoves(botPlayer, diceValue);
-        console.log('Bot-possibleMoves',possibleMoves);
+        console.log('Bot-possibleMoves', possibleMoves);
         if (possibleMoves.length > 0) {
             let chosenMove;
             switch (this.botDifficulty) {
@@ -290,7 +289,7 @@ class LudoGame {
             } else if (currentPosition > 0) {
                 const newPosition = currentPosition + diceValue;
                 if (newPosition <= 56) {
-                    moves.push({ tokenKey, newPosition ,i });
+                    moves.push({ tokenKey, newPosition, i });
                 }
             }
         }
@@ -343,20 +342,20 @@ class LudoGame {
     }
 
     executeBotMove(botPlayer, move, diceValue) {
-        const { tokenKey, newPosition ,i} = move;
+        const { tokenKey, newPosition, i } = move;
         botPlayer[tokenKey] = newPosition;
 
         const moveData = {
             PlayerID: botPlayer.userId,
-            TournamentID:this.lobbyId,
-            RoomId:this.roomName,
+            TournamentID: this.lobbyId,
+            RoomId: this.roomName,
             key: i,
             steps: diceValue,
             newPosition: diceValue
         };
 
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
-        console.log('executeBotMove', tokenKey, newPosition,move ,'moveDaata', moveData);
+        console.log('executeBotMove', tokenKey, newPosition, move, 'moveDaata', moveData);
         const killed = this.checkForKills(botPlayer, newPosition);
         if (killed) {
             setTimeout(() => this.handleBotKill(botPlayer, killed), this.botMoveDelay);
@@ -497,7 +496,7 @@ class LudoGame {
             this.endGame('All players left');
         } else if (this.isGameOver()) {
             this.endGame('Game completed');
-        } 
+        }
     }
     isGameOver() {
         return this.turnOrder.some(player =>
