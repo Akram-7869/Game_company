@@ -342,16 +342,18 @@ class LudoGame {
     executeBotMove(botPlayer, move, diceValue) {
         const { tokenKey, newPosition ,i} = move;
         botPlayer[tokenKey] = newPosition;
-console.log('executeBotMove', tokenKey, newPosition,move );
+
         const moveData = {
             PlayerID: botPlayer.userId,
+            TournamentID:this.lobbyId,
+            RoomId:this.roomName,
             key: i,
             steps: diceValue,
             newPosition: diceValue
         };
 
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
-
+        console.log('executeBotMove', tokenKey, newPosition,move ,'moveDaata', moveData);
         const killed = this.checkForKills(botPlayer, newPosition);
         if (killed) {
             setTimeout(() => this.handleBotKill(botPlayer, killed), this.botMoveDelay);
