@@ -8,12 +8,12 @@ class TambolaGame {
     this.numbers = new Set();
     this.numbersArray = this.generateNumbers();
     this.claimed = {
-      upperRow: 0,
-      lowerRow: 0,
-      fullHouse: 0,
-      middle: 0,
-      fourCorner: 0,
-      earlyFive: 0,
+      upperRow: 5,
+      lowerRow: 5,
+      fullHouse: 5,
+      middle: 5,
+      fourCorner: 5,
+      earlyFive: 5,
       upperRowTotal: 0,
       lowerRowTotal: 0,
       fullHouseTotal: 0,
@@ -234,9 +234,9 @@ console.log('onBetPlaced',d);
      // const rewardAmount = this.calculateReward(rewardType);
 
       if (d.rewardAmount > 0) {
-        this.claimed[rewardType] += 1;
+        this.claimed[rewardType] -= 1;
         this.claimed[`${rewardType}Total`] += d.rewardAmount;
-        this.io.to(socket.id).emit('OnClaimReward', {
+        this.io.to(this.room).emit('OnClaimReward', {
           success: true,
           rewardType,
           name:d.name,
