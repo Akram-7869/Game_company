@@ -108,13 +108,15 @@ class LudoGame {
     }
     handlePlayerMove(socket, data) {
         let { PlayerID, key, steps, currentPosition, newPosition } = data;
-        console.log('handlePlayerMove', data);
+        // console.log('handlePlayerMove', data);
 
         let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
         let pasaIndex = key % 4;
         let pasa_k = `pasa_${pasaIndex + 1}`;
 
         let player = this.turnOrder[playerIndex];
+        console.log('player-move',data);
+
         if (player && player[pasa_k] !== undefined) {
             // Check if the move is valid
             if ((player[pasa_k] === -1 && steps === 6 && newPosition === 0) || 
@@ -122,7 +124,6 @@ class LudoGame {
                 
                 // Update player position
                 player[pasa_k] = newPosition;
-                
                 // Emit move to all clients
                 this.io.to(this.roomName).emit('OnMovePasa', data);
 
@@ -471,7 +472,7 @@ class LudoGame {
             newPosition: newPosition,
             currentPosition: currentPosition
         };
-
+console.log('bot-move',moveData,move);
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
         //this.updateGameState();
 
