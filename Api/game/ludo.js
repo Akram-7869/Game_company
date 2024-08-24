@@ -188,23 +188,25 @@ class LudoGame {
     }
 
     handleKill(killerPlayer, killed) {
+        console.log('handleKill', killed);
         killed.forEach(({ player, tokenKey }) => {
             player[tokenKey] = -1; // Reset to home position
             
             // If the killed token belongs to a bot, update bot's internal state
-            if (player.type === 'bot') {
-                const botPlayer = this.bots.get(player.userId);
-                if (botPlayer) {
-                    botPlayer.player[tokenKey] = -1;
+            // if (player.type === 'bot') {
+            //     const botPlayer = this.bots.get(player.userId);
+            //     if (botPlayer) {
+            //         botPlayer.player[tokenKey] = -1;
+            //     }
+            // }
+                let dd= {
+                    killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === killerPlayer.userId),
+                    killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
+                    killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
+                    killedPasaIndex: parseInt(tokenKey.split('_')[1]) - 1
                 }
-            }
-
-            this.io.to(this.roomName).emit('OnKillEvent', {
-                killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === killerPlayer.userId),
-                killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
-                killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
-                killedPasaIndex: parseInt(tokenKey.split('_')[1]) - 1
-            });
+                console.log('handleKill enitin OnKillEvent--',dd)
+            this.io.to(this.roomName).emit('OnKillEvent',dd);
         });
 
         // Update game state after kills
