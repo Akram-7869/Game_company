@@ -498,7 +498,7 @@ class LudoGame {
                     if (playerTokenPosition >= 0) {
                         const relativePosition = (playerTokenPosition - (serverPlayerIndex * 13) + 52) % 52;
                         
-                        if (relativePosition === botRelativePosition && !this.isSafeSpot(relativePosition)) {
+                        if (relativePosition === botRelativePosition && !this.isSafePosition(relativePosition)) {
                             killed.push({ 
                                 player, 
                                 serverPlayerIndex, 
@@ -514,6 +514,7 @@ class LudoGame {
         return killed;
     }
 
+    
     handleBotKill(botPlayer, killed) {
         const botServerIndex = this.turnOrder.findIndex(p => p.userId === botPlayer.userId);
         
