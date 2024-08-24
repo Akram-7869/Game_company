@@ -23,6 +23,7 @@ class LudoGame {
         this.botMoveDelay = 2000;
         this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
+        
     }
 
     syncPlayer(socket, player) {
@@ -287,7 +288,7 @@ class LudoGame {
             this.botTurn(currentPlayer);
             return;
         }
-        console.log('OnNextTurn', this.currentTurnIndex , );
+        console.log('OnNextTurn', this.currentTurnIndex ,this.turnOrder[this.currentTurnIndex] );
         // else {
         //     this.startTurnTimer();
         // }
@@ -586,6 +587,7 @@ class LudoGame {
 
     OnKillEvent(socket) {
         socket.on('OnKillEvent', (d) => {
+            console.log('OnKillEvent',d);
             this.io.to(this.roomName).emit('OnKillEvent', d);
         });
     }
@@ -681,7 +683,7 @@ class LudoGame {
         }
     }
 
-
+  
 }
 
 module.exports = LudoGame;
