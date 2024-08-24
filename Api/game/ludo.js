@@ -23,8 +23,8 @@ class LudoGame {
         this.botMoveDelay = 2000;
         this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
-        
-        
+
+
     }
 
     syncPlayer(socket, player) {
@@ -112,16 +112,16 @@ class LudoGame {
         // console.log('handlePlayerMove', data);
 
         let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
-        let pasaIndex = key+1;
+        let pasaIndex = key + 1;
         let pasa_k = `pasa_${pasaIndex}`;
 
         let player = this.turnOrder[playerIndex];
-                        console.log('player-move',data , 'pasa_k',pasa_k );
+        console.log('player-move', data, 'pasa_k', pasa_k);
 
         if (player && player[pasa_k] !== undefined) {
             // skip for home key
-            if (currentPosition  !== -1) {
-                
+            if (currentPosition !== -1) {
+
                 // Update player position
                 player[pasa_k] = newPosition;
                 // Emit move to all clients
@@ -139,7 +139,7 @@ class LudoGame {
                 // Handle turn continuation
                 this.handleTurnContinuation(player, steps === 6 || killed);
             } else {
-                console.log('Invalid move detected currentPosition',currentPosition);
+                console.log('Invalid move detected currentPosition', currentPosition);
                 // Optionally, send an error message back to the client
             }
         }
@@ -149,7 +149,7 @@ class LudoGame {
 
         if (canContinue) {
             // Player gets another turn
-            this.io.to(this.roomName).emit('AllowReroll', { 
+            this.io.to(this.roomName).emit('AllowReroll', {
                 PlayerID: player.userId,
                 reason: diceValue === 6 ? 'Rolled a 6' : 'Killed a token'
             });
@@ -184,14 +184,14 @@ class LudoGame {
         }
 
         // Emit updated game state
-       // this.io.to(this.roomName).emit('GameStateUpdate', this.gameState);
+        // this.io.to(this.roomName).emit('GameStateUpdate', this.gameState);
     }
 
     handleKill(killerPlayer, killed) {
         console.log('handleKill', killed);
         killed.forEach(({ player, tokenKey }) => {
             player[tokenKey] = -1; // Reset to home position
-            
+
             // If the killed token belongs to a bot, update bot's internal state
             // if (player.type === 'bot') {
             //     const botPlayer = this.bots.get(player.userId);
@@ -199,18 +199,18 @@ class LudoGame {
             //         botPlayer.player[tokenKey] = -1;
             //     }
             // }
-                let dd= {
-                    killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === killerPlayer.userId),
-                    killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
-                    killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
-                    killedPasaIndex: parseInt(tokenKey.split('_')[1]) - 1
-                }
-                console.log('handleKill enitin OnKillEvent--',dd)
-            this.io.to(this.roomName).emit('OnKillEvent',dd);
+            let dd = {
+                killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === killerPlayer.userId),
+                killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
+                killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
+                killedPasaIndex: parseInt(tokenKey.split('_')[1]) - 1
+            }
+            console.log('handleKill enitin OnKillEvent--', dd)
+            this.io.to(this.roomName).emit('OnKillEvent', dd);
         });
 
         // Update game state after kills
-      //  this.updateGameState();
+        //  this.updateGameState();
     }
     checkAndUpdateBotPositions(newPosition) {
         this.turnOrder.forEach(player => {
@@ -286,12 +286,12 @@ class LudoGame {
             currentPhase: this.currentPhase,
             currentTurnIndex: this.currentTurnIndex,
         });
-        
+
         if (currentPlayer.type === 'bot') {
             this.botTurn(currentPlayer);
             return;
         }
-        console.log('OnNextTurn', this.currentTurnIndex ,this.turnOrder);
+        console.log('OnNextTurn', this.currentTurnIndex, this.turnOrder);
         // else {
         //     this.startTurnTimer();
         // }
@@ -299,7 +299,7 @@ class LudoGame {
         this.turnTimer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
         }, () => {
-          
+
             this.nextTurn();
         });
 
@@ -325,9 +325,9 @@ class LudoGame {
             this.turnTimer.reset(15); // Reset to 15 seconds or your preferred turn duration
         } else {
             this.turnTimer = new Timer(15, (remaining) => {
-                this.io.to(this.roomName).emit('turn_tick', { 
-                    remaining, 
-                    currentTurnIndex: this.currentTurnIndex 
+                this.io.to(this.roomName).emit('turn_tick', {
+                    remaining,
+                    currentTurnIndex: this.currentTurnIndex
                 });
             }, () => {
                 // Time's up, move to next player
@@ -368,7 +368,7 @@ class LudoGame {
 
     botChooseMove(botPlayer, diceValue) {
         const possibleMoves = this.getBotPossibleMoves(botPlayer, diceValue);
-       // console.log('Bot-possibleMoves', possibleMoves);
+        // console.log('Bot-possibleMoves', possibleMoves);
         if (possibleMoves.length > 0) {
             let chosenMove;
             switch (this.botDifficulty) {
@@ -474,7 +474,7 @@ class LudoGame {
             newPosition: newPosition,
             currentPosition: currentPosition
         };
-console.log('bot-move',moveData,move);
+        console.log('bot-move', moveData, move);
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
         //this.updateGameState();
 
@@ -487,7 +487,7 @@ console.log('bot-move',moveData,move);
     }
 
 
-   
+
     checkForKills(player, newPosition) {
         const killed = [];
         this.turnOrder.forEach(otherPlayer => {
@@ -526,7 +526,7 @@ console.log('bot-move',moveData,move);
         if (canContinue) {
             setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
-            
+
             this.nextTurn();
         }
     }
@@ -537,14 +537,14 @@ console.log('bot-move',moveData,move);
         socket.on('OnContinueTurn', (data) => this.handlePlayerContinueTurn(socket, data));
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket, data));
         socket.on('OnKillEvent', (data) => this.handleKillEvent(socket, data));
-       
+
     }
 
 
     handlePlayerKill(killerPlayer, killed) {
         killed.forEach(({ player, tokenKey }) => {
             player[tokenKey] = -1; // Reset to home position
-            
+
             // If the killed token belongs to a bot, update bot's internal state
             if (player.type === 'bot') {
                 const botPlayer = this.bots.get(player.userId);
@@ -562,7 +562,7 @@ console.log('bot-move',moveData,move);
         });
 
         // Update game state after kills
-       // this.updateGameState();
+        // this.updateGameState();
     }
 
 
@@ -580,18 +580,19 @@ console.log('bot-move',moveData,move);
     }
 
 
-    handleKillEvent(socket ,d) {
-        
-            console.log('OnKillEvent',d);
-           let  user = this.turnOrder[d.killedPlayerIndex];
-           if(user.type ==='bot'){
+    handleKillEvent(socket, d) {
 
-           }
-           let pasa_k = `pasa_${d.killedPasaIndex}`
-           user[pasa_k]=-1;
-           console.log('OnKillEvent', user,pasa_k)
-            this.io.to(this.roomName).emit('OnKillEvent', d);
-        
+        console.log('OnKillEvent', d);
+        let targetUser = this.turnOrder[d.killedPlayerIndex];
+        let pasaIndex = d.killedPasaIndex;
+        if (targetUser.type === 'bot') {
+            pasaIndex + 1;
+        }
+        let pasa_k = `pasa_${pasaIndex}`
+        targetUser[pasa_k] = -1;
+        console.log('OnKillEvent', targetUser, pasa_k)
+        this.io.to(this.roomName).emit('OnKillEvent', d);
+
     }
 
 
@@ -606,7 +607,7 @@ console.log('bot-move',moveData,move);
                 this.turnTimer.startTimer();
             }
         } else {
-            
+
             this.nextTurn();
         }
         this.io.to(this.roomName).emit('OnContinueTurn', data);
@@ -685,7 +686,7 @@ console.log('bot-move',moveData,move);
         }
     }
 
-  
+
 }
 
 module.exports = LudoGame;
