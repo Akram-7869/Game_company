@@ -589,6 +589,7 @@ console.log('bot-move',moveData,move);
            }
            let pasa_k = `pasa_${d.killedPasaIndex}`
            user[pasa_k]=-1;
+           console.log('OnKillEvent', user,pasa_k)
             this.io.to(this.roomName).emit('OnKillEvent', d);
         
     }
