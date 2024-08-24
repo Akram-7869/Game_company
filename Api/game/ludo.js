@@ -288,7 +288,7 @@ class LudoGame {
             this.botTurn(currentPlayer);
             return;
         }
-        console.log('OnNextTurn', this.currentTurnIndex ,this.turnOrder[this.currentTurnIndex] );
+        console.log('OnNextTurn', this.currentTurnIndex ,this.turnOrder);
         // else {
         //     this.startTurnTimer();
         // }
