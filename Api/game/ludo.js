@@ -115,12 +115,11 @@ class LudoGame {
         let pasa_k = `pasa_${pasaIndex + 1}`;
 
         let player = this.turnOrder[playerIndex];
-        console.log('player-move',data);
+                        console.log('player-move',data , 'pasa_k',pasa_k );
 
         if (player && player[pasa_k] !== undefined) {
-            // Check if the move is valid
-            if ((player[pasa_k] === -1 && steps === 6 && newPosition === 0) || 
-                (player[pasa_k] >= 0 && newPosition === player[pasa_k] + steps)) {
+            // skip for home key
+            if (currentPosition  !== -1) {
                 
                 // Update player position
                 player[pasa_k] = newPosition;
