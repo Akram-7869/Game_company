@@ -8,7 +8,7 @@ class LudoGame {
 
         this.players = new Map(); this.bots = new Map();
         this.turnOrder = [];
-        this.currentTurnIndex = 0;
+        this.currentTurnIndex = -1;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.turnTimer = null;
         this.roomJoinTimers = null;
@@ -159,7 +159,6 @@ class LudoGame {
             }
         } else {
             // Move to the next player's turn
-            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
             const nextPlayer = this.turnOrder[this.currentTurnIndex];
 
             // Update game state
@@ -276,14 +275,15 @@ class LudoGame {
         if (this.turnTimer) {
             this.turnTimer?.reset(15);
         }
-       
+        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+        const currentPlayer = this.turnOrder[this.currentTurnIndex];
         this.io.to(this.roomName).emit('OnNextTurn', {
             gameType: 'Ludo',
             room: this.roomName,
             currentPhase: this.currentPhase,
             currentTurnIndex: this.currentTurnIndex,
         });
-        const currentPlayer = this.turnOrder[this.currentTurnIndex];
+        
         if (currentPlayer.type === 'bot') {
             this.botTurn(currentPlayer);
             return;
@@ -296,7 +296,7 @@ class LudoGame {
         this.turnTimer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
         }, () => {
-            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+          
             this.nextTurn();
         });
 
@@ -523,7 +523,7 @@ console.log('bot-move',moveData,move);
         if (canContinue) {
             setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
-            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+            
             this.nextTurn();
         }
     }
@@ -560,16 +560,6 @@ console.log('bot-move',moveData,move);
        // this.updateGameState();
     }
 
-    playerMove(socket, move) {
-        if (this.turnOrder[this.currentTurnIndex] !== socket.id) {
-            socket.emit('error', 'Not your turn.');
-            return;
-        }
-
-        this.io.to(this.roomName).emit('player_move', { id: socket.id, move });
-        console.log(`Player ${socket.id} made a move:`, move);
-        this.nextTurn();
-    }
 
 
     endGame(reason) {
@@ -604,7 +594,7 @@ console.log('bot-move',moveData,move);
                 this.turnTimer.startTimer();
             }
         } else {
-            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+            
             this.nextTurn();
         }
         this.io.to(this.roomName).emit('OnContinueTurn', data);
