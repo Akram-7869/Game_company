@@ -505,7 +505,7 @@ console.log('bot-move',moveData,move);
 
     handleBotKill(botPlayer, killed) {
         killed.forEach(({ player, tokenKey }) => {
-            player[tokenKey] = 0;
+            player[tokenKey] = -1;
             this.io.to(this.roomName).emit('OnKillEvent', {
                 killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === botPlayer.userId),
                 killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
@@ -583,6 +583,12 @@ console.log('bot-move',moveData,move);
     handleKillEvent(socket ,d) {
         
             console.log('OnKillEvent',d);
+           let  user = this.turnOrder[d.killedPlayerIndex];
+           if(user.type ==='bot'){
+
+           }
+           let pasa_k = `pasa_${d.killedPasaIndex}`
+           user[pasa_k]=-1;
             this.io.to(this.roomName).emit('OnKillEvent', d);
         
     }
