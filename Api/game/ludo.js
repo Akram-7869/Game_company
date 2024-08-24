@@ -494,10 +494,10 @@ class LudoGame {
                 for (let pasaIndex = 0; pasaIndex < 4; pasaIndex++) {
                     const tokenKey = `pasa_${pasaIndex + 1}`;
                     const playerTokenPosition = player[tokenKey];
-                    
+                    console.log( 'botRelativePosition', botRelativePosition ,'playerTokenPosition', playerTokenPosition)
                     if (playerTokenPosition >= 0) {
                         const relativePosition = (playerTokenPosition - (serverPlayerIndex * 13) + 52) % 52;
-                        
+                        console.log('relativePosition',relativePosition ,'botRelativePosition', botRelativePosition ,'playerTokenPosition', playerTokenPosition)
                         if (relativePosition === botRelativePosition && !this.isSafePosition(relativePosition)) {
                             killed.push({ 
                                 player, 
@@ -513,6 +513,7 @@ class LudoGame {
 
         return killed;
     }
+
 
     
     handleBotKill(botPlayer, killed) {
