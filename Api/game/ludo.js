@@ -111,8 +111,8 @@ class LudoGame {
         // console.log('handlePlayerMove', data);
 
         let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
-        let pasaIndex = key % 4;
-        let pasa_k = `pasa_${pasaIndex + 1}`;
+        //let pasaIndex = key % 4;
+        let pasa_k = `pasa_${key}`;
 
         let player = this.turnOrder[playerIndex];
                         console.log('player-move',data , 'pasa_k',pasa_k );
