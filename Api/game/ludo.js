@@ -138,7 +138,7 @@ class LudoGame {
                 // Handle turn continuation
                 this.handleTurnContinuation(player, steps === 6 || killed);
             } else {
-                console.log('Invalid move detected');
+                console.log('Invalid move detected currentPosition',currentPosition);
                 // Optionally, send an error message back to the client
             }
         }
