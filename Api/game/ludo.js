@@ -286,12 +286,12 @@ class LudoGame {
             currentPhase: this.currentPhase,
             currentTurnIndex: this.currentTurnIndex,
         });
+        console.log('OnNextTurn', this.currentTurnIndex, this.turnOrder);
 
         if (currentPlayer.type === 'bot') {
             this.botTurn(currentPlayer);
             return;
         }
-        console.log('OnNextTurn', this.currentTurnIndex, this.turnOrder);
         // else {
         //     this.startTurnTimer();
         // }
@@ -351,8 +351,8 @@ class LudoGame {
 
     botTurn(botPlayer) {
         // Ensure we're using the most up-to-date bot state
-        const updatedBotPlayer = this.bots.get(botPlayer.userId).player;
-        setTimeout(() => this.botRollDice(updatedBotPlayer), this.botMoveDelay);
+        // const updatedBotPlayer = this.bots.get(botPlayer.userId).player;
+        setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
     }
 
     botRollDice(botPlayer) {
@@ -576,33 +576,6 @@ class LudoGame {
         socket.on('OnKillEvent', (data) => this.handleKillEvent(socket, data));
 
     }
-
-
-    handlePlayerKill(killerPlayer, killed) {
-        killed.forEach(({ player, tokenKey }) => {
-            player[tokenKey] = -1; // Reset to home position
-
-            // If the killed token belongs to a bot, update bot's internal state
-            if (player.type === 'bot') {
-                const botPlayer = this.bots.get(player.userId);
-                if (botPlayer) {
-                    botPlayer.player[tokenKey] = -1;
-                }
-            }
-
-            this.io.to(this.roomName).emit('OnKillEvent', {
-                killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === killerPlayer.userId),
-                killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
-                killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
-                killedPasaIndex: parseInt(tokenKey.split('_')[1]) - 1
-            });
-        });
-
-        // Update game state after kills
-        // this.updateGameState();
-    }
-
-
 
     endGame(reason) {
         this.currentPhase = 'finished';
