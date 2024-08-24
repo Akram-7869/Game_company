@@ -109,21 +109,130 @@ class LudoGame {
         let { PlayerID, key, steps, currentPosition, newPosition } = data;
         console.log('handlePlayerMove', data);
 
-        let player = this.turnOrder.find(p => p.userId === PlayerID);
-        if (player) {
-            // Calculate the pasa index from the key
-            let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
-            let pasaIndex = key % 4;
-            let pasa_k = `pasa_${pasaIndex + 1}`;
+        let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
+        let pasaIndex = key % 4;
+        let pasa_k = `pasa_${pasaIndex + 1}`;
 
-            if (player[pasa_k] !== undefined) {
+        let player = this.turnOrder[playerIndex];
+        if (player && player[pasa_k] !== undefined) {
+            // Check if the move is valid
+            if ((player[pasa_k] === -1 && steps === 6 && newPosition === 0) || 
+                (player[pasa_k] >= 0 && newPosition === player[pasa_k] + steps)) {
+                
+                // Update player position
                 player[pasa_k] = newPosition;
+                
+                // Emit move to all clients
                 this.io.to(this.roomName).emit('OnMovePasa', data);
-                //this.updateGameState(); // Update game state after move
+
+                // Check for kills
+                const killed = this.checkForKills(player, newPosition);
+                if (killed) {
+                    this.handleKill(player, killed);
+                }
+
+                // Update game state
+                //this.updateGameState();
+
+                // Handle turn continuation
+                this.handleTurnContinuation(player, steps === 6 || killed);
+            } else {
+                console.log('Invalid move detected');
+                // Optionally, send an error message back to the client
             }
         }
     }
-  
+    handleTurnContinuation(player, diceValue, hasKilled) {
+        const canContinue = diceValue === 6 || hasKilled;
+
+        if (canContinue) {
+            // Player gets another turn
+            this.io.to(this.roomName).emit('AllowReroll', { 
+                PlayerID: player.userId,
+                reason: diceValue === 6 ? 'Rolled a 6' : 'Killed a token'
+            });
+
+            // Reset turn timer for the same player
+            if (this.turnTimer) {
+                this.turnTimer.reset(15); // Reset to 15 seconds or your preferred turn duration
+            }
+        } else {
+            // Move to the next player's turn
+            this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+            const nextPlayer = this.turnOrder[this.currentTurnIndex];
+
+            // Update game state
+            //this.updateGameState();
+
+            // Emit turn change event
+            this.io.to(this.roomName).emit('OnNextTurn', {
+                gameType: 'Ludo',
+                room: this.roomName,
+                currentPhase: this.currentPhase,
+                currentTurnIndex: this.currentTurnIndex,
+            });
+
+            // Handle next turn based on player type
+            if (nextPlayer.type === 'bot') {
+                // Start bot turn after a short delay
+                setTimeout(() => this.botTurn(nextPlayer), this.botMoveDelay);
+            } else {
+                // Start turn timer for human player
+                this.startTurnTimer();
+            }
+        }
+
+        // Emit updated game state
+       // this.io.to(this.roomName).emit('GameStateUpdate', this.gameState);
+    }
+
+    handleKill(killerPlayer, killed) {
+        killed.forEach(({ player, tokenKey }) => {
+            player[tokenKey] = -1; // Reset to home position
+            
+            // If the killed token belongs to a bot, update bot's internal state
+            if (player.type === 'bot') {
+                const botPlayer = this.bots.get(player.userId);
+                if (botPlayer) {
+                    botPlayer.player[tokenKey] = -1;
+                }
+            }
+
+            this.io.to(this.roomName).emit('OnKillEvent', {
+                killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === killerPlayer.userId),
+                killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
+                killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
+                killedPasaIndex: parseInt(tokenKey.split('_')[1]) - 1
+            });
+        });
+
+        // Update game state after kills
+      //  this.updateGameState();
+    }
+    checkAndUpdateBotPositions(newPosition) {
+        this.turnOrder.forEach(player => {
+            if (player.type === 'bot') {
+                for (let i = 1; i <= 4; i++) {
+                    const tokenKey = `pasa_${i}`;
+                    if (player[tokenKey] === newPosition && !this.isSafePosition(newPosition)) {
+                        this.updateBotPosition(player, tokenKey);
+                    }
+                }
+            }
+        });
+    }
+    updateBotPosition(botPlayer, tokenKey) {
+        // Reset bot token to home position
+        botPlayer[tokenKey] = -1;
+
+        // Update bot's state in the bots Map
+        const botInMap = this.bots.get(botPlayer.userId);
+        if (botInMap) {
+            botInMap.player[tokenKey] = -1;
+        }
+
+        console.log(`Bot token updated: ${botPlayer.userId}, ${tokenKey} set to -1`);
+    }
     handlePlayerRollDice(socket) {
         this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
         // this.lastDiceValue = Math.floor(Math.random() * 6) + 1;
@@ -208,48 +317,37 @@ class LudoGame {
 
     startTurnTimer() {
         if (this.turnTimer) {
-            this.turnTimer.reset(15);
+            this.turnTimer.reset(15); // Reset to 15 seconds or your preferred turn duration
+        } else {
+            this.turnTimer = new Timer(15, (remaining) => {
+                this.io.to(this.roomName).emit('turn_tick', { 
+                    remaining, 
+                    currentTurnIndex: this.currentTurnIndex 
+                });
+            }, () => {
+                // Time's up, move to next player
+                this.handleTurnTimeout();
+            });
         }
-        this.io.to(this.roomName).emit('OnNextTurn', {
-            gameType: 'Ludo',
-            room: this.roomName,
-            currentPhase: this.currentPhase,
-            currentTurnIndex: this.currentTurnIndex,
-        });
-
-        this.turnTimer = new Timer(15, (remaining) => {
-            console.log('turn_tick', remaining);
-            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
-        }, () => {
-            this.handleTurnTimeout();
-        });
-
         this.turnTimer.startTimer();
     }
 
+
     handleTurnTimeout() {
-
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        console.log('handle time out', this.turnOrder, this.currentTurnIndex);
-        if (this.players.has(currentPlayer.userId)) {
-            let playerObj = this.players.get(currentPlayer.userId);
-            playerObj.lives = (playerObj.lives || 3) - 1;
-            console.log('player_lost_life', playerObj.lives);
+        console.log(`Turn timeout for player: ${currentPlayer.userId}`);
 
-            this.io.to(this.roomName).emit('player_lost_life', { playerId: currentPlayer.userId, lives: playerObj.lives });
+        // Implement any timeout-specific logic here
+        // For example, you might want to penalize the player or simply move to the next turn
 
-            if (playerObj.lives <= 0) {
-                playerObj.player.playerStatus = 'Left';
-            }
-            this.checkGameStatus();
-        }
-        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-
-        this.nextTurn();
+        // Move to next turn
+        this.handleTurnContinuation(currentPlayer, 0, false);
     }
 
     botTurn(botPlayer) {
-        setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
+        // Ensure we're using the most up-to-date bot state
+        const updatedBotPlayer = this.bots.get(botPlayer.userId).player;
+        setTimeout(() => this.botRollDice(updatedBotPlayer), this.botMoveDelay);
     }
 
     botRollDice(botPlayer) {
@@ -438,7 +536,16 @@ class LudoGame {
 
     handlePlayerKill(killerPlayer, killed) {
         killed.forEach(({ player, tokenKey }) => {
-            player[tokenKey] = -1; // Send back to home
+            player[tokenKey] = -1; // Reset to home position
+            
+            // If the killed token belongs to a bot, update bot's internal state
+            if (player.type === 'bot') {
+                const botPlayer = this.bots.get(player.userId);
+                if (botPlayer) {
+                    botPlayer.player[tokenKey] = -1;
+                }
+            }
+
             this.io.to(this.roomName).emit('OnKillEvent', {
                 killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === killerPlayer.userId),
                 killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
@@ -446,7 +553,11 @@ class LudoGame {
                 killedPasaIndex: parseInt(tokenKey.split('_')[1]) - 1
             });
         });
+
+        // Update game state after kills
+       // this.updateGameState();
     }
+
     playerMove(socket, move) {
         if (this.turnOrder[this.currentTurnIndex] !== socket.id) {
             socket.emit('error', 'Not your turn.');
