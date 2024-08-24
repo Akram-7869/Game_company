@@ -478,14 +478,74 @@ class LudoGame {
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
         //this.updateGameState();
 
-        const killed = this.checkForKills(botPlayer, newPosition);
+        const killed = this.checkForBotKills(botPlayer, newPosition);
         if (killed) {
             setTimeout(() => this.handleBotKill(botPlayer, killed), this.botMoveDelay);
         } else {
             this.botEndTurn(botPlayer, diceValue === 6);
         }
     }
+    checkForBotKills(botServerIndex, botNewPosition) {
+        const killed = [];
+        const botRelativePosition = botNewPosition % 13;
 
+        this.turnOrder.forEach((player, serverPlayerIndex) => {
+            if (serverPlayerIndex !== botServerIndex) {
+                for (let pasaIndex = 0; pasaIndex < 4; pasaIndex++) {
+                    const tokenKey = `pasa_${pasaIndex + 1}`;
+                    const playerTokenPosition = player[tokenKey];
+                    
+                    if (playerTokenPosition >= 0) {
+                        const relativePosition = (playerTokenPosition - (serverPlayerIndex * 13) + 52) % 52;
+                        
+                        if (relativePosition === botRelativePosition && !this.isSafeSpot(relativePosition)) {
+                            killed.push({ 
+                                player, 
+                                serverPlayerIndex, 
+                                pasaIndex, 
+                                tokenKey 
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
+        return killed;
+    }
+
+    handleBotKill(botPlayer, killed) {
+        const botServerIndex = this.turnOrder.findIndex(p => p.userId === botPlayer.userId);
+        
+        killed.forEach(({ player, serverPlayerIndex, pasaIndex, tokenKey }) => {
+            player[tokenKey] = -1; // Reset to home position
+            
+            const killerServerKey = this.getServerIndexKey(botServerIndex, 0); // Assuming bot always uses first pasa
+            const killedServerKey = this.getServerIndexKey(serverPlayerIndex, pasaIndex);
+            
+            this.io.to(this.roomName).emit('OnKillEvent', {
+                killerPlayerIndex: botServerIndex,
+                killerPasaIndex: 0, // Assuming bot always uses first pasa
+                killedPlayerIndex: serverPlayerIndex,
+                killedPasaIndex: pasaIndex
+            });
+        });
+
+        this.botEndTurn(botPlayer, true);
+    }
+    botEndTurn(botPlayer, canContinue) {
+        this.io.to(this.roomName).emit('OnContinueTurn', {
+            PlayerID: botPlayer.userId,
+            canContinue: canContinue
+        });
+
+        if (canContinue) {
+            setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
+        } else {
+
+            this.nextTurn();
+        }
+    }
 
 
     checkForKills(player, newPosition) {
@@ -503,33 +563,9 @@ class LudoGame {
         return killed.length > 0 ? killed : null;
     }
 
-    handleBotKill(botPlayer, killed) {
-        killed.forEach(({ player, tokenKey }) => {
-            player[tokenKey] = -1;
-            this.io.to(this.roomName).emit('OnKillEvent', {
-                killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === botPlayer.userId),
-                killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
-                killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
-                killedPasaIndex: parseInt(tokenKey.split('_')[1]) - 1
-            });
-        });
 
-        this.botEndTurn(botPlayer, true);
-    }
 
-    botEndTurn(botPlayer, canContinue) {
-        this.io.to(this.roomName).emit('OnContinueTurn', {
-            PlayerID: botPlayer.userId,
-            canContinue: canContinue
-        });
-
-        if (canContinue) {
-            setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
-        } else {
-
-            this.nextTurn();
-        }
-    }
+  
     setupPlayerListeners(socket) {
         socket.on('OnMovePasa', (data) => this.handlePlayerMove(socket, data));
         socket.on('OnRollDice', () => this.handlePlayerRollDice(socket));
@@ -585,9 +621,7 @@ class LudoGame {
         console.log('OnKillEvent', d);
         let targetUser = this.turnOrder[d.killedPlayerIndex];
         let pasaIndex = d.killedPasaIndex;
-        pasaIndex= pasaIndex + 1;
-        
-        let pasa_k = `pasa_${pasaIndex}`
+        let pasa_k = `pasa_${pasaIndex +1}`
         targetUser[pasa_k] = -1;
         console.log('OnKillEvent', targetUser, pasa_k)
         this.io.to(this.roomName).emit('OnKillEvent', d);
