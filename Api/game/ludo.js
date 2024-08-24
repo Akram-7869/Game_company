@@ -275,7 +275,7 @@ class LudoGame {
         if (this.turnTimer) {
             this.turnTimer?.reset(15);
         }
-        console.log('OnNextTurn', this.currentTurnIndex);
+       
         this.io.to(this.roomName).emit('OnNextTurn', {
             gameType: 'Ludo',
             room: this.roomName,
@@ -287,6 +287,7 @@ class LudoGame {
             this.botTurn(currentPlayer);
             return;
         }
+        console.log('OnNextTurn', this.currentTurnIndex , );
         // else {
         //     this.startTurnTimer();
         // }
