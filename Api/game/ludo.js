@@ -534,6 +534,8 @@ console.log('bot-move',moveData,move);
         socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
         socket.on('OnContinueTurn', (data) => this.handlePlayerContinueTurn(socket, data));
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket, data));
+        socket.on('OnKillEvent', (data) => this.handleKillEvent(socket, data));
+       
     }
 
 
@@ -576,11 +578,11 @@ console.log('bot-move',moveData,move);
     }
 
 
-    OnKillEvent(socket) {
-        socket.on('OnKillEvent', (d) => {
+    handleKillEvent(socket ,d) {
+        
             console.log('OnKillEvent',d);
             this.io.to(this.roomName).emit('OnKillEvent', d);
-        });
+        
     }
 
 
