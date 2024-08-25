@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require("path");
 
 exports.callApi = (req) => {
-   console.log(req.cookies, 'cookies');
+    
   axios.defaults.headers.common = { 'Authorization': `Bearer ${req.cookies.token}` }
   return axios;
 }

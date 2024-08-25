@@ -470,7 +470,6 @@ const sendTokenResponse = (user, statusCode, res) => {
   if (process.env.NODE_ENV === 'production') {
     options.secure = true;
   }
-console.log(user,'user')
 let d= {
   success: true,
   token,
@@ -481,8 +480,7 @@ let d= {
   lastName: user.lastName,
   email: user.email
 }
-console.log(d, 'sssssssssss');
-  res
+   res
     .status(statusCode)
     //.cookie('token', token, options)
     .json(d);

@@ -104,9 +104,9 @@ exports.getCommissions = asyncHandler(async (req, res, next) => {
     if (req.body.stateCode) {
         filter['find']['stateCode'] = req.body.stateCode;
     }
-    if(req.user.role === 'influencer'){
+    if(req.role === 'influencer'){
         filter['find']['influencerId'] = req.user._id;
-    }else if(req.user.role === 'franchise'){
+    }else if(req.role === 'franchise'){
         filter['find']['franchiseId'] = req.user._id;
 
     }
