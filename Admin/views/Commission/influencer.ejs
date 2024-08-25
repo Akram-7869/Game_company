@@ -213,10 +213,10 @@
                                 },
                                 
                                 { data: 'influencerCommission', "defaultContent": "",render: function (data) {
-                                        return parseFloat(data).toFixed(2);
+                                        return data && parseFloat(data).toFixed(2);
                                     } },
                                 { data: 'totalGifts', "defaultContent": "",render: function (data) {
-                                        return parseFloat(data).toFixed(2);
+                                        return data && parseFloat(data).toFixed(2);
                                     } },
 
                                 { data: 'logType', "defaultContent": "" },
