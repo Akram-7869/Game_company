@@ -212,11 +212,11 @@
                                     }
                                 },
                                 
-                                { data: 'influencerCommission', "defaultContent": "",render: function (data) {
-                                        return data && parseFloat(data).toFixed(2);
+                                { data: 'influencerCommission', "defaultContent": 0.00,render: function (data) {
+                                        return parseFloat(data).toFixed(2);
                                     } },
-                                { data: 'totalGifts', "defaultContent": "",render: function (data) {
-                                        return data && parseFloat(data).toFixed(2);
+                                { data: 'totalGifts', "defaultContent": 0.00,render: function (data) {
+                                        return parseFloat(data).toFixed(2);
                                     } },
 
                                 { data: 'logType', "defaultContent": "" },
