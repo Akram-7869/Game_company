@@ -45,7 +45,7 @@ exports.getCommissions = asyncHandler(async (req, res, next) => {
         limit: req.body.length,
         skip: req.body.start,
         find: req.query,
-        select: {influencerId:1, 'status': 1, 'gameId': 1, franchiseCommission:1,influencerCommission:1,giftRecevied:1},
+        select: {influencerId:1, 'status': 1, 'gameId': 1, franchiseCommission:1,influencerCommission:1,giftRecevied:1,createdAt:1},
         search: {
 
         },
