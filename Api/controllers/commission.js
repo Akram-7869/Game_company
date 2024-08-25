@@ -45,13 +45,13 @@ exports.getCommissions = asyncHandler(async (req, res, next) => {
         limit: req.body.length,
         skip: req.body.start,
         find: req.query,
-        select: {influencerId:1, 'status': 1, 'gameId': 1, '': 1, franchiseCommission:1,influencerCommission:1,giftRecevied:1},
+        select: {influencerId:1, 'status': 1, 'gameId': 1, franchiseCommission:1,influencerCommission:1,giftRecevied:1},
         search: {
 
         },
 
         populate: {
-            path: 'influencerId', select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1, email: 1 }, options: { sort: { 'membership': -1 } }
+            path: 'influencerId', select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1, email: 1 }
         },
         sort: {
             _id: -1
