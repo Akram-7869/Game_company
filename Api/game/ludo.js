@@ -171,6 +171,7 @@ class LudoGame {
                 room: this.roomName,
                 currentPhase: this.currentPhase,
                 currentTurnIndex: this.currentTurnIndex,
+                currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
             });
 
             // Handle next turn based on player type
@@ -241,7 +242,9 @@ class LudoGame {
         // this.lastDiceValue = Math.floor(Math.random() * 6) + 1;
         this.io.to(this.roomName).emit('OnRollDice', {
             dice: this.lastDiceValue,
-            currentTurnIndex: this.currentTurnIndex
+            currentTurnIndex: this.currentTurnIndex,
+            currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
+            
         });
     }
     sendCurrentStatus(socket) {
@@ -252,6 +255,7 @@ class LudoGame {
             players: this.turnOrder,
             currentTurnIndex: this.currentTurnIndex,
             betting_remaing: this.bettingTimer?.remaining,
+            currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         });
     }
     startGame() {
@@ -285,6 +289,7 @@ class LudoGame {
             room: this.roomName,
             currentPhase: this.currentPhase,
             currentTurnIndex: this.currentTurnIndex,
+            currentPalyerId: this.turnOrder[this.currentTurnIndex].userId
         });
         console.log('OnNextTurn', this.currentTurnIndex, this.turnOrder);
 
@@ -297,7 +302,7 @@ class LudoGame {
         // }
         //  Set timer for the next turn
         this.turnTimer = new Timer(15, (remaining) => {
-            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex });
+            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex , currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
         }, () => {
 
             this.nextTurn();
@@ -327,7 +332,8 @@ class LudoGame {
             this.turnTimer = new Timer(15, (remaining) => {
                 this.io.to(this.roomName).emit('turn_tick', {
                     remaining,
-                    currentTurnIndex: this.currentTurnIndex
+                    currentTurnIndex: this.currentTurnIndex,
+                    currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
                 });
             }, () => {
                 // Time's up, move to next player
@@ -360,7 +366,8 @@ class LudoGame {
         let diceValue = this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
         this.io.to(this.roomName).emit('OnRollDice', {
             dice: diceValue,
-            currentTurnIndex: this.currentTurnIndex
+            currentTurnIndex: this.currentTurnIndex,
+            currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         });
 
         setTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);

@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 var dataTables = require('mongoose-datatables');
  
 const CommissionSchema = new mongoose.Schema({
+    gameId: {
+        type: String,
+    },
     franchiseId: {
         type: mongoose.Schema.ObjectId,
         ref: 'Franchise'
@@ -9,11 +12,6 @@ const CommissionSchema = new mongoose.Schema({
     influencerId: {
         type: mongoose.Schema.ObjectId,
         ref: 'Influencer'
-    },
-    
-    playerId: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Players'
     },
     
     adminCommission: {
@@ -33,16 +31,7 @@ const CommissionSchema = new mongoose.Schema({
         default:0
     },
      
-    gameId: {
-        type: String,
-    },
-    betTotal: {
-        type: Number,
-    },
-    currency: {
-        type: String,
-        default: 'INR'
-    },
+    
     status: {
         type: String,
         enum: [ 'complete','processing'],

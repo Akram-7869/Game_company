@@ -3,7 +3,7 @@ const fs = require('fs');
 const sample = new Map();
 
 module.exports = {
-   makeid, uploadFile, deletDiskFile, getKey, setkey
+   makeid, uploadFile, deletDiskFile, getKey, setkey, roundToTwoDecimals
 }
 
 function makeid(length) {
@@ -51,4 +51,7 @@ function setkey(key, v) {
 
    return sample.set(key, v);
 
+}
+function roundToTwoDecimals(value) {
+   return Math.round(value * 100) / 100;
 }

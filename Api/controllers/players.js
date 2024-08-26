@@ -836,7 +836,7 @@ exports.won = asyncHandler(async (req, res, next) => {
 
 
   let betAmout = parseFloat(amount) + parseFloat(adminCommision);
-  betAmout = parseFloat(betAmout).toFixed(2);
+  betAmout = betAmout.toFixed(2);
   let playerGame = {
     'playerId': req.player._id,
     'amountWon': amount,
@@ -866,13 +866,11 @@ exports.won = asyncHandler(async (req, res, next) => {
 
 
   let commisonInf = {
-    'gameId': gameId,
-    'playerId': req.player._id,
-    
+    'gameId': gameId,    
   }
   if (tournament.influencerId) {
     commisonInf['influencerId'] = tournament.influencerId;
-    commisonInf['influencerCommission'] = adminCommision * 0.7;
+    commisonInf['influencerCommission'] =  parseFloat((adminCommision * 0.7).toFixed(2));
 
     await Influencer.findByIdAndUpdate(tournament.influencerId, {
       $inc: {
@@ -888,15 +886,23 @@ exports.won = asyncHandler(async (req, res, next) => {
     let franchiseDoc = await Franchise.findOne({ stateCode: player.stateCode, status: 'active' });
     if (franchiseDoc) {
       commisonInf['franchiseId'] = franchiseDoc._id;
-      commisonInf['franchiseCommission'] = adminCommision * 0.3;
-      await Franchise.findByIdAndUpdate(franchiseDoc._id, { $inc: { totalBalance: commisonInf['franchiseCommission'], totalCommissions: commisonInf['franchiseCommission'] } });
-
+      commisonInf['franchiseCommission'] =  parseFloat((adminCommision * 0.3).toFixed(2));
+      
+      await Franchise.findByIdAndUpdate(franchiseDoc._id, { 
+        $inc: { 
+          totalBalance: commisonInf['franchiseCommission'], 
+          totalCommissions: commisonInf['franchiseCommission'] 
+        } });
     }
   }
 
 
-
-  await Commission.create(commisonInf);
+  const options = {
+    new: true,          // Return the modified document rather than the original
+    upsert: true,       // Create the document if it doesn't exist
+    setDefaultsOnInsert: true  // Use schema default values if creating a new document
+};
+  await Commission.findOneAndUpdate({gameId},commisonInf, options);
 
 
   Dashboard.totalIncome(betAmout, amount, adminCommision);
