@@ -114,7 +114,7 @@ class LudoGame {
         let { PlayerID, pasaIndex, steps, currentPosition, newPosition, globalPosition, isGlobal } = data;
         let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
         let player = this.turnOrder[playerIndex];
-        let pasa_k = `pasa_${pasaIndex + 1}`;
+        let pasa_k = `pasa_${pasaIndex}`;
  
         console.log('player-move', data, 'pasa_k', pasa_k);
  
