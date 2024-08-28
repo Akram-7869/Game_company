@@ -325,9 +325,20 @@ class LudoGame {
  
         if (currentPlayer.type === 'bot') {
             this.botTurn(currentPlayer);
-        } else {
-            this.startTurnTimer();
+            return;
         }
+        // else {
+        //     this.startTurnTimer();
+        // }
+        //  Set timer for the next turn
+        this.turnTimer = new Timer(15, (remaining) => {
+            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex , currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
+        }, () => {
+
+            this.nextTurn();
+        });
+
+        this.turnTimer.startTimer();
     }
   // New method to calculate player's score
   calculatePlayerScore(player) {
