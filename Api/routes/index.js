@@ -27,6 +27,7 @@ const franchises = require('./franchises');
 const influencers = require('./influencers');
 const commission = require('./commission');
 
+const { state} = require('../utils/JoinRoom');
 
 
 
@@ -59,7 +60,7 @@ router.use('/api/v1/commissions', commission);
 
 
 router.get('/api/v1/so', function (req, res, next) {
-    console.log(JoinRoom)
+    console.log(Object.keys(state).length)
 })
  
 
