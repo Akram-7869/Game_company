@@ -504,23 +504,9 @@ class LudoGame {
  
     // Updated botChooseMove method
     botChooseMove(botPlayer, diceValue) {
-        const possibleMoves = this.getBotPossibleMoves(botPlayer, diceValue);
-        if (possibleMoves.length > 0) {
-            let chosenMove;
-            switch (this.botDifficulty) {
-                case 'easy':
-                    chosenMove = this.getRandomMove(possibleMoves);
-                    break;
-                case 'medium':
-                    chosenMove = this.getMediumMove(botPlayer, possibleMoves);
-                    break;
-                case 'hard':
-                    chosenMove = this.getHardMove(botPlayer, possibleMoves);
-                    break;
-                default:
-                    chosenMove = this.getRandomMove(possibleMoves);
-            }
-            this.executeBotMove(botPlayer, chosenMove, diceValue);
+        const move = this.getBotMove(botPlayer, diceValue);
+        if (move) {
+            this.executeBotMove(botPlayer, move, diceValue);
         } else {
             this.botEndTurn(botPlayer, false);
         }
