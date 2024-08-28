@@ -57,7 +57,7 @@
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
-                            <a type="button" href="<%=process.env.ADMIN_URL%>/admin/tournament/add"
+                            <a type="button" href="<%=process.env.ADMIN_URL%>/influencer/tournament/add"
                                 class="btn btn-success waves-effect waves-light mb-3"><i
                                     class="mdi mdi-plus me-1"></i>Add New</a>
 
@@ -69,7 +69,7 @@
                                         <th>Name</th>
                                         <th>Bet Amount</th>
                                         <th>Players</th>
-                                        <th>Time</th>
+                                        <th>Start Time</th>
                                         <th>Status</th>
                                         <th>action</th>
                                     </tr>
@@ -154,7 +154,7 @@
                                 { data: 'name', "defaultContent": "" },
                                 { data: 'betAmount', "defaultContent": "" },
                                 { data: 'players', "defaultContent": "" },
-                                { data: 'time', "defaultContent": "" },
+                                { data: 'startTime', "defaultContent": "" },
                                 { data: 'active', "defaultContent": "" },
                                 {
                                     data: null, "render": function (data, type, full, meta) {

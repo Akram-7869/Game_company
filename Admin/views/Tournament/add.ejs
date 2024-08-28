@@ -1,6 +1,6 @@
 <%- contentFor('HeaderCss') %>
     <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
-
+    <link rel="stylesheet" href="/public/assets/libs/flatpickr/flatpickr.min.css">
     <%- contentFor('breadcrumb') %>
 
         <!-- start page title -->
@@ -36,119 +36,26 @@
 
                             <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST"
                                 name="player" enctype="application/x-www-form-urlencoded">
+                                
                                 <div class="mb-3">
-                                    <label class="form-label">Name</label>
-                                    <input type="text" name="name" value="<%=row.name?row.name:'' %>"
-                                        class="form-control" required placeholder="Tournament name" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Mode</label>
-                                    <select class="form-select" name="mode" required>
-                                        <option value="">Select Mode..</option>
+                                    <label class="form-label">Game</label>
+                                    <select id="gameDropdown" class="form-select" name="mode" required>
+                                        <option value="">Select Game..</option>
                                         <option value="1" <%=row.mode===1 ?'selected':'' %>>Ludo</option>
                                         <option value="2" <%=row.mode===2 ?'selected':'' %>>Dragon Tiger</option>
                                         <option value="3" <%=row.mode===3 ?'selected':'' %>>Teen patti</option>
 
-                                         <option value="4" <%=row.mode===4 ?'selected':'' %>>Rouletee</option>
-                                     
+                                        <option value="4" <%=row.mode===4 ?'selected':'' %>>Rouletee</option>
+
                                         <option value="5" <%=row.mode===5 ?'selected':'' %>>Tambola</option>
                                         <option value="6" <%=row.mode===6 ?'selected':'' %>>Crash</option>
 
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Bet Amount</label>
-                                    <input type="text" name="betAmount" value="<%=row.betAmount?row.betAmount:'' %>"
-                                        class="form-control" required placeholder="Bet amount" />
-                                </div>
-                                <!-- <div class="mb-3">
-                                    <label class="form-label">Min Bet Amount</label>
-                                    <input type="text" name="minBet" value="<%=row.minBet?row.minBet:'' %>"
-                                        class="form-control" required placeholder="Min Bet amount" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Max Bet Amount</label>
-                                    <input type="text" name="maxBet" value="<%=row.maxBet?row.maxBet:'' %>"
-                                        class="form-control" required placeholder="Max Bet amount" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Max Payout</label>
-                                    <input type="text" name="maxPayout" value="<%=row.maxPayout?row.maxPayout:'' %>"
-                                        class="form-control" required placeholder="Max Payout" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Chaal Limit</label>
-                                    <input type="text" name="challLimit" value="<%=row.challLimit?row.challLimit:'' %>"
-                                        class="form-control" required placeholder="Chall Limit" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Pot Limit</label>
-                                    <input type="text" name="potLimit" value="<%=row.potLimit?row.potLimit:'' %>"
-                                        class="form-control" required placeholder="Pot Limit amount" />
-                                </div> -->
-                                <!-- <div class="mb-3">
-                                    <label class="form-label">Bonus Amount Use</label>
-                                    <input type="text" name="bonusAmountDeduction"
-                                        value="<%=row.bonusAmountDeduction?row.bonusAmountDeduction:'' %>"
-                                        class="form-control" required placeholder="Bonus  amount use" />
-                                </div> -->
-                                <div class="mb-3">
-                                    <label class="form-label">Players</label>
-                                    <!-- <select class="form-select" name="players" required>
-                                        <option value="">Select players..</option>
-                                        <option value="2" <%=row.players===2 ?'selected':'' %>>2 players</option>
-                                        <option value="4" <%=row.players===4 ?'selected':'' %>>4 players</option>
-                                    </select> -->
-                                    <input type="text" name="players" value="<%=row.players?row.players:'' %>"
-                                        class="form-control" required placeholder="Numer of players" />
-                                </div>
-
-                                <div class="row">
-                                    <div class="form-group col">
-                                        <label class="form-label">Winner</label>
-                                        <select class="form-select" name="winner" id="winner" required>
-                                            <option value="">Select Winner..</option>
-                                            <option value="1" <%=row.winner===1 ?'selected':'' %>>1</option>
-                                            <option value="2" <%=row.winner===2 ?'selected':'' %>>2</option>
-                                            <option value="3" <%=row.winner===3 ?'selected':'' %>>3</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col">
-                                        <div id="userFields"></div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Time</label>
-                                    
-                                    <input type="text" name="time" value="<%=row.time?row.time:'' %>"
-                                        class="form-control" required placeholder="Time" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Complexity</label>
-                                    <select class="form-select" name="complexity" required>
-                                        <option value="">Select Accuracy..</option>
-                                        <option value="1" <%=row.complexity===1 ?'selected':'' %>>Low</option>
-                                        <option value="2" <%=row.complexity===2 ?'selected':'' %>>Medium</option>
-                                        <option value="3" <%=row.complexity===3 ?'selected':'' %>>High</option>
-                                    </select>
-                                </div>
-
-
-                                <div class="mb-3">
-                                    <label class="form-label">Bot</label>
-                                    <select class="form-select" name="bot" required>
-                                        <option value="false" <%=row.bot===false?'selected':'' %>>OFF</option>
-                                        <option value="true" <%=row.bot===true?'selected':'' %>>ON</option>
-                                    </select>
-                                </div>
-                                 
-                                <div class="mb-3">
-                                    <label class="form-label">Active</label>
-                                    <select class="form-select" name="active" required>
-                                        <option value="false" <%=row.status===false?'selected':'' %>>OFF</option>
-                                        <option value="true" <%=row.status===true?'selected':'' %>>ON</option>
-                                    </select>
+                                    <label class="form-label">Name</label>
+                                    <input type="text" name="name" value="<%=row.name?row.name:'' %>"
+                                        class="form-control" required placeholder="Tournament name" />
                                 </div>
                                 <div>
                                     <div>
@@ -173,7 +80,7 @@
 
                 <!-- parsleyjs -->
                 <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
-
+                <script src="/public/assets/libs/flatpickr/flatpickr.min.js"></script>
                 <script src="/public/assets/js/pages/form-validation.init.js"></script>
                 <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
                 <script>
@@ -187,13 +94,63 @@
 
 
                         });
+                        let optional_config={ enableTime: true,
+                            dateFormat: "Y-m-d H:i"}
+                    $("#datepicker-datetime").flatpickr(optional_config);
                     });
                     function handleSubmit(params) {
-                        if (params.checkValidity()) {
-                            Swal.showLoading();
+                        // Clear any previous error messages
+                        document.querySelectorAll('.error').forEach(function (error) {
+                            error.style.display = 'none';
+                        });
+
+                        let isValid = true;
+                        let errorMessages = [];
+
+                        // Check only the visible elements for validity
+                        for (let element of params.elements) {
+                            if (element.offsetParent !== null) { // Check if the element is visible
+                                if (!element.checkValidity()) {
+                                    isValid = false;
+
+                                    // Capture the invalid element and its error message
+                                    errorMessages.push({
+                                        element: element,
+                                        message: element.validationMessage
+                                    });
+
+                                    // Show the error message in the corresponding error span
+                                    let errorElement = document.getElementById(element.name + 'Error');
+                                    if (errorElement) {
+                                        errorElement.textContent = element.validationMessage;
+                                        errorElement.style.display = 'inline';
+                                    }
+                                }
+                            }
                         }
-                        return false;
+
+                        if (isValid) {
+                           
+
+                            // If the form is valid, show a loading indicator
+                             return true;
+                        } else {
+                            // If there are errors, log them or show them as needed
+                            console.log("Errors:", errorMessages);
+
+                            // Optionally, use SweetAlert to show errors
+                            Swal.fire({
+                                title: 'Form Errors',
+                                html: errorMessages.map(err => `<p>${err.message}</p>`).join(''),
+                                icon: 'error'
+                            });
+                            // Prevent default form submission
+                            return false;
+                        }
+
+
                     }
+
                     function create(userNumber) {
                         for (var i = 1; i <= userNumber; i++) {
                             $("userForm").append($("#userFields").append($("<div/>", {
@@ -211,6 +168,62 @@
                             ))
                         }
                     }
+
+
+                    function calculatePrizes() {
+                        const players = parseInt(document.getElementById('players').value);
+                        const betAmount = parseInt(document.getElementById('betAmount').value);
+                        const totalAmount = players * betAmount;
+
+                        const numberOfUsers = parseInt(document.getElementById('numberOfWinners').value);
+
+                        const percentages = {
+                            upperRow: 15,
+                            lowerRow: 15,
+                            fullHouse: 35,
+                            middle: 15,
+                            fourCorner: 15,
+                            earlyFive: 5,
+                        };
+                        const maxWinners = Math.floor(players / 5);
+                        let numberOfWinners = parseInt(document.getElementById('numberOfWinners').value);
+                        const numberOfWinnersInput = document.getElementById(`numberOfWinners`);
+
+                        numberOfWinnersInput.max = maxWinners;
+
+
+                        // Update prize amounts and number of winners
+                        for (const key in percentages) {
+                            const prizeAmount = (totalAmount * percentages[key]) / 100;
+
+                            document.getElementById(key).value = prizeAmount;
+                            document.getElementById('numberOfWinners').value = numberOfWinners;
+                        }
+
+                        // Submit the form after calculation
+                        //  document.getElementById('prizeForm').submit();
+                    }
+                    function capitalizeFirstLetter(string) {
+                        return string.charAt(0).toUpperCase() + string.slice(1);
+                    }
+                    document.getElementById('gameDropdown').addEventListener('change', handleGameSection);
+
+                    function handleGameSection() {
+                        // Hide all settings sections
+                        document.querySelectorAll('.settings-section').forEach(function (section) {
+                            section.style.display = 'none';
+                        });
+
+
+                        // Show the settings section for the selected game
+                        const selectedGame = this.value;
+                        if (selectedGame == 5 || selectedGame == 1) {
+                            document.getElementById(selectedGame + '-setting').style.display = 'block';
+                        }  
+                    }
+
+                    handleGameSection();
+                    
 
                 </script>
                 <%- contentFor('BottomJs') %>

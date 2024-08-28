@@ -1,6 +1,6 @@
 
 
-const { makeid ,getKey, setkey } = require('../utils/utils');
+const { makeid, getKey, setkey } = require('../utils/utils');
 const Player = require('../models/Player');
 
 
@@ -31,7 +31,7 @@ let onConnection = (socket) => {
   socket.on('join', async (d) => {
     console.log('join', d);
     let dataParsed = d;// JSON.parse(d);
-    let { userId, lobbyId, maxp = 4 ,role='player'} = dataParsed;
+    let { userId, lobbyId, maxp = 4, role = 'player' } = dataParsed;
     let lobby = await Tournament.findById(lobbyId);
     if (!lobby) {
       console.log('looby-not-found');
@@ -46,7 +46,7 @@ let onConnection = (socket) => {
     } else {
       roomName = makeid(5);
       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
-      state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [], status: 'open', codeObj: null  };
+      state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [], status: 'open', codeObj: null, messages:[] };
       console.log('create-room-', roomName);
     }
 
@@ -80,20 +80,20 @@ let onConnection = (socket) => {
     } else {
       // delete publicRoom[lobbyId];
     }
-    if(d.role ==='influencer'){
-     // io.emit('influencer_matches', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
-     const validIds = Object.entries(userSocketMap)
-    .filter(([playerId, user]) => user.role === 'influencer')
-    .map(([userId, user]) => user.lobbyId);
+    if (d.role === 'influencer') {
+      // io.emit('influencer_matches', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
+      const validIds = Object.entries(userSocketMap)
+        .filter(([playerId, user]) => user.role === 'influencer')
+        .map(([userId, user]) => user.lobbyId);
 
-    let influencers = await Tournament.find({_id: { $in: validIds }, tournamentType:'influencer'}).populate('influencerId', 'displayName');
+      let influencers = await Tournament.find({ _id: { $in: validIds }, tournamentType: 'influencer' }).populate('influencerId', 'displayName');
 
-      setkey('influencer_matches',influencers );
+      setkey('influencer_matches', influencers);
 
-     io.emit('influencer_matches', {influencers});
+      io.emit('influencer_matches', { influencers });
     }
-   // io.to(roomName).emit('res', { ev: 'join', data });
-   
+    // io.to(roomName).emit('res', { ev: 'join', data });
+
     switch (lobby.mode) {
       case gameName.ludo:
         if (!state[roomName]['codeObj']) {
@@ -143,7 +143,7 @@ let onConnection = (socket) => {
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobbyId);
           state[roomName]['codeObj'].startGame();
-         }
+        }
         state[roomName]['codeObj'].syncPlayer(socket, d);
         socket.emit('join', { ...d, gameType: gameName.teen_patti, room: roomName, status: 'success' });
         break;
@@ -191,7 +191,7 @@ let onConnection = (socket) => {
   //leave
   socket.on('leave', (d) => {
     let { room, userId } = d;
- 
+
     userLeave(d);
     socket.leave(room);
     let data = {
@@ -205,21 +205,37 @@ let onConnection = (socket) => {
   socket.on('chat_message', (d) => {
     let { room } = d;
     console.log(d);
+    if (state[room].messages.length >= 100) {
+      state[room].messages.shift(); // Remove the oldest message to maintain the limit
+    }
+    state[room].messages.push({ firstName: d.firstName, message: d.message });
     io.in(room).emit('chat_message', d);
   });
   socket.on('gift_message', (d) => {
     let { room } = d;
     console.log(d);
+    if (state[room].messages.length >= 100) {
+      state[room].messages.shift(); // Remove the oldest message to maintain the limit
+    }
+    state[room].messages.push({ firstName: d.firstName, message: d.message });
     io.in(room).emit('gift_message', d);
   });
   socket.on('influencer_matches', (d) => {
-     const influencers =  getKey('influencer_matches')
-    io.to(socket.id).emit('influencer_matches', {influencers});
+    const influencers = getKey('influencer_matches')
+    io.to(socket.id).emit('influencer_matches', { influencers });
   });
   socket.on('emoji_message', (d) => {
     let { room } = d;
     console.log(d);
+    if (state[room].messages.length >= 100) {
+      state[room].messages.shift(); // Remove the oldest message to maintain the limit
+    }
+    state[room].messages.push({ firstName: d.firstName, message: d.message });
     io.in(room).emit('emoji_message', d);
+  });
+  socket.on('list_message', (d) => {
+    let { room } = d;
+    io.in(socket.id).emit('list_message', { messages: state[room].messages });
   });
 
   // Runs when client disconnects

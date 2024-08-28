@@ -1,0 +1,338 @@
+<%- contentFor('HeaderCss') %>
+    <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/public/assets/libs/flatpickr/flatpickr.min.css">
+    <%- contentFor('breadcrumb') %>
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">Tournament Controle </h4>
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item active">
+                                <%- title %> List
+                            </li>
+                            <li class="breadcrumb-item active">Add</li>
+                        </ol>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        <%- contentFor('body') %>
+
+
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <!--  <h4 class="card-title">Validation type</h4>
+                <p class="card-title-desc"> </p> -->
+
+                            <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST"
+                                name="player" enctype="application/x-www-form-urlencoded">
+                                <div class="mb-3">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" name="name" value="<%=row.name?row.name:'' %>"
+                                        class="form-control" required placeholder="Tournament name" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Game</label>
+                                    <select id="gameDropdown" class="form-select" name="mode" required  disabled >
+                                        <option value="">Select Mode..</option>
+                                        <option value="1" <%=row.mode===1 ?'selected':'' %>>Ludo</option>
+                                        <option value="2" <%=row.mode===2 ?'selected':'' %>>Dragon Tiger</option>
+                                        <option value="3" <%=row.mode===3 ?'selected':'' %>>Teen patti</option>
+
+                                        <option value="4" <%=row.mode===4 ?'selected':'' %>>Rouletee</option>
+
+                                        <option value="5" <%=row.mode===5 ?'selected':'' %>>Tambola</option>
+                                        <option value="6" <%=row.mode===6 ?'selected':'' %>>Crash</option>
+
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Bet Amount</label>
+                                    <input type="number" id="betAmount" name="betAmount"
+                                        value="<%=row.betAmount?row.betAmount:'' %>" class="form-control" required
+                                        placeholder="Bet amount" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Players</label>
+
+                                    <input type="number" id="players" name="players"
+                                        value="<%=row.players?row.players:'' %>" class="form-control" required
+                                        placeholder="Numer of players" />
+                                </div>
+
+                               
+
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="prizeDistributionModalLabel">Prize
+                                                Distribution</h5>
+                                            <button type="button" class="btn btn-primary" onclick="calculatePrizes()">
+                                                calculatePrizes
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="prizeForm">
+                                                <div class="row">
+                                                    <!-- Upper Row -->
+                                                    <div class="col-md-4">
+                                                        <div class="form-group d-flex align-items-center flex-nowrap">
+                                                            <label for="upperRow" class="col">Upper Row(15%)</label>
+                                                            <input type="number" class="form-control col" id="upperRow"
+                                                                value="<%=row.winnerRow?.upperRow??15 %>"
+                                                                name="winnerRow[upperRow]" required readonly>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- Lower Row -->
+                                                    <div class="col-md-4">
+                                                        <div class="form-group d-flex align-items-center flex-nowrap">
+                                                            <label for="lowerRow" class="col">Lower Row(15%)</label>
+                                                            <input type="number"
+                                                                value="<%=row.winnerRow?.upperRow??15 %>"
+                                                                class="form-control col" id="lowerRow" name="winnerRow[lowerRow]"
+                                                                required readonly>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- Full House -->
+                                                    <div class="col-md-4">
+                                                        <div class="form-group d-flex align-items-center flex-nowrap">
+                                                            <label for="fullHouse" class="col">Full House (35%)</label>
+                                                            <input type="number"
+                                                                value="<%=row.winnerRow?.upperRow??35 %>"
+                                                                class="form-control col" id="fullHouse" name="winnerRow[fullHouse]"
+                                                                required readonly>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Middle -->
+                                                    <div class="col-md-4">
+                                                        <div class="form-group d-flex align-items-center flex-nowrap">
+                                                            <label for="middle" class="col">Middle (15%)</label>
+                                                            <input type="number"
+                                                                value="<%=row.winnerRow?.upperRow??15 %>"
+                                                                class="form-control col" id="middle" name="winnerRow[middle]" required
+                                                                readonly>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Four Corner -->
+                                                    <div class="col-md-4">
+                                                        <div class="form-group d-flex align-items-center flex-nowrap">
+                                                            <label for="fourCorner" class="col">Four Corner (15%)</label>
+                                                            <input  type="number"
+                                                                   value="<%= row.winnerRow?.fourCorner ?? 15 %>"
+                                                                   class="form-control col"
+                                                                   id="fourCorner"
+                                                                   name="winnerRow[fourCorner]"
+                                                                   required readonly>
+                                                        </div>
+                                                    </div>
+                                                    
+
+                                                    <!-- Early Five -->
+                                                    <div class="col-md-4">
+                                                        <div class="form-group d-flex align-items-center flex-nowrap">
+                                                            <label for="earlyFive" class="col">Early Five (5%)</label>
+                                                            <input type="number"
+                                                                value="<%=row.winnerRow?.upperRow??15 %>"
+                                                                class="form-control col" id="earlyFive" name="winnerRow[earlyFive]"
+                                                                required readonly>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="numberOfWinners">Number of Winners</label>
+                                                    <input type="number" value="1" class="form-control"
+                                                        id="numberOfWinners" name="numberOfWinners" min="1" max="1"
+                                                        required>
+                                                </div>
+                                                <!-- Number of Users -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Start Time</label>
+                
+                                                    <!-- <input type="text" name="time" class="form-control" required placeholder="Time" /> -->
+                                                        <input  placeholder="Select Date time.." type="text"  name="startTime" value="<%=row.startTime?row.startTime:'' %>" class="form-control flatpickr-input active" id="datepicker-datetime"  required>
+                                                </div>
+
+                                        </div>
+
+                                    </div>
+                                
+
+
+
+                                
+                                <!-- <div class="mb-3">
+                                    <label class="form-label">Complexity</label>
+                                    <select class="form-select" name="complexity" required>
+                                        <option value="">Select Accuracy..</option>
+                                        <option value="1" <%=row.complexity===1 ?'selected':'' %>>Low</option>
+                                        <option value="2" <%=row.complexity===2 ?'selected':'' %>>Medium</option>
+                                        <option value="3" <%=row.complexity===3 ?'selected':'' %>>High</option>
+                                    </select>
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <label class="form-label">Bot</label>
+                                    <select class="form-select" name="bot" required>
+                                        <option value="false" <%=row.bot===false?'selected':'' %>>OFF</option>
+                                        <option value="true" <%=row.bot===true?'selected':'' %>>ON</option>
+                                    </select>
+                                </div> -->
+
+                                <div class="mb-3">
+                                    <label class="form-label">Active</label>
+                                    <select class="form-select" name="active" required>
+                                        <option value="false" <%=row.status===false?'selected':'' %>>OFF</option>
+                                        <option value="true" <%=row.status===true?'selected':'' %>>ON</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <div>
+                                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                            Submit
+                                        </button>
+                                        <button type="reset" class="btn btn-secondary waves-effect">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div> <!-- end col -->
+
+
+            </div> <!-- end row -->
+
+            <%- contentFor('FooterJs') %>
+
+                <!-- parsleyjs -->
+                <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
+                <script src="/public/assets/libs/flatpickr/flatpickr.min.js"></script>
+                <script src="/public/assets/js/pages/form-validation.init.js"></script>
+                <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+                <script>
+                    $(function () {
+                         
+                        let optional_config={ enableTime: true, minDate: "today",
+                            dateFormat: "Y-m-d H:i"}
+                    $("#datepicker-datetime").flatpickr(optional_config);
+                    });
+                    function handleSubmit(params) {
+                        // Clear any previous error messages
+                        document.querySelectorAll('.error').forEach(function (error) {
+                            error.style.display = 'none';
+                        });
+
+                        let isValid = true;
+                        let errorMessages = [];
+
+                        // Check only the visible elements for validity
+                        for (let element of params.elements) {
+                            if (element.offsetParent !== null) { // Check if the element is visible
+                                if (!element.checkValidity()) {
+                                    isValid = false;
+
+                                    // Capture the invalid element and its error message
+                                    errorMessages.push({
+                                        element: element,
+                                        message: element.validationMessage
+                                    });
+
+                                    // Show the error message in the corresponding error span
+                                    let errorElement = document.getElementById(element.name + 'Error');
+                                    if (errorElement) {
+                                        errorElement.textContent = element.validationMessage;
+                                        errorElement.style.display = 'inline';
+                                    }
+                                }
+                            }
+                        }
+
+                        if (isValid) {
+                           
+
+                            // If the form is valid, show a loading indicator
+                             return true;
+                        } else {
+                            // If there are errors, log them or show them as needed
+                            console.log("Errors:", errorMessages);
+
+                            // Optionally, use SweetAlert to show errors
+                            // Swal.fire({
+                            //     title: 'Form Errors',
+                            //     html: errorMessages.map(err => `<p>${err.message}</p>`).join(''),
+                            //     icon: 'error'
+                            // });
+                            // Prevent default form submission
+                            return false;
+                        }
+
+
+                    }
+
+                     
+
+
+                    function calculatePrizes() {
+                        const players = parseInt(document.getElementById('players').value);
+                        const betAmount = parseInt(document.getElementById('betAmount').value);
+                        const totalAmount = players * betAmount;
+
+                        const numberOfUsers = parseInt(document.getElementById('numberOfWinners').value);
+
+                        const percentages = {
+                            upperRow: 15,
+                            lowerRow: 15,
+                            fullHouse: 35,
+                            middle: 15,
+                            fourCorner: 15,
+                            earlyFive: 5,
+                        };
+                        const maxWinners = Math.floor(players / 5);
+                        let numberOfWinners = parseInt(document.getElementById('numberOfWinners').value);
+                        const numberOfWinnersInput = document.getElementById(`numberOfWinners`);
+
+                        numberOfWinnersInput.max = maxWinners;
+
+
+                        // Update prize amounts and number of winners
+                        for (const key in percentages) {
+                            const prizeAmount = (totalAmount * percentages[key]) / 100;
+
+                            document.getElementById(key).value = prizeAmount;
+                            document.getElementById('numberOfWinners').value = numberOfWinners;
+                        }
+
+                        // Submit the form after calculation
+                        //  document.getElementById('prizeForm').submit();
+                    }
+                    function capitalizeFirstLetter(string) {
+                        return string.charAt(0).toUpperCase() + string.slice(1);
+                    }
+                    document.getElementById('players').addEventListener('change', calculatePrizes);
+                    document.getElementById('betAmount').addEventListener('change', calculatePrizes);
+
+                    
+                    
+
+                </script>
+                <%- contentFor('BottomJs') %>

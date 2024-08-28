@@ -56,29 +56,52 @@
 
                                     </select>
                                 </div>
-                               
-                                <!-- <div class="mb-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Bet Amount</label>
+                                    <input type="text" id="betAmount" name="betAmount"
+                                        value="<%=row.betAmount?row.betAmount:'' %>" class="form-control" required
+                                        placeholder="Bet amount" />
+                                </div>
+
+                                <div class="mb-3">
                                     <label class="form-label">Players</label>
 
                                     <input type="text" id="players" name="players"
-                                        value="<%=row.players?row.players:6 %>" class="form-control" required
+                                        value="<%=row.players?row.players:'' %>" class="form-control" required
                                         placeholder="Numer of players" />
-                                </div> -->
+                                </div>
 
+                                <div class="row " id="">
+                                    <div class="form-group col">
+                                        <label class="form-label">Winner</label>
+                                        <select class="form-select" name="winner" id="winner" >
+                                            <option value="">Select Winner..</option>
+                                            <option value="1" <%=row.winner===1 ?'selected':'' %>>1</option>
+                                            <option value="2" <%=row.winner===2 ?'selected':'' %>>2</option>
+                                            <option value="3" <%=row.winner===3 ?'selected':'' %>>3</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col">
+                                        <div id="userFields">
+                                            <% for (const [key, value] of Object.entries(row.winnerRow)) { %>
+                                                <div class="form-group">
+                                                    <label><%= key %>:</label>
+                                                    <input type="text" class="form-control" name="winnerRow[<%=key%>]" value="<%= value %>">
+ 
+                                                </div>
+                                            <% } %>
+
+
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">Start Time</label>
 
                                     <!-- <input type="text" name="time" class="form-control" required placeholder="Time" /> -->
-                                    <input  placeholder="Select Date time.." type="text"  name="startTime" value="<%=row.startTime?row.startTime:'' %>" class="form-control flatpickr-input active" id="datepicker-datetime"  required>
-
-                                 </div>
-
-
-                               
-
-
-                                
-                                <!-- <div class="mb-3">
+                                        <input  placeholder="Select Date time.." type="text"  name="startTime" value="<%=row.startTime?row.startTime:'' %>" class="form-control flatpickr-input active" id="datepicker-datetime"  required>
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Complexity</label>
                                     <select class="form-select" name="complexity" required>
                                         <option value="">Select Accuracy..</option>
@@ -86,7 +109,7 @@
                                         <option value="2" <%=row.complexity===2 ?'selected':'' %>>Medium</option>
                                         <option value="3" <%=row.complexity===3 ?'selected':'' %>>High</option>
                                     </select>
-                                </div> -->
+                                </div>
 
 
                                 <div class="mb-3">
@@ -132,10 +155,19 @@
                 <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
                 <script>
                     $(function () {
-                        
+                        $('#winner').change(function () {
+                            var userNumber = $(this).val();
+                            $("#userFields").empty();
+
+                            //Dynamically create input fields based on user selection
+                            create(userNumber);
+
+
+                        });
                         let optional_config={ enableTime: true,
                             dateFormat: "Y-m-d H:i"}
                     $("#datepicker-datetime").flatpickr(optional_config);
+
                     });
                     function handleSubmit(params) {
                         // Clear any previous error messages
@@ -169,8 +201,6 @@
                         }
 
                         if (isValid) {
-                           
-
                             // If the form is valid, show a loading indicator
                              return true;
                         } else {
@@ -178,7 +208,11 @@
                             console.log("Errors:", errorMessages);
 
                             // Optionally, use SweetAlert to show errors
-                           
+                            // Swal.fire({
+                            //     title: 'Form Errors',
+                            //     html: errorMessages.map(err => `<p>${err.message}</p>`).join(''),
+                            //     icon: 'error'
+                            // });
                             // Prevent default form submission
                             return false;
                         }
@@ -186,7 +220,26 @@
 
                     }
 
-                    
+                    function create(userNumber) {
+                        for (var i = 1; i <= userNumber; i++) {
+                            $("userForm").append($("#userFields").append($("<div/>", {
+                                id: 'heading', class: 'form-group'
+                            }).append($("<lable/>").text("winner_" + i + " : "), $("<input/>", {
+                                type: 'text',
+                                placeholder: 'Wining Amount ',
+                                name: 'winnerRow[winner_' + i + ']',
+                                id: 'winner_' + i,
+                                class: "form-control",
+                                required: 'true'
+                            })),
 
+
+                            ))
+                        }
+                    }
+
+
+                     
+                    
                 </script>
                 <%- contentFor('BottomJs') %>

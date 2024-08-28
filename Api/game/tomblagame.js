@@ -39,10 +39,17 @@ class TambolaGame {
     this.adminCommission = 0.2;
     this.intervalId = null;
     this.currentPhase = 'joining';
+    this.messages = []; 
   }
 
   updatePlayers(players) {
     this.players = players;
+  }
+  addMessage(message) {
+    if (this.messages.length >= 100) {
+      this.messages.shift(); // Remove the oldest message to maintain the limit
+    }
+    this.messages.push(message);
   }
   setupGame() {
     if (this.roomJoinTimers) return; // Prevent multiple starts

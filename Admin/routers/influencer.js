@@ -25,6 +25,10 @@ router.route('/tournament').get(tournCtl.listInfluencerTournament);
 router.route('/tournament/data').post(tournCtl.getInfluencerTournaments);
 router.route('/tournament/join/:id').get(tournCtl.getInfluencerTournament);
 
+router.route('/tournament/add').get(tournCtl.addTournament).post(tournCtl.createTournaments);
+router.route('/tournament/:id').get(tournCtl.getTournament).post(tournCtl.updateTournament).delete(tournCtl.deleteTournament);
+
+
 router.route('/commission').get(commissionCtl.influencerCommList);
 router.route('/commission/data').post(commissionCtl.influencerCommData);
 

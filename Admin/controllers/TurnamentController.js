@@ -18,7 +18,15 @@ exports.getTournament = asyncHandler(async (req, res, next) => {
     callApi(req).get(apiUrl + req.params.id)
         .then(r => {
             res.locals = { title: 'Tournament' };
-            res.render('Tournament/edit', { row: r.data.data });
+            if (r.data.data.mode == 5) {
+                res.render('Tournament/tambola-edit', { row: r.data.data });
+            } else if (r.data.data.mode == 1) {
+                res.render('Tournament/ludo-edit', { row: r.data.data });
+            } else if (r.data.data.mode == 3) {
+                res.render('Tournament/teen-patti-edit', { row: r.data.data });
+            } else {
+                res.render('Tournament/edit', { row: r.data.data });
+            }
         })
         .catch(error => {
 
@@ -26,12 +34,24 @@ exports.getTournament = asyncHandler(async (req, res, next) => {
 });
 
 exports.getInfluencerTournament = asyncHandler(async (req, res, next) => {
-    res.locals = { title: 'Tournament', apiUrl  };
+    res.locals = { title: 'Tournament', apiUrl };
     callApi(req).get(apiUrl + req.params.id)
         .then(r => {
             res.locals = { title: 'Tournament' };
             const sessionData = req.session.user;
-            res.render('Tournament/influencer-lion', { row: r.data.data, agodaAppId:'0f62fbaad9c446a3b1b7be2ba203be49', user:req.session.user});
+            if (r.data.data.mode == 5) {
+                res.render('Tournament/influencer-tambola', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+            } else if (r.data.data.mode == 1) {
+                res.render('Tournament/influencer-ludo', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+            } else if (r.data.data.mode == 3) {
+                res.render('Tournament/influencer-teen-patti', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+            } else if (r.data.data.mode == 2) {
+                res.render('Tournament/influencer-lion', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+            } else if (r.data.data.mode == 4) {
+                res.render('Tournament/influencer-rouletee', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+            } else if (r.data.data.mode == 6) {
+                res.render('Tournament/influencer-crash', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+            }
         })
         .catch(error => {
 
@@ -49,6 +69,7 @@ exports.updateTournament = asyncHandler(async (req, res, next) => {
             // Assign value in session
 
             req.flash('message', 'Data save');
+
             res.redirect(process.env.ADMIN_URL + '/admin/tournament');
         })
         .catch(error => {
@@ -89,7 +110,7 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
 });
 exports.getInfluencerTournaments = asyncHandler(async (req, res, next) => {
 
-    callApi(req).post(apiUrl+'influencer-list', { ...req.body })
+    callApi(req).post(apiUrl + 'influencer-list', { ...req.body })
         .then(r => {
             // Assign value in session
             res.status(200).json(r.data);
@@ -108,12 +129,14 @@ exports.addTournament = asyncHandler(async (req, res, next) => {
 
 exports.createTournaments = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Tournament-add' };
+    console.log('add-tourn', req.body);
     callApi(req).post(apiUrl + 'add', req.body)
         .then(r => {
+            console.log('response', r.data);
             // Assign value in session
-            req.flash('message', 'Data save');
+            // req.flash('message', 'Data save');
 
-            res.redirect(process.env.ADMIN_URL + '/admin/tournament');
+            res.redirect(process.env.ADMIN_URL + '/admin/tournament/' + r.data.data._id);
         })
         .catch(error => {
             req.flash('error', 'Data not updated');

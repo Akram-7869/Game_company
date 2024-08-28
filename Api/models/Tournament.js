@@ -21,6 +21,12 @@ const TournamentSchema = new mongoose.Schema({
     time: {
         type: Number
     },
+    frequency: {
+        type: Number
+    },
+    startTime: {
+        type: Date
+    },
     bot: {
         type: Boolean,
         default: true

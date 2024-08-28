@@ -52,7 +52,7 @@ class RolletGame {
     startPausePhase() {
         this.currentPhase = 'pause';
         RolletGame.io.to(this.roomName).emit('OnTimeUp', { phase: 'pause' });
-        console.log(`Pause phase started in room: ${this.roomName}`);
+       // console.log(`Pause phase started in room: ${this.roomName}`);
         let betWin= this.getKeyWithMinValue(this.betList)
         this.winList.shift();
         this.winList.push(betWin);
@@ -68,7 +68,7 @@ class RolletGame {
         this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
           //  console.log(remaining);
             if (remaining == 2) {
-                console.log('reseting');
+               // console.log('reseting');
                 RolletGame.io.to(this.roomName).emit('OnReset', { phase: 'reset' });
             }
             //  RolletGame.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });

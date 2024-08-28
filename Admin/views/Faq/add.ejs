@@ -50,24 +50,11 @@
                                             <option value="game" <%=row.options==='game' ?'selected':'' %>>Game</option>
                                             <option value="wallet" <%=row.options==='wallet' ?'selected':'' %>>Wallet
                                             </option>
-                                            <option value="kyc" <%=row.options==='kyc' ?'selected':'' %>>KYC</option>
-
+ 
                                         </select>
                                     </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Game Name</label>
-                                    <select class="form-select" name="gamename">
-                                        <option value="">Select Game</option>
-                                        <option value="1" <%=row.gamename===1 ?'selected':'' %>>Ludo</option>
-                                        <option value="2" <%=row.gamename===2 ?'selected':'' %>>Dragon Tiger</option>
-                                        <option value="3" <%=row.gamename===3 ?'selected':'' %>>Teen patti</option>
-                                        <option value="4" <%=row.gamename===4 ?'selected':'' %>>Rouletee</option>
-                                        <option value="5" <%=row.gamename===5 ?'selected':'' %>>Tambola</option>
-                                        <option value="6" <%=row.gamename===6 ?'selected':'' %>>Crash</option>
-
-                                    </select>
-                                </div>
+                                 
                                 <div class="mb-3">
                                     <label class="form-label">Topic</label>
                                     <input type="text" id="topic" name="topic" value="<%=row.topic?row.topic:'' %>"
@@ -75,9 +62,10 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Explanation</label>
-                                    <input type="text" id="explaination" name="explaination"
-                                        value="<%=row.explaination?row.explaination:'' %>" class="form-control" required
-                                        placeholder="Explanation" />
+                                     
+                                        <textarea name="explaination" id="explaination" value="" class="form-control "
+                                        id="" required
+                                        placeholder=""><%=row.explaination?row.explaination:'' %></textarea>
                                 </div>
 
                                 <div class="mb-3">
