@@ -192,8 +192,16 @@ class LudoGame {
   // New method to get global position
   getGlobalPosition(player, localPosition) {
     if (localPosition === -1) return -1; // Home position
-    let startPosition = this.playerStartPositions[this.turnOrder.indexOf(player) % 4];
-    console.log('startPosition', startPosition,'player', player,'localPosition', localPosition,'m-', this.turnOrder.indexOf(player) % 4)
+    let playerIndex = this.turnOrder.indexOf(player);
+    console.log('playerIndex', playerIndex);
+
+    if(this.turnOrder.length ==2 && playerIndex ==1){
+        //two player chage player number
+        playerIndex=2;
+    } 
+    console.log('playerIndex----', playerIndex);
+    let startPosition = this.playerStartPositions[ playerIndex % 4];
+    console.log('startPosition', startPosition, 'localPosition', localPosition )
     return (startPosition + localPosition) % 52;
 }
     // New method to handle pasa movement validation
@@ -478,25 +486,17 @@ class LudoGame {
 
     // Updated getBotPossibleMoves method
     getBotPossibleMoves(botPlayer, diceValue) {
-        const moves = [];let player = 0
+        const moves = []; 
         for (let i = 1; i <= 4; i++) {
             const tokenKey = `pasa_${i}`;
             const currentPosition = botPlayer[tokenKey];
             if (currentPosition === -1 && diceValue === 6) {
-                
-                if(this.turnOrder.size ==2 && botPlayer ==1){
-                    //two player chage player number
-                    player=2;
-                }else{
-                    //four player
-                    player =botPlayer;
-                }
-                console.log(botPlayer,'player', player, 'dicevalue', diceValue)
-                moves.push({ tokenKey, newPosition: 0, pasaIndex: i - 1, globalPosition: this.getGlobalPosition(player, 0) });
+               
+                moves.push({ tokenKey, newPosition: 0, pasaIndex: i - 1, globalPosition: this.getGlobalPosition(botPlayer, 0) });
             } else if (currentPosition >= 0) {
                 const newPosition = currentPosition + diceValue;
                 if (newPosition <= 56) {
-                    moves.push({ tokenKey, newPosition, pasaIndex: i - 1, globalPosition: this.getGlobalPosition(player, newPosition) });
+                    moves.push({ tokenKey, newPosition, pasaIndex: i - 1, globalPosition: this.getGlobalPosition(botPlayer, newPosition) });
                 }
             }
         }
