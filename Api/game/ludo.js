@@ -111,42 +111,87 @@ class LudoGame {
         return Array.from(this.bots.values()).map(value => value.player);
     }
     handlePlayerMove(socket, data) {
-        let { PlayerID, key, steps, currentPosition, newPosition } = data;
-        // console.log('handlePlayerMove', data);
-
+        let { PlayerID, pasaIndex, steps, currentPosition, newPosition, globalPosition, isGlobal } = data;
         let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
-        let pasaIndex = key + 1;
-        let pasa_k = `pasa_${pasaIndex}`;
-
         let player = this.turnOrder[playerIndex];
+        let pasa_k = `pasa_${pasaIndex + 1}`;
+ 
         console.log('player-move', data, 'pasa_k', pasa_k);
-
+ 
         if (player && player[pasa_k] !== undefined) {
-            // skip for home key
-            if (currentPosition !== -1) {
-
-                // Update player position
-                player[pasa_k] = newPosition;
-                // Emit move to all clients
-                this.io.to(this.roomName).emit('OnMovePasa', data);
-
-                // Check for kills
-                const killed = this.checkForKills(player, newPosition);
-                if (killed) {
-                    this.handleKill(player, killed);
-                }
-
-                // Update game state
-                //this.updateGameState();
-
-                // Handle turn continuation
-                this.handleTurnContinuation(player, steps === 6 || killed);
-            } else {
-                console.log('Invalid move detected currentPosition', currentPosition);
-                // Optionally, send an error message back to the client
+            // Validate the move
+            if (!this.validateMove(player, pasaIndex, steps)) {
+                console.log('Invalid move detected');
+                socket.emit('InvalidMove', { message: 'The move is not valid.' });
+                return;
             }
+ 
+            // Update player position
+            player[pasa_k] = newPosition;
+            player.score = this.calculatePlayerScore(player); // Recalculate score
+ 
+            // Emit move to all clients
+            this.io.to(this.roomName).emit('OnMovePasa', data);
+ 
+            // Check for kills
+            const killed = this.checkForKills(player, globalPosition);
+            if (killed.length > 0) {
+                this.handleKill(player, killed);
+            }
+ 
+            // Handle turn continuation
+            this.handleTurnContinuation(player, steps === 6 || killed.length > 0);
+ 
+            // Update and emit scores
+            this.updateScores();
         }
     }
+      // New method to update and emit scores
+      updateScores() {
+        let scores = this.turnOrder.map(player => ({
+            PlayerID: player.userId,
+            score: player.score
+        }));
+        this.io.to(this.roomName).emit('UpdateScores', scores);
+    }
+ 
+     // New method to calculate player's score
+     calculatePlayerScore(player) {
+        let score = 0;
+        for (let i = 1; i <= 4; i++) {
+            const position = player[`pasa_${i}`];
+            if (position > 0 && position <= 56) {
+                score += position;
+            }
+        }
+        return score;
+    }
+    // New method to get global position
+    getGlobalPosition(player, localPosition) {
+        if (localPosition === -1) return -1; // Home position
+        let startPosition = this.playerStartPositions[this.turnOrder.indexOf(player) % 4];
+        return (startPosition + localPosition) % 52;
+    }
+     // New method to handle pasa movement validation
+     validateMove(player, pasaIndex, steps) {
+        const currentPosition = player[`pasa_${pasaIndex + 1}`];
+        const newPosition = currentPosition + steps;
+ 
+        // Check if the move is within bounds
+        if (newPosition > 56) {
+            return false;
+        }
+ 
+        // Check if the pasa is moving out of home
+        if (currentPosition === -1 && steps !== 6) {
+            return false;
+        }
+ 
+        // Additional game-specific rules can be added here
+ 
+        return true;
+    }
+ 
     handleTurnContinuation(player, diceValue, hasKilled) {
         const canContinue = diceValue === 6 || hasKilled;
 
@@ -560,21 +605,21 @@ class LudoGame {
     }
 
 
-    checkForKills(player, newPosition) {
+    // Updated checkForKills method
+    checkForKills(killerPlayer, globalPosition) {
         const killed = [];
-        this.turnOrder.forEach(otherPlayer => {
-            if (otherPlayer.userId !== player.userId) {
+        this.turnOrder.forEach(player => {
+            if (player.userId !== killerPlayer.userId) {
                 for (let i = 1; i <= 4; i++) {
                     const tokenKey = `pasa_${i}`;
-                    if (otherPlayer[tokenKey] === newPosition && !this.isSafePosition(newPosition)) {
-                        killed.push({ player: otherPlayer, tokenKey });
+                    if (this.getGlobalPosition(player, player[tokenKey]) === globalPosition && !this.isSafePosition(globalPosition)) {
+                        killed.push({ player, tokenKey, pasaIndex: i - 1 });
                     }
                 }
             }
         });
-        return killed.length > 0 ? killed : null;
+        return killed;
     }
-
 
 
   
