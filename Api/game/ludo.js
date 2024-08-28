@@ -127,13 +127,13 @@ class LudoGame {
                 this.io.to(this.roomName).emit('OnMovePasa', data);
 
                 // Check for kills
-                const killed = this.checkForKills(player, newPosition);
+                const killed = this.checkForKills(player, globalPosition);
                 if (killed) {
                     this.handleKill(player, killed);
                 }
 
                 // Update game state
-                //this.updateGameState();
+               // this.updateGameState();
 
                 // Handle turn continuation
                 this.handleTurnContinuation(player, steps === 6 || killed.length > 0);
