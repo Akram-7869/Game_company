@@ -193,6 +193,7 @@ class LudoGame {
   getGlobalPosition(player, localPosition) {
     if (localPosition === -1) return -1; // Home position
     let startPosition = this.playerStartPositions[this.turnOrder.indexOf(player) % 4];
+    console.log('startPosition', startPosition,'player', player,'localPosition', localPosition,'m-', this.turnOrder.indexOf(player) % 4)
     return (startPosition + localPosition) % 52;
 }
     // New method to handle pasa movement validation
@@ -483,13 +484,14 @@ class LudoGame {
             const currentPosition = botPlayer[tokenKey];
             if (currentPosition === -1 && diceValue === 6) {
                 
-                if(this.players.size ==2 && botPlayer ==1){
+                if(this.turnOrder.size ==2 && botPlayer ==1){
                     //two player chage player number
                     player=2;
                 }else{
                     //four player
                     player =botPlayer;
                 }
+                console.log(botPlayer,'player', player, 'dicevalue', diceValue)
                 moves.push({ tokenKey, newPosition: 0, pasaIndex: i - 1, globalPosition: this.getGlobalPosition(player, 0) });
             } else if (currentPosition >= 0) {
                 const newPosition = currentPosition + diceValue;
