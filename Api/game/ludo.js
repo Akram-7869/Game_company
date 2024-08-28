@@ -551,32 +551,35 @@ class LudoGame {
         return playerIndex * 4 + pasaIndex;
     }
     executeBotMove(botPlayer, move, diceValue) {
-        const { tokenKey, newPosition, pasaIndex } = move;
+        const { tokenKey, newPosition, pasaIndex, globalPosition } = move;
         const currentPosition = botPlayer[tokenKey];
         botPlayer[tokenKey] = newPosition;
-
-        const botServerIndex = this.turnOrder.findIndex(p => p.userId === botPlayer.userId);
-        const serverKey = this.getServerIndexKey(botServerIndex, pasaIndex);
-
+        botPlayer.score = this.calculatePlayerScore(botPlayer);
+ 
         const moveData = {
             PlayerID: botPlayer.userId,
             TournamentID: this.lobbyId,
             RoomId: this.roomName,
-            key: serverKey,
+            pasaIndex: pasaIndex,
             steps: diceValue,
             newPosition: newPosition,
-            currentPosition: currentPosition
+            currentPosition: currentPosition,
+            globalPosition: globalPosition,
+            isGlobal: true
         };
-
+ 
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
-
-        // Check for kills after the bot move
-        const killed = this.checkForBotKills(botServerIndex, newPosition);
+ 
+        const killed = this.checkForKills(botPlayer, globalPosition);
         if (killed.length > 0) {
-            this.handleBotKill(botPlayer, killed);
+            this.handleKill(botPlayer, killed);
+            this.botEndTurn(botPlayer, true);
         } else {
             this.botEndTurn(botPlayer, diceValue === 6);
         }
+ 
+        //this.updateScores();
+        //this.updateGameState();
     }
     checkForBotKills(botServerIndex, botNewPosition) {
         const killed = [];
