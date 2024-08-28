@@ -63,7 +63,7 @@ class LudoGame {
                     lobbyId: this.lobbyId,
                     maxp: this.maxPlayers,
                     type: 'bot',
-                    pasa_1: -1, pasa_2: -1, pasa_3: -1, pasa_4: -1,
+                    pasa_0: -1, pasa_1: -1, pasa_2: -1, pasa_3: -1,
                     playerStatus: 'joined',
                     avtar: 'http://example.com/bot-avatar.png'
                 }
@@ -174,7 +174,7 @@ class LudoGame {
     }
      // New method to handle pasa movement validation
      validateMove(player, pasaIndex, steps) {
-        const currentPosition = player[`pasa_${pasaIndex + 1}`];
+        const currentPosition = player[`pasa_${pasaIndex}`];
         const newPosition = currentPosition + steps;
  
         // Check if the move is within bounds
@@ -547,7 +547,7 @@ class LudoGame {
         this.turnOrder.forEach((player, serverPlayerIndex) => {
             if (serverPlayerIndex !== botServerIndex) {
                 for (let pasaIndex = 0; pasaIndex < 4; pasaIndex++) {
-                    const tokenKey = `pasa_${pasaIndex + 1}`;
+                    const tokenKey = `pasa_${pasaIndex}`;
                     const playerTokenPosition = player[tokenKey];
                     //console.log( 'botRelativePosition', botRelativePosition ,'playerTokenPosition', playerTokenPosition)
                     if (playerTokenPosition >= 0) {
@@ -651,7 +651,7 @@ class LudoGame {
         console.log('OnKillEvent', d);
         let targetUser = this.turnOrder[d.killedPlayerIndex];
         let pasaIndex = d.killedPasaIndex;
-        let pasa_k = `pasa_${pasaIndex +1}`
+        let pasa_k = `pasa_${pasaIndex}`
         targetUser[pasa_k] = -1;
         console.log('OnKillEvent', targetUser, pasa_k)
         this.io.to(this.roomName).emit('OnKillEvent', d);
@@ -711,13 +711,13 @@ class LudoGame {
     }
     isGameOver() {
         return this.turnOrder.some(player =>
-            player.pasa_1 === 56 && player.pasa_2 === 56 && player.pasa_3 === 56 && player.pasa_4 === 56
+            player.pasa_0 === 56 && player.pasa_1 === 56 && player.pasa_2 === 56 && player.pasa_3 === 56
         );
     }
 
     getWinner() {
         return this.turnOrder.find(player =>
-            player.pasa_1 === 56 && player.pasa_2 === 56 && player.pasa_3 === 56 && player.pasa_4 === 56
+            player.pasa_0 === 56 && player.pasa_1 === 56 && player.pasa_2 === 56 && player.pasa_3 === 56
         );
     }
 
