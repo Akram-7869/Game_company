@@ -60,7 +60,7 @@ router.use('/api/v1/commissions', commission);
 
 
 router.get('/api/v1/so', function (req, res, next) {
-     res.send(Object.keys(state).length);
+     res.status(200).json({n:Object.keys(state).length});
 })
  
 
