@@ -189,12 +189,12 @@ class LudoGame {
         }
         return score;
     }
-    // New method to get global position
-    getGlobalPosition(player, localPosition) {
-        if (localPosition === -1) return -1; // Home position
-        let startPosition = this.playerStartPositions[this.turnOrder.indexOf(player) % 4];
-        return (startPosition + localPosition) % 52;
-    }
+  // New method to get global position
+  getGlobalPosition(player, localPosition) {
+    if (localPosition === -1) return -1; // Home position
+    let startPosition = this.playerStartPositions[this.turnOrder.indexOf(player) % 4];
+    return (startPosition + localPosition) % 52;
+}
     // New method to handle pasa movement validation
     validateMove(player, pasaIndex, steps) {
         const currentPosition = player[`pasa_${pasaIndex}`];
@@ -475,18 +475,26 @@ class LudoGame {
         }
     }
 
+    // Updated getBotPossibleMoves method
     getBotPossibleMoves(botPlayer, diceValue) {
-        const moves = [];
-        for (let i = 0; i <= 3; i++) {
+        const moves = [];let player = 0
+        for (let i = 1; i <= 4; i++) {
             const tokenKey = `pasa_${i}`;
             const currentPosition = botPlayer[tokenKey];
             if (currentPosition === -1 && diceValue === 6) {
-                // Move out of home
-                moves.push({ tokenKey, newPosition: 0, pasaIndex: i });
+                
+                if(this.players.size ==2 && botPlayer ==1){
+                    //two player chage player number
+                    player=2;
+                }else{
+                    //four player
+                    player =botPlayer;
+                }
+                moves.push({ tokenKey, newPosition: 0, pasaIndex: i - 1, globalPosition: this.getGlobalPosition(player, 0) });
             } else if (currentPosition >= 0) {
                 const newPosition = currentPosition + diceValue;
                 if (newPosition <= 56) {
-                    moves.push({ tokenKey, newPosition, pasaIndex: i });
+                    moves.push({ tokenKey, newPosition, pasaIndex: i - 1, globalPosition: this.getGlobalPosition(player, newPosition) });
                 }
             }
         }
