@@ -458,26 +458,10 @@ class LudoGame {
     isSafePosition(position) {
         return this.safeSpots.includes(position);
     }
-        // Updated botTurn method with improved logic
-        botTurn(botPlayer) {
-            setTimeout(() => {
-                const diceValue = Math.floor(Math.random() * 6) + 1;
-                this.io.to(this.roomName).emit('OnRollDice', {
-                    dice: diceValue,
-                    currentTurnIndex: this.currentTurnIndex,
-                    currentPalyerId: botPlayer.userId,
-                });
-     
-                setTimeout(() => {
-                    const move = this.getBotMove(botPlayer, diceValue);
-                    if (move) {
-                        this.executeBotMove(botPlayer, move, diceValue);
-                    } else {
-                        this.botEndTurn(botPlayer, false);
-                    }
-                }, this.botMoveDelay);
-            }, this.botMoveDelay);
-        }
+    botTurn(botPlayer) {
+        setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
+    }
+ 
    // New method to get the best move for a bot based on difficulty
    getBotMove(botPlayer, diceValue) {
     const possibleMoves = this.getBotPossibleMoves(botPlayer, diceValue);
