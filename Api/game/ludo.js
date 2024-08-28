@@ -26,7 +26,7 @@ class LudoGame {
         this.globalPath = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51];
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
- 
+
 
     }
 
@@ -115,50 +115,73 @@ class LudoGame {
         let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
         let player = this.turnOrder[playerIndex];
         let pasa_k = `pasa_${pasaIndex}`;
- 
+
         console.log('player-move', data, 'pasa_k', pasa_k);
- 
+
         if (player && player[pasa_k] !== undefined) {
-            // Validate the move
-            if (!this.validateMove(player, pasaIndex, steps)) {
-                console.log('Invalid move detected');
-                socket.emit('InvalidMove', { message: 'The move is not valid.' });
-                return;
+            if (currentPosition !== -1) {
+
+                // Update player position
+                player[pasa_k] = newPosition;
+                // Emit move to all clients
+                this.io.to(this.roomName).emit('OnMovePasa', data);
+
+                // Check for kills
+                const killed = this.checkForKills(player, newPosition);
+                if (killed) {
+                    this.handleKill(player, killed);
+                }
+
+                // Update game state
+                //this.updateGameState();
+
+                // Handle turn continuation
+                this.handleTurnContinuation(player, steps === 6 || killed.length > 0);
+                // // Update and emit scores
+                // this.updateScores();
+            } else {
+                console.log('HOme');
+                // Optionally, send an error message back to the client
             }
- 
-            // Update player position
-            player[pasa_k] = newPosition;
-            player.score = this.calculatePlayerScore(player); // Recalculate score
- 
-            // Emit move to all clients
-            this.io.to(this.roomName).emit('OnMovePasa', data);
- 
-            // Check for kills
-            const killed = this.checkForKills(player, globalPosition);
-            if (killed.length > 0) {
-                this.handleKill(player, killed);
-            }
- 
-            // Handle turn continuation
-            this.handleTurnContinuation(player, steps === 6 || killed.length > 0);
- 
-            // Update and emit scores
-            this.updateScores();
+
+
+
+
+
+
+
+
+
         }
     }
-      // New method to update and emit scores
-      updateScores() {
+    // Updated checkForKills method
+    checkForKills(killerPlayer, globalPosition) {
+        const killed = [];
+        this.turnOrder.forEach(player => {
+            if (player.userId !== killerPlayer.userId) {
+                for (let i = 0; i <= 3; i++) {
+                    const tokenKey = `pasa_${i}`;
+                    if (this.getGlobalPosition(player, player[tokenKey]) === globalPosition && !this.isSafePosition(globalPosition)) {
+                        killed.push({ player, tokenKey, pasaIndex: i });
+                    }
+                }
+            }
+        });
+        return killed;
+    }
+    // New method to update and emit scores
+    updateScores() {
         let scores = this.turnOrder.map(player => ({
             PlayerID: player.userId,
             score: player.score
         }));
         this.io.to(this.roomName).emit('UpdateScores', scores);
     }
- 
-     // New method to calculate player's score
-     calculatePlayerScore(player) {
+
+    // New method to calculate player's score
+    calculatePlayerScore(player) {
         let score = 0;
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 0; i <= 3; i++) {
             const position = player[`pasa_${i}`];
             if (position > 0 && position <= 56) {
                 score += position;
@@ -172,26 +195,33 @@ class LudoGame {
         let startPosition = this.playerStartPositions[this.turnOrder.indexOf(player) % 4];
         return (startPosition + localPosition) % 52;
     }
-     // New method to handle pasa movement validation
-     validateMove(player, pasaIndex, steps) {
+    // New method to handle pasa movement validation
+    validateMove(player, pasaIndex, steps) {
         const currentPosition = player[`pasa_${pasaIndex}`];
         const newPosition = currentPosition + steps;
- 
+
         // Check if the move is within bounds
         if (newPosition > 56) {
             return false;
         }
- 
+
         // Check if the pasa is moving out of home
         if (currentPosition === -1 && steps !== 6) {
             return false;
         }
- 
+
         // Additional game-specific rules can be added here
- 
+
         return true;
+
+
+
+
+
+
+
     }
- 
+
     handleTurnContinuation(player, diceValue, hasKilled) {
         const canContinue = diceValue === 6 || hasKilled;
 
@@ -250,11 +280,11 @@ class LudoGame {
             // }
             let dd = {
                 killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === killerPlayer.userId),
-                killerPasaIndex: parseInt(tokenKey.split('_')[1]) - 1,
+                killerPasaIndex: parseInt(tokenKey.split('_')[1]),
                 killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
-                killedPasaIndex: parseInt(tokenKey.split('_')[1]) - 1
+                killedPasaIndex: parseInt(tokenKey.split('_')[1])
             }
-            console.log('handleKill enitin OnKillEvent--', dd)
+            console.log('handleKill  OnKillEvent--', dd)
             this.io.to(this.roomName).emit('OnKillEvent', dd);
         });
 
@@ -264,7 +294,7 @@ class LudoGame {
     checkAndUpdateBotPositions(newPosition) {
         this.turnOrder.forEach(player => {
             if (player.type === 'bot') {
-                for (let i = 1; i <= 4; i++) {
+                for (let i = 0; i <= 3; i++) {
                     const tokenKey = `pasa_${i}`;
                     if (player[tokenKey] === newPosition && !this.isSafePosition(newPosition)) {
                         this.updateBotPosition(player, tokenKey);
@@ -292,7 +322,7 @@ class LudoGame {
             dice: this.lastDiceValue,
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
-            
+
         });
     }
     sendCurrentStatus(socket) {
@@ -350,7 +380,7 @@ class LudoGame {
         // }
         //  Set timer for the next turn
         this.turnTimer = new Timer(15, (remaining) => {
-            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex , currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
+            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
         }, () => {
 
             this.nextTurn();
@@ -447,16 +477,16 @@ class LudoGame {
 
     getBotPossibleMoves(botPlayer, diceValue) {
         const moves = [];
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 0; i <= 3; i++) {
             const tokenKey = `pasa_${i}`;
             const currentPosition = botPlayer[tokenKey];
             if (currentPosition === -1 && diceValue === 6) {
                 // Move out of home
-                moves.push({ tokenKey, newPosition: 0, pasaIndex: i - 1 });
+                moves.push({ tokenKey, newPosition: 0, pasaIndex: i });
             } else if (currentPosition >= 0) {
                 const newPosition = currentPosition + diceValue;
                 if (newPosition <= 56) {
-                    moves.push({ tokenKey, newPosition, pasaIndex: i - 1 });
+                    moves.push({ tokenKey, newPosition, pasaIndex: i });
                 }
             }
         }
@@ -552,13 +582,13 @@ class LudoGame {
                     //console.log( 'botRelativePosition', botRelativePosition ,'playerTokenPosition', playerTokenPosition)
                     if (playerTokenPosition >= 0) {
                         const relativePosition = (playerTokenPosition - (serverPlayerIndex * 13) + 52) % 52;
-                      //  console.log('relativePosition',relativePosition ,'botRelativePosition', botRelativePosition ,'playerTokenPosition', playerTokenPosition)
+                        //  console.log('relativePosition',relativePosition ,'botRelativePosition', botRelativePosition ,'playerTokenPosition', playerTokenPosition)
                         if (relativePosition === botRelativePosition && !this.isSafePosition(relativePosition)) {
-                            killed.push({ 
-                                player, 
-                                serverPlayerIndex, 
-                                pasaIndex, 
-                                tokenKey 
+                            killed.push({
+                                player,
+                                serverPlayerIndex,
+                                pasaIndex,
+                                tokenKey
                             });
                         }
                     }
@@ -570,16 +600,16 @@ class LudoGame {
     }
 
 
-    
+
     handleBotKill(botPlayer, killed) {
         const botServerIndex = this.turnOrder.findIndex(p => p.userId === botPlayer.userId);
-        
+
         killed.forEach(({ player, serverPlayerIndex, pasaIndex, tokenKey }) => {
             player[tokenKey] = -1; // Reset to home position
-            
+
             const killerServerKey = this.getServerIndexKey(botServerIndex, 0); // Assuming bot always uses first pasa
             const killedServerKey = this.getServerIndexKey(serverPlayerIndex, pasaIndex);
-            
+
             this.io.to(this.roomName).emit('OnKillEvent', {
                 killerPlayerIndex: botServerIndex,
                 killerPasaIndex: 0, // Assuming bot always uses first pasa
@@ -605,24 +635,10 @@ class LudoGame {
     }
 
 
-    // Updated checkForKills method
-    checkForKills(killerPlayer, globalPosition) {
-        const killed = [];
-        this.turnOrder.forEach(player => {
-            if (player.userId !== killerPlayer.userId) {
-                for (let i = 1; i <= 4; i++) {
-                    const tokenKey = `pasa_${i}`;
-                    if (this.getGlobalPosition(player, player[tokenKey]) === globalPosition && !this.isSafePosition(globalPosition)) {
-                        killed.push({ player, tokenKey, pasaIndex: i - 1 });
-                    }
-                }
-            }
-        });
-        return killed;
-    }
 
 
-  
+
+
     setupPlayerListeners(socket) {
         socket.on('OnMovePasa', (data) => this.handlePlayerMove(socket, data));
         socket.on('OnRollDice', () => this.handlePlayerRollDice(socket));
