@@ -204,7 +204,7 @@ class LudoGame {
     botKill(killerPlayer, killed, killerPasaIndex) {
         console.log('botKill', killed);
         killed.forEach(({ player, pasaIndex }) => {
-            player[pasaIndex] = -1; // Reset to home position
+            player.pasa[pasaIndex] = -1; // Reset to home position
 
             // If the killed token belongs to a bot, update bot's internal state
             // if (player.type === 'bot') {
