@@ -127,7 +127,7 @@ class LudoGame {
         let player = this.turnOrder[playerIndex];
 console.log('OnMovePasa', playerIndex , data);
 
-
+this.turnOrder
         if (player && player[pasaIndex] !== undefined) {
             
             // Update player position
@@ -212,10 +212,10 @@ console.log('OnMovePasa', playerIndex , data);
         });
     }
 
-    handleKill(killerPlayer, killed) {
-        console.log('handleKill', killed);
-        killed.forEach(({ player, tokenKey }) => {
-            player[tokenKey] = -1; // Reset to home position
+    botKill(killerPlayer, killed, killerPasaIndex) {
+        console.log('botKill', killed);
+        killed.forEach(({ player, pasaIndex }) => {
+            player[pasaIndex] = -1; // Reset to home position
 
             // If the killed token belongs to a bot, update bot's internal state
             // if (player.type === 'bot') {
@@ -226,11 +226,11 @@ console.log('OnMovePasa', playerIndex , data);
             // }
             let dd = {
                 killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === killerPlayer.userId),
-                killerPasaIndex: parseInt(tokenKey.split('_')[1]),
+                killerPasaIndex: parseInt(killerPasaIndex),
                 killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
-                killedPasaIndex: parseInt(tokenKey.split('_')[1])
+                killedPasaIndex: parseInt(pasaIndex)
             }
-            console.log('handleKill  OnKillEvent--', dd)
+            console.log('botKill  OnKillEvent--', dd)
             this.io.to(this.roomName).emit('OnKillEvent', dd);
         });
 
@@ -498,7 +498,7 @@ console.log('OnMovePasa', playerIndex , data);
 
         const killed = this.checkForKills(botPlayer, globalPosition);
         if (killed.length > 0) {
-            this.handleKill(botPlayer, killed);
+            this.botKill(botPlayer, killed, ,pasaIndex);
             this.botEndTurn(botPlayer, true);
         } else {
             this.botEndTurn(botPlayer, diceValue === 6);
@@ -533,7 +533,7 @@ console.log('OnMovePasa', playerIndex , data);
         socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
         socket.on('OnContinueTurn', (data) => this.handlePlayerContinueTurn(socket, data));
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket, data));
-        socket.on('OnKillEvent', (data) => this.handleKillEvent(socket, data));
+        socket.on('OnKillEvent', (data) => this.playerKillEvent(socket, data));
 
     }
 
@@ -550,7 +550,7 @@ console.log('OnMovePasa', playerIndex , data);
     }
 
 
-    handleKillEvent(socket, d) {
+    playerKillEvent(socket, d) {
 
         console.log('OnKillEvent', d);
         let targetUser = this.turnOrder[d.killedPlayerIndex];
