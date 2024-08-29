@@ -37,6 +37,7 @@ class LudoGame {
             player['startPosition'] = startPosition;
             player['pasa'] = [-1, -1, -1, -1];
             player['global'] = [-1, -1, -1, -1];
+            player['life'] = 3;
 
             this.turnOrder.push(player);
             this.setupPlayerListeners(socket)
@@ -288,6 +289,13 @@ class LudoGame {
         }, () => {
             
             if(this.currentPhase !=='finished'){
+
+                if(currentPlayer['life'] <=0){
+                    currentPlayer.playerStatus="left";
+                    this.checkGameStatus();
+                }else{
+                    currentPlayer['life'] -=1
+                }
                 this.nextTurn();
             }
             
