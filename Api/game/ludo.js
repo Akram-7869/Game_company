@@ -89,6 +89,12 @@ class LudoGame {
             console.log(`Bot ${botId} added to room ${this.roomName}`);
         }
     }
+    initializePlayerScores() {
+        this.turnOrder.forEach(player => {
+            player.score = 0;
+        });
+    }
+
     setupGame() {
         if (this.roomJoinTimers) return; // Prevent multiple starts
 
@@ -96,10 +102,9 @@ class LudoGame {
         this.roomJoinTimers = new Timer(10, (remaining) => {
             this.io.to(this.roomName).emit('join_tick', { remaining });
             if (remaining === 5) {
-
                 this.checkAndAddBots();
             }
-
+            this.initializePlayerScores();
         }, () => {
             if (this.isGameReady) {
                 this.startGame();
@@ -459,11 +464,10 @@ class LudoGame {
         } else {
             this.botEndTurn(botPlayer, diceValue === 6);
         }
+
         if (newPosition == 57) {
             this.checkGameStatus();
         }
-        //this.updateScores();
-        //this.updateGameState();
     }
 
     botEndTurn(botPlayer, canContinue) {
@@ -475,7 +479,7 @@ class LudoGame {
         if (canContinue) {
             setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
-
+            this.calculatePlayerScore(botPlayer);
             this.nextTurn();
         }
     }
