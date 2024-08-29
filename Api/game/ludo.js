@@ -1,10 +1,11 @@
 const Timer = require("./Timer");
-const { state, publicRoom, userSocketMap, tokenMiddleware, gameName, sleep, userLeave, getRoomLobbyUsers, getRoomUsers, joinRoom, arraymove, getKeyWithMinValue, defaultRolletValue } = require('../utils/JoinRoom');
+const { state, publicRoom, getBotName } = require('../utils/JoinRoom');
 const { listeners } = require("../models/File");
 
 class LudoGame {
-    constructor(io, roomName, maxPlayers, lobbyId) {
-        this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.lobbyId = lobbyId;
+    constructor(io, roomName, maxPlayers, lobby) {
+        this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.lobbyId = lobby._id;
+        this.bot = lobby.bot; this.complexity = lobby.complexity;
         this.turnOrder = [];
         this.currentTurnIndex = -1;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
@@ -43,10 +44,15 @@ class LudoGame {
             this.setupPlayerListeners(socket)
 
         }
-        
+
 
     }
     checkAndAddBots() {
+        if (!this.bot) {
+            return;
+        }
+
+        this.setBotDifficulty(getBotName(this.complexity))
         let totalPlayers = this.turnOrder.length;
         if (totalPlayers < this.maxPlayers) {
             const botsToAdd = this.maxPlayers - totalPlayers;
@@ -178,32 +184,30 @@ class LudoGame {
     botKill(killerPlayer, killed, killerPasaIndex) {
         // Extract killer player index once
         const killerPlayerIndex = this.turnOrder.findIndex(p => p.userId === killerPlayer.userId);
-    
+
         // Iterate over each killed player
         for (const { player, pasaIndex } of killed) {
             player.pasa[pasaIndex] = -1; // Reset to home position
-    
+
             // Extract killed player index only once per player
             const killedPlayerIndex = this.turnOrder.findIndex(p => p.userId === player.userId);
-    
+
             const dd = {
                 killerPlayerIndex,
                 killerPasaIndex: parseInt(killerPasaIndex, 10),
                 killedPlayerIndex,
                 killedPasaIndex: parseInt(pasaIndex, 10)
             };
-    
-            // Log for debugging purposes (consider removing in production)
+
             console.log('botKill  OnKillEvent--', dd);
-    
             // Emit event for each killed player
             this.io.to(this.roomName).emit('OnKillEvent', dd);
         }
-    
+
         // Optionally update game state after kills
         // this.updateGameState();
     }
-    
+
 
     handlePlayerRollDice(socket) {
         this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
@@ -300,10 +304,10 @@ class LudoGame {
         //         }
 
     }
- 
 
 
-    
+
+
 
     botTurn(botPlayer) {
         setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
@@ -366,17 +370,17 @@ class LudoGame {
     // Updated checkForKills method
     checkForKills(killerPlayer, globalPosition) {
         const killed = [];
-        const isOnSafeBox =this.isSafePosition(globalPosition);
+        const isOnSafeBox = this.isSafePosition(globalPosition);
         for (const player of this.turnOrder) {
             if (player.userId === killerPlayer.userId) continue; // Skip the killerPlayer
-    
+
             for (let i = 0; i < player.global.length; i++) {
                 if (player.global[i] === globalPosition && !isOnSafeBox) {
                     killed.push({ player, pasaIndex: i });
                 }
             }
         }
-    
+
         console.log('killed', killed);
         return killed;
     }

@@ -150,5 +150,22 @@ let defaultRolletValue = () => {
     });
   }
 
-module.exports = {server,express,io,app,sleep, userLeave,getRoomLobbyUsers, getRoomUsers, joinRoom,arraymove, getKeyWithMinValue,defaultRolletValue,publicRoom, state, userSocketMap,tokenMiddleware, gameName}
+  function getBotName(i){
+    switch (i) {
+      case 0:
+        return 'easy';
+        break;
+        case 1:
+          return 'medium';
+        break;
+        case 2:
+          return 'hard';
+        break;
+    
+      default:
+        break;
+    }
+  }
+
+module.exports = {getBotName, server,express,io,app,sleep, userLeave,getRoomLobbyUsers, getRoomUsers, joinRoom,arraymove, getKeyWithMinValue,defaultRolletValue,publicRoom, state, userSocketMap,tokenMiddleware, gameName}
  
