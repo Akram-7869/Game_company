@@ -168,5 +168,5 @@ let defaultRolletValue = () => {
     }
   }
 
-module.exports = s{getBotName, server,express,io,app,sleep, userLeave,getRoomLobbyUsers, getRoomUsers, joinRoom,arraymove, getKeyWithMinValue,defaultRolletValue,publicRoom, state, userSocketMap,tokenMiddleware, gameName}
+module.exports = {getBotName, server,express,io,app,sleep, userLeave,getRoomLobbyUsers, getRoomUsers, joinRoom,arraymove, getKeyWithMinValue,defaultRolletValue,publicRoom, state, userSocketMap,tokenMiddleware, gameName}
  
