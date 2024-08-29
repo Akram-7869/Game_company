@@ -23,7 +23,7 @@ class LudoGame {
         this.botMoveDelay = 2000;
         this.botDifficulty = 'easy'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
-         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
+        this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
 
 
@@ -35,6 +35,7 @@ class LudoGame {
             let startPosition = this.playerStartPositions[this.players.size];
             player['startPosition'] = startPosition;
             player['pasa'] = [-1, -1, -1, -1];
+            player['global'] = [-1, -1, -1, -1];
 
 
             this.players.set(player.userId, { player, socket, lives: 3 });
@@ -71,6 +72,7 @@ class LudoGame {
                     maxp: this.maxPlayers,
                     type: 'bot',
                     pasa: [-1, -1, -1, -1],
+                    global: [-1, -1, -1, -1],
                     startPosition,
                     playerStatus: 'joined',
                     avtar: 'http://example.com/bot-avatar.png'
@@ -136,6 +138,7 @@ class LudoGame {
 
             // Update player position
             player.pasa[pasaIndex] = newPosition;
+            player.global[pasaIndex] = globalPosition;
             player.score = this.calculatePlayerScore(player); // Recalculate score
 
             // Emit move to all clients
@@ -398,45 +401,45 @@ class LudoGame {
             this.botEndTurn(botPlayer, false);
         }
     }
-        // Updated getBotPossibleMoves method
-        getBotPossibleMoves(botPlayer, diceValue) {
-            const moves = [];
-            for (let i = 0; i <= 3; i++) {
-                const currentPosition = botPlayer.pasa[i];
-                if (currentPosition === -1 && diceValue === 6) {
-                    moves.push({ newPosition: 0, pasaIndex: i , globalPosition: this.getGlobalPosition(botPlayer, 0) });
-                } else if (currentPosition >= 0) {
-                    const newPosition = currentPosition + diceValue;
-                    if (newPosition <= 56) {
-                        moves.push({ newPosition, pasaIndex: i, globalPosition: this.getGlobalPosition(botPlayer, newPosition) });
+    // Updated getBotPossibleMoves method
+    getBotPossibleMoves(botPlayer, diceValue) {
+        const moves = [];
+        for (let i = 0; i <= 3; i++) {
+            const currentPosition = botPlayer.pasa[i];
+            if (currentPosition === -1 && diceValue === 6) {
+                moves.push({ newPosition: 0, pasaIndex: i, globalPosition: this.getGlobalPosition(botPlayer, 0) });
+            } else if (currentPosition >= 0) {
+                const newPosition = currentPosition + diceValue;
+                if (newPosition <= 56) {
+                    moves.push({ newPosition, pasaIndex: i, globalPosition: this.getGlobalPosition(botPlayer, newPosition) });
+                }
+            }
+        }
+        return moves;
+    }
+
+
+
+    // Updated checkForKills method
+    checkForKills(killerPlayer, globalPosition) {
+        const killed = [];
+        this.turnOrder.forEach(player => {
+            if (player.userId !== killerPlayer.userId) {
+                for (let i = 0; i <= 3; i++) {
+                    if ( player.global[i] === globalPosition && !this.isSafePosition(globalPosition)) {
+                        killed.push({ player, pasaIndex: i });
                     }
                 }
             }
-            return moves;
-        }
-    
+        });
+        return killed;
+    }
 
-   
- // Updated checkForKills method
- checkForKills(killerPlayer, globalPosition) {
-    const killed = [];
-    this.turnOrder.forEach(player => {
-        if (player.userId !== killerPlayer.userId) {
-            for (let i = 0; i <= 3; i++) {
-                if (this.getGlobalPosition(player, player.pasa[i]) === globalPosition && !this.isSafePosition(globalPosition)) {
-                    killed.push({ player, pasaIndex: i });
-                }
-            }
-        }
-    });
-    return killed;
-}
-
-// New method to get global position
-getGlobalPosition(player, localPosition) {
-    if (localPosition === -1) return -1; // Home position
-    return (player.startPosition + localPosition) % 52;
-}
+    // New method to get global position
+    getGlobalPosition(player, localPosition) {
+        if (localPosition === -1) return -1; // Home position
+        return (player.startPosition + localPosition) % 52;
+    }
 
     getRandomMove(possibleMoves) {
         return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
@@ -477,11 +480,12 @@ getGlobalPosition(player, localPosition) {
     }
 
 
-   
+
     executeBotMove(botPlayer, move, diceValue) {
         const { newPosition, pasaIndex, globalPosition } = move;
         const currentPosition = botPlayer.pasa[pasaIndex];
         botPlayer.pasa[pasaIndex] = newPosition;
+        botPlayer.global[pasaIndex] = globalPosition;
         botPlayer.score = this.calculatePlayerScore(botPlayer);
 
         const moveData = {
