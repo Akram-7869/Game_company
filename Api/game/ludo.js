@@ -498,7 +498,7 @@ this.turnOrder
 
         const killed = this.checkForKills(botPlayer, globalPosition);
         if (killed.length > 0) {
-            this.botKill(botPlayer, killed, ,pasaIndex);
+            this.botKill(botPlayer, killed, pasaIndex);
             this.botEndTurn(botPlayer, true);
         } else {
             this.botEndTurn(botPlayer, diceValue === 6);
