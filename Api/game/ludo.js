@@ -131,7 +131,7 @@ class LudoGame {
                
                 player.pasa[pasaIndex] = newPosition;
                 player.global[pasaIndex] = globalPosition;
-                //  player.score = this.calculatePlayerScore(player); // Recalculate score
+                player['score'] = this.calculatePlayerScore(player); // Recalculate score
 
                 console.log('player',player);
            
@@ -413,6 +413,7 @@ class LudoGame {
                 }
             }
         });
+        console.log('killed',killed);
         return killed;
     }
 
