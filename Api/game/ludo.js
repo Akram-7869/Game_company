@@ -21,7 +21,7 @@ class LudoGame {
         this.pauseTime = 9; // 5 seconds
         this.lastDiceValue = 6;
         this.botMoveDelay = 2000;
-        this.botDifficulty = 'easy'; // 'easy', 'medium', or 'hard'
+        this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
