@@ -123,26 +123,23 @@ class LudoGame {
     }
     handlePlayerMove(socket, data) {
         let { PlayerID, pasaIndex, steps, currentPosition, newPosition, globalPosition, isGlobal } = data;
-         
-console.log('OnMovePasa' , data);
 
-this.turnOrder.forEach(player => {
-    if (player.userId == PlayerID) {
-        player.pasa[pasaIndex] = newPosition;
-        player.global[pasaIndex] = globalPosition;
-        player.score = this.calculatePlayerScore(player); // Recalculate score
-      
-         
-    }
-}); 
+        console.log('OnMovePasa', data);
 
+        this.turnOrder.forEach(player => {
+            if (player.userId == PlayerID) {
+               
+                player.pasa[pasaIndex] = newPosition;
+                player.global[pasaIndex] = globalPosition;
+                //  player.score = this.calculatePlayerScore(player); // Recalculate score
 
-this.io.to(this.roomName).emit('OnMovePasa', data);
-this.updateScores();
+                console.log('player',player);
+            }
+        });
 
 
-
-
+        this.io.to(this.roomName).emit('OnMovePasa', data);
+        // this.updateScores();
     }
 
     // New method to update and emit scores
@@ -412,7 +409,7 @@ this.updateScores();
         this.turnOrder.forEach(player => {
             if (player.userId !== killerPlayer.userId) {
                 for (let i = 0; i <= 3; i++) {
-                    if ( player.global[i] === globalPosition && !this.isSafePosition(globalPosition)) {
+                    if (player.global[i] === globalPosition && !this.isSafePosition(globalPosition)) {
                         killed.push({ player, pasaIndex: i });
                     }
                 }
