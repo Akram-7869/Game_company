@@ -123,20 +123,18 @@ class LudoGame {
     }
     handlePlayerMove(socket, data) {
         let { PlayerID, pasaIndex, steps, currentPosition, newPosition, globalPosition, isGlobal } = data;
-
+        let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
+        let player = this.turnOrder[playerIndex];
         console.log('OnMovePasa', data);
 
-        this.turnOrder.forEach(player => {
-            if (player.userId == PlayerID) {
+      
                
                 player.pasa[pasaIndex] = newPosition;
                 player.global[pasaIndex] = globalPosition;
                 //  player.score = this.calculatePlayerScore(player); // Recalculate score
 
                 console.log('player',player);
-            }
-        });
-
+           
 
         this.io.to(this.roomName).emit('OnMovePasa', data);
         // this.updateScores();
