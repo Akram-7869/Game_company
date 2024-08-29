@@ -125,17 +125,11 @@ class LudoGame {
         let { PlayerID, pasaIndex, steps, currentPosition, newPosition, globalPosition, isGlobal } = data;
         let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
         let player = this.turnOrder[playerIndex];
-
+console.log('OnMovePasa', playerIndex , data);
 
 
         if (player && player[pasaIndex] !== undefined) {
-            // Validate the move
-            if (!this.validateMove(player, pasaIndex, steps)) {
-                console.log('Invalid move detected');
-                socket.emit('InvalidMove', { message: 'The move is not valid.' });
-                return;
-            }
-
+            
             // Update player position
             player.pasa[pasaIndex] = newPosition;
             player.global[pasaIndex] = globalPosition;
