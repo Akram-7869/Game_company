@@ -123,34 +123,19 @@ class LudoGame {
     }
     handlePlayerMove(socket, data) {
         let { PlayerID, pasaIndex, steps, currentPosition, newPosition, globalPosition, isGlobal } = data;
-        let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
-        let player = this.turnOrder[playerIndex];
-console.log('OnMovePasa', playerIndex , data);
+         
+console.log('OnMovePasa' , data);
 
-this.turnOrder
-        if (player && player[pasaIndex] !== undefined) {
-            
-            // Update player position
-            player.pasa[pasaIndex] = newPosition;
-            player.global[pasaIndex] = globalPosition;
-            player.score = this.calculatePlayerScore(player); // Recalculate score
-
-            // Emit move to all clients
-            this.io.to(this.roomName).emit('OnMovePasa', data);
-
-            // // Check for kills
-            // const killed = this.checkForKills(player, globalPosition);
-            // if (killed.length > 0) {
-            //     this.handleKill(player, killed);
-            // }
-
-            // Handle turn continuation
-            //this.handleTurnContinuation(player, steps === 6 || killed.length > 0);
-
-            // Update and emit scores
-            this.updateScores();
-
-        }
+this.turnOrder.forEach(player => {
+    if (player.userId !== PlayerID) {
+        player.pasa[pasaIndex] = newPosition;
+        player.global[pasaIndex] = globalPosition;
+        player.score = this.calculatePlayerScore(player); // Recalculate score
+        this.io.to(this.roomName).emit('OnMovePasa', data);
+        this.updateScores();
+         
+    }
+});         
     }
 
     // New method to update and emit scores
