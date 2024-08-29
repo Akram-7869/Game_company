@@ -38,11 +38,11 @@
                             <form id="poll" action="" enctype="multipart/form-data" method="POST">
 
                                 <div class="mb-3">
-                                    <label class="form-label">Url</label>
+                                    <label class="form-label">Title</label>
                                     <input id="url" type="text" name="url" value="<%=row.url?row.url:'' %>"
                                         class="form-control" required placeholder="Url " />
                                 </div>
-                                <div class="mb-3">
+                                <!-- <div class="mb-3">
                                     <label class="form-label">Location</label>
                                     <div class="col-md-10">
                                         <select id="location" class="form-select" name="location" required>
@@ -52,8 +52,8 @@
                                             </option>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="mb-3">
+                                </div> -->
+                                <!-- <div class="mb-3">
                                     <label class="form-label">Type</label>
                                     <div class="col-md-10">
                                         <select id="pollType" class="form-select" name="pollType" required>
@@ -63,7 +63,7 @@
                                             </option> -->
                                         </select>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
                                     <div class="col-md-10">
@@ -148,8 +148,8 @@
                             //send all the form data along with the files:
                             this.on("sending", function (data, xhr, formData) {
                                 formData.append("url", $("#url").val());
-                                formData.append("pollType", $("#pollType").val());
-                                formData.append("location", $("#location").val());
+                                // formData.append("pollType", $("#pollType").val());
+                                // formData.append("location", $("#location").val());
                                 formData.append("status", $("#statustxt").val());
 
                             });

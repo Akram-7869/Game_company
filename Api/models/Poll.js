@@ -8,7 +8,7 @@ const PollSchema = new mongoose.Schema({
     url: {
         type: String
     },
-    message: {
+    title: {
         type: String
     },
     imageId: {
