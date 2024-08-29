@@ -520,10 +520,9 @@ class LudoGame {
         let targetUser = this.turnOrder[killedPlayerIndex];
         let pasaIndex = d.killedPasaIndex;
 
-        targetUser[pasaIndex] = -1;
+        targetUser.pasa[pasaIndex] = -1;
         console.log('OnKillEvent', targetUser, pasaIndex)
         this.io.to(this.roomName).emit('OnKillEvent', d);
-
     }
 
 
