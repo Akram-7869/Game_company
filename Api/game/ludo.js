@@ -127,15 +127,22 @@ class LudoGame {
 console.log('OnMovePasa' , data);
 
 this.turnOrder.forEach(player => {
-    if (player.userId !== PlayerID) {
+    if (player.userId == PlayerID) {
         player.pasa[pasaIndex] = newPosition;
         player.global[pasaIndex] = globalPosition;
         player.score = this.calculatePlayerScore(player); // Recalculate score
-        this.io.to(this.roomName).emit('OnMovePasa', data);
-        this.updateScores();
+      
          
     }
-});         
+}); 
+
+
+this.io.to(this.roomName).emit('OnMovePasa', data);
+this.updateScores();
+
+
+
+
     }
 
     // New method to update and emit scores
