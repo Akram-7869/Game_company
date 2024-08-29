@@ -149,12 +149,11 @@ class LudoGame {
     }
 
     // New method to update and emit scores
-    updateScores() {
-        let scores = this.turnOrder.map(player => ({
-            PlayerID: player.userId,
-            score: player.score
-        }));
-        this.io.to(this.roomName).emit('UpdateScores', scores);
+    handleResult(socket, data) {
+        let scores = this.turnOrder.map(({ userId, name, avtar, type, score, playerStatus }) => 
+            ({ userId, name, avtar, type, score, playerStatus })
+        );
+        this.io.to(this.roomName).emit('OnResult', scores);
     }
 
     // New method to calculate player's score
@@ -497,6 +496,7 @@ class LudoGame {
         socket.on('OnContinueTurn', (data) => this.handlePlayerContinueTurn(socket, data));
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket, data));
         socket.on('OnKillEvent', (data) => this.playerKillEvent(socket, data));
+        socket.on('OnResult', (data) => this.handleResult(socket, data));
 
     }
 
@@ -549,7 +549,7 @@ class LudoGame {
 
     handlePlayerLeave(socket, data) {
         let { PlayerID } = data;
-        socket.leave(this.roomName);
+       
 
         let playerIndex = this.turnOrder.findIndex(player1 => player1.userId === PlayerID);
         if (playerIndex !== -1) {
@@ -565,6 +565,17 @@ class LudoGame {
             players: this.turnOrder,
         });
         this.checkGameStatus();
+          // Unbind all the event listeners when the player leaves
+          socket.removeAllListeners('OnMovePasa');
+          socket.removeAllListeners('OnRollDice');
+          socket.removeAllListeners('OnCurrentStatus');
+          socket.removeAllListeners('OnContinueTurn');
+          
+          // Avoid unbinding onLeaveRoom itself during its execution
+          socket.removeAllListeners('OnKillEvent');
+          socket.removeAllListeners('OnResult');
+          socket.removeAllListeners('onLeaveRoom');
+          socket.leave(this.roomName);
     }
 
     checkGameStatus() {
