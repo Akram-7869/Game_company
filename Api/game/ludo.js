@@ -515,7 +515,9 @@ class LudoGame {
     playerKillEvent(socket, d) {
 
         console.log('OnKillEvent', d);
-        let targetUser = this.turnOrder[d.killedPlayerIndex];
+
+        let killedPlayerIndex  = this.turnOrder.findIndex(p => p.userId === d.killedPlayerIndex);
+        let targetUser = this.turnOrder[killedPlayerIndex];
         let pasaIndex = d.killedPasaIndex;
 
         targetUser[pasaIndex] = -1;
