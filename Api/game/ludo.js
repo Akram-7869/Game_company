@@ -107,7 +107,7 @@ class LudoGame {
 
     }
     emitJoinPlayer() {
-        this.io.to(this.roomName).emit('join_players', { players: this.getTurnOrder() });
+        this.io.to(this.roomName).emit('join_players', { players: this.turnOrder });
     }
 
     getJoinedPlayers() {
