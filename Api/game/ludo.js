@@ -427,7 +427,7 @@ class LudoGame {
     }
 
     getMediumMove(botPlayer, possibleMoves) {
-        const killMoves = possibleMoves.filter(move => this.checkForKills(botPlayer, move.newPosition));
+        const killMoves = possibleMoves.filter(move => this.checkForKills(botPlayer, move.globalPosition));
         if (killMoves.length > 0) {
             return this.getRandomMove(killMoves);
         }
@@ -440,7 +440,7 @@ class LudoGame {
         const winningMoves = possibleMoves.filter(move => move.newPosition === 56);
         if (winningMoves.length > 0) return winningMoves[0];
 
-        const killMoves = possibleMoves.filter(move => this.checkForKills(botPlayer, move.newPosition));
+        const killMoves = possibleMoves.filter(move => this.checkForKills(botPlayer, move.globalPosition));
         if (killMoves.length > 0) return this.getRandomMove(killMoves);
 
         const safeMoves = possibleMoves.filter(move => this.isSafePosition(move.newPosition));
