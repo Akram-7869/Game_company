@@ -30,8 +30,8 @@ class LudoGame {
         return this.turnOrder.findIndex(player => player.userId === id) !== -1;
     }
     syncPlayer(socket, player) {
-         
-        let playerExit=  this.turnOrder.findIndex(player1 => player1.userId === player.userId) !== -1;
+
+        let playerExit = this.turnOrder.findIndex(player1 => player1.userId === player.userId) !== -1;
         if (this.turnOrder.length < this.maxPlayers && !playerExit) {
             let startPosition = this.playerStartPositions[this.turnOrder.length];
             player['startPosition'] = startPosition;
@@ -43,15 +43,16 @@ class LudoGame {
             this.setupPlayerListeners(socket)
 
         }
+        
 
     }
     checkAndAddBots() {
-        let totalPlayers = this.turnOrder.length ;
+        let totalPlayers = this.turnOrder.length;
         if (totalPlayers < this.maxPlayers) {
             const botsToAdd = this.maxPlayers - totalPlayers;
             this.addBots(botsToAdd);
         }
-        if (this.turnOrder.length  === this.maxPlayers) {
+        if (this.turnOrder.length === this.maxPlayers) {
             this.isGameReady = true;
             this.emitJoinPlayer();
         }
@@ -64,21 +65,21 @@ class LudoGame {
                 startPosition = this.playerStartPositions[2]
             }
 
-            let botPlayer={
-                    userId: `${i + 1}-bot`,
-                    name: `Bot-${i + 1}`,
-                    balance: '1000',
-                    lobbyId: this.lobbyId,
-                    maxp: this.maxPlayers,
-                    type: 'bot',
-                    pasa: [-1, -1, -1, -1],
-                    global: [-1, -1, -1, -1],
-                    startPosition,
-                    playerStatus: 'joined',
-                    avtar: 'http://example.com/bot-avatar.png'
-                }
-            
-                this.turnOrder.push(botPlayer);
+            let botPlayer = {
+                userId: `${i + 1}-bot`,
+                name: `Bot-${i + 1}`,
+                balance: '1000',
+                lobbyId: this.lobbyId,
+                maxp: this.maxPlayers,
+                type: 'bot',
+                pasa: [-1, -1, -1, -1],
+                global: [-1, -1, -1, -1],
+                startPosition,
+                playerStatus: 'joined',
+                avtar: 'http://example.com/bot-avatar.png'
+            }
+
+            this.turnOrder.push(botPlayer);
             console.log(`Bot ${botId} added to room ${this.roomName}`);
         }
     }
@@ -111,26 +112,26 @@ class LudoGame {
     }
 
     getJoinedPlayers() {
-            return this.turnOrder.filter(player => player.status === 'joined' &&  player.type === 'player').length;
+        return this.turnOrder.filter(player => player.status === 'joined' && player.type === 'player').length;
     }
 
-  
+
     handlePlayerMove(socket, data) {
         let { PlayerID, pasaIndex, steps, currentPosition, newPosition, globalPosition, isGlobal } = data;
         let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
         let player = this.turnOrder[playerIndex];
         console.log('OnMovePasa', data);
 
-      
-               
-                player.pasa[pasaIndex] = newPosition;
-                player.global[pasaIndex] = globalPosition;
-                 let score = this.calculatePlayerScore(player); // Recalculate score
-                 player['score']=score;
-                console.log('player',player);
-           if(newPosition >=56){
+
+
+        player.pasa[pasaIndex] = newPosition;
+        player.global[pasaIndex] = globalPosition;
+        let score = this.calculatePlayerScore(player); // Recalculate score
+        player['score'] = score;
+        console.log('player', player);
+        if (newPosition >= 56) {
             this.checkGameStatus();
-           }
+        }
 
         this.io.to(this.roomName).emit('OnMovePasa', data);
         // this.updateScores();
@@ -174,52 +175,35 @@ class LudoGame {
         // Additional game-specific rules can be added here
         return true;
     }
-
-    handleTurnContinuation(player, canContinue) {
-        if (canContinue) {
-            this.io.to(this.roomName).emit('AllowReroll', {
-                PlayerID: player.userId,
-                reason: canContinue ? 'Rolled a 6 or Killed a token' : 'Normal turn end'
-            });
-
-            if (this.turnTimer) {
-                this.turnTimer.reset(15);
-            }
-        } else {
-            this.nextTurn();
-        }
-
-        this.io.to(this.roomName).emit('OnContinueTurn', {
-            PlayerID: player.userId,
-            canContinue: canContinue
-        });
-    }
-
     botKill(killerPlayer, killed, killerPasaIndex) {
-        console.log('botKill', killed);
-        killed.forEach(({ player, pasaIndex }) => {
+        // Extract killer player index once
+        const killerPlayerIndex = this.turnOrder.findIndex(p => p.userId === killerPlayer.userId);
+    
+        // Iterate over each killed player
+        for (const { player, pasaIndex } of killed) {
             player.pasa[pasaIndex] = -1; // Reset to home position
-
-            // If the killed token belongs to a bot, update bot's internal state
-            // if (player.type === 'bot') {
-            //     const botPlayer = this.bots.get(player.userId);
-            //     if (botPlayer) {
-            //         botPlayer.player[tokenKey] = -1;
-            //     }
-            // }
-            let dd = {
-                killerPlayerIndex: this.turnOrder.findIndex(p => p.userId === killerPlayer.userId),
-                killerPasaIndex: parseInt(killerPasaIndex),
-                killedPlayerIndex: this.turnOrder.findIndex(p => p.userId === player.userId),
-                killedPasaIndex: parseInt(pasaIndex)
-            }
-            console.log('botKill  OnKillEvent--', dd)
+    
+            // Extract killed player index only once per player
+            const killedPlayerIndex = this.turnOrder.findIndex(p => p.userId === player.userId);
+    
+            const dd = {
+                killerPlayerIndex,
+                killerPasaIndex: parseInt(killerPasaIndex, 10),
+                killedPlayerIndex,
+                killedPasaIndex: parseInt(pasaIndex, 10)
+            };
+    
+            // Log for debugging purposes (consider removing in production)
+            console.log('botKill  OnKillEvent--', dd);
+    
+            // Emit event for each killed player
             this.io.to(this.roomName).emit('OnKillEvent', dd);
-        });
-
-        // Update game state after kills
-        //  this.updateGameState();
+        }
+    
+        // Optionally update game state after kills
+        // this.updateGameState();
     }
+    
 
     handlePlayerRollDice(socket) {
         this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
@@ -247,7 +231,7 @@ class LudoGame {
         publicRoom[this.lobbyId]['played'] = true;
         this.currentPhase = 'playing';
         this.round += 1;
- 
+
 
         this.bettingTimer = new Timer(3, (remaining) => {
             // console.log(remaining);
@@ -287,18 +271,17 @@ class LudoGame {
         this.turnTimer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
         }, () => {
-            
-            if(this.currentPhase !=='finished'){
+            if (currentPlayer['life'] <= 0) {
+                currentPlayer.playerStatus = "left";
+                this.checkGameStatus();
+            } else {
+                currentPlayer['life'] -= 1
+            }
 
-                if(currentPlayer['life'] <=0){
-                    currentPlayer.playerStatus="left";
-                    this.checkGameStatus();
-                }else{
-                    currentPlayer['life'] -=1
-                }
+            if (this.currentPhase === 'playing') {
                 this.nextTurn();
             }
-            
+
         });
 
         this.turnTimer.startTimer();
@@ -317,36 +300,10 @@ class LudoGame {
         //         }
 
     }
-
-    startTurnTimer() {
-        if (this.turnTimer) {
-            this.turnTimer.reset(15); // Reset to 15 seconds or your preferred turn duration
-        } else {
-            this.turnTimer = new Timer(15, (remaining) => {
-                this.io.to(this.roomName).emit('turn_tick', {
-                    remaining,
-                    currentTurnIndex: this.currentTurnIndex,
-                    currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
-                });
-            }, () => {
-                // Time's up, move to next player
-                this.handleTurnTimeout();
-            });
-        }
-        this.turnTimer.startTimer();
-    }
+ 
 
 
-    handleTurnTimeout() {
-        const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        console.log(`Turn timeout for player: ${currentPlayer.userId}`);
-
-        // Implement any timeout-specific logic here
-        // For example, you might want to penalize the player or simply move to the next turn
-
-        // Move to next turn
-        this.handleTurnContinuation(currentPlayer, 0, false);
-    }
+    
 
     botTurn(botPlayer) {
         setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
@@ -409,16 +366,18 @@ class LudoGame {
     // Updated checkForKills method
     checkForKills(killerPlayer, globalPosition) {
         const killed = [];
-        this.turnOrder.forEach(player => {
-            if (player.userId !== killerPlayer.userId) {
-                for (let i = 0; i <= 3; i++) {
-                    if (player.global[i] === globalPosition && !this.isSafePosition(globalPosition)) {
-                        killed.push({ player, pasaIndex: i });
-                    }
+        const isOnSafeBox =this.isSafePosition(globalPosition);
+        for (const player of this.turnOrder) {
+            if (player.userId === killerPlayer.userId) continue; // Skip the killerPlayer
+    
+            for (let i = 0; i < player.global.length; i++) {
+                if (player.global[i] === globalPosition && !isOnSafeBox) {
+                    killed.push({ player, pasaIndex: i });
                 }
             }
-        });
-        console.log('killed',killed);
+        }
+    
+        console.log('killed', killed);
         return killed;
     }
 
@@ -496,7 +455,7 @@ class LudoGame {
         } else {
             this.botEndTurn(botPlayer, diceValue === 6);
         }
-        if(newPosition ==57){
+        if (newPosition == 57) {
             this.checkGameStatus();
         }
         //this.updateScores();
@@ -579,22 +538,22 @@ class LudoGame {
         let { PlayerID } = data;
         socket.leave(this.roomName);
 
-        let playerIndex=  this.turnOrder.findIndex(player1 => player1.userId === PlayerID);
+        let playerIndex = this.turnOrder.findIndex(player1 => player1.userId === PlayerID);
         if (playerIndex !== -1) {
             let player = this.turnOrder[playerIndex];
             player.playerStatus = 'Left';
-            if(this.currentPhase != 'playing'){
-                 delete this.turnOrder[playerIndex];
+            if (this.currentPhase != 'playing') {
+                delete this.turnOrder[playerIndex];
             }
-            
-           
-         }
+
+
+        }
         this.io.to(this.roomName).emit('onleaveRoom', {
             players: this.turnOrder,
         });
         this.checkGameStatus();
     }
- 
+
     checkGameStatus() {
         let players = this.getJoinedPlayers();
 
@@ -614,7 +573,7 @@ class LudoGame {
     }
 
     resetGame() {
-        
+
         this.turnOrder = [];
         this.currentTurnIndex = 0;
         this.currentPhase = 'waiting';
