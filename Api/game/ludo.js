@@ -492,8 +492,10 @@ class LudoGame {
         }
     }
     handleWinners(player) {
-        let isWinner = player.pawns.every((pawn) => pawn === 57)
+        let isWinner = player.pawns.every((pawn) => pawn === 57);
+      
         if (isWinner) {
+            console.log('winner',player, this.turnOrder)
             this.winnerPosition += 1;
             player.winnerPosition = this.winnerPosition; // Assign the winner position and increment
             player.playerStatus = 'winner'; // Mark the winner as playing
