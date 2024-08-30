@@ -291,7 +291,7 @@ class LudoGame {
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId
         });
-        console.log('OnNextTurn', this.currentTurnIndex, this.turnOrder);
+        console.log('OnNextTurn', this.currentTurnIndex);
 
         if (currentPlayer.type === 'bot') {
             this.botTurn(currentPlayer);
@@ -553,9 +553,9 @@ class LudoGame {
         let killedPlayerId = this.turnOrder.findIndex(p => p.userId === d.killedPlayerId);
         let targetUser = this.turnOrder[killedPlayerId];
         let pasaIndex = d.killedPasaIndex;
+        console.log('OnKillEvent', targetUser, pasaIndex);
 
         this.setPass(targetUser, pasaIndex, -1);
-        console.log('OnKillEvent', targetUser, pasaIndex)
         this.io.to(this.roomName).emit('OnKillEvent', d);
     }
     setPass(player, pasaIndex, value) {
