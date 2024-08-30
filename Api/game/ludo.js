@@ -258,7 +258,7 @@ class LudoGame {
             betting_remaing: this.bettingTimer?.remaining,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         };
-        console.log('OnCurrentStatus',d);
+        console.log('OnCurrentStatus',JSON.stringify(d));
         socket.emit('OnCurrentStatus',d);
     }
     startGame() {
