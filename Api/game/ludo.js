@@ -285,7 +285,25 @@ class LudoGame {
             this.turnTimer?.reset(15);
         }
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-        const currentPlayer = this.turnOrder[this.currentTurnIndex];
+        let currentPlayer = this.turnOrder[this.currentTurnIndex];
+
+        const totalPlayers = this.turnOrder.length;
+
+        if (currentPlayer.playerStatus !== 'playing') {
+            for (let i = 1; i < totalPlayers; i++) {
+                this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+                currentPlayer = this.turnOrder[this.currentTurnIndex];
+                if (currentPlayer.playerStatus === 'playing') {    
+                    break;
+                }
+            }
+            if (currentPlayer.playerStatus !== 'playing') {
+             this.checkGameStatus();
+            }
+        }
+        
+
+       
         this.io.to(this.roomName).emit('OnNextTurn', {
             gameType: 'Ludo',
             room: this.roomName,
@@ -314,25 +332,7 @@ class LudoGame {
         });
 
         this.turnTimer.startTimer();
-
-
-
-        //  console.log('in-next-index',this.currentTurnIndex);
-        //         if (currentPlayer.playerStatus !== 'Left') {
-        //             if (currentPlayer.type === 'bot') {
-        //                 this.botTurn(currentPlayer);
-        //             } else {
-        //                 this.startTurnTimer();
-        //             }
-        //         } else {
-        //             this.nextTurn();
-        //         }
-
     }
-
-
-
-
 
     botTurn(botPlayer) {
         setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
