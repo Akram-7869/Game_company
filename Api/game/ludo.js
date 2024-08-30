@@ -492,7 +492,7 @@ class LudoGame {
         }
     }
     handleWinners(player) {
-        let isWinner = player.pawns.every((pawn) => pawn === 56);
+        let isWinner = player.pasa.every((pawn) => pawn === 56);
       console.log('handleWinners');
         if (isWinner) {
             console.log(player, this.turnOrder)
