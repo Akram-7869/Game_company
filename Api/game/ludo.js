@@ -9,12 +9,11 @@ class LudoGame {
         this.turnOrder = [];
         this.currentTurnIndex = -1;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
-        this.turnTimer = null;
-        this.roomJoinTimers = null;
+        this.turnTimer = undefined;
+        this.roomJoinTimers = undefined;
 
-        this.bettingTimer = null;
-        this.pauseTimer = null;
-        this.round = 0;
+        this.bettingTimer = undefined;
+         this.round = 0;
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 9; // 5 seconds
         this.lastDiceValue = 6;
@@ -25,6 +24,7 @@ class LudoGame {
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
         this.winnerPosition = 0; // Start tracking winners from position 1
+        this.botTimer=undefined;
 
 
 
@@ -120,7 +120,7 @@ class LudoGame {
         });
 
         this.roomJoinTimers.startTimer();
-        console.log(`Game started in room: ${this.roomName}`);
+        console.log(`Game setup in room: ${this.roomName}`);
 
     }
     emitJoinPlayer() {
@@ -276,7 +276,7 @@ class LudoGame {
             this.nextTurn();
 
         }).startTimer();
-        console.log(`Game started in room: ${this.roomName}`);
+        console.log(`Game Start room: ${this.roomName}`);
 
     }
 
@@ -335,8 +335,12 @@ class LudoGame {
     }
 
     botTurn(botPlayer) {
-        setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
+        // Clear any existing timer to avoid multiple timers running at the same time
+        clearTimeout(this.botTimer);
+        
+        this.botTimer = setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
     }
+    
 
     botRollDice(botPlayer) {
         // const diceValue = Math.floor(Math.random() * 6) + 1;
@@ -346,8 +350,8 @@ class LudoGame {
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         });
-
-        setTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);
+        clearTimeout(this.botTimer);
+        this.botTimer =setTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);
     }
 
     botChooseMove(botPlayer, diceValue) {
@@ -514,7 +518,8 @@ class LudoGame {
         });
 
         if (canContinue) {
-            setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
+            clearTimeout(this.botTimer);
+            this.botTimer =  setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
             this.calculatePlayerScore(botPlayer);
             this.nextTurn();
@@ -661,6 +666,8 @@ class LudoGame {
         if (this.bettingTimer) {
             this.bettingTimer.pause();
         }
+        clearTimeout(this.botTimer);
+        
     }
 
     setBotDifficulty(difficulty) {
