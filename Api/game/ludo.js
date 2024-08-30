@@ -500,6 +500,11 @@ class LudoGame {
             this.winnerPosition +=1;
             player.winnerPosition = this.winnerPosition; // Assign the winner position and increment
             player.playerStatus = 'winner'; // Mark the winner as playing
+            this.io.to(this.roomName).emit('winner', {
+                message: 'Winner - this.winnerPosition',
+                winnerPosition:this.winnerPosition,
+                winner: player.userId
+            });
             this.checkGameStatus();
         }
     }
