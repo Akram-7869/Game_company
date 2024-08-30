@@ -548,14 +548,14 @@ class LudoGame {
 
     playerKillEvent(socket, d) {
 
-        console.log('OnKillEvent', d);
 
         let killedPlayerId = this.turnOrder.findIndex(p => p.userId === d.killedPlayerId);
         let targetUser = this.turnOrder[killedPlayerId];
         let pasaIndex = d.killedPasaIndex;
-        console.log('OnKillEvent', targetUser, pasaIndex);
-
+ 
         this.setPass(targetUser, pasaIndex, -1);
+        console.log('OnKillEvent', d, this.turnOrder);
+
         this.io.to(this.roomName).emit('OnKillEvent', d);
     }
     setPass(player, pasaIndex, value) {
