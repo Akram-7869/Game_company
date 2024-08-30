@@ -11,27 +11,23 @@ class LudoGame {
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.turnTimer = null;
         this.roomJoinTimers = null;
-        this.botTimer=null;
 
+        this.bettingTimer = null;
+        this.pauseTimer = null;
         this.round = 0;
+        this.bettingTime = 20; // 20 seconds
+        this.pauseTime = 9; // 5 seconds
         this.lastDiceValue = 6;
         this.botMoveDelay = 2000;
         this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
 
-
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
         this.winnerPosition = 0; // Start tracking winners from position 1
-    }
 
-    setAutoClearingTimeout(callback, duration) {
-        const timerId = setTimeout(() => {
-            callback();
-            clearTimeout(timerId);  // Auto-clear the timer after the callback is executed
-        }, duration);
 
-        return timerId;  // Return the timer ID in case you need to manually clear it later
+
     }
     isPlayerInTurnOrder(id) {
         return this.turnOrder.findIndex(player => player.userId === id) !== -1;
@@ -132,7 +128,7 @@ class LudoGame {
     }
 
     getJoinedPlayers() {
-        return this.turnOrder.filter(player => player.playerStatus === 'joined' && player.type == 'player').length;
+        return this.turnOrder.filter(player => player.playerStatus === 'joined'&& player.type=='player').length;
     }
 
 
@@ -259,20 +255,25 @@ class LudoGame {
             currentPhase: this.currentPhase,
             players: this.turnOrder,
             currentTurnIndex: this.currentTurnIndex,
-            betting_remaing: 0,
+            betting_remaing: this.bettingTimer?.remaining,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         });
     }
     startGame() {
-
+        if (this.bettingTimer) return; // Prevent multiple starts
         publicRoom[this.lobbyId]['played'] = true;
         this.currentPhase = 'playing';
         this.round += 1;
 
-        this.setAutoClearingTimeout(() => {
-            this.nextTurn();
-        }, 3);
 
+        this.bettingTimer = new Timer(3, (remaining) => {
+            // console.log(remaining);
+            //this.io.to(this.roomName).emit('play_tick', { remainingTime: remaining });
+        }, () => {
+            //  this.startPausePhase();
+            this.nextTurn();
+
+        }).startTimer();
         console.log(`Game started in room: ${this.roomName}`);
 
     }
@@ -281,28 +282,8 @@ class LudoGame {
         if (this.turnTimer) {
             this.turnTimer?.reset(15);
         }
-        // this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-        // const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        const totalPlayers = this.turnOrder.length;
-        let startIndex = this.currentTurnIndex;
-    
-        for (let i = 0; i < totalPlayers; i++) {
-            const currentPlayer = this.turnOrder[startIndex];
-    
-            if (currentPlayer.playerStatus === 'playing') {
-                this.currentTurnIndex = startIndex;
-                this.performAdditionalLogic(currentPlayer); // Call additional logic with the current player
-                return; // Exit the method when a valid player is found
-            }
-    
-            startIndex = (startIndex + 1) % totalPlayers;
-        }
-    
-        console.log("No players with 'playing' status found.");
-    }
-
-
-    performAdditionalLogic(currentPlayer){
+        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+        const currentPlayer = this.turnOrder[this.currentTurnIndex];
         this.io.to(this.roomName).emit('OnNextTurn', {
             gameType: 'Ludo',
             room: this.roomName,
@@ -321,9 +302,9 @@ class LudoGame {
         // }
         //  Set timer for the next turn
         this.turnTimer = new Timer(15, (remaining) => {
-            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId:currentPlayer.userId });
+            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
         }, () => {
-
+             
             if (this.currentPhase === 'playing') {
                 this.nextTurn();
             }
@@ -332,11 +313,27 @@ class LudoGame {
 
         this.turnTimer.startTimer();
 
+
+
+        //  console.log('in-next-index',this.currentTurnIndex);
+        //         if (currentPlayer.playerStatus !== 'Left') {
+        //             if (currentPlayer.type === 'bot') {
+        //                 this.botTurn(currentPlayer);
+        //             } else {
+        //                 this.startTurnTimer();
+        //             }
+        //         } else {
+        //             this.nextTurn();
+        //         }
+
     }
 
 
+
+
+
     botTurn(botPlayer) {
-      this.botTimer=  this.setAutoClearingTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
+        setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
     }
 
     botRollDice(botPlayer) {
@@ -348,7 +345,7 @@ class LudoGame {
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         });
 
-        this.botTimer=  this.setAutoClearingTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);
+        setTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);
     }
 
     botChooseMove(botPlayer, diceValue) {
@@ -513,7 +510,7 @@ class LudoGame {
         });
 
         if (canContinue) {
-            this.setAutoClearingTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
+            setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
             this.calculatePlayerScore(botPlayer);
             this.nextTurn();
@@ -638,31 +635,28 @@ class LudoGame {
 
 
     }
-
+ 
 
     getWinner() {
         return this.turnOrder.find(player => player.playerStatus === 'online' && player.pasa.every(position => position === 56));
     }
 
-    resetGame() {  
+    resetGame() {
+
+        this.turnOrder = [];
+        this.currentTurnIndex = 0;
+        this.currentPhase = 'waiting';
+        this.round = 0;
         this.isGameReady = false;
-        if(this.botTimer){
-            clearTimeout(this.botTimer); 
-       }
-       
         if (this.turnTimer) {
             this.turnTimer.pause();
         }
         if (this.roomJoinTimers) {
             this.roomJoinTimers.pause();
         }
-        this.turnOrder = [];
-        this.currentTurnIndex = 0;
-        this.currentPhase = 'waiting';
-        this.round = 0;
-      
-       
-
+        if (this.bettingTimer) {
+            this.bettingTimer.pause();
+        }
     }
 
     setBotDifficulty(difficulty) {
