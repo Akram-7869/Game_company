@@ -171,7 +171,7 @@ class LudoGame {
                 if (b.winnerPosition) return 1;
                 return b.score - a.score; // Sort remaining by score
             });
-
+console.log('handleResult',sortedPlayers);
         this.io.to(this.roomName).emit('OnResult', sortedPlayers);
     }
 
@@ -289,15 +289,15 @@ class LudoGame {
 
         const totalPlayers = this.turnOrder.length;
 
-        if (currentPlayer.playerStatus !== 'playing') {
+        if (currentPlayer.playerStatus !== 'joined') {
             for (let i = 1; i < totalPlayers; i++) {
                 this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
                 currentPlayer = this.turnOrder[this.currentTurnIndex];
-                if (currentPlayer.playerStatus === 'playing') {    
+                if (currentPlayer.playerStatus === 'joined') {    
                     break;
                 }
             }
-            if (currentPlayer.playerStatus !== 'playing') {
+            if (currentPlayer.playerStatus !== 'joined') {
              this.checkGameStatus();
             }
         }
@@ -551,6 +551,7 @@ class LudoGame {
             winner: winner ? winner.userId : null
         });
         console.log(`Game ended in room: ${this.roomName}`);
+        this.handleResult({},{});
         this.resetGame();
     }
 
@@ -647,7 +648,7 @@ class LudoGame {
  
 
     getWinner() {
-        return this.turnOrder.find(player => player.playerStatus === 'online' && player.pasa.every(position => position === 56));
+        return this.turnOrder.find(player => player.playerStatus === 'winner' && player.pasa.every(position => position === 56));
     }
 
     resetGame() {
