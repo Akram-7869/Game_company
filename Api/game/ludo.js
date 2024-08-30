@@ -281,14 +281,28 @@ class LudoGame {
         if (this.turnTimer) {
             this.turnTimer?.reset(15);
         }
+        // this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+        // const currentPlayer = this.turnOrder[this.currentTurnIndex];
+        const totalPlayers = this.turnOrder.length;
+        let startIndex = this.currentTurnIndex;
+    
+        for (let i = 0; i < totalPlayers; i++) {
+            const currentPlayer = this.turnOrder[startIndex];
+    
+            if (currentPlayer.playerStatus === 'playing') {
+                this.currentTurnIndex = startIndex;
+                this.performAdditionalLogic(currentPlayer); // Call additional logic with the current player
+                return; // Exit the method when a valid player is found
+            }
+    
+            startIndex = (startIndex + 1) % totalPlayers;
+        }
+    
+        console.log("No players with 'playing' status found.");
+    }
 
-        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-        const currentPlayer = this.turnOrder[this.currentTurnIndex];
 
-        // if (currentPlayer.playerStatus == 'Left' || [1,2,3].includes(currentPlayer.winnerPosition) ) {
-        //     this.nextTurn();
-        // }
-
+    performAdditionalLogic(currentPlayer){
         this.io.to(this.roomName).emit('OnNextTurn', {
             gameType: 'Ludo',
             room: this.roomName,
@@ -307,7 +321,7 @@ class LudoGame {
         // }
         //  Set timer for the next turn
         this.turnTimer = new Timer(15, (remaining) => {
-            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
+            this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId:currentPlayer.userId });
         }, () => {
 
             if (this.currentPhase === 'playing') {
@@ -318,23 +332,7 @@ class LudoGame {
 
         this.turnTimer.startTimer();
 
-
-
-        //  console.log('in-next-index',this.currentTurnIndex);
-        //         if (currentPlayer.playerStatus !== 'Left') {
-        //             if (currentPlayer.type === 'bot') {
-        //                 this.botTurn(currentPlayer);
-        //             } else {
-        //                 this.startTurnTimer();
-        //             }
-        //         } else {
-        //             this.nextTurn();
-        //         }
-
     }
-
-
-
 
 
     botTurn(botPlayer) {
