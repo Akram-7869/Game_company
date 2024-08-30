@@ -555,7 +555,6 @@ class LudoGame {
         console.log('OnKillEvent', d, this.turnOrder);
         console.log('targetUser', targetUser);
         this.setPass(targetUser, pasaIndex, -1);
-       
 
         this.io.to(this.roomName).emit('OnKillEvent', d);
     }
