@@ -21,7 +21,7 @@ class LudoGame {
         this.botMoveDelay = 2000;
         this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
-        
+
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
         this.winnerPosition = 0; // Start tracking winners from position 1
@@ -144,7 +144,7 @@ class LudoGame {
         player.global[pasaIndex] = globalPosition;
         let score = this.calculatePlayerScore(player); // Recalculate score
         player['score'] = score;
-         if (newPosition >= 56) {
+        if (newPosition >= 56) {
             this.handleWinners(player);
         }
 
@@ -155,22 +155,22 @@ class LudoGame {
     // New method to update and emit scores
     handleResult(socket, data) {
         const sortedPlayers = this.turnOrder
-            .map(({ userId, name, avtar, type, score, playerStatus,winnerPosition }) => ({
+            .map(({ userId, name, avtar, type, score, playerStatus, winnerPosition }) => ({
                 userId,
                 name,
                 avtar,
                 type,
                 score,
-                playerStatus,winnerPosition
+                playerStatus, winnerPosition
             }))
             .sort((a, b) => {
                 if (a.winnerPosition && b.winnerPosition) {
-                  return a.winnerPosition - b.winnerPosition;
+                    return a.winnerPosition - b.winnerPosition;
                 }
                 if (a.winnerPosition) return -1;
                 if (b.winnerPosition) return 1;
                 return b.score - a.score; // Sort remaining by score
-              });
+            });
 
         this.io.to(this.roomName).emit('OnResult', sortedPlayers);
     }
@@ -398,24 +398,23 @@ class LudoGame {
 
     // Updated checkForKills method
     checkForKills(killerPlayer, globalPosition) {
+        if (this.isSafePosition(globalPosition)) return []; // Early return if the position is safe
+
         const killed = [];
-        if (this.isSafePosition(globalPosition)) return killed; // No kills on a safe box
-    
+
         for (const player of this.turnOrder) {
             if (player.userId === killerPlayer.userId) continue; // Skip the killerPlayer
-    
-            // Use `forEach` to avoid the need for a manual index increment
-            player.global.forEach((position, i) => {
-                if (position === globalPosition) {
+
+            // Use a single loop to find kills and ignore `-1` directly
+            for (let i = 0; i < player.global.length; i++) {
+                if (player.global[i] === globalPosition) {
                     killed.push({ player, pasaIndex: i });
                 }
-            });
+            }
         }
-    
-        console.log('killed', killed);
+
         return killed;
     }
-    
 
     // New method to get global position
     getGlobalPosition(player, localPosition) {
@@ -493,18 +492,18 @@ class LudoGame {
 
         if (newPosition == 57) {
             this.handleWinners(botPlayer);
-            
+
         }
     }
-    handleWinners(player){
-       let isWinner = player.pawns.every((pawn) => pawn === 57)
+    handleWinners(player) {
+        let isWinner = player.pawns.every((pawn) => pawn === 57)
         if (isWinner) {
-            this.winnerPosition +=1;
+            this.winnerPosition += 1;
             player.winnerPosition = this.winnerPosition; // Assign the winner position and increment
             player.playerStatus = 'winner'; // Mark the winner as playing
             this.io.to(this.roomName).emit('winner', {
                 message: 'Winner - this.winnerPosition',
-                winnerPosition:this.winnerPosition,
+                winnerPosition: this.winnerPosition,
                 winner: player.userId
             });
             this.checkGameStatus();
@@ -625,21 +624,21 @@ class LudoGame {
 
     checkGameStatus() {
         let players = this.getJoinedPlayers();
-        console.log('checkGameStatus',this.maxPlayers,  players);
-        if(this.maxPlayers == 2){
-            if(this.winnerPosition ==1){
-              return  this.endGame('Game completed');
+        console.log('checkGameStatus', this.maxPlayers, players);
+        if (this.maxPlayers == 2) {
+            if (this.winnerPosition == 1) {
+                return this.endGame('Game completed');
             }
-           
-        }else if(this.maxPlayers == 3){
-            if(this.winnerPosition ==1){
-              return  this.endGame('Game completed');
-            } 
+
+        } else if (this.maxPlayers == 3) {
+            if (this.winnerPosition == 1) {
+                return this.endGame('Game completed');
+            }
         }
         if (players === 1) {
             this.endGame('All players left');
         }
-         
+
 
     }
     isGameOver() {
