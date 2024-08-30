@@ -24,6 +24,8 @@ class LudoGame {
         this.killed = [];
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
+        this.winnerPosition = 0; // Start tracking winners from position 1
+
 
 
     }
@@ -39,6 +41,7 @@ class LudoGame {
             player['pasa'] = [-1, -1, -1, -1];
             player['global'] = [-1, -1, -1, -1];
             player['life'] = 3;
+            player['winnerPosition'] = this.maxPlayers;
 
             this.turnOrder.push(player);
             this.setupPlayerListeners(socket)
@@ -92,6 +95,8 @@ class LudoGame {
     initializePlayerScores() {
         this.turnOrder.forEach(player => {
             player.score = 0;
+            player['winnerPosition'] = this.maxPlayers;
+
         });
     }
 
@@ -123,7 +128,7 @@ class LudoGame {
     }
 
     getJoinedPlayers() {
-        return this.turnOrder.filter(player => player.status === 'joined' && player.type === 'player').length;
+        return this.turnOrder.filter(player => player.playerStatus === 'joined' && player.type === 'player').length;
     }
 
 
@@ -141,7 +146,7 @@ class LudoGame {
         player['score'] = score;
         console.log('player', player);
         if (newPosition >= 56) {
-            this.checkGameStatus();
+            this.handleWinners(player);
         }
 
         this.io.to(this.roomName).emit('OnMovePasa', data);
@@ -151,24 +156,22 @@ class LudoGame {
     // New method to update and emit scores
     handleResult(socket, data) {
         const sortedPlayers = this.turnOrder
-            .map(({ userId, name, avtar, type, score, playerStatus }) => ({
+            .map(({ userId, name, avtar, type, score, playerStatus,winnerPosition }) => ({
                 userId,
                 name,
                 avtar,
                 type,
                 score,
-                playerStatus
+                playerStatus,winnerPosition
             }))
             .sort((a, b) => {
-                // Sort by playerStatus 'online' first
-                if (a.playerStatus === 'joined' && b.playerStatus !== 'joined') {
-                    return -1; // a should come before b
-                } else if (a.playerStatus !== 'joined' && b.playerStatus === 'joined') {
-                    return 1; // b should come before a
+                if (a.winnerPosition && b.winnerPosition) {
+                  return a.winnerPosition - b.winnerPosition;
                 }
-                // If both have the same playerStatus, sort by score in descending order
-                return b.score - a.score;
-            });
+                if (a.winnerPosition) return -1;
+                if (b.winnerPosition) return 1;
+                return b.score - a.score; // Sort remaining by score
+              });
 
         this.io.to(this.roomName).emit('OnResult', sortedPlayers);
     }
@@ -487,10 +490,19 @@ class LudoGame {
         }
 
         if (newPosition == 57) {
+            this.handleWinners(botPlayer);
+            
+        }
+    }
+    handleWinners(player){
+       let isWinner = player.pawns.every((pawn) => pawn === 57)
+        if (isWinner) {
+            this.winnerPosition +=1;
+            player.winnerPosition = this.winnerPosition; // Assign the winner position and increment
+            player.playerStatus = 'winner'; // Mark the winner as playing
             this.checkGameStatus();
         }
     }
-
     botEndTurn(botPlayer, canContinue) {
         this.io.to(this.roomName).emit('OnContinueTurn', {
             PlayerID: botPlayer.userId,
@@ -606,12 +618,20 @@ class LudoGame {
 
     checkGameStatus() {
         let players = this.getJoinedPlayers();
-
-        if (players === 0) {
-            this.endGame('All players left');
-        } else if (this.isGameOver()) {
-            this.endGame('Game completed');
+        if(this.maxPlayers == 2){
+            if(this.winnerPosition ==1){
+              return  this.endGame('Game completed');
+            }
+           
+        }else if(this.maxPlayers == 3){
+            if(this.winnerPosition ==1){
+              return  this.endGame('Game completed');
+            } 
         }
+        if (players === 1) {
+            this.endGame('All players left');
+        }
+         
 
     }
     isGameOver() {
