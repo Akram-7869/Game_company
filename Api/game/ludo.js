@@ -128,7 +128,7 @@ class LudoGame {
     }
 
     getJoinedPlayers() {
-        return this.turnOrder.filter(player => player.playerStatus === 'joined' && player.type === 'player').length;
+        return this.turnOrder.filter(player => player.playerStatus === 'joined').length;
     }
 
 
@@ -144,8 +144,7 @@ class LudoGame {
         player.global[pasaIndex] = globalPosition;
         let score = this.calculatePlayerScore(player); // Recalculate score
         player['score'] = score;
-        console.log('player', player);
-        if (newPosition >= 56) {
+         if (newPosition >= 56) {
             this.handleWinners(player);
         }
 
@@ -400,20 +399,23 @@ class LudoGame {
     // Updated checkForKills method
     checkForKills(killerPlayer, globalPosition) {
         const killed = [];
-        const isOnSafeBox = this.isSafePosition(globalPosition);
+        if (this.isSafePosition(globalPosition)) return killed; // No kills on a safe box
+    
         for (const player of this.turnOrder) {
             if (player.userId === killerPlayer.userId) continue; // Skip the killerPlayer
-
-            for (let i = 0; i < player.global.length; i++) {
-                if (player.global[i] === globalPosition && !isOnSafeBox) {
+    
+            // Use `forEach` to avoid the need for a manual index increment
+            player.global.forEach((position, i) => {
+                if (position === globalPosition) {
                     killed.push({ player, pasaIndex: i });
                 }
-            }
+            });
         }
-
-        console.log('killed',killed);
+    
+        console.log('killed', killed);
         return killed;
     }
+    
 
     // New method to get global position
     getGlobalPosition(player, localPosition) {
@@ -623,6 +625,7 @@ class LudoGame {
 
     checkGameStatus() {
         let players = this.getJoinedPlayers();
+        console.log('checkGameStatus',this.maxPlayers,  players);
         if(this.maxPlayers == 2){
             if(this.winnerPosition ==1){
               return  this.endGame('Game completed');
