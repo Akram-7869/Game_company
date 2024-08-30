@@ -21,6 +21,7 @@ class LudoGame {
         this.botMoveDelay = 2000;
         this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
+        this.killed = [];
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
 
@@ -215,9 +216,9 @@ class LudoGame {
 
             const dd = {
                 PlayerID: killerPlayerId,
-  TournamentID: this.lobbyId,
-  RoomId: this.roomName,
-  
+                TournamentID: this.lobbyId,
+                RoomId: this.roomName,
+
                 killerPlayerId,
                 killerPasaIndex: parseInt(killerPasaIndex, 10),
                 killedPlayerId,
@@ -395,20 +396,20 @@ class LudoGame {
 
     // Updated checkForKills method
     checkForKills(killerPlayer, globalPosition) {
-        const killed = [];
+        this.killed = [];
         const isOnSafeBox = this.isSafePosition(globalPosition);
         for (const player of this.turnOrder) {
             if (player.userId === killerPlayer.userId) continue; // Skip the killerPlayer
 
             for (let i = 0; i < player.global.length; i++) {
                 if (player.global[i] === globalPosition && !isOnSafeBox) {
-                    killed.push({ player, pasaIndex: i });
+                    this.killed.push({ player, pasaIndex: i });
                 }
             }
         }
 
-        console.log('killed', killed);
-        return killed;
+        console.log('killed', this.killed);
+        return this.killed;
     }
 
     // New method to get global position
@@ -478,9 +479,8 @@ class LudoGame {
 
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
 
-        const killed = this.checkForKills(botPlayer, globalPosition);
-        if (killed.length > 0) {
-            this.botKill(botPlayer, killed, pasaIndex);
+        if (this.killed.length > 0) {
+            this.botKill(botPlayer, this.killed, pasaIndex);
             this.botEndTurn(botPlayer, true);
         } else {
             this.botEndTurn(botPlayer, diceValue === 6);
