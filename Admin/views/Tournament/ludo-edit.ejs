@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="form-group col">
                                         <div id="userFields">
-                                            <% for (const [key, value] of Object.entries(row.winnerRow)) { %>
+                                            <% row.winnerRow  && for (const [key, value] of Object.entries(row.winnerRow)) { %>
                                                 <div class="form-group">
                                                     <label><%= key %>:</label>
                                                     <input type="text" class="form-control" name="winnerRow[<%=key%>]" value="<%= value %>">
