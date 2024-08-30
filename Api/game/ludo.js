@@ -11,8 +11,7 @@ class LudoGame {
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.turnTimer = null;
         this.roomJoinTimers = null;
-        this.currentPhase = 'createdroom';
-
+ 
         this.bettingTimer = null;
         this.pauseTimer = null;
         this.round = 0;
@@ -150,10 +149,27 @@ class LudoGame {
 
     // New method to update and emit scores
     handleResult(socket, data) {
-        let scores = this.turnOrder.map(({ userId, name, avtar, type, score, playerStatus }) => 
-            ({ userId, name, avtar, type, score, playerStatus })
-        );
-        this.io.to(this.roomName).emit('OnResult', scores);
+         const sortedPlayers = this.turnOrder
+        .map(({ userId, name, avtar, type, score, playerStatus }) => ({
+          userId,
+          name,
+          avtar,
+          type,
+          score,
+          playerStatus
+        }))
+        .sort((a, b) => {
+          // Sort by playerStatus 'online' first
+          if (a.playerStatus === 'online' && b.playerStatus !== 'online') {
+            return -1; // a should come before b
+          } else if (a.playerStatus !== 'online' && b.playerStatus === 'online') {
+            return 1; // b should come before a
+          }
+          // If both have the same playerStatus, sort by score in descending order
+          return b.score - a.score;
+        });
+        
+        this.io.to(this.roomName).emit('OnResult', sortedPlayers);
     }
 
     // New method to calculate player's score
@@ -555,7 +571,7 @@ class LudoGame {
         if (playerIndex !== -1) {
             let player = this.turnOrder[playerIndex];
             player.playerStatus = 'Left';
-            if (this.currentPhase != 'playing') {
+            if (! this.isGameReady) {
                 delete this.turnOrder[playerIndex];
             }
 
@@ -593,7 +609,7 @@ class LudoGame {
     }
 
     getWinner() {
-        return this.turnOrder.find(player => player.pasa.every(position => position === 56));
+        return this.turnOrder.find(player =>  player.status === 'online' && player.pasa.every(position => position === 56));
     }
 
     resetGame() {
