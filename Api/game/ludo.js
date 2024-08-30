@@ -11,7 +11,7 @@ class LudoGame {
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.turnTimer = null;
         this.roomJoinTimers = null;
- 
+
         this.bettingTimer = null;
         this.pauseTimer = null;
         this.round = 0;
@@ -149,26 +149,26 @@ class LudoGame {
 
     // New method to update and emit scores
     handleResult(socket, data) {
-         const sortedPlayers = this.turnOrder
-        .map(({ userId, name, avtar, type, score, playerStatus }) => ({
-          userId,
-          name,
-          avtar,
-          type,
-          score,
-          playerStatus
-        }))
-        .sort((a, b) => {
-          // Sort by playerStatus 'online' first
-          if (a.playerStatus === 'online' && b.playerStatus !== 'online') {
-            return -1; // a should come before b
-          } else if (a.playerStatus !== 'online' && b.playerStatus === 'online') {
-            return 1; // b should come before a
-          }
-          // If both have the same playerStatus, sort by score in descending order
-          return b.score - a.score;
-        });
-        
+        const sortedPlayers = this.turnOrder
+            .map(({ userId, name, avtar, type, score, playerStatus }) => ({
+                userId,
+                name,
+                avtar,
+                type,
+                score,
+                playerStatus
+            }))
+            .sort((a, b) => {
+                // Sort by playerStatus 'online' first
+                if (a.playerStatus === 'joined' && b.playerStatus !== 'joined') {
+                    return -1; // a should come before b
+                } else if (a.playerStatus !== 'joined' && b.playerStatus === 'joined') {
+                    return 1; // b should come before a
+                }
+                // If both have the same playerStatus, sort by score in descending order
+                return b.score - a.score;
+            });
+
         this.io.to(this.roomName).emit('OnResult', sortedPlayers);
     }
 
@@ -203,26 +203,27 @@ class LudoGame {
     }
     botKill(killerPlayer, killed, killerPasaIndex) {
         // Extract killer player index once
-        const killerPlayerIndex = this.turnOrder.findIndex(p => p.userId === killerPlayer.userId);
+        const killerPlayerId = killerPlayer.userId;
 
         // Iterate over each killed player
         for (const { player, pasaIndex } of killed) {
 
-            this.setPass(player,pasaIndex, -1 );// Reset to home position
+            this.setPass(player, pasaIndex, -1);// Reset to home position
 
             // Extract killed player index only once per player
-            const killedPlayerIndex = this.turnOrder.findIndex(p => p.userId === player.userId);
+            const killedPlayerId = player.userId;
 
             const dd = {
-                killerPlayerIndex,
+                killerPlayerId,
                 killerPasaIndex: parseInt(killerPasaIndex, 10),
-                killedPlayerIndex,
+                killedPlayerId,
                 killedPasaIndex: parseInt(pasaIndex, 10)
             };
 
             console.log('botKill  OnKillEvent--', dd);
             // Emit event for each killed player
             this.io.to(this.roomName).emit('OnKillEvent', dd);
+            break;
         }
 
         // Optionally update game state after kills
@@ -533,8 +534,8 @@ class LudoGame {
 
         console.log('OnKillEvent', d);
 
-        let killedPlayerIndex  = this.turnOrder.findIndex(p => p.userId === d.killedPlayerIndex);
-        let targetUser = this.turnOrder[killedPlayerIndex];
+        let killedPlayerId = this.turnOrder.findIndex(p => p.userId === d.killedPlayerId);
+        let targetUser = this.turnOrder[killedPlayerId];
         let pasaIndex = d.killedPasaIndex;
 
         this.setPass(targetUser, pasaIndex, -1);
@@ -565,13 +566,18 @@ class LudoGame {
 
     handlePlayerLeave(socket, data) {
         let { PlayerID } = data;
-       
+
 
         let playerIndex = this.turnOrder.findIndex(player1 => player1.userId === PlayerID);
         if (playerIndex !== -1) {
             let player = this.turnOrder[playerIndex];
-            player.playerStatus = 'Left';
-            if (! this.isGameReady) {
+            // dont chage status after game ended 
+
+            if (this.currentPhase !== 'finished') {
+                player.playerStatus = 'Left';
+            }
+            // dont delete after game started 
+            if (!this.isGameReady) {
                 delete this.turnOrder[playerIndex];
             }
 
@@ -581,17 +587,17 @@ class LudoGame {
             players: this.turnOrder,
         });
         this.checkGameStatus();
-          // Unbind all the event listeners when the player leaves
-          socket.removeAllListeners('OnMovePasa');
-          socket.removeAllListeners('OnRollDice');
-          socket.removeAllListeners('OnCurrentStatus');
-          socket.removeAllListeners('OnContinueTurn');
-          
-          // Avoid unbinding onLeaveRoom itself during its execution
-          socket.removeAllListeners('OnKillEvent');
-          socket.removeAllListeners('OnResult');
-          socket.removeAllListeners('onLeaveRoom');
-          socket.leave(this.roomName);
+        // Unbind all the event listeners when the player leaves
+        socket.removeAllListeners('OnMovePasa');
+        socket.removeAllListeners('OnRollDice');
+        socket.removeAllListeners('OnCurrentStatus');
+        socket.removeAllListeners('OnContinueTurn');
+
+        // Avoid unbinding onLeaveRoom itself during its execution
+        socket.removeAllListeners('OnKillEvent');
+        socket.removeAllListeners('OnResult');
+        socket.removeAllListeners('onLeaveRoom');
+        socket.leave(this.roomName);
     }
 
     checkGameStatus() {
@@ -609,7 +615,7 @@ class LudoGame {
     }
 
     getWinner() {
-        return this.turnOrder.find(player =>  player.status === 'online' && player.pasa.every(position => position === 56));
+        return this.turnOrder.find(player => player.status === 'online' && player.pasa.every(position => position === 56));
     }
 
     resetGame() {
