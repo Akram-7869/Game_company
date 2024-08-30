@@ -249,7 +249,7 @@ class LudoGame {
         });
     }
     sendCurrentStatus(socket) {
-        socket.emit('OnCurrentStatus', {
+        let d={
             gameType: 'Ludo',
             room: this.roomName,
             currentPhase: this.currentPhase,
@@ -257,7 +257,9 @@ class LudoGame {
             currentTurnIndex: this.currentTurnIndex,
             betting_remaing: this.bettingTimer?.remaining,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
-        });
+        };
+        console.log('OnCurrentStatus',d);
+        socket.emit('OnCurrentStatus',d);
     }
     startGame() {
         if (this.bettingTimer) return; // Prevent multiple starts
