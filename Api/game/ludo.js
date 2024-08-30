@@ -128,7 +128,7 @@ class LudoGame {
     }
 
     getJoinedPlayers() {
-        return this.turnOrder.filter(player => player.playerStatus === 'joined').length;
+        return this.turnOrder.filter(player => player.playerStatus === 'joined'&& player.type=='player').length;
     }
 
 
@@ -304,13 +304,7 @@ class LudoGame {
         this.turnTimer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
         }, () => {
-            if (currentPlayer['life'] <= 0) {
-                currentPlayer.playerStatus = "left";
-                this.checkGameStatus();
-            } else {
-                currentPlayer['life'] -= 1
-            }
-
+             
             if (this.currentPhase === 'playing') {
                 this.nextTurn();
             }
@@ -635,18 +629,16 @@ class LudoGame {
                 return this.endGame('Game completed');
             }
         }
-        if (players === 1) {
+        if (players === 0) {
             this.endGame('All players left');
         }
 
 
     }
-    isGameOver() {
-        return this.turnOrder.some(player => player.pasa.every(position => position === 56));
-    }
+ 
 
     getWinner() {
-        return this.turnOrder.find(player => player.status === 'online' && player.pasa.every(position => position === 56));
+        return this.turnOrder.find(player => player.playerStatus === 'online' && player.pasa.every(position => position === 56));
     }
 
     resetGame() {
