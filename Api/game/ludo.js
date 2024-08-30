@@ -65,7 +65,7 @@ class LudoGame {
     addBots(count) {
         for (let i = 0; i < count; i++) {
             let botId = `${i + 1}-bot`;
-            let startPosition = this.playerStartPositions[this.turnOrder.length + i];
+            let startPosition = this.playerStartPositions[this.turnOrder.length];
             if (this.maxPlayers == 2) {
                 startPosition = this.playerStartPositions[2]
             }
