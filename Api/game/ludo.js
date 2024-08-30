@@ -214,6 +214,10 @@ class LudoGame {
             const killedPlayerId = player.userId;
 
             const dd = {
+                PlayerID: killerPlayerId,
+  TournamentID: this.lobbyId,
+  RoomId: this.roomName,
+  
                 killerPlayerId,
                 killerPasaIndex: parseInt(killerPasaIndex, 10),
                 killedPlayerId,
