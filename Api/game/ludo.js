@@ -11,9 +11,8 @@ class LudoGame {
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.turnTimer = null;
         this.roomJoinTimers = null;
+        this.botTimer=null;
 
-        this.bettingTimer = null;
-        this.pauseTimer = null;
         this.round = 0;
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 9; // 5 seconds
@@ -22,12 +21,19 @@ class LudoGame {
         this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
 
+
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
         this.winnerPosition = 0; // Start tracking winners from position 1
+    }
 
+    setAutoClearingTimeout(callback, duration) {
+        const timerId = setTimeout(() => {
+            callback();
+            clearTimeout(timerId);  // Auto-clear the timer after the callback is executed
+        }, duration);
 
-
+        return timerId;  // Return the timer ID in case you need to manually clear it later
     }
     isPlayerInTurnOrder(id) {
         return this.turnOrder.findIndex(player => player.userId === id) !== -1;
@@ -128,7 +134,7 @@ class LudoGame {
     }
 
     getJoinedPlayers() {
-        return this.turnOrder.filter(player => player.playerStatus === 'joined'&& player.type=='player').length;
+        return this.turnOrder.filter(player => player.playerStatus === 'joined' && player.type == 'player').length;
     }
 
 
@@ -255,25 +261,20 @@ class LudoGame {
             currentPhase: this.currentPhase,
             players: this.turnOrder,
             currentTurnIndex: this.currentTurnIndex,
-            betting_remaing: this.bettingTimer?.remaining,
+            betting_remaing: 0,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         });
     }
     startGame() {
-        if (this.bettingTimer) return; // Prevent multiple starts
+
         publicRoom[this.lobbyId]['played'] = true;
         this.currentPhase = 'playing';
         this.round += 1;
 
-
-        this.bettingTimer = new Timer(3, (remaining) => {
-            // console.log(remaining);
-            //this.io.to(this.roomName).emit('play_tick', { remainingTime: remaining });
-        }, () => {
-            //  this.startPausePhase();
+        this.setAutoClearingTimeout(() => {
             this.nextTurn();
+        }, 3);
 
-        }).startTimer();
         console.log(`Game started in room: ${this.roomName}`);
 
     }
@@ -304,7 +305,7 @@ class LudoGame {
         this.turnTimer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
         }, () => {
-             
+
             if (this.currentPhase === 'playing') {
                 this.nextTurn();
             }
@@ -333,7 +334,7 @@ class LudoGame {
 
 
     botTurn(botPlayer) {
-        setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
+      this.botTimer=  this.setAutoClearingTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
     }
 
     botRollDice(botPlayer) {
@@ -345,7 +346,7 @@ class LudoGame {
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         });
 
-        setTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);
+        this.botTimer=  this.setAutoClearingTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);
     }
 
     botChooseMove(botPlayer, diceValue) {
@@ -510,7 +511,7 @@ class LudoGame {
         });
 
         if (canContinue) {
-            setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
+            this.setAutoClearingTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
             this.calculatePlayerScore(botPlayer);
             this.nextTurn();
@@ -635,28 +636,31 @@ class LudoGame {
 
 
     }
- 
+
 
     getWinner() {
         return this.turnOrder.find(player => player.playerStatus === 'online' && player.pasa.every(position => position === 56));
     }
 
-    resetGame() {
-
-        this.turnOrder = [];
-        this.currentTurnIndex = 0;
-        this.currentPhase = 'waiting';
-        this.round = 0;
+    resetGame() {  
         this.isGameReady = false;
+        if(this.botTimer){
+            clearTimeout(this.botTimer); 
+       }
+       
         if (this.turnTimer) {
             this.turnTimer.pause();
         }
         if (this.roomJoinTimers) {
             this.roomJoinTimers.pause();
         }
-        if (this.bettingTimer) {
-            this.bettingTimer.pause();
-        }
+        this.turnOrder = [];
+        this.currentTurnIndex = 0;
+        this.currentPhase = 'waiting';
+        this.round = 0;
+      
+       
+
     }
 
     setBotDifficulty(difficulty) {
