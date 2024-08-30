@@ -486,13 +486,13 @@ class LudoGame {
             this.botEndTurn(botPlayer, diceValue === 6);
         }
 
-        if (newPosition == 57) {
+        if (newPosition == 56) {
             this.handleWinners(botPlayer);
 
         }
     }
     handleWinners(player) {
-        let isWinner = player.pawns.every((pawn) => pawn === 57);
+        let isWinner = player.pawns.every((pawn) => pawn === 56);
       
         if (isWinner) {
             console.log('winner',player, this.turnOrder)
