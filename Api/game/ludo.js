@@ -281,11 +281,14 @@ class LudoGame {
         if (this.turnTimer) {
             this.turnTimer?.reset(15);
         }
+
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
         const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        if (currentPlayer.playerStatus == 'Left' || [1,2,3].includes(currentPlayer.winnerPosition) ) {
-            this.nextTurn();
-        }
+
+        // if (currentPlayer.playerStatus == 'Left' || [1,2,3].includes(currentPlayer.winnerPosition) ) {
+        //     this.nextTurn();
+        // }
+
         this.io.to(this.roomName).emit('OnNextTurn', {
             gameType: 'Ludo',
             room: this.roomName,
