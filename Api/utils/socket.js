@@ -32,7 +32,7 @@ let onConnection = (socket) => {
     console.log('join', d);
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4, role = 'player' } = dataParsed;
-    let lobby = await Tournament.findById(lobbyId);
+    let lobby = await Tournament.findById(lobbyId).lean();
     if (!lobby) {
       console.log('looby-not-found');
       return;

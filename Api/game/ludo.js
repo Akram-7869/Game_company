@@ -3,7 +3,7 @@ const { state, publicRoom, getBotName } = require('../utils/JoinRoom');
  
 class LudoGame {
     constructor(io, roomName, maxPlayers, tournament) {
-        this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.tournament=tournament
+        this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.tournament = tournament;
         
         this.turnOrder = [];
         this.currentTurnIndex = -1;
@@ -281,6 +281,7 @@ this.botTimer = setTimeout(() => {
         socket.emit('OnCurrentStatus',d);
     }
     startGame() {
+        console.log(this.tournament);
          publicRoom[this.tournament.lobbyId]['played'] = true;
         this.currentPhase = 'playing';
         this.round += 1;
