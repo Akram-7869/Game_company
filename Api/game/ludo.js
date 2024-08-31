@@ -404,17 +404,16 @@ console.log('handleResult',sortedPlayers);
     // Updated checkForKills method
     checkForKills(killerPlayer, globalPosition) {
         const killed = [];
-        let isNotSafe =!this.isSafePosition(globalPosition)
+        if(this.isSafePosition(globalPosition)) return [];
         this.turnOrder.forEach(player => {
             if (player.userId !== killerPlayer.userId) {
-                for (let i = 0; i <= 3; i++) {
-                    if (player.global[i] === globalPosition && isNotSafe) {
+                let i = player.global.indexOf(globalPosition);
+                    if (i !== -1 ) {
                         killed.push({ player, pasaIndex: i });
                     }
                 }
-            }
         });
-        console.log('killerPlayer',killerPlayer.userId ,globalPosition,killed);
+        console.log('killerPlayer',globalPosition,killed);
         return killed;
     }
 
