@@ -552,19 +552,22 @@ console.log('handleLeftWinners' );
         }
     }
     botEndTurn(botPlayer, canContinue) {
-        this.io.to(this.roomName).emit('OnContinueTurn', {
-            PlayerID: botPlayer.userId,
-            canContinue: canContinue,
-            turnTimer :this.turnTimer?.remaining
-        });
+       
 
         if (canContinue) {
             clearTimeout(this.botTimer);
+            this.turnTimer?.reset(15);
+            this.turnTimer?.startTimer();
             this.botTimer = setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
             this.calculatePlayerScore(botPlayer);
             this.nextTurn();
         }
+        this.io.to(this.roomName).emit('OnContinueTurn', {
+            PlayerID: botPlayer.userId,
+            canContinue: canContinue,
+            turnTimer :this.turnTimer?.remaining
+        });
     }
 
 
@@ -612,13 +615,12 @@ console.log('handleLeftWinners' );
 
     handlePlayerContinueTurn(socket, data) {
         let { canContinue } = data;
-        if (this.turnTimer) {
-            this.turnTimer.reset(15);
-        }
+        
+        
         if (canContinue) {
-            if (this.turnTimer) {
-                this.turnTimer.startTimer();
-            }
+            this.turnTimer.reset(15);
+            this.turnTimer.startTimer();
+            
         } else {
 
             this.nextTurn();
