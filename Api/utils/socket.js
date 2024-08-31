@@ -242,11 +242,12 @@ let onConnection = (socket) => {
   socket.on('disconnect', () => {
 
     let { room, userId, lobbyId } = socket;
+    io.to(socket.id).emit('onleaveRoom', { PlayerID:userId });
+
     delete userSocketMap[userId];
 
     userLeave(socket);
     //console.log('disconnect-inputstring');
-    io.to(socket.id).emit('onleaveRoom');
     let data = {
       room: room,
       users: getRoomUsers(room),
