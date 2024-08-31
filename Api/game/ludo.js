@@ -245,7 +245,7 @@ class LudoGame {
                 killedPasaIndex: parseInt(pasaIndex, 10)
             };
 
-            console.log('botKill  OnKillEvent', dd);
+            console.log('botKill  OnKillEvent--', dd);
             // Emit event for each killed player
             this.io.to(this.roomName).emit('OnKillEvent', dd);
             break;
@@ -323,7 +323,7 @@ class LudoGame {
             currentPhase: this.currentPhase,
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
-            timer: 15
+            timer:15
 
         });
         console.log('OnNextTurn', this.currentTurnIndex);
@@ -334,7 +334,7 @@ class LudoGame {
         }
 
         this.turnTimer = new Timer(15, (remaining) => {
-            // this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
+           // this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
         }, () => {
 
             if (this.currentPhase === 'playing') {
@@ -521,22 +521,22 @@ class LudoGame {
                 winnerPosition: this.winnerPosition,
                 winner: player.userId,
                 winingAmount,
-                reason: 'won',
-                leftPlayerId: ''
+                reason:'won',
+                leftPlayerId:'' 
             });
             this.checkGameStatus();
         }
     }
     handleLeftWinners(player) {
         let players = this.turnOrder.filter(player => player.playerStatus === 'joined');
-        console.log('handleLeftWinners');
+console.log('handleLeftWinners' );
         if (players.length === 1) {
             let player = this.turnOrder.find(p => p.userId === players[0].userId);
 
             this.winnerPosition += 1;
             let win_key = `winner_${this.winnerPosition}`
             let winingAmount = this.tournament.winnerRow[win_key];
-            console.log('winingAmount', winingAmount);
+            console.log('winingAmount',winingAmount );
 
             player.winnerPosition = this.winnerPosition; // Assign the winner position and increment
             player.playerStatus = 'winner'; // Mark the winner as playing
@@ -545,28 +545,26 @@ class LudoGame {
                 winnerPosition: this.winnerPosition,
                 winner: player.userId,
                 winingAmount,
-                reason: 'left',
-                leftPlayerId: player.userId,
+                reason:'left',                
+                leftPlayerId:player.userId ,
             });
             this.checkGameStatus();
         }
     }
     botEndTurn(botPlayer, canContinue) {
+        this.io.to(this.roomName).emit('OnContinueTurn', {
+            PlayerID: botPlayer.userId,
+            canContinue: canContinue,
+            turnTimer :this.turnTimer?.remaining
+        });
 
         if (canContinue) {
             clearTimeout(this.botTimer);
             this.botTimer = setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
-            this.io.to(this.roomName).emit('OnContinueTurn', {
-                PlayerID: botPlayer.userId,
-                canContinue: canContinue,
-                turnTimer: this.turnTimer?.remaining
-            });
         } else {
             this.calculatePlayerScore(botPlayer);
             this.nextTurn();
         }
-
-
     }
 
 
@@ -618,14 +616,15 @@ class LudoGame {
             this.turnTimer.reset(15);
         }
         if (canContinue) {
+            if (this.turnTimer) {
                 this.turnTimer.startTimer();
-            
-            data['turnTimer'] = this.turnTimer?.remaining;
-            this.io.to(this.roomName).emit('OnContinueTurn', data);
+            }
         } else {
+
             this.nextTurn();
         }
-
+        data['turnTimer']=this.turnTimer?.remaining;
+        this.io.to(this.roomName).emit('OnContinueTurn', data);
     }
 
     handlePlayerLeave(socket, data) {
@@ -633,9 +632,9 @@ class LudoGame {
 
 
         let playerIndex = this.turnOrder.findIndex(player1 => player1.userId === PlayerID);
-        let player;
+        let player ;
         if (playerIndex !== -1) {
-            player = this.turnOrder[playerIndex];
+             player = this.turnOrder[playerIndex];
             // dont chage status after game ended 
 
             if (this.currentPhase !== 'finished') {
