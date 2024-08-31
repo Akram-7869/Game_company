@@ -519,7 +519,9 @@ class LudoGame {
                 message: 'Winner - this.winnerPosition',
                 winnerPosition: this.winnerPosition,
                 winner: player.userId,
-                winingAmount
+                winingAmount,
+                reason:'WON'
+
 
             });
             this.checkGameStatus();
@@ -527,20 +529,23 @@ class LudoGame {
     }
     handleLeftWinners() {
         let players = this.turnOrder.filter(player => player.playerStatus === 'joined');
-
+console.log('handleLeftWinners' );
         if (players.length === 1) {
             let player = this.turnOrder.find(p => p.userId === players[0].userId);
 
             this.winnerPosition += 1;
             let win_key = `winner_${this.winnerPosition}`
             let winingAmount = this.tournament.winnerRow[win_key];
+            console.log('winingAmount',winingAmount );
+
             player.winnerPosition = this.winnerPosition; // Assign the winner position and increment
             player.playerStatus = 'winner'; // Mark the winner as playing
             this.io.to(this.roomName).emit('winner', {
                 message: 'Winner - this.winnerPosition',
                 winnerPosition: this.winnerPosition,
                 winner: player.userId,
-                winingAmount
+                winingAmount,
+                reason:'left'
 
             });
             this.checkGameStatus();
