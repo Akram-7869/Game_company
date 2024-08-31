@@ -246,6 +246,7 @@ let onConnection = (socket) => {
 
     userLeave(socket);
     //console.log('disconnect-inputstring');
+    io.to(socket.id).emit('onleaveRoom');
     let data = {
       room: room,
       users: getRoomUsers(room),
