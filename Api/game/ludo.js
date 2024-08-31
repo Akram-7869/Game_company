@@ -1,10 +1,10 @@
 const Timer = require("./Timer");
 const { state, publicRoom, getBotName } = require('../utils/JoinRoom');
- 
+
 class LudoGame {
     constructor(io, roomName, maxPlayers, tournament) {
         this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.tournament = tournament;
-        
+
         this.turnOrder = [];
         this.currentTurnIndex = -1;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
@@ -22,12 +22,12 @@ class LudoGame {
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
         this.winnerPosition = 0; // Start tracking winners from position 1
-        this.botTimer=undefined;
+        this.botTimer = undefined;
 
 
 
     }
-    
+
     syncPlayer(socket, player) {
 
         let playerExit = this.turnOrder.findIndex(player1 => player1.userId === player.userId) !== -1;
@@ -131,7 +131,7 @@ class LudoGame {
     handlePlayerMove(socket, data) {
         let { PlayerID, pasaIndex, steps, currentPosition, newPosition, globalPosition, isGlobal } = data;
         let player = this.turnOrder.find(p => p.userId === PlayerID);
-      //  console.log('OnMovePasa', data);
+        //  console.log('OnMovePasa', data);
 
 
 
@@ -159,39 +159,39 @@ class LudoGame {
                 playerStatus, winnerPosition
             }))
             .sort((a, b) => {
-                   // 1. Sort winners by winnerPosition in ascending order
-        if (a.winnerPosition && b.winnerPosition) {
-            return a.winnerPosition - b.winnerPosition;
-        }
-        
-        // Prioritize winners over joined or left
-        if (a.winnerPosition) return -1;
-        if (b.winnerPosition) return 1;
+                // 1. Sort winners by winnerPosition in ascending order
+                if (a.winnerPosition && b.winnerPosition) {
+                    return a.winnerPosition - b.winnerPosition;
+                }
 
-        // 2. Sort joined players next by score in descending order
-        if (a.playerStatus === 'joined' && b.playerStatus === 'joined') {
-            return b.score - a.score;
-        }
+                // Prioritize winners over joined or left
+                if (a.winnerPosition) return -1;
+                if (b.winnerPosition) return 1;
 
-        // Joined players before left players
-        if (a.playerStatus === 'joined') return -1;
-        if (b.playerStatus === 'joined') return 1;
+                // 2. Sort joined players next by score in descending order
+                if (a.playerStatus === 'joined' && b.playerStatus === 'joined') {
+                    return b.score - a.score;
+                }
 
-        // 3. Sort left players by score in descending order
-        if (a.playerStatus === 'left' && b.playerStatus === 'left') {
-            return b.score - a.score;
-        }
+                // Joined players before left players
+                if (a.playerStatus === 'joined') return -1;
+                if (b.playerStatus === 'joined') return 1;
 
-        return 0; // Default case, if none of the above apply
+                // 3. Sort left players by score in descending order
+                if (a.playerStatus === 'left' && b.playerStatus === 'left') {
+                    return b.score - a.score;
+                }
+
+                return 0; // Default case, if none of the above apply
             });
-console.log('handleResult',sortedPlayers);
-clearTimeout(this.botTimer);
-this.botTimer = setTimeout(() => {
-    this.io.to(this.roomName).emit('OnResult', {result:sortedPlayers});
-    clearTimeout(this.botTimer);
-    console.log('result declared');
-}, 3000);
-        
+        console.log('handleResult', sortedPlayers);
+        clearTimeout(this.botTimer);
+        this.botTimer = setTimeout(() => {
+            this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
+            clearTimeout(this.botTimer);
+            console.log('result declared', sortedPlayers);
+        }, 3000);
+
     }
 
     // New method to calculate player's score
@@ -268,7 +268,7 @@ this.botTimer = setTimeout(() => {
         });
     }
     sendCurrentStatus(socket) {
-        let d={
+        let d = {
             gameType: 'Ludo',
             room: this.roomName,
             currentPhase: this.currentPhase,
@@ -277,18 +277,18 @@ this.botTimer = setTimeout(() => {
             betting_remaing: 0,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         };
-        console.log('OnCurrentStatus',JSON.stringify(d));
-        socket.emit('OnCurrentStatus',d);
+        console.log('OnCurrentStatus', JSON.stringify(d));
+        socket.emit('OnCurrentStatus', d);
     }
     startGame() {
-         publicRoom[this.tournament._id]['played'] = true;
+        publicRoom[this.tournament._id]['played'] = true;
         this.currentPhase = 'playing';
         this.round += 1;
 
-        clearInterval(this.botTimer );
+        clearInterval(this.botTimer);
         this.botTimer = setTimeout(() => {
             this.nextTurn();
-        }, 3000);  
+        }, 3000);
         console.log(`Game Start room: ${this.roomName}`);
 
     }
@@ -306,18 +306,18 @@ this.botTimer = setTimeout(() => {
             for (let i = 1; i < totalPlayers; i++) {
                 this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
                 currentPlayer = this.turnOrder[this.currentTurnIndex];
-                if (currentPlayer.playerStatus === 'joined') {    
+                if (currentPlayer.playerStatus === 'joined') {
                     break;
                 }
             }
             if (currentPlayer.playerStatus !== 'joined') {
-             this.checkGameStatus();
-             return;
+                this.checkGameStatus();
+                return;
             }
         }
-        
 
-       
+
+
         this.io.to(this.roomName).emit('OnNextTurn', {
             gameType: 'Ludo',
             room: this.roomName,
@@ -335,7 +335,7 @@ this.botTimer = setTimeout(() => {
         this.turnTimer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
         }, () => {
-             
+
             if (this.currentPhase === 'playing') {
                 this.nextTurn();
             }
@@ -348,10 +348,10 @@ this.botTimer = setTimeout(() => {
     botTurn(botPlayer) {
         // Clear any existing timer to avoid multiple timers running at the same time
         clearTimeout(this.botTimer);
-        
+
         this.botTimer = setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
     }
-    
+
 
     botRollDice(botPlayer) {
         // const diceValue = Math.floor(Math.random() * 6) + 1;
@@ -362,7 +362,7 @@ this.botTimer = setTimeout(() => {
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         });
         clearTimeout(this.botTimer);
-        this.botTimer =setTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);
+        this.botTimer = setTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);
     }
 
     botChooseMove(botPlayer, diceValue) {
@@ -410,16 +410,16 @@ this.botTimer = setTimeout(() => {
     // Updated checkForKills method
     checkForKills(killerPlayer, globalPosition) {
         const killed = [];
-        if(this.isSafePosition(globalPosition)) return [];
+        if (this.isSafePosition(globalPosition)) return [];
         this.turnOrder.forEach(player => {
             if (player.userId !== killerPlayer.userId) {
                 let i = player.global.indexOf(globalPosition);
-                    if (i !== -1 ) {
-                        killed.push({ player, pasaIndex: i });
-                    }
+                if (i !== -1) {
+                    killed.push({ player, pasaIndex: i });
                 }
+            }
         });
-        console.log('killerPlayer',globalPosition,killed);
+        console.log('killerPlayer', globalPosition, killed);
         return killed;
     }
 
@@ -493,7 +493,7 @@ this.botTimer = setTimeout(() => {
         if (killed.length > 0) {
             this.botKill(botPlayer, killed, pasaIndex);
             this.botEndTurn(botPlayer, true);
-            
+
         } else {
             this.botEndTurn(botPlayer, diceValue === 6);
         }
@@ -505,11 +505,11 @@ this.botTimer = setTimeout(() => {
     }
     handleWinners(player) {
         let isWinner = player.pasa.every((pawn) => pawn === 56);
-      console.log('handleWinners');
-      
+        console.log('handleWinners');
+
         if (isWinner) {
             console.log(player, this.turnOrder)
-            
+
             this.winnerPosition += 1;
             let win_key = `winner_${this.winnerPosition}`
             let winingAmount = this.tournament.winnerRow[win_key];
@@ -527,10 +527,10 @@ this.botTimer = setTimeout(() => {
     }
     handleLeftWinners() {
         let players = this.turnOrder.filter(player => player.playerStatus === 'joined');
-      
+
         if (players.length === 1) {
             let player = this.turnOrder.find(p => p.userId === players[0].userId);
-    
+
             this.winnerPosition += 1;
             let win_key = `winner_${this.winnerPosition}`
             let winingAmount = this.tournament.winnerRow[win_key];
@@ -554,7 +554,7 @@ this.botTimer = setTimeout(() => {
 
         if (canContinue) {
             clearTimeout(this.botTimer);
-            this.botTimer =  setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
+            this.botTimer = setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
             this.calculatePlayerScore(botPlayer);
             this.nextTurn();
@@ -580,9 +580,9 @@ this.botTimer = setTimeout(() => {
     endGame(reason) {
         this.currentPhase = 'finished';
         const winner = this.getWinner();
-     this.handleResult({},{});
+        this.handleResult({}, {});
         console.log(`Game ended in room: ${this.roomName}`);
-        
+
         this.resetGame();
     }
 
@@ -590,7 +590,7 @@ this.botTimer = setTimeout(() => {
     playerKillEvent(socket, d) {
 
         let targetUser = this.turnOrder.find(p => p.userId === d.killedPlayerId);
-       
+
         let pasaIndex = d.killedPasaIndex;
         console.log('OnKillEvent', d, this.turnOrder);
         console.log('targetUser', targetUser);
@@ -631,7 +631,7 @@ this.botTimer = setTimeout(() => {
 
             if (this.currentPhase !== 'finished') {
                 player.playerStatus = 'Left';
-                player.winnerPosition = this.maxPlayers+1;
+                player.winnerPosition = this.maxPlayers + 1;
             }
             // dont delete after game started 
             if (!this.isGameReady) {
@@ -643,7 +643,7 @@ this.botTimer = setTimeout(() => {
         this.io.to(this.roomName).emit('onleaveRoom', {
             players: this.turnOrder,
         });
-        
+
         // Unbind all the event listeners when the player leaves
         socket.removeAllListeners('OnMovePasa');
         socket.removeAllListeners('OnRollDice');
@@ -665,7 +665,7 @@ this.botTimer = setTimeout(() => {
             if (this.winnerPosition == 1) {
                 return this.endGame('Game completed');
             }
-        } else if (this.maxPlayers ==4) {
+        } else if (this.maxPlayers == 4) {
             if (this.winnerPosition == this.tournament.winners) {
                 return this.endGame('Game completed');
             }
@@ -676,7 +676,7 @@ this.botTimer = setTimeout(() => {
 
 
     }
- 
+
 
     getWinner() {
         return this.turnOrder.find(player => player.playerStatus === 'winner' && player.pasa.every(position => position === 56));
@@ -695,9 +695,9 @@ this.botTimer = setTimeout(() => {
         if (this.roomJoinTimers) {
             this.roomJoinTimers.pause();
         }
-        
-        
-        
+
+
+
     }
 
     setBotDifficulty(difficulty) {
