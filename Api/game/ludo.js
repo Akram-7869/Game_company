@@ -281,8 +281,7 @@ this.botTimer = setTimeout(() => {
         socket.emit('OnCurrentStatus',d);
     }
     startGame() {
-        console.log(this.tournament);
-         publicRoom[this.tournament.lobbyId]['played'] = true;
+         publicRoom[this.tournament._id]['played'] = true;
         this.currentPhase = 'playing';
         this.round += 1;
 
