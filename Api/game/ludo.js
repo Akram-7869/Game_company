@@ -191,6 +191,7 @@ class LudoGame {
             this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
             clearTimeout(this.botTimer);
             console.log('result declared', sortedPlayers);
+           delete  state[this.roomName]
         }, 3000);
 
     }
