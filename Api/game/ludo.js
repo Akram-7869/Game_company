@@ -325,11 +325,8 @@ console.log('handleResult',sortedPlayers);
             this.botTurn(currentPlayer);
             return;
         }
-        // else {
-        //     this.startTurnTimer();
-        // }
-        //  Set timer for the next turn
-        this.turnTimer = new Timer(5, (remaining) => {
+
+        this.turnTimer = new Timer(15, (remaining) => {
             this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
         }, () => {
              
