@@ -184,7 +184,6 @@ class LudoGame {
 
                 return 0; // Default case, if none of the above apply
             });
-        console.log('handleResult', sortedPlayers);
         clearTimeout(this.botTimer);
         this.botTimer = setTimeout(() => {
             this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
@@ -520,14 +519,12 @@ class LudoGame {
                 winnerPosition: this.winnerPosition,
                 winner: player.userId,
                 winingAmount,
-                reason:'WON'
-
-
+                reason:'won'
             });
             this.checkGameStatus();
         }
     }
-    handleLeftWinners() {
+    handleLeftWinners(player) {
         let players = this.turnOrder.filter(player => player.playerStatus === 'joined');
 console.log('handleLeftWinners' );
         if (players.length === 1) {
@@ -545,8 +542,8 @@ console.log('handleLeftWinners' );
                 winnerPosition: this.winnerPosition,
                 winner: player.userId,
                 winingAmount,
-                reason:'left'
-
+                reason:'left',                
+                player
             });
             this.checkGameStatus();
         }
@@ -630,8 +627,9 @@ console.log('handleLeftWinners' );
 
 
         let playerIndex = this.turnOrder.findIndex(player1 => player1.userId === PlayerID);
+        let player ;
         if (playerIndex !== -1) {
-            let player = this.turnOrder[playerIndex];
+             player = this.turnOrder[playerIndex];
             // dont chage status after game ended 
 
             if (this.currentPhase !== 'finished') {
@@ -660,7 +658,7 @@ console.log('handleLeftWinners' );
         socket.removeAllListeners('OnResult');
         socket.removeAllListeners('onLeaveRoom');
         socket.leave(this.roomName);
-        this.handleLeftWinners();
+        this.handleLeftWinners(player);
     }
 
     checkGameStatus() {
