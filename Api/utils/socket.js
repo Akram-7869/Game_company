@@ -242,8 +242,7 @@ let onConnection = (socket) => {
   socket.on('disconnect', () => {
 
     let { room, userId, lobbyId } = socket;
-    io.to(socket.id).emit('onleaveRoom', { PlayerID:userId });
-
+ 
     delete userSocketMap[userId];
 
     userLeave(socket);
@@ -255,7 +254,10 @@ let onConnection = (socket) => {
     };
 
     console.log('disconnect-', room, userId, lobbyId);
-
+    if(state[room]&& userId){
+      state[room].codeObj.handlePlayerLeave(socket, {PlayerID:userId});
+    }
+    
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
 
   });
