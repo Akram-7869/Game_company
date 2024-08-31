@@ -16,11 +16,11 @@ const axios = require('axios')
 //const admin = require('../utils/fiebase')
 const fs = require('fs');
 var path = require('path');
-const { makeid, setkey, getKey } = require('../utils/utils');
+const { makeid, setkey, getKey, generateName } = require('../utils/utils');
 const { OAuth2Client } = require('google-auth-library');
 
 exports.test = asyncHandler(async (req, res, next) => {
- 
+
 });
 
 // @desc      Register user
@@ -75,7 +75,7 @@ exports.getByEmail = asyncHandler(async (req, res, next) => {
 // @route     POST /api/v1/auth/register
 // @access    Public
 exports.playerRegister = asyncHandler(async (req, res, next) => {
-   console.log('playerRegister');
+  console.log('playerRegister');
   const { email, phone, deviceToken, countryCode, firebaseToken = '' } = req.body;
 
   if (!phone) {
@@ -135,10 +135,7 @@ exports.playerRegister = asyncHandler(async (req, res, next) => {
   });
 
 });
-function generateName(pre='Cherry') {
-  const randomTwoDigitNumber = Math.floor(Math.random() * 90) + 10; // Generates a random number between 10 and 99
-  return `${pre}_${randomTwoDigitNumber}`;
-}
+
 
 // @desc      Register user
 // @route     POST /api/v1/auth/register
@@ -149,7 +146,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
   const client = new OAuth2Client(CLIENT_ID);
 
-  if (!email ) {
+  if (!email) {
     return next(
       new ErrorResponse(`select email`)
     );
@@ -184,7 +181,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
     // }
 
     let fieldsToUpdate = {
-      'firebaseToken': firebaseToken, 
+      'firebaseToken': firebaseToken,
       //'deviceToken': deviceToken, stateCode,
       stateName,
       longitude,
@@ -198,12 +195,12 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   } else {
     console.log('playerRegisterEmail-new');
 
-    if( !firebaseToken){
+    if (!firebaseToken) {
       return next(
         new ErrorResponse(`Registration  failed retry fb `)
       );
     }
-    if( !deviceToken  ){
+    if (!deviceToken) {
       return next(
         new ErrorResponse(`Registration  failed retry token `)
       );
@@ -214,7 +211,7 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`Mutiple account canot be created in one device`)
       );
     }
-    
+
     try {
       ticket = await client.verifyIdToken({
         idToken: firebaseToken,
@@ -272,25 +269,25 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   sendTokenResponse(player, 200, res);
 });
 exports.webRegisterEmail = asyncHandler(async (req, res, next) => {
-  let {id, email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode = '', stateName = '', latitude = 0, longitude = 0,state } = req.body;
+  let { id, email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode = '', stateName = '', latitude = 0, longitude = 0, state } = req.body;
   console.log(req.body);
-  
 
-  if (!email || !state ) {
+
+  if (!email || !state) {
     return next(
       new ErrorResponse(`select email`)
     );
   }
   let user;
-  let displayName ='';
-  if(state ==='influencer'){
-    user = await Influencer.findOne({ 'email': email , role: state, googleid:id});
-    displayName= generateName('IN');
-  } else if(state ==='franchise'){
-    user = await Franchise.findOne({ 'email': email , role: state,googleid:id});
-    displayName= generateName('FR');
- }
- 
+  let displayName = '';
+  if (state === 'influencer') {
+    user = await Influencer.findOne({ 'email': email, role: state, googleid: id });
+    displayName = generateName('IN');
+  } else if (state === 'franchise') {
+    user = await Franchise.findOne({ 'email': email, role: state, googleid: id });
+    displayName = generateName('FR');
+  }
+
   if (!user) {
     console.log('influencerRegisterEmail-new');
     email = req.body['email'];
@@ -302,7 +299,7 @@ exports.webRegisterEmail = asyncHandler(async (req, res, next) => {
     // create new influencer
     let addamount = 0;
     let data = {
-      displayName:displayName,
+      displayName: displayName,
       firstName,
       'email': email,
       'picture': picture,
@@ -317,41 +314,41 @@ exports.webRegisterEmail = asyncHandler(async (req, res, next) => {
       latitude
     };
     // Create user
-    if(state ==='influencer'){
-      user =  await Influencer.create(data);
-    } else if(state ==='franchise'){
-      user =  await Influencer.create(data);
-   }
+    if (state === 'influencer') {
+      user = await Influencer.create(data);
+    } else if (state === 'franchise') {
+      user = await Influencer.create(data);
+    }
   }
-  
-  if(user){
-    console.log(user,'user-token');
+
+  if (user) {
+    console.log(user, 'user-token');
     sendTokenResponse(user, 200, res);
-   }
+  }
 });
 exports.registerInfluencer = asyncHandler(async (req, res, next) => {
-  let {password, email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode = '', stateName = '', latitude = 0, longitude = 0,state } = req.body;
+  let { password, email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode = '', stateName = '', latitude = 0, longitude = 0, state } = req.body;
   console.log(req.body);
-  
 
-  if (!email ) {
+
+  if (!email) {
     return next(
       new ErrorResponse(`select email`)
     );
   }
   let user;
-  let displayName ='';
-    user = await Influencer.findOne({ 'email': email });
+  let displayName = '';
+  user = await Influencer.findOne({ 'email': email });
   if (!user) {
     console.log('influencerRegisterEmail-new');
-    displayName= generateName('IN');
+    displayName = generateName('IN');
 
     email = req.body['email'];
     firstName = req.body['username'];
     // create new influencer
     let addamount = 0;
     let data = {
-      displayName:displayName,
+      displayName: displayName,
       firstName,
       'email': email,
       // 'picture': picture,
@@ -367,8 +364,8 @@ exports.registerInfluencer = asyncHandler(async (req, res, next) => {
       password
     };
     // Create user
-      user =  await Influencer.create(data);
-      sendTokenResponse(user, 200, res);
+    user = await Influencer.create(data);
+    sendTokenResponse(user, 200, res);
   }
 });
 // @desc      Verify phone
@@ -470,17 +467,17 @@ const sendTokenResponse = (user, statusCode, res) => {
   if (process.env.NODE_ENV === 'production') {
     options.secure = true;
   }
-let d= {
-  success: true,
-  token,
-  playerId: user._id,
-  role:user.role,
-  firstName: user.firstName,
-  displayName: user.displayName,
-  lastName: user.lastName,
-  email: user.email
-}
-   res
+  let d = {
+    success: true,
+    token,
+    playerId: user._id,
+    role: user.role,
+    firstName: user.firstName,
+    displayName: user.displayName,
+    lastName: user.lastName,
+    email: user.email
+  }
+  res
     .status(statusCode)
     //.cookie('token', token, options)
     .json(d);
@@ -491,25 +488,25 @@ let d= {
 // @route     POST /api/v1/auth/login
 // @access    Public
 exports.login = asyncHandler(async (req, res, next) => {
-  const { email, password,role} = req.body;
+  const { email, password, role } = req.body;
   // Validate emil & password
   if (!email || !password || !role) {
     return next(new ErrorResponse('Please provide an email and password'));
   }
 
   // Check for user
-  let user ;
-switch (role) {
-  case 'influencer':
-     user = await Influencer.findOne({ email }).select('+password');
-    break;
+  let user;
+  switch (role) {
+    case 'influencer':
+      user = await Influencer.findOne({ email }).select('+password');
+      break;
     case 'franchise':
-       user = await Franchise.findOne({ email }).select('+password');
-    break;
+      user = await Franchise.findOne({ email }).select('+password');
+      break;
     case 'admin':
-       user = await User.findOne({ email }).select('+password');
-    break;
-}
+      user = await User.findOne({ email }).select('+password');
+      break;
+  }
   if (!user) {
     return next(new ErrorResponse('Invalid credentials'));
   }
@@ -538,42 +535,38 @@ exports.logout = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.maintanance = asyncHandler(async (req, res, next) => {
-  let bot_profile = [];
-  let setting = {};
-  let games=[]
-  //console.log('one---',res.app.get('bot_profile'));
-  if (!res.app.get('bot_profile')) {
-
-
+  let bot_profile = getKey('bot_profile');
+  let setting = getKey('site_setting');
+  let games = getKey('games');
+  if (!bot_profile) {
+    bot_profile = [];
     let filename = '/img/profile-picture/';
     let filePath = path.resolve(__dirname, '../../assets/' + filename);
     let pathurl = process.env.IMAGE_URL + filename;
     //console.log(filePath);
     fs.readdirSync(filePath).forEach(file => {
-      // console.log(file);
       bot_profile.push(pathurl + file);
     });
-    res.app.set('bot_profile', bot_profile);
-  } else {
-    bot_profile = res.app.get('bot_profile')
+    setkey('bot_profile', bot_profile);
   }
-  //console.log(setting );
-  setting = res.app.get('site_setting');
-  // console.log('site setting');
-  //if (!setting) {
+  if (!setting) {
+    setting = await Setting.findOne({
+      type: 'SITE',
+    });
+    setkey('site_setting', setting)
+  }
 
-  setting = await Setting.findOne({
-    type: 'SITE',
-  });
-  games = await Game.find({
-    status: 'active',
-  });
-  res.app.set('site_setting', setting);
-  // }
+  if (!games) {
+    games = await Game.find({
+      status: 'active',
+    });
+    setkey('games', games)
+
+  }
 
   res.status(200).json({
     success: true,
-    data: { bot_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit ,games }
+    data: { bot_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games }
   });
 });
 exports.smsOtp = async (mobile, otp, template_id, authkey) => {

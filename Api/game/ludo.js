@@ -1,5 +1,5 @@
 const Timer = require("./Timer");
-const { state, publicRoom, getBotName } = require('../utils/JoinRoom');
+const { state, publicRoom, getBotName ,generateName } = require('../utils/JoinRoom');
 
 class LudoGame {
     constructor(io, roomName, maxPlayers, tournament) {
@@ -69,10 +69,11 @@ class LudoGame {
             if (this.maxPlayers == 2) {
                 startPosition = this.playerStartPositions[2]
             }
-
+            let name = generateName();
+            let pathurl = process.env.IMAGE_URL + '/img/logo/profile_default.png';
             let botPlayer = {
                 userId: `${i + 1}-bot`,
-                name: `Bot-${i + 1}`,
+                name ,
                 balance: '1000',
                 lobbyId: this.tournament._id,
                 maxp: this.maxPlayers,
@@ -81,7 +82,7 @@ class LudoGame {
                 global: [-1, -1, -1, -1],
                 startPosition,
                 playerStatus: 'joined',
-                avtar: 'http://example.com/bot-avatar.png'
+                avtar: pathurl
             }
 
             this.turnOrder.push(botPlayer);

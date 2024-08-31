@@ -3,7 +3,7 @@ const fs = require('fs');
 const sample = new Map();
 
 module.exports = {
-   makeid, uploadFile, deletDiskFile, getKey, setkey, roundToTwoDecimals
+   makeid, uploadFile, deletDiskFile, getKey, setkey, roundToTwoDecimals, generateName
 }
 
 function makeid(length) {
@@ -33,6 +33,7 @@ function uploadFile(req, filename, res) {
 
 }
 
+
 function deletDiskFile(filePath) {
 
    fs.exists(filePath, function (exists) {
@@ -55,3 +56,7 @@ function setkey(key, v) {
 function roundToTwoDecimals(value) {
    return Math.round(value * 100) / 100;
 }
+function generateName(pre = 'Cherry') {
+   const randomTwoDigitNumber = Math.floor(Math.random() * 90) + 10; // Generates a random number between 10 and 99
+   return `${pre}_${randomTwoDigitNumber}`;
+ }
