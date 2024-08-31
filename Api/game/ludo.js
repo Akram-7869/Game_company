@@ -1,5 +1,6 @@
 const Timer = require("./Timer");
-const { state, publicRoom, getBotName ,generateName } = require('../utils/JoinRoom');
+const { state, publicRoom, getBotName  } = require('../utils/JoinRoom');
+const { generateName } = require('../utils/utils');
 
 class LudoGame {
     constructor(io, roomName, maxPlayers, tournament) {
