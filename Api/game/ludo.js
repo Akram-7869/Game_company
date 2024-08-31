@@ -319,7 +319,7 @@ console.log('handleResult',sortedPlayers);
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId
         });
-        console.log('OnNextTurn', this.currentTurnIndex,this.turnOrder);
+        console.log('OnNextTurn', this.currentTurnIndex);
 
         if (currentPlayer.type === 'bot') {
             this.botTurn(currentPlayer);
@@ -487,6 +487,11 @@ console.log('handleResult',sortedPlayers);
         if (killed.length > 0) {
             this.botKill(botPlayer, killed, pasaIndex);
             this.botEndTurn(botPlayer, true);
+            console.log('player-', this.turnOrder
+                .map(({ userId, global,pasa }) => ({
+                    userId,
+                    global,pasa
+                })))
         } else {
             this.botEndTurn(botPlayer, diceValue === 6);
         }
