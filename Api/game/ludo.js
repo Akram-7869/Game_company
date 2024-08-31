@@ -403,21 +403,18 @@ console.log('handleResult',sortedPlayers);
 
     // Updated checkForKills method
     checkForKills(killerPlayer, globalPosition) {
-        if (this.isSafePosition(globalPosition)) return []; // Early return if the position is safe
-
         const killed = [];
-
-        for (const player of this.turnOrder) {
-            if (player.userId === killerPlayer.userId) continue; // Skip the killerPlayer
-
-            // Use a single loop to find kills and ignore `-1` directly
-            for (let i = 0; i < player.global.length; i++) {
-                if (player.global[i] === globalPosition) {
-                    killed.push({ player, pasaIndex: i });
+        let isNotSafe =!this.isSafePosition(globalPosition)
+        this.turnOrder.forEach(player => {
+            if (player.userId !== killerPlayer.userId) {
+                for (let i = 0; i <= 3; i++) {
+                    if (player.global[i] === globalPosition && isNotSafe) {
+                        killed.push({ player, pasaIndex: i });
+                    }
                 }
             }
-        }
-console.log('killed', globalPosition, killed)
+        });
+        console.log('killerPlayer',killerPlayer.userId ,globalPosition,killed);
         return killed;
     }
 
