@@ -1,7 +1,6 @@
 const Timer = require("./Timer");
 const { state, publicRoom, getBotName } = require('../utils/JoinRoom');
-const { listeners } = require("../models/File");
-
+ 
 class LudoGame {
     constructor(io, roomName, maxPlayers, lobby) {
         this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.lobbyId = lobby._id;
@@ -12,8 +11,7 @@ class LudoGame {
         this.turnTimer = undefined;
         this.roomJoinTimers = undefined;
 
-        this.bettingTimer = undefined;
-         this.round = 0;
+        this.round = 0;
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 9; // 5 seconds
         this.lastDiceValue = 6;
@@ -29,9 +27,7 @@ class LudoGame {
 
 
     }
-    isPlayerInTurnOrder(id) {
-        return this.turnOrder.findIndex(player => player.userId === id) !== -1;
-    }
+    
     syncPlayer(socket, player) {
 
         let playerExit = this.turnOrder.findIndex(player1 => player1.userId === player.userId) !== -1;
@@ -134,8 +130,7 @@ class LudoGame {
 
     handlePlayerMove(socket, data) {
         let { PlayerID, pasaIndex, steps, currentPosition, newPosition, globalPosition, isGlobal } = data;
-        let playerIndex = this.turnOrder.findIndex(p => p.userId === PlayerID);
-        let player = this.turnOrder[playerIndex];
+        let player = this.turnOrder.find(p => p.userId === PlayerID);
       //  console.log('OnMovePasa', data);
 
 
@@ -273,27 +268,21 @@ console.log('handleResult',sortedPlayers);
             currentPhase: this.currentPhase,
             players: this.turnOrder,
             currentTurnIndex: this.currentTurnIndex,
-            betting_remaing: this.bettingTimer?.remaining,
+            betting_remaing: 0,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         };
         console.log('OnCurrentStatus',JSON.stringify(d));
         socket.emit('OnCurrentStatus',d);
     }
     startGame() {
-        if (this.bettingTimer) return; // Prevent multiple starts
-        publicRoom[this.lobbyId]['played'] = true;
+         publicRoom[this.lobbyId]['played'] = true;
         this.currentPhase = 'playing';
         this.round += 1;
 
-
-        this.bettingTimer = new Timer(3, (remaining) => {
-            // console.log(remaining);
-            //this.io.to(this.roomName).emit('play_tick', { remainingTime: remaining });
-        }, () => {
-            //  this.startPausePhase();
+        clearInterval(this.botTimer );
+        this.botTimer = setTimeout(() => {
             this.nextTurn();
-
-        }).startTimer();
+        }, 3000);  
         console.log(`Game Start room: ${this.roomName}`);
 
     }
@@ -577,9 +566,8 @@ console.log('handleResult',sortedPlayers);
 
     playerKillEvent(socket, d) {
 
-
-        let killedPlayerId = this.turnOrder.findIndex(p => p.userId === d.killedPlayerId);
-        let targetUser = this.turnOrder[killedPlayerId];
+        let targetUser = this.turnOrder.find(p => p.userId === d.killedPlayerId);
+       
         let pasaIndex = d.killedPasaIndex;
         console.log('OnKillEvent', d, this.turnOrder);
         console.log('targetUser', targetUser);
@@ -684,9 +672,7 @@ console.log('handleResult',sortedPlayers);
         if (this.roomJoinTimers) {
             this.roomJoinTimers.pause();
         }
-        if (this.bettingTimer) {
-            this.bettingTimer.pause();
-        }
+        
         clearTimeout(this.botTimer);
         
     }
