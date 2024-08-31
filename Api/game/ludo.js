@@ -525,12 +525,12 @@ this.botTimer = setTimeout(() => {
             this.checkGameStatus();
         }
     }
-    handleLeftWinners(player) {
-        let players = this.turnOrder.filter(player => player.playerStatus === 'joined')
+    handleLeftWinners() {
+        let players = this.turnOrder.filter(player => player.playerStatus === 'joined');
       
         if (players.length === 1) {
-            console.log(player, this.turnOrder)
-            
+            let player = this.turnOrder.find(p => p.userId === players[0].userId);
+    
             this.winnerPosition += 1;
             let win_key = `winner_${this.winnerPosition}`
             let winingAmount = this.tournament.winnerRow[win_key];
@@ -539,7 +539,7 @@ this.botTimer = setTimeout(() => {
             this.io.to(this.roomName).emit('winner', {
                 message: 'Winner - this.winnerPosition',
                 winnerPosition: this.winnerPosition,
-                winner: player[0].userId,
+                winner: player.userId,
                 winingAmount
 
             });
@@ -643,7 +643,7 @@ this.botTimer = setTimeout(() => {
         this.io.to(this.roomName).emit('onleaveRoom', {
             players: this.turnOrder,
         });
-        this.checkGameStatus();
+        
         // Unbind all the event listeners when the player leaves
         socket.removeAllListeners('OnMovePasa');
         socket.removeAllListeners('OnRollDice');
@@ -655,6 +655,7 @@ this.botTimer = setTimeout(() => {
         socket.removeAllListeners('OnResult');
         socket.removeAllListeners('onLeaveRoom');
         socket.leave(this.roomName);
+        this.handleLeftWinners();
     }
 
     checkGameStatus() {
