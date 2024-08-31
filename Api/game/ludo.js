@@ -417,7 +417,7 @@ console.log('handleResult',sortedPlayers);
                 }
             }
         }
-
+console.log('killed', globalPosition, killed)
         return killed;
     }
 
