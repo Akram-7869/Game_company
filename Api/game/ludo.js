@@ -319,7 +319,7 @@ console.log('handleResult',sortedPlayers);
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId
         });
-        console.log('OnNextTurn', this.currentTurnIndex);
+        console.log('OnNextTurn', this.currentTurnIndex,this.turnOrder);
 
         if (currentPlayer.type === 'bot') {
             this.botTurn(currentPlayer);
