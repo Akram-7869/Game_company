@@ -620,6 +620,7 @@ console.log('handleResult',sortedPlayers);
 
             if (this.currentPhase !== 'finished') {
                 player.playerStatus = 'Left';
+                player.winnerPosition = this.maxPlayers+1;
             }
             // dont delete after game started 
             if (!this.isGameReady) {
