@@ -164,12 +164,30 @@ class LudoGame {
                 playerStatus, winnerPosition
             }))
             .sort((a, b) => {
-                if (a.winnerPosition && b.winnerPosition) {
-                    return a.winnerPosition - b.winnerPosition;
-                }
-                if (a.winnerPosition) return -1;
-                if (b.winnerPosition) return 1;
-                return b.score - a.score; // Sort remaining by score
+                   // 1. Sort winners by winnerPosition in ascending order
+        if (a.winnerPosition && b.winnerPosition) {
+            return a.winnerPosition - b.winnerPosition;
+        }
+        
+        // Prioritize winners over joined or left
+        if (a.winnerPosition) return -1;
+        if (b.winnerPosition) return 1;
+
+        // 2. Sort joined players next by score in descending order
+        if (a.playerStatus === 'joined' && b.playerStatus === 'joined') {
+            return b.score - a.score;
+        }
+
+        // Joined players before left players
+        if (a.playerStatus === 'joined') return -1;
+        if (b.playerStatus === 'joined') return 1;
+
+        // 3. Sort left players by score in descending order
+        if (a.playerStatus === 'left' && b.playerStatus === 'left') {
+            return b.score - a.score;
+        }
+
+        return 0; // Default case, if none of the above apply
             });
 console.log('handleResult',sortedPlayers);
         this.io.to(this.roomName).emit('OnResult', sortedPlayers);
@@ -299,6 +317,7 @@ console.log('handleResult',sortedPlayers);
             }
             if (currentPlayer.playerStatus !== 'joined') {
              this.checkGameStatus();
+             return;
             }
         }
         
@@ -634,8 +653,8 @@ console.log('handleResult',sortedPlayers);
                 return this.endGame('Game completed');
             }
 
-        } else if (this.maxPlayers == 3) {
-            if (this.winnerPosition == 1) {
+        } else if (this.maxPlayers ==4) {
+            if (this.winnerPosition == 3) {
                 return this.endGame('Game completed');
             }
         }
