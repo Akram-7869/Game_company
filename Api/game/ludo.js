@@ -530,14 +530,14 @@ class LudoGame {
             this.checkGameStatus();
         }
     }
-    handleLeftWinners(player) {
-        let noplayers = this.turnOrder.filter(player => player.playerStatus === 'joined'&& player.type=='player');
+    handleLeftWinners(p) {
+        let players = this.turnOrder.filter(player => player.playerStatus === 'joined'&& player.type=='player');
 
-console.log('handleLeftWinners' );
-        if(noplayers.length <1){
+console.log('handleLeftWinners',this.turnOrder );
+        if(players.length <1){
             this.checkGameStatus();return;
         }
-        if (noplayers.length === 1) {
+        if (players.length === 1) {
             let player = this.turnOrder.find(p => p.userId === players[0].userId);
 
             this.winnerPosition += 1;
