@@ -103,6 +103,7 @@ class LudoGame {
 
         this.currentPhase = 'createdroom';
         this.roomJoinTimers = new Timer(10, (remaining) => {
+            console.log('remaining',remaining);
             this.io.to(this.roomName).emit('join_tick', { remaining });
             if (remaining === 5) {
                 this.checkAndAddBots();
@@ -336,7 +337,7 @@ class LudoGame {
             return;
         }
 
-        this.turnTimer = new Timer(15, (remaining) => {
+        this.turnTimer = new Timer(15,  {
            // this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
         }, () => {
 
@@ -595,10 +596,8 @@ console.log('handleLeftWinners' );
 
     endGame(reason) {
         this.currentPhase = 'finished';
-        const winner = this.getWinner();
         this.handleResult({}, {});
         console.log(`Game ended in room: ${this.roomName}`);
-
         this.resetGame();
     }
 
@@ -707,10 +706,10 @@ console.log('handleLeftWinners' );
         this.round = 0;
         this.isGameReady = false;
         if (this.turnTimer) {
-            this.turnTimer.pause();
+            this.turnTimer.reset(15);
         }
         if (this.roomJoinTimers) {
-            this.roomJoinTimers.pause();
+            this.roomJoinTimers.reset(15);
         }
 
 
