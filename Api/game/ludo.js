@@ -707,10 +707,10 @@ console.log('handleLeftWinners',this.turnOrder );
         this.round = 0;
         this.isGameReady = false;
         if (this.turnTimer) {
-            this.turnTimer.pause();
+            this.turnTimer.reset(15);
         }
         if (this.roomJoinTimers) {
-            this.roomJoinTimers.pause();
+            this.roomJoinTimers.reset(15);
         }
 
 

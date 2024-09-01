@@ -3,6 +3,7 @@ class Timer {
         this.onTick = typeof onTick === 'function' ? onTick : null; // Optional onTick callback
         this.callback = callback; // Optional final callback
         this.remaining = delay; // Remaining time in seconds
+        this.delay=delay;
         this.timerId = null; // Reference to the timeout
     }
 
