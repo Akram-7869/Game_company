@@ -11,6 +11,7 @@ class LudoGame {
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.turnTimer = undefined;
         this.roomJoinTimers = undefined;
+        this.bettingTimer = undefined;
 
         this.round = 0;
         this.bettingTime = 20; // 20 seconds
@@ -135,15 +136,17 @@ class LudoGame {
         socket.emit('OnCurrentStatus', d);
     }
     startGame() {
+        if (this.bettingTimer) return; // Prevent multiple starts
         publicRoom[this.tournament._id]['played'] = true;
         this.currentPhase = 'playing';
         this.round += 1;
 
-        clearInterval(this.botTimer);
-        this.botTimer = setTimeout(() => {
+        this.bettingTimer = new Timer(3, undefined, () => {
+            //  this.startPausePhase();
             this.nextTurn();
-        }, 3000);
-        console.log(`Game Start room: ${this.roomName}`);
+
+        }).startTimer();
+        console.log(`Game started in room: ${this.roomName}`);
 
     }
 
@@ -710,6 +713,9 @@ console.log('handleLeftWinners',this.turnOrder );
         }
         if (this.roomJoinTimers) {
             this.roomJoinTimers.reset(15);
+        }
+        if (this.bettingTimer) {
+            this.bettingTimer.reset(3);
         }
 
 
