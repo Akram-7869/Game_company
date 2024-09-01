@@ -533,7 +533,7 @@ class LudoGame {
     handleLeftWinners(p) {
         let players = this.turnOrder.filter(player => player.playerStatus === 'joined'&& player.type=='player');
 
-console.log('handleLeftWinners',this.turnOrder );
+console.log('handleLeftWinners' );
         if(players.length < 1){
             this.endGame('All players left');return;
         }
