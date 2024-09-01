@@ -17,14 +17,16 @@ class Timer {
     countdown() {
         
         if (this.remaining <= 0) {
- 
+            console.log('countdown',this.remaining);
+            if (this.onTick) this.onTick(this.remaining);
+
             this.callback();
             this.reset();
             return;
         }
         this.timerId = setTimeout(() => {
             if (!this.paused) {
-               console.log('countdown',this.remaining);
+               
     if (this.onTick) this.onTick(this.remaining);
 
                 this.remaining -= 1;
