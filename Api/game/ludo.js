@@ -142,7 +142,7 @@ class LudoGame {
         clearInterval(this.botTimer);
         this.botTimer = setTimeout(() => {
             this.nextTurn();
-        }, 4000);
+        }, 3000);
         console.log(`Game Start room: ${this.roomName}`);
 
     }
