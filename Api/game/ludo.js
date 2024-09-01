@@ -25,13 +25,7 @@ class LudoGame {
         this.winnerPosition = 0; // Start tracking winners from position 1
         this.botTimer = undefined;
 
-        this.turnTimer = new Timer(15,  {
-            // this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
-         }, () => {
-            if (this.currentPhase === 'playing') {
-                 this.nextTurn();
-             }
-         });
+
 
     }
 
@@ -324,6 +318,8 @@ class LudoGame {
             }
         }
 
+
+
         this.io.to(this.roomName).emit('OnNextTurn', {
             gameType: 'Ludo',
             room: this.roomName,
@@ -333,15 +329,24 @@ class LudoGame {
             timer:15
 
         });
-        console.log('OnNextTurn', this.currentTurnIndex , this.turnTimer.remaining);
+        console.log('OnNextTurn', this.currentTurnIndex);
 
         if (currentPlayer.type === 'bot') {
             this.botTurn(currentPlayer);
-         }   
-         
-         this.turnTimer.startTimer();
+            return;
+        }
 
+        this.turnTimer = new Timer(15, (remaining) => {
+           // this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
+        }, () => {
 
+            if (this.currentPhase === 'playing') {
+                this.nextTurn();
+            }
+
+        });
+
+        this.turnTimer.startTimer();
     }
 
     botTurn(botPlayer) {
@@ -528,7 +533,7 @@ class LudoGame {
     handleLeftWinners(p) {
         let players = this.turnOrder.filter(player => player.playerStatus === 'joined'&& player.type=='player');
 
-console.log('handleLeftWinners' );
+console.log('handleLeftWinners',this.turnOrder );
         if(players.length < 1){
             this.endGame('All players left');return;
         }
@@ -558,19 +563,18 @@ console.log('handleLeftWinners' );
 
         if (canContinue) {
             clearTimeout(this.botTimer);
+            this.turnTimer?.reset(15);
             this.turnTimer?.startTimer();
             this.botTimer = setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
             this.calculatePlayerScore(botPlayer);
             this.nextTurn();
         }
-        let d= {
+        this.io.to(this.roomName).emit('OnContinueTurn', {
             PlayerID: botPlayer.userId,
             canContinue: canContinue,
             turnTimer :this.turnTimer?.remaining
-        }
-        console.log('OnContinueTurn-bot : ',d)
-        this.io.to(this.roomName).emit('OnContinueTurn',d);
+        });
     }
 
 
@@ -591,8 +595,10 @@ console.log('handleLeftWinners' );
 
     endGame(reason) {
         this.currentPhase = 'finished';
+        const winner = this.getWinner();
         this.handleResult({}, {});
         console.log(`Game ended in room: ${this.roomName}`);
+
         this.resetGame();
     }
 
@@ -619,6 +625,7 @@ console.log('handleLeftWinners' );
         
         
         if (canContinue) {
+            this.turnTimer.reset(15);
             this.turnTimer.startTimer();
             
         } else {
@@ -626,7 +633,6 @@ console.log('handleLeftWinners' );
             this.nextTurn();
         }
         data['turnTimer']=this.turnTimer?.remaining;
-        console.log('OnContinueTurn=player',data);
         this.io.to(this.roomName).emit('OnContinueTurn', data);
     }
 
@@ -701,10 +707,10 @@ console.log('handleLeftWinners' );
         this.round = 0;
         this.isGameReady = false;
         if (this.turnTimer) {
-            this.turnTimer.reset();
+            this.turnTimer.pause();
         }
         if (this.roomJoinTimers) {
-            this.roomJoinTimers.reset();
+            this.roomJoinTimers.pause();
         }
 
 
