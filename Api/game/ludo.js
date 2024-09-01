@@ -531,12 +531,13 @@ class LudoGame {
         }
     }
     handleLeftWinners(player) {
-        let players = this.turnOrder.filter(player => player.playerStatus === 'joined');
+        let noplayers = this.turnOrder.filter(player => player.playerStatus === 'joined'&& player.type=='player');
+
 console.log('handleLeftWinners' );
-        if(players.length <1){
+        if(noplayers.length <1){
             this.checkGameStatus();return;
         }
-        if (players.length === 1) {
+        if (noplayers.length === 1) {
             let player = this.turnOrder.find(p => p.userId === players[0].userId);
 
             this.winnerPosition += 1;
