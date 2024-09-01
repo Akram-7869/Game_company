@@ -28,11 +28,9 @@ class LudoGame {
         this.turnTimer = new Timer(15,  {
             // this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
          }, () => {
- 
-             if (this.currentPhase === 'playing') {
+            if (this.currentPhase === 'playing') {
                  this.nextTurn();
              }
- 
          });
 
     }
@@ -336,7 +334,7 @@ class LudoGame {
             timer:15
 
         });
-        console.log('OnNextTurn', this.currentTurnIndex);
+        console.log('OnNextTurn', this.currentTurnIndex , this.turnTimer.remaining);
 
         if (currentPlayer.type === 'bot') {
             this.botTurn(currentPlayer);
@@ -565,11 +563,13 @@ console.log('handleLeftWinners' );
             this.calculatePlayerScore(botPlayer);
             this.nextTurn();
         }
-        this.io.to(this.roomName).emit('OnContinueTurn', {
+        let d= {
             PlayerID: botPlayer.userId,
             canContinue: canContinue,
             turnTimer :this.turnTimer?.remaining
-        });
+        }
+        console.log('OnContinueTurn-bot : ',d)
+        this.io.to(this.roomName).emit('OnContinueTurn',d);
     }
 
 
@@ -625,6 +625,7 @@ console.log('handleLeftWinners' );
             this.nextTurn();
         }
         data['turnTimer']=this.turnTimer?.remaining;
+        console.log('OnContinueTurn=player',data);
         this.io.to(this.roomName).emit('OnContinueTurn', data);
     }
 
