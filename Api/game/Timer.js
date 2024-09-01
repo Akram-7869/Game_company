@@ -3,18 +3,22 @@ class Timer {
         this.onTick = typeof onTick === 'function' ? onTick : null; // Optional onTick callback
         this.callback = callback; // Optional final callback
         this.remaining = delay; // Remaining time in seconds
+        this.delay=delay;
         this.timerId = null; // Reference to the timeout
     }
 
     // Start the timer countdown
     startTimer() {
+        this.reset(this.delay); // Reset the timer to the initial delay
         this.countdown();
     }
 
     // The core countdown method
     countdown() {
         if (this.remaining <= 0) {
-
+            if (this.onTick) {
+                this.onTick(this.remaining); // Execute onTick callback if provided
+            }
             this.callback(); // Execute the final callback
 
             this.reset(0); // Reset timer to zero when it reaches the end
@@ -34,7 +38,7 @@ class Timer {
     // Reset the timer to a specified delay
     reset(delay) {
         clearTimeout(this.timerId); // Clear the existing timeout
-        this.remaining = delay; // Set the new delay time
+        this.remaining = delay??this.delay; // Set the new delay time
     }
 }
 

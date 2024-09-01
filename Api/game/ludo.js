@@ -25,7 +25,15 @@ class LudoGame {
         this.winnerPosition = 0; // Start tracking winners from position 1
         this.botTimer = undefined;
 
-
+        this.turnTimer = new Timer(15,  {
+            // this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
+         }, () => {
+ 
+             if (this.currentPhase === 'playing') {
+                 this.nextTurn();
+             }
+ 
+         });
 
     }
 
@@ -318,8 +326,7 @@ class LudoGame {
             }
         }
 
-
-
+        this.turnTimer.startTimer();
         this.io.to(this.roomName).emit('OnNextTurn', {
             gameType: 'Ludo',
             room: this.roomName,
@@ -334,19 +341,8 @@ class LudoGame {
         if (currentPlayer.type === 'bot') {
             this.botTurn(currentPlayer);
             return;
-        }
+        }        
 
-        this.turnTimer = new Timer(15,  {
-           // this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
-        }, () => {
-
-            if (this.currentPhase === 'playing') {
-                this.nextTurn();
-            }
-
-        });
-
-        this.turnTimer.startTimer();
     }
 
     botTurn(botPlayer) {
@@ -563,7 +559,6 @@ console.log('handleLeftWinners' );
 
         if (canContinue) {
             clearTimeout(this.botTimer);
-            this.turnTimer?.reset(15);
             this.turnTimer?.startTimer();
             this.botTimer = setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
@@ -623,7 +618,6 @@ console.log('handleLeftWinners' );
         
         
         if (canContinue) {
-            this.turnTimer.reset(15);
             this.turnTimer.startTimer();
             
         } else {
@@ -705,10 +699,10 @@ console.log('handleLeftWinners' );
         this.round = 0;
         this.isGameReady = false;
         if (this.turnTimer) {
-            this.turnTimer.reset(15);
+            this.turnTimer.reset();
         }
         if (this.roomJoinTimers) {
-            this.roomJoinTimers.reset(15);
+            this.roomJoinTimers.reset();
         }
 
 
