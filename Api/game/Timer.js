@@ -3,25 +3,29 @@ class Timer {
         this.onTick = onTick; // Callback for each tick
         this.callback = callback;
         this.remaining = delay;
-        this.timerId = null;
-        this.start = null;
-        this.paused = false;
+        this.delay = delay;
+
+        this.timerId = undefined;
+         this.paused = false;
     }
 
     startTimer() {
-        this.start = 0;
+        
         this.countdown();
     }
 
     countdown() {
         if (this.remaining <= 0) {
+            if (this.onTick) this.onTick(this.remaining);
+
             this.callback();
-            this.reset(0);
+            this.reset();
             return;
         }
         this.timerId = setTimeout(() => {
             if (!this.paused) {
-                this.onTick(this.remaining);
+               
+    if (this.onTick) this.onTick(this.remaining);
 
                 this.remaining -= 1;
                 this.countdown();
@@ -33,22 +37,20 @@ class Timer {
         if (!this.paused) {
             this.paused = true;
             clearTimeout(this.timerId);
-            //   this.remaining -= Date.now() - this.start;
-            console.log('Timer paused.');
+             console.log('Timer paused.');
         }
     }
 
     reset(delay) {
         clearTimeout(this.timerId);
-        this.remaining = delay;
+        this.remaining =  delay || this.delay;
         this.paused = false;
     }
 
     resume() {
         if (this.paused) {
             this.paused = false;
-            // this.start = 0;
-            console.log('Timer resumed.');
+             console.log('Timer resumed.');
             this.countdown();
         }
     }

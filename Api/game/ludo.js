@@ -336,9 +336,7 @@ class LudoGame {
             return;
         }
 
-        this.turnTimer = new Timer(15, (remaining) => {
-           // this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
-        }, () => {
+        this.turnTimer = new Timer(15, undefined , () => {
 
             if (this.currentPhase === 'playing') {
                 this.nextTurn();
