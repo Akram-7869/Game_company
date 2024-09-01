@@ -1,41 +1,56 @@
 class Timer {
     constructor(delay, onTick, callback) {
-        this.onTick = typeof onTick === 'function' ? onTick : null; // Optional onTick callback
-        this.callback =  callback === 'function' ? callback : null; // Optional final callback
-        this.remaining = delay; // Remaining time in seconds
-        this.timerId = null; // Reference to the timeout
+        this.onTick = onTick; // Callback for each tick
+        this.callback = callback;
+        this.remaining = delay;
+        this.timerId = null;
+        this.start = null;
+        this.paused = false;
     }
 
-    // Start the timer countdown
     startTimer() {
+        this.start = 0;
         this.countdown();
     }
 
-    // The core countdown method
     countdown() {
         if (this.remaining <= 0) {
-            if (this.callback) {
-                this.callback(); // Execute the final callback
-            }
-            this.reset(0); // Reset timer to zero when it reaches the end
+            this.callback();
+            this.reset(0);
             return;
         }
-
-        // Set a timeout to count down each second
         this.timerId = setTimeout(() => {
-            if (this.onTick) {
-                this.onTick(this.remaining); // Execute onTick callback if provided
+            if (!this.paused) {
+                this.onTick(this.remaining);
+
+                this.remaining -= 1;
+                this.countdown();
             }
-            this.remaining -= 1; // Decrease the remaining time
-            this.countdown(); // Continue the countdown
         }, 1000);
     }
 
-    // Reset the timer to a specified delay
+    pause() {
+        if (!this.paused) {
+            this.paused = true;
+            clearTimeout(this.timerId);
+            //   this.remaining -= Date.now() - this.start;
+            console.log('Timer paused.');
+        }
+    }
+
     reset(delay) {
-        clearTimeout(this.timerId); // Clear the existing timeout
-        this.remaining = delay; // Set the new delay time
+        clearTimeout(this.timerId);
+        this.remaining = delay;
+        this.paused = false;
+    }
+
+    resume() {
+        if (this.paused) {
+            this.paused = false;
+            // this.start = 0;
+            console.log('Timer resumed.');
+            this.countdown();
+        }
     }
 }
-
 module.exports = Timer;
