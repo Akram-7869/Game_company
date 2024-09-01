@@ -103,7 +103,6 @@ class LudoGame {
 
         this.currentPhase = 'createdroom';
         this.roomJoinTimers = new Timer(10, (remaining) => {
-            console.log('remaining',remaining);
             this.io.to(this.roomName).emit('join_tick', { remaining });
             if (remaining === 5) {
                 this.checkAndAddBots();
