@@ -9,7 +9,7 @@ class LudoGame {
         this.turnOrder = [];
         this.currentTurnIndex = -1;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
-        this.turnTimer = undefined;
+        //this.turnTimer = undefined;
         this.roomJoinTimers = undefined;
 
         this.round = 0;
@@ -24,6 +24,15 @@ class LudoGame {
         this.playerStartPositions = [0, 13, 26, 39];
         this.winnerPosition = 0; // Start tracking winners from position 1
         this.botTimer = undefined;
+        this.turnTimer = new Timer(15, (remaining) => {
+            // this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
+         }, () => {
+ 
+             if (this.currentPhase === 'playing') {
+                 this.nextTurn();
+             }
+ 
+         });
 
 
 
@@ -336,15 +345,7 @@ class LudoGame {
             return;
         }
 
-        this.turnTimer = new Timer(15, (remaining) => {
-           // this.io.to(this.roomName).emit('turn_tick', { remaining, currentTurnIndex: this.currentTurnIndex, currentPalyerId: this.turnOrder[this.currentTurnIndex].userId });
-        }, () => {
-
-            if (this.currentPhase === 'playing') {
-                this.nextTurn();
-            }
-
-        });
+      
 
         this.turnTimer.startTimer();
     }
