@@ -1,9 +1,8 @@
 class Timer {
     constructor(delay, onTick, callback) {
         this.onTick = typeof onTick === 'function' ? onTick : null; // Optional onTick callback
-        this.callback = callback; // Optional final callback
+        this.callback =  callback === 'function' ? callback : null; // Optional final callback
         this.remaining = delay; // Remaining time in seconds
-        this.delay=delay;
         this.timerId = null; // Reference to the timeout
     }
 
@@ -15,11 +14,9 @@ class Timer {
     // The core countdown method
     countdown() {
         if (this.remaining <= 0) {
-            if (this.onTick) {
-                this.onTick(this.remaining); // Execute onTick callback if provided
+            if (this.callback) {
+                this.callback(); // Execute the final callback
             }
-            this.callback(); // Execute the final callback
-
             this.reset(0); // Reset timer to zero when it reaches the end
             return;
         }
