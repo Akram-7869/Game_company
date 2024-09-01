@@ -186,6 +186,7 @@ class LudoGame {
 
                 return 0; // Default case, if none of the above apply
             });
+        clearTimeout(this.botTimer);
         this.botTimer = setTimeout(() => {
             this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
             clearTimeout(this.botTimer);
@@ -350,6 +351,8 @@ class LudoGame {
 
     botTurn(botPlayer) {
         // Clear any existing timer to avoid multiple timers running at the same time
+        clearTimeout(this.botTimer);
+
         this.botTimer = setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
     }
 
@@ -362,6 +365,7 @@ class LudoGame {
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         });
+        clearTimeout(this.botTimer);
         this.botTimer = setTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);
     }
 
@@ -617,8 +621,8 @@ console.log('handleLeftWinners' );
         
         
         if (canContinue) {
-            this.turnTimer?.reset(15);
-            this.turnTimer?.startTimer();
+            this.turnTimer.reset(15);
+            this.turnTimer.startTimer();
             
         } else {
 
@@ -704,8 +708,6 @@ console.log('handleLeftWinners' );
         if (this.roomJoinTimers) {
             this.roomJoinTimers.pause();
         }
-        clearTimeout(this.botTimer);
-
 
 
 
