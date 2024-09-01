@@ -683,7 +683,7 @@ console.log('handleLeftWinners' );
                 return this.endGame('Game completed');
             }
         }
-        if (players === 1) {
+        if (players <= 1 ) {
             this.endGame('All players left');
         }
 
