@@ -121,6 +121,91 @@ class LudoGame {
         console.log(`Game setup in room: ${this.roomName}`);
 
     }
+    sendCurrentStatus(socket) {
+        let d = {
+            gameType: 'Ludo',
+            room: this.roomName,
+            currentPhase: this.currentPhase,
+            players: this.turnOrder,
+            currentTurnIndex: this.currentTurnIndex,
+            turnTimer: this.turnTimer?.remaining,
+            currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
+        };
+        console.log('OnCurrentStatus', JSON.stringify(d));
+        socket.emit('OnCurrentStatus', d);
+    }
+    startGame() {
+        publicRoom[this.tournament._id]['played'] = true;
+        this.currentPhase = 'playing';
+        this.round += 1;
+
+        clearInterval(this.botTimer);
+        this.botTimer = setTimeout(() => {
+            this.nextTurn();
+        }, 4000);
+        console.log(`Game Start room: ${this.roomName}`);
+
+    }
+
+    nextTurn(socket) {
+        if (this.turnTimer) {
+            this.turnTimer?.reset(15);
+        }
+        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+        let currentPlayer = this.turnOrder[this.currentTurnIndex];
+
+        const totalPlayers = this.turnOrder.length;
+
+        if (currentPlayer.playerStatus !== 'joined') {
+            for (let i = 1; i < totalPlayers; i++) {
+                this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
+                currentPlayer = this.turnOrder[this.currentTurnIndex];
+                if (currentPlayer.playerStatus === 'joined') {
+                    break;
+                }
+            }
+            if (currentPlayer.playerStatus !== 'joined') {
+                this.checkGameStatus();
+                return;
+            }
+        }
+
+
+
+        this.io.to(this.roomName).emit('OnNextTurn', {
+            gameType: 'Ludo',
+            room: this.roomName,
+            currentPhase: this.currentPhase,
+            currentTurnIndex: this.currentTurnIndex,
+            currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
+            timer:15
+
+        });
+        console.log('OnNextTurn', this.currentTurnIndex);
+
+        if (currentPlayer.type === 'bot') {
+            this.botTurn(currentPlayer);
+            return;
+        }
+
+        this.turnTimer = new Timer(15, undefined , () => {
+
+            if (this.currentPhase === 'playing') {
+                this.nextTurn();
+            }
+
+        });
+
+        this.turnTimer.startTimer();
+    }
+
+    botTurn(botPlayer) {
+        // Clear any existing timer to avoid multiple timers running at the same time
+        clearTimeout(this.botTimer);
+
+        this.botTimer = setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
+    }
+
     emitJoinPlayer() {
         this.io.to(this.roomName).emit('join_players', { players: this.turnOrder });
     }
@@ -268,90 +353,6 @@ class LudoGame {
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
 
         });
-    }
-    sendCurrentStatus(socket) {
-        let d = {
-            gameType: 'Ludo',
-            room: this.roomName,
-            currentPhase: this.currentPhase,
-            players: this.turnOrder,
-            currentTurnIndex: this.currentTurnIndex,
-            turnTimer: this.turnTimer?.remaining,
-            currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
-        };
-        console.log('OnCurrentStatus', JSON.stringify(d));
-        socket.emit('OnCurrentStatus', d);
-    }
-    startGame() {
-        publicRoom[this.tournament._id]['played'] = true;
-        this.currentPhase = 'playing';
-        this.round += 1;
-
-        clearInterval(this.botTimer);
-        this.botTimer = setTimeout(() => {
-            this.nextTurn();
-        }, 3000);
-        console.log(`Game Start room: ${this.roomName}`);
-
-    }
-
-    nextTurn(socket) {
-        if (this.turnTimer) {
-            this.turnTimer?.reset(15);
-        }
-        this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-        let currentPlayer = this.turnOrder[this.currentTurnIndex];
-
-        const totalPlayers = this.turnOrder.length;
-
-        if (currentPlayer.playerStatus !== 'joined') {
-            for (let i = 1; i < totalPlayers; i++) {
-                this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-                currentPlayer = this.turnOrder[this.currentTurnIndex];
-                if (currentPlayer.playerStatus === 'joined') {
-                    break;
-                }
-            }
-            if (currentPlayer.playerStatus !== 'joined') {
-                this.checkGameStatus();
-                return;
-            }
-        }
-
-
-
-        this.io.to(this.roomName).emit('OnNextTurn', {
-            gameType: 'Ludo',
-            room: this.roomName,
-            currentPhase: this.currentPhase,
-            currentTurnIndex: this.currentTurnIndex,
-            currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
-            timer:15
-
-        });
-        console.log('OnNextTurn', this.currentTurnIndex);
-
-        if (currentPlayer.type === 'bot') {
-            this.botTurn(currentPlayer);
-            return;
-        }
-
-        this.turnTimer = new Timer(15, undefined , () => {
-
-            if (this.currentPhase === 'playing') {
-                this.nextTurn();
-            }
-
-        });
-
-        this.turnTimer.startTimer();
-    }
-
-    botTurn(botPlayer) {
-        // Clear any existing timer to avoid multiple timers running at the same time
-        clearTimeout(this.botTimer);
-
-        this.botTimer = setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
     }
 
 
