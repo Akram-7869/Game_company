@@ -238,7 +238,7 @@ class LudoGame {
         this.io.to(this.roomName).emit('OnMovePasa', data);
 
         if (newPosition >= 56) {
-            this.botTimer = setTimeout(() =>  this.handleWinners(player), 5000);
+            this.handleWinners(player);
         }
 
     }
@@ -557,7 +557,7 @@ class LudoGame {
         
         const killed = this.checkForKills(botPlayer, globalPosition);
         if (killed.length > 0) {
-           await sleep(diceValue * 100);
+           await sleep(diceValue * 250);
 
             this.botKill(botPlayer, killed, pasaIndex);            
             this.botEndTurn(botPlayer, true);
@@ -588,7 +588,7 @@ class LudoGame {
 
         if (isWinner) {
             console.log(player, this.turnOrder)
-          await  sleep(5000);
+          await  sleep(3500);
             this.winnerPosition += 1;
             let win_key = `winner_${this.winnerPosition}`
             let winingAmount = this.tournament.winnerRow[win_key];
