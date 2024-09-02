@@ -523,7 +523,12 @@ class LudoGame {
 
 
     isSafePosition(position) {
-        return this.safeSpots.includes(position);
+        for (let i = 0; i < this.safeSpots.length; i++) {
+            if (this.safeSpots[i] === position) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -558,8 +563,7 @@ class LudoGame {
         }
 
         if (newPosition == 56) {
-            this.handleWinners(botPlayer);
-
+            this.botTimer = setTimeout(() =>  this.handleWinners(botPlayer), 5);
         }
     }
     isEveryPawnAtPosition56(player) {
@@ -804,7 +808,17 @@ console.log('handleLeftWinners',this.turnOrder );
     }
 
     setBotDifficulty(difficulty) {
-        if (['easy', 'medium', 'hard'].includes(difficulty)) {
+        const validDifficulties = ['easy', 'medium', 'hard'];
+        let isValid = false;
+        
+        for (let i = 0; i < validDifficulties.length; i++) {
+            if (validDifficulties[i] === difficulty) {
+                isValid = true;
+                break;
+            }
+        }
+        
+        if (isValid) {
             this.botDifficulty = difficulty;
             console.log(`Bot difficulty set to ${difficulty} for room ${this.roomName}`);
         } else {
