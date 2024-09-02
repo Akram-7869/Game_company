@@ -69,8 +69,6 @@ let onConnection = (socket) => {
     let data = {
       roomName, users: getRoomLobbyUsers(roomName, lobbyId),
       userId: userId,
-      gameData: state[roomName]['gameData'],
-      WinList: state[roomName]['WinList'],
     }
     if (state[roomName]) {
       publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
