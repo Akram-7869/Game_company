@@ -563,7 +563,7 @@ class LudoGame {
         }
 
         if (newPosition == 56) {
-            this.botTimer = setTimeout(() =>  this.handleWinners(botPlayer), 5);
+            this.botTimer = setTimeout(() =>  this.handleWinners(botPlayer), 5000);
         }
     }
     isEveryPawnAtPosition56(player) {
