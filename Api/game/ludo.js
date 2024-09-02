@@ -1,5 +1,5 @@
 const Timer = require("./Timer");
-const { state, publicRoom, getBotName  } = require('../utils/JoinRoom');
+const { state, publicRoom, getBotName, sleep  } = require('../utils/JoinRoom');
 const { generateName } = require('../utils/utils');
 
 class LudoGame {
@@ -534,7 +534,7 @@ class LudoGame {
 
 
 
-    executeBotMove(botPlayer, move, diceValue) {
+   async executeBotMove(botPlayer, move, diceValue) {
         const { newPosition, pasaIndex, globalPosition } = move;
         const currentPosition = botPlayer.pasa[pasaIndex];
         botPlayer.pasa[pasaIndex] = newPosition;
@@ -554,19 +554,26 @@ class LudoGame {
         };
 
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
+        
         const killed = this.checkForKills(botPlayer, globalPosition);
         if (killed.length > 0) {
-            this.botKill(botPlayer, killed, pasaIndex);
+           await sleep(diceValue * 100);
+
+            this.botKill(botPlayer, killed, pasaIndex);            
             this.botEndTurn(botPlayer, true);
 
         } else {
+
             this.botEndTurn(botPlayer, diceValue === 6);
         }
 
         if (newPosition == 56) {
-            this.botTimer = setTimeout(() =>  this.handleWinners(botPlayer), 5000);
+            
+            this.handleWinners(botPlayer)
+           
         }
     }
+
     isEveryPawnAtPosition56(player) {
         for (let i = 0; i < player.pasa.length; i++) {
             if (player.pasa[i] !== 56) {
@@ -575,13 +582,13 @@ class LudoGame {
         }
         return true;
     }
-    handleWinners(player) {
+   async handleWinners(player) {
         let isWinner = this.isEveryPawnAtPosition56(player);
         console.log('handleWinners');
 
         if (isWinner) {
             console.log(player, this.turnOrder)
-
+          await  sleep(5000);
             this.winnerPosition += 1;
             let win_key = `winner_${this.winnerPosition}`
             let winingAmount = this.tournament.winnerRow[win_key];
