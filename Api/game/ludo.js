@@ -32,8 +32,8 @@ class LudoGame {
 
     syncPlayer(socket, player) {
 
-        let playerExit = this.turnOrder.findIndex(player1 => player1.userId === player.userId) !== -1;
-        if (this.turnOrder.length < this.maxPlayers && !playerExit) {
+        let playerExit = this.findPlayerByUserId(player.userId);
+        if (this.turnOrder.length < this.maxPlayers && !playerExit ) {
             let startPosition = this.playerStartPositions[this.turnOrder.length];
             player['startPosition'] = startPosition;
             player['pasa'] = [-1, -1, -1, -1];
@@ -92,11 +92,11 @@ class LudoGame {
         }
     }
     initializePlayerScores() {
-        this.turnOrder.forEach(player => {
+        for (let i = 0; i < this.turnOrder.length; i++) {
+            const player = this.turnOrder[i];
             player.score = 0;
             player['winnerPosition'] = this.maxPlayers;
-
-        });
+        }
     }
 
     setupGame() {
@@ -213,16 +213,21 @@ class LudoGame {
         this.io.to(this.roomName).emit('join_players', { players: this.turnOrder });
     }
 
-    getJoinedPlayers() {
-        return this.turnOrder.filter(player => player.playerStatus === 'joined').length;
+    countJoinedPlayers() {
+        let joinedCount = 0;
+        for (let i = 0; i < this.turnOrder.length; i++) {
+            if (this.turnOrder[i].playerStatus === 'joined') {
+                joinedCount++;
+            }
+        }
+        return joinedCount;
     }
 
 
     handlePlayerMove(socket, data) {
         let { PlayerID, pasaIndex, steps, currentPosition, newPosition, globalPosition, isGlobal } = data;
-        let player = this.turnOrder.find(p => p.userId === PlayerID);
-        //  console.log('OnMovePasa', data);
-
+        let player = this.findPlayerByUserId(PlayerID);
+ 
 
 
         player.pasa[pasaIndex] = newPosition;
@@ -420,15 +425,17 @@ class LudoGame {
     checkForKills(killerPlayer, globalPosition) {
         const killed = [];
         if (this.isSafePosition(globalPosition)) return [];
-        this.turnOrder.forEach(player => {
+        for (let i = 0; i < this.turnOrder.length; i++) {
+            const player = this.turnOrder[i];
             if (player.userId !== killerPlayer.userId) {
-                let i = player.global.indexOf(globalPosition);
-                if (i !== -1) {
-                    killed.push({ player, pasaIndex: i });
+                for (let j = 0; j < player.global.length; j++) {
+                    if (player.global[j] === globalPosition) {
+                        killed.push({ player, pasaIndex: j });
+                        break; // Stop searching this player's positions once a match is found
+                    }
                 }
             }
-        });
-        console.log('killerPlayer', globalPosition, killed);
+        }
         return killed;
     }
 
@@ -441,34 +448,77 @@ class LudoGame {
     getRandomMove(possibleMoves) {
         return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
     }
+    filterPossibleKillMoves(botPlayer, possibleMoves) {
+        const filteredMoves = [];
+        for (let i = 0; i < possibleMoves.length; i++) {
+            const move = possibleMoves[i];
+            if (this.checkForKills(botPlayer, move.globalPosition)) {
+                filteredMoves.push(move);
+            }
+        }
+        return filteredMoves;
+    }
+       // Method to filter moves with newPosition equal to 56
+       filterWinningMoves(possibleMoves) {
+        const filteredMoves = [];
+        for (let i = 0; i < possibleMoves.length; i++) {
+            const move = possibleMoves[i];
+            if (move.newPosition === 56) {
+                filteredMoves.push(move);
+            }
+        }
+        return filteredMoves;
+    }
+
+    // Method to filter moves with newPosition considered safe
+    filterSafeMoves(possibleMoves) {
+        const safeMoves = [];
+        for (let i = 0; i < possibleMoves.length; i++) {
+            const move = possibleMoves[i];
+            if (this.isSafePosition(move.newPosition)) {
+                safeMoves.push(move);
+            }
+        }
+        return safeMoves;
+    }
+     // Method to find the move with the highest newPosition
+     findBestMove(possibleMoves) {
+        if (possibleMoves.length === 0) return null; // Handle empty array case
+
+        let bestMove = possibleMoves[0]; // Assume the first move is the best initially
+
+        for (let i = 1; i < possibleMoves.length; i++) {
+            const current = possibleMoves[i];
+            if (current.newPosition > bestMove.newPosition) {
+                bestMove = current;
+            }
+        }
+        return bestMove;
+    }
 
     getMediumMove(botPlayer, possibleMoves) {
-        const killMoves = possibleMoves.filter(move => this.checkForKills(botPlayer, move.globalPosition));
+        const killMoves = this.filterPossibleKillMoves(botPlayer,possibleMoves );
         if (killMoves.length > 0) {
             return this.getRandomMove(killMoves);
         }
-        return possibleMoves.reduce((best, current) =>
-            current.newPosition > best.newPosition ? current : best
-        );
+        return this.findBestMove(possibleMoves);
     }
 
     getHardMove(botPlayer, possibleMoves) {
-        const winningMoves = possibleMoves.filter(move => move.newPosition === 56);
+        const winningMoves = this.filterWinningMoves(possibleMoves);
         if (winningMoves.length > 0) return winningMoves[0];
 
-        const killMoves = possibleMoves.filter(move => this.checkForKills(botPlayer, move.globalPosition));
+        const killMoves = this.filterPossibleKillMoves(botPlayer,possibleMoves );
         if (killMoves.length > 0) return this.getRandomMove(killMoves);
 
-        const safeMoves = possibleMoves.filter(move => this.isSafePosition(move.newPosition));
+        const safeMoves =this.filterSafeMoves(possibleMoves);
         if (safeMoves.length > 0) {
             return safeMoves.reduce((best, current) =>
                 current.newPosition > best.newPosition ? current : best
             );
         }
 
-        return possibleMoves.reduce((best, current) =>
-            current.newPosition > best.newPosition ? current : best
-        );
+        return this.findBestMove(possibleMoves);
     }
 
 
@@ -483,7 +533,7 @@ class LudoGame {
         const currentPosition = botPlayer.pasa[pasaIndex];
         botPlayer.pasa[pasaIndex] = newPosition;
         botPlayer.global[pasaIndex] = globalPosition;
-        botPlayer.score = this.calculatePlayerScore(botPlayer);
+        //botPlayer.score = this.calculatePlayerScore(botPlayer);
 
         const moveData = {
             PlayerID: botPlayer.userId,
@@ -512,8 +562,16 @@ class LudoGame {
 
         }
     }
+    isEveryPawnAtPosition56(player) {
+        for (let i = 0; i < player.pasa.length; i++) {
+            if (player.pasa[i] !== 56) {
+                return false;
+            }
+        }
+        return true;
+    }
     handleWinners(player) {
-        let isWinner = player.pasa.every((pawn) => pawn === 56);
+        let isWinner = this.isEveryPawnAtPosition56(player);
         console.log('handleWinners');
 
         if (isWinner) {
@@ -535,15 +593,41 @@ class LudoGame {
             this.checkGameStatus();
         }
     }
+     findPlayerByUserId(userId) {
+        for (let i = 0; i < this.turnOrder.length; i++) {
+            if (this.turnOrder[i].userId === userId) {
+                return this.turnOrder[i]; // Return the player when a match is found
+            }
+        }
+        return null; // Return null if no matching player is found
+    }
+    deletePlayerByUserId(userId) {
+        for (let i = 0; i < this.turnOrder.length; i++) {
+            if (this.turnOrder[i].userId === userId) {
+                return delete this.turnOrder[i]; // Return the player when a match is found
+            }
+        }
+        return null; // Return null if no matching player is found
+    }
+    filterJoinedPlayers() {
+        const filtered = [];
+        for (let i = 0; i < this.turnOrder.length; i++) {
+            const player = this.turnOrder[i];
+            if (player.playerStatus === 'joined' && player.type === 'player') {
+                filtered.push(player);
+            }
+        }
+        return filtered;
+    }
     handleLeftWinners(p) {
-        let players = this.turnOrder.filter(player => player.playerStatus === 'joined'&& player.type=='player');
+        let players = this.filterJoinedPlayers();
 
 console.log('handleLeftWinners',this.turnOrder );
         if(players.length < 1){
             this.endGame('All players left');return;
         }
         if (players.length === 1) {
-            let player = this.turnOrder.find(p => p.userId === players[0].userId);
+            let player = this.findPlayerByUserId(players[0].userId);
 
             this.winnerPosition += 1;
             let win_key = `winner_${this.winnerPosition}`
@@ -572,7 +656,7 @@ console.log('handleLeftWinners',this.turnOrder );
             this.turnTimer?.startTimer();
             this.botTimer = setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
-            this.calculatePlayerScore(botPlayer);
+            //this.calculatePlayerScore(botPlayer);
             this.nextTurn();
         }
         this.io.to(this.roomName).emit('OnContinueTurn', {
@@ -600,8 +684,7 @@ console.log('handleLeftWinners',this.turnOrder );
 
     endGame(reason) {
         this.currentPhase = 'finished';
-        const winner = this.getWinner();
-        this.handleResult({}, {});
+         this.handleResult({}, {});
         console.log(`Game ended in room: ${this.roomName}`);
 
         this.resetGame();
@@ -610,7 +693,7 @@ console.log('handleLeftWinners',this.turnOrder );
 
     playerKillEvent(socket, d) {
 
-        let targetUser = this.turnOrder.find(p => p.userId === d.killedPlayerId);
+        let targetUser = this.findPlayerByUserId( d.killedPlayerId);
 
         let pasaIndex = d.killedPasaIndex;
         console.log('OnKillEvent', d, this.turnOrder);
@@ -645,19 +728,16 @@ console.log('handleLeftWinners',this.turnOrder );
         let { PlayerID } = data;
 
 
-        let playerIndex = this.turnOrder.findIndex(player1 => player1.userId === PlayerID);
-        let player ;
-        if (playerIndex !== -1) {
-             player = this.turnOrder[playerIndex];
-            // dont chage status after game ended 
-
+        let player =this.findPlayerByUserId(PlayerID);;
+        if (player) {
+ 
             if (this.currentPhase !== 'finished') {
                 player.playerStatus = 'Left';
                 player.winnerPosition = this.maxPlayers + 1;
             }
             // dont delete after game started 
             if (!this.isGameReady) {
-                delete this.turnOrder[playerIndex];
+                this.deletePlayerByUserId(PlayerID);
             }
 
 
@@ -681,7 +761,7 @@ console.log('handleLeftWinners',this.turnOrder );
     }
 
     checkGameStatus() {
-        let players = this.getJoinedPlayers();
+        let players = this.countJoinedPlayers();
         console.log('checkGameStatus', this.maxPlayers, players);
         if (this.maxPlayers == 2) {
             if (this.winnerPosition == 1) {
@@ -700,9 +780,7 @@ console.log('handleLeftWinners',this.turnOrder );
     }
 
 
-    getWinner() {
-        return this.turnOrder.find(player => player.playerStatus === 'winner' && player.pasa.every(position => position === 56));
-    }
+     
 
     resetGame() {
 
