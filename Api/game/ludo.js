@@ -234,11 +234,13 @@ class LudoGame {
         player.global[pasaIndex] = globalPosition;
         //let score = this.calculatePlayerScore(player); // Recalculate score
         //player['score'] = score;
+        
+        this.io.to(this.roomName).emit('OnMovePasa', data);
+
         if (newPosition >= 56) {
             this.handleWinners(player);
         }
 
-        this.io.to(this.roomName).emit('OnMovePasa', data);
         // this.updateScores();
     }
 
