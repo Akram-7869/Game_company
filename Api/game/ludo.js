@@ -227,8 +227,8 @@ class LudoGame {
 
         player.pasa[pasaIndex] = newPosition;
         player.global[pasaIndex] = globalPosition;
-        let score = this.calculatePlayerScore(player); // Recalculate score
-        player['score'] = score;
+        //let score = this.calculatePlayerScore(player); // Recalculate score
+        //player['score'] = score;
         if (newPosition >= 56) {
             this.handleWinners(player);
         }
@@ -239,6 +239,9 @@ class LudoGame {
 
     // New method to update and emit scores
     handleResult(socket, data) {
+        this.turnOrder.forEach(player =>{
+            this.calculatePlayerScore(player);
+        })
         const sortedPlayers = this.turnOrder
             .map(({ userId, name, avtar, type, score, playerStatus, winnerPosition }) => ({
                 userId,
