@@ -150,7 +150,7 @@ class LudoGame {
 
     }
 
-    nextTurn(socket) {console.log('nextTurn');
+    nextTurn(socket) { 
         if (this.turnTimer) {
             this.turnTimer?.reset(15);
         }
