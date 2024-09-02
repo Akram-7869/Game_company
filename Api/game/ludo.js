@@ -151,7 +151,7 @@ class LudoGame {
     }
 
     nextTurn(socket) { 
-        if (this.turnTimer) {
+        if (this.turnTimer || this.currentPhase === 'finshed') {
             this.turnTimer?.reset(15);
         }
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
