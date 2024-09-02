@@ -241,7 +241,6 @@ class LudoGame {
             this.botTimer = setTimeout(() =>  this.handleWinners(player), 5000);
         }
 
-        // this.updateScores();
     }
 
     // New method to update and emit scores
