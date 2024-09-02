@@ -240,7 +240,7 @@ class LudoGame {
     // New method to update and emit scores
     handleResult(socket, data) {
         this.turnOrder.forEach(player =>{
-            this.calculatePlayerScore(player);
+            player['score'] = this.calculatePlayerScore(player);
         })
         const sortedPlayers = this.turnOrder
             .map(({ userId, name, avtar, type, score, playerStatus, winnerPosition }) => ({
