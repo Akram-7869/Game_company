@@ -238,7 +238,7 @@ class LudoGame {
         this.io.to(this.roomName).emit('OnMovePasa', data);
 
         if (newPosition >= 56) {
-            this.handleWinners(player);
+            this.botTimer = setTimeout(() =>  this.handleWinners(player), 5000);
         }
 
         // this.updateScores();
