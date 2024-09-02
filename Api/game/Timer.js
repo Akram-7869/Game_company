@@ -17,7 +17,7 @@ class Timer {
     countdown() {
         
         if (this.remaining <= 0) {
-            // if (this.onTick) this.onTick(this.remaining);
+            if (this.onTick) this.onTick(this.remaining);
 
             this.callback();
             this.reset();
