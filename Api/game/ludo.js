@@ -203,7 +203,10 @@ class LudoGame {
 
     async botTurn(botPlayer) {
         // Clear any existing timer to avoid multiple timers running at the same time
-        //await sleep( this.botMoveDelay)
+        if( this.currentPhase === 'finshed'){
+            return;
+        }
+        await sleep( this.botMoveDelay)
 
          this.botRollDice(botPlayer);
     }
@@ -372,6 +375,9 @@ class LudoGame {
 
     async botRollDice(botPlayer) {
         // const diceValue = Math.floor(Math.random() * 6) + 1;
+        if( this.currentPhase === 'finshed'){
+            return;
+        }
         let diceValue = this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
         this.io.to(this.roomName).emit('OnRollDice', {
             dice: diceValue,
