@@ -312,7 +312,7 @@ class LudoGame {
         this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
         console.log('result declared', sortedPlayers);
         delete state[this.roomName];
-        delete publicRoom[this.tournament._id];
+        publicRoom[this.tournament._id]['played'] = true;
 
 
     }
@@ -813,7 +813,10 @@ class LudoGame {
         } else if (this.currentPhase === 'createdroom') {
             this.deletePlayerByUserId(PlayerID);
             this.emitJoinPlayer();
-
+            let playerCount = this.countJoinedPlayers();
+                if(playerCount === 0 ){
+                    publicRoom[this.tournament._id]['played'] = true;
+                }
         }
 
 
