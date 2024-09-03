@@ -1,5 +1,5 @@
 const Timer = require("./Timer");
-const { state, publicRoom, getBotName, sleep } = require('../utils/JoinRoom');
+const { state, publicRoom, getBotName, sleep, userLeave } = require('../utils/JoinRoom');
 const { generateName } = require('../utils/utils');
 
 class LudoGame {
@@ -760,9 +760,10 @@ class LudoGame {
 
     handlePlayerLeave(socket, data) {
         let { PlayerID } = data;
+        userLeave({ userId:PlayerID, room: this.roomName })
 
 
-        let player = this.findPlayerByUserId(PlayerID);;
+        let player = this.findPlayerByUserId(PlayerID);
         if (player) {
 
             if (this.currentPhase !== 'finished') {

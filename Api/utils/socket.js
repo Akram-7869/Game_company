@@ -19,8 +19,7 @@ let io;
 
 let onConnection = (socket) => {
   console.log('contedt', socket.id);
-  socket.emit('onleaveRoom', { PlayerID: 'testPlayerId' });
-
+ 
   //socket.join('notification_channel');
   socket.on('associateUserId', (d) => {
     let dataParsed = d;// JSON.parse(d);
