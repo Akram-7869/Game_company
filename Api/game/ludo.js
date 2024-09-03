@@ -247,6 +247,9 @@ class LudoGame {
 
     // New method to update and emit scores
     async handleResult(socket, data) {
+        if( this.currentPhase === 'finshed'){
+            return;
+        }
         this.turnOrder.forEach(player => {
             player['score'] = this.calculatePlayerScore(player);
         })
@@ -289,7 +292,7 @@ class LudoGame {
                 return 0; // Default case
             });
 
-
+          
         await sleep(3000)
 
         this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
@@ -781,9 +784,6 @@ class LudoGame {
         // socket.removeAllListeners('OnResult');
         socket.removeAllListeners('onLeaveRoom');
         socket.leave(this.roomName);
-        if( this.currentPhase === 'finshed'){
-            return;
-        }
         this.handleLeftWinners(player);
     }
 
