@@ -644,7 +644,8 @@ class LudoGame {
     deletePlayerByUserId(userId) {
         for (let i = 0; i < this.turnOrder.length; i++) {
             if (this.turnOrder[i].userId === userId) {
-                return delete this.turnOrder[i]; // Return the player when a match is found
+                this.turnOrder.splice(i, 1);// Return the player when a match is found
+                return ;
             }
         }
         return null; // Return null if no matching player is found
