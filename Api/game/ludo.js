@@ -238,6 +238,15 @@ class LudoGame {
         }
         return joinedCount;
     }
+    countPlayers() {
+        let joinedCount = 0;
+        for (let i = 0; i < this.turnOrder.length; i++) {
+            if (this.turnOrder[i].playerStatus === 'joined' && this.turnOrder[i].playerStatus === 'player') {
+                joinedCount++;
+            }
+        }
+        return joinedCount;
+    }
 
 
     handlePlayerMove(socket, data) {
@@ -813,13 +822,10 @@ class LudoGame {
         } else if (this.currentPhase === 'createdroom') {
             this.deletePlayerByUserId(PlayerID);
             this.emitJoinPlayer();
-            let playerCount = this.countJoinedPlayers();
-            console.log('remaing--', playerCount)
-                if(playerCount === 0 ){
-                   
+            let playerCount = this.countPlayers();
+                 if(playerCount <= 1 ){                   
                     delete state[this.roomName];
                     publicRoom[this.tournament._id]['played'] = true;
-                    console.log('publicRoom--', publicRoom)
                 }
         }
 
