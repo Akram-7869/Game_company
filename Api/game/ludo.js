@@ -24,6 +24,10 @@ class LudoGame {
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
         this.winnerPosition = 0; // Start tracking winners from position 1
+        this.botTimer = undefined;
+
+
+
     }
 
     syncPlayer(socket, player) {
@@ -92,7 +96,6 @@ class LudoGame {
             const player = this.turnOrder[i];
             player.score = 0;
             player['winnerPosition'] = this.maxPlayers;
-            player['winingAmount'] = 0;
         }
     }
 
@@ -119,10 +122,7 @@ class LudoGame {
         console.log(`Game setup in room: ${this.roomName}`);
 
     }
-    async sendCurrentStatus(socket) {
-        if(this.currentTurnIndex == -1){
-            await sleep(2000);
-        }
+    sendCurrentStatus(socket) {
         let d = {
             gameType: 'Ludo',
             room: this.roomName,
@@ -242,7 +242,7 @@ class LudoGame {
     }
 
     // New method to update and emit scores
-    async handleResult(socket, data) {
+    handleResult(socket, data) {
         this.turnOrder.forEach(player => {
             player['score'] = this.calculatePlayerScore(player);
         })
@@ -284,11 +284,13 @@ class LudoGame {
             
                 return 0; // Default case
             });
-            await sleep(3000)         
+        clearTimeout(this.botTimer);
+        this.botTimer = setTimeout(() => {
             this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
-             console.log('result declared', sortedPlayers);
+            clearTimeout(this.botTimer);
+            console.log('result declared', sortedPlayers);
             delete state[this.roomName]
-        
+        }, 3000);
 
     }
 
@@ -664,9 +666,10 @@ class LudoGame {
 
 
         if (canContinue) {
-             this.turnTimer?.reset(15);
+            clearTimeout(this.botTimer);
+            this.turnTimer?.reset(15);
             this.turnTimer?.startTimer();
-             this.botTurn(botPlayer);
+            this.botTimer = setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
             //this.calculatePlayerScore(botPlayer);
             this.nextTurn();
