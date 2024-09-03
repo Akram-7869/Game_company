@@ -822,7 +822,7 @@ class LudoGame {
 
 
     }
-
+    
     checkGameStatus() {
         let players = this.countJoinedPlayers();
         console.log('checkGameStatus', this.maxPlayers, players);
