@@ -97,9 +97,11 @@ class LudoGame {
         }
     }
     initializePlayerScores() {
+        console.log('initializePlayerScores',this.turnOrder)
         if (this.turnOrder.length >= 1) {
             for (let i = 0; i < this.turnOrder.length; i++) {
                 let player = this.turnOrder[i];
+                
                 player['score'] = 0;
                 player['winnerPosition'] = this.maxPlayers;
                 player['winingAmount'] = 0;
