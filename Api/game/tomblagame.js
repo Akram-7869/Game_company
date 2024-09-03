@@ -96,7 +96,7 @@ class TambolaGame {
         clearInterval(this.intervalId);
         this.io.to(this.room).emit('gameEnded', { message: 'All numbers have been drawn' });
       } else {
-        console.log(`newnumber`)
+        console.log(`newnumber--->`, number)
         this.io.to(this.room).emit('newNumber', { gameType: 'tambola', room: this.room, number , intervel:delay, playerCount:this.players.size});
       }
     }, delayMicrosec); // Draw a number every second
