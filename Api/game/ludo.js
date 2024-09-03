@@ -246,14 +246,13 @@ class LudoGame {
         this.turnOrder.forEach(player => {
             player['score'] = this.calculatePlayerScore(player);
         })
-        const sortedPlayers = this.turnOrder
-            .map(({ userId, name, avtar, type, score, playerStatus, winnerPosition }) => ({
+        const sortedPlayers = this.turnOrder.map(({ userId, name, avtar, type, score, playerStatus, winnerPosition, winingAmount }) => ({
                 userId,
                 name,
                 avtar,
                 type,
                 score,
-                playerStatus, winnerPosition
+                playerStatus, winnerPosition,winingAmount
             }))
             .sort((a, b) => {
                 // 1. Sort by `winnerPosition` in ascending order if both have a winner position
