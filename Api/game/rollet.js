@@ -164,10 +164,11 @@ class RolletGame {
 
         // });
         this.onBetPlaced(socket);
-        this.onleaveRoom(socket);
+         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
+
         this.OnCurrentStatus(socket);
      }
-    onleaveRoom(socket) {
+     handlePlayerLeave(socket) {
         socket.on('onleaveRoom', function (data) {
             try {
                 console.log('OnleaveRoom--dragon')
@@ -178,10 +179,10 @@ class RolletGame {
  
 
 
-                socket.removeAllListeners('OnWinNo');
-                socket.removeAllListeners('OnTimeUp');
-                socket.removeAllListeners('OnTimerStart');
-                socket.removeAllListeners('OnCurrentTimer');
+        
+        
+        
+        
                 socket.removeAllListeners('onleaveRoom');
 
 

@@ -85,7 +85,7 @@ class TambolaGame {
 
   startGameLogic() {
     console.log(`Tambola game started in room: ${this.room}`);
-    let delay = 10;
+    let delay = 5;
     let delayMicrosec = delay*1000;
 
     this.intervalId  = setInterval(() => {
@@ -182,13 +182,13 @@ console.log('onBetPlaced',d);
     
 
     this.onBetPlaced(socket);
-    this.onleaveRoom(socket);
+    socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
     this.OnCurrentStatus(socket);
     this.OnClaimReward(socket);
   }
 
 
-  onleaveRoom(socket) {
+  handlePlayerLeave(socket) {
     socket.on('onleaveRoom', function (data) {
       try {
         console.log('OnleaveRoom--tambola')
@@ -197,8 +197,8 @@ console.log('onBetPlaced',d);
         socket.removeAllListeners('OnCurrentStatus');
         socket.removeAllListeners('OnClaimReward');
 
-        socket.removeAllListeners('OnTimeUp');
-        socket.removeAllListeners('OnTimerStart');
+
+
         socket.removeAllListeners('onleaveRoom');
 
         // playerManager.RemovePlayer(socket.id);
@@ -250,7 +250,10 @@ console.log('onBetPlaced',d);
           rewardAmount:d.rewardAmount,
           claimed: this.claimed
         });
+        console.log('OnClaimReward<<<-----', this.claimed);
       } else {
+        console.log('OnClaimReward<<==== Error');
+
         this.io.to(socket.id).emit('OnClaimReward', {
           success: false,
           message: 'Invalid claim or reward already distributed.'
