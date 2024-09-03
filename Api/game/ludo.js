@@ -785,7 +785,6 @@ class LudoGame {
             }
             // dont delete after game started 
             if (!this.isGameReady) {
-                console.log('deleteing player');
                 this.deletePlayerByUserId(PlayerID);
             }
 
@@ -812,10 +811,8 @@ class LudoGame {
             this.handleLeftWinners(player);
 
         } else if (this.currentPhase === 'createdroom') {
-
             this.deletePlayerByUserId(PlayerID);
-
-
+            this.emitJoinPlayer();
 
         }
 
