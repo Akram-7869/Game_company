@@ -247,7 +247,7 @@ class LudoGame {
 
     // New method to update and emit scores
     async handleResult(socket, data) {
-        if( this.currentPhase === 'finshed'){
+        if( this.currentPhase == 'playing'){
             return;
         }
         this.turnOrder.forEach(player => {
