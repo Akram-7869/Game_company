@@ -96,6 +96,7 @@ class LudoGame {
             const player = this.turnOrder[i];
             player.score = 0;
             player['winnerPosition'] = this.maxPlayers;
+            player['winingAmount'] = 0;
         }
     }
 
