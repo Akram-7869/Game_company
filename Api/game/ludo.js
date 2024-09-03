@@ -40,6 +40,9 @@ class LudoGame {
             player['global'] = [-1, -1, -1, -1];
             player['life'] = 3;
             player['winnerPosition'] = this.maxPlayers;
+            player['score'] = 0;
+            player['winingAmount'] = 0;
+
 
             this.turnOrder.push(player);
             this.setupPlayerListeners(socket)
@@ -84,7 +87,9 @@ class LudoGame {
                 global: [-1, -1, -1, -1],
                 startPosition,
                 playerStatus: 'joined',
-                avtar: pathurl
+                avtar: pathurl,
+                score: 0,
+                winingAmount: 0
             }
 
             this.turnOrder.push(botPlayer);
@@ -92,15 +97,15 @@ class LudoGame {
         }
     }
     initializePlayerScores() {
-        if(this.turnOrder.length >= 1){
- for (let i = 0; i < this.turnOrder.length; i++) {
-            const player = this.turnOrder[i];
-            player['score'] = 0;
-            player['winnerPosition'] = this.maxPlayers;
-            player['winingAmount'] = 0;
+        if (this.turnOrder.length >= 1) {
+            for (let i = 0; i < this.turnOrder.length; i++) {
+                let player = this.turnOrder[i];
+                player['score'] = 0;
+                player['winnerPosition'] = this.maxPlayers;
+                player['winingAmount'] = 0;
+            }
         }
-        }
-       
+
     }
 
     setupGame() {
@@ -127,10 +132,10 @@ class LudoGame {
 
     }
     sendCurrentStatus(socket) {
-        if(this.isGameReady){
-             this.startGame();
+        if (this.isGameReady) {
+            this.startGame();
         }
-       
+
         let d = {
             gameType: 'Ludo',
             room: this.roomName,
@@ -254,7 +259,7 @@ class LudoGame {
 
     // New method to update and emit scores
     async handleResult(socket, data) {
-       
+
         this.turnOrder.forEach(player => {
             player['score'] = this.calculatePlayerScore(player);
         })
@@ -297,9 +302,9 @@ class LudoGame {
                 return 0; // Default case
             });
 
-            if( sortedPlayers.length ===0){
-                return;
-            }
+        if (sortedPlayers.length === 0) {
+            return;
+        }
         await sleep(3000)
 
         this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
@@ -660,7 +665,7 @@ class LudoGame {
             this.endGame('All players left'); return;
         }
         if (players.length === 1) {
-            
+
             let player = this.findPlayerByUserId(players[0].userId);
 
             this.winnerPosition += 1;
@@ -679,7 +684,7 @@ class LudoGame {
                 reason: 'left',
                 leftPlayerId: leftPlayer.userId,
             });
-            
+
             this.checkGameStatus();
         }
     }
@@ -763,11 +768,11 @@ class LudoGame {
 
     handlePlayerLeave(socket, data) {
         let { PlayerID } = data;
-        userLeave({ userId:PlayerID, room: this.roomName })
+        userLeave({ userId: PlayerID, room: this.roomName })
 
 
         let player = this.findPlayerByUserId(PlayerID);
-        console.log(' player',player);
+        console.log(' player', player);
         if (player) {
 
             if (this.currentPhase !== 'finished') {
@@ -798,20 +803,20 @@ class LudoGame {
         // socket.removeAllListeners('OnResult');
         socket.removeAllListeners('onLeaveRoom');
         socket.leave(this.roomName);
-        console.log('handlePlayerLeave',this.currentPhase,this.isGameReady, this.turnOrder)
+        console.log('handlePlayerLeave', this.currentPhase, this.isGameReady, this.turnOrder)
         //if game is reday then check winner
-        if(this.currentPhase === 'playing' ){
+        if (this.currentPhase === 'playing') {
             this.handleLeftWinners(player);
 
-        }else if(this.currentPhase === 'createdroom'){
-           
+        } else if (this.currentPhase === 'createdroom') {
+
             this.deletePlayerByUserId(PlayerID);
-            
-            
 
-         }
 
-       
+
+        }
+
+
     }
 
     checkGameStatus() {
