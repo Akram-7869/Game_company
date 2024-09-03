@@ -94,7 +94,7 @@ class LudoGame {
     initializePlayerScores() {
         for (let i = 0; i < this.turnOrder.length; i++) {
             const player = this.turnOrder[i];
-            player.score = 0;
+            player['score'] = 0;
             player['winnerPosition'] = this.maxPlayers;
             player['winingAmount'] = 0;
         }
@@ -112,7 +112,7 @@ class LudoGame {
         }, () => {
             if (this.isGameReady) {
                 this.initializePlayerScores();
-                this.startGame();
+                // this.startGame();
             } else {
                 console.log("Not enough players to start the game.");
                 this.io.to(this.roomName).emit('game_cancelled', { reason: 'Not enough players' });
@@ -124,7 +124,7 @@ class LudoGame {
 
     }
     sendCurrentStatus(socket) {
-        if(!this.isGameReady){
+        if(this.isGameReady){
              this.startGame();
         }
        
