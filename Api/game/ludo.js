@@ -119,7 +119,10 @@ class LudoGame {
         console.log(`Game setup in room: ${this.roomName}`);
 
     }
-    sendCurrentStatus(socket) {
+    async sendCurrentStatus(socket) {
+        if(this.currentTurnIndex == -1){
+            await sleep(2000);
+        }
         let d = {
             gameType: 'Ludo',
             room: this.roomName,
