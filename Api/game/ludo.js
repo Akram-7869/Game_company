@@ -1,5 +1,5 @@
 const Timer = require("./Timer");
-const { state, publicRoom, getBotName, sleep  } = require('../utils/JoinRoom');
+const { state, publicRoom, getBotName, sleep } = require('../utils/JoinRoom');
 const { generateName } = require('../utils/utils');
 
 class LudoGame {
@@ -33,7 +33,7 @@ class LudoGame {
     syncPlayer(socket, player) {
 
         let playerExit = this.findPlayerByUserId(player.userId);
-        if (this.turnOrder.length < this.maxPlayers && !playerExit ) {
+        if (this.turnOrder.length < this.maxPlayers && !playerExit) {
             let startPosition = this.playerStartPositions[this.turnOrder.length];
             player['startPosition'] = startPosition;
             player['pasa'] = [-1, -1, -1, -1];
@@ -75,7 +75,7 @@ class LudoGame {
             let pathurl = process.env.IMAGE_URL + '/img/logo/profile_default.png';
             let botPlayer = {
                 userId: `${i + 1}-bot`,
-                name ,
+                name,
                 balance: '1000',
                 lobbyId: this.tournament._id,
                 maxp: this.maxPlayers,
@@ -135,32 +135,30 @@ class LudoGame {
         console.log('OnCurrentStatus', JSON.stringify(d));
         socket.emit('OnCurrentStatus', d);
     }
-    startGame() {
-        if (this.bettingTimer) return; // Prevent multiple starts
+    async startGame() {
         publicRoom[this.tournament._id]['played'] = true;
         this.currentPhase = 'playing';
         this.round += 1;
 
-        this.bettingTimer = new Timer(3, undefined, () => {
-            //  this.startPausePhase();
-            this.nextTurn();
-
-        }).startTimer();
+        await sleep(3000)
+        this.nextTurn();
         console.log(`Game started in room: ${this.roomName}`);
 
     }
 
-    nextTurn(socket) { 
-        if (this.turnTimer || this.currentPhase === 'finshed') {
+      nextTurn(socket) {
+       
+        if (this.turnTimer ) {
             this.turnTimer?.reset(15);
+            if( this.currentPhase === 'finshed'){
+                return;
+            }
         }
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
         let currentPlayer = this.turnOrder[this.currentTurnIndex];
 
-        const totalPlayers = this.turnOrder.length;
-
         if (currentPlayer.playerStatus !== 'joined') {
-            for (let i = 1; i < totalPlayers; i++) {
+            for (let i = 1; i < this.turnOrder.length; i++) {
                 this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
                 currentPlayer = this.turnOrder[this.currentTurnIndex];
                 if (currentPlayer.playerStatus === 'joined') {
@@ -181,7 +179,7 @@ class LudoGame {
             currentPhase: this.currentPhase,
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
-            timer:15
+            timer: 15
 
         });
         console.log('OnNextTurn', this.currentTurnIndex);
@@ -202,11 +200,11 @@ class LudoGame {
         this.turnTimer.startTimer();
     }
 
-    botTurn(botPlayer) {
+    async botTurn(botPlayer) {
         // Clear any existing timer to avoid multiple timers running at the same time
-        clearTimeout(this.botTimer);
+        await sleep( this.botMoveDelay)
 
-        this.botTimer = setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
+         this.botRollDice(botPlayer);
     }
 
     emitJoinPlayer() {
@@ -227,14 +225,14 @@ class LudoGame {
     handlePlayerMove(socket, data) {
         let { PlayerID, pasaIndex, steps, currentPosition, newPosition, globalPosition, isGlobal } = data;
         let player = this.findPlayerByUserId(PlayerID);
- 
+
 
 
         player.pasa[pasaIndex] = newPosition;
         player.global[pasaIndex] = globalPosition;
         //let score = this.calculatePlayerScore(player); // Recalculate score
         //player['score'] = score;
-        
+
         this.io.to(this.roomName).emit('OnMovePasa', data);
 
         if (newPosition >= 56) {
@@ -245,7 +243,7 @@ class LudoGame {
 
     // New method to update and emit scores
     handleResult(socket, data) {
-        this.turnOrder.forEach(player =>{
+        this.turnOrder.forEach(player => {
             player['score'] = this.calculatePlayerScore(player);
         })
         const sortedPlayers = this.turnOrder
@@ -288,7 +286,7 @@ class LudoGame {
             this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
             clearTimeout(this.botTimer);
             console.log('result declared', sortedPlayers);
-           delete  state[this.roomName]
+            delete state[this.roomName]
         }, 3000);
 
     }
@@ -368,7 +366,7 @@ class LudoGame {
     }
 
 
-    botRollDice(botPlayer) {
+    async botRollDice(botPlayer) {
         // const diceValue = Math.floor(Math.random() * 6) + 1;
         let diceValue = this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
         this.io.to(this.roomName).emit('OnRollDice', {
@@ -376,8 +374,8 @@ class LudoGame {
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         });
-        clearTimeout(this.botTimer);
-        this.botTimer = setTimeout(() => this.botChooseMove(botPlayer, diceValue), this.botMoveDelay);
+        await sleep(this.botChooseMove);
+        this.botChooseMove(botPlayer, diceValue);
     }
 
     botChooseMove(botPlayer, diceValue) {
@@ -459,8 +457,8 @@ class LudoGame {
         }
         return filteredMoves;
     }
-       // Method to filter moves with newPosition equal to 56
-       filterWinningMoves(possibleMoves) {
+    // Method to filter moves with newPosition equal to 56
+    filterWinningMoves(possibleMoves) {
         const filteredMoves = [];
         for (let i = 0; i < possibleMoves.length; i++) {
             const move = possibleMoves[i];
@@ -482,8 +480,8 @@ class LudoGame {
         }
         return safeMoves;
     }
-     // Method to find the move with the highest newPosition
-     findBestMove(possibleMoves) {
+    // Method to find the move with the highest newPosition
+    findBestMove(possibleMoves) {
         if (possibleMoves.length === 0) return null; // Handle empty array case
 
         let bestMove = possibleMoves[0]; // Assume the first move is the best initially
@@ -498,7 +496,7 @@ class LudoGame {
     }
 
     getMediumMove(botPlayer, possibleMoves) {
-        const killMoves = this.filterPossibleKillMoves(botPlayer,possibleMoves );
+        const killMoves = this.filterPossibleKillMoves(botPlayer, possibleMoves);
         if (killMoves.length > 0) {
             return this.getRandomMove(killMoves);
         }
@@ -509,10 +507,10 @@ class LudoGame {
         const winningMoves = this.filterWinningMoves(possibleMoves);
         if (winningMoves.length > 0) return winningMoves[0];
 
-        const killMoves = this.filterPossibleKillMoves(botPlayer,possibleMoves );
+        const killMoves = this.filterPossibleKillMoves(botPlayer, possibleMoves);
         if (killMoves.length > 0) return this.getRandomMove(killMoves);
 
-        const safeMoves =this.filterSafeMoves(possibleMoves);
+        const safeMoves = this.filterSafeMoves(possibleMoves);
         if (safeMoves.length > 0) {
             return safeMoves.reduce((best, current) =>
                 current.newPosition > best.newPosition ? current : best
@@ -534,7 +532,7 @@ class LudoGame {
 
 
 
-   async executeBotMove(botPlayer, move, diceValue) {
+    async executeBotMove(botPlayer, move, diceValue) {
         const { newPosition, pasaIndex, globalPosition } = move;
         const currentPosition = botPlayer.pasa[pasaIndex];
         botPlayer.pasa[pasaIndex] = newPosition;
@@ -554,12 +552,12 @@ class LudoGame {
         };
 
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
-        
+
         const killed = this.checkForKills(botPlayer, globalPosition);
         if (killed.length > 0) {
-           await sleep(diceValue * 250);
+            await sleep(diceValue * 250);
 
-            this.botKill(botPlayer, killed, pasaIndex);            
+            this.botKill(botPlayer, killed, pasaIndex);
             this.botEndTurn(botPlayer, true);
 
         } else {
@@ -568,9 +566,9 @@ class LudoGame {
         }
 
         if (newPosition == 56) {
-            
+
             this.handleWinners(botPlayer)
-           
+
         }
     }
 
@@ -582,13 +580,13 @@ class LudoGame {
         }
         return true;
     }
-   async handleWinners(player) {
+    async handleWinners(player) {
         let isWinner = this.isEveryPawnAtPosition56(player);
         console.log('handleWinners');
 
         if (isWinner) {
             console.log(player, this.turnOrder)
-          await  sleep(3500);
+            await sleep(3500);
             this.winnerPosition += 1;
             let win_key = `winner_${this.winnerPosition}`
             let winingAmount = this.tournament.winnerRow[win_key];
@@ -599,13 +597,13 @@ class LudoGame {
                 winnerPosition: this.winnerPosition,
                 winner: player.userId,
                 winingAmount,
-                reason:'won',
-                leftPlayerId:'' 
+                reason: 'won',
+                leftPlayerId: ''
             });
             this.checkGameStatus();
         }
     }
-     findPlayerByUserId(userId) {
+    findPlayerByUserId(userId) {
         for (let i = 0; i < this.turnOrder.length; i++) {
             if (this.turnOrder[i].userId === userId) {
                 return this.turnOrder[i]; // Return the player when a match is found
@@ -634,9 +632,9 @@ class LudoGame {
     handleLeftWinners(p) {
         let players = this.filterJoinedPlayers();
 
-console.log('handleLeftWinners',this.turnOrder );
-        if(players.length < 1){
-            this.endGame('All players left');return;
+        console.log('handleLeftWinners', this.turnOrder);
+        if (players.length < 1) {
+            this.endGame('All players left'); return;
         }
         if (players.length === 1) {
             let player = this.findPlayerByUserId(players[0].userId);
@@ -644,7 +642,7 @@ console.log('handleLeftWinners',this.turnOrder );
             this.winnerPosition += 1;
             let win_key = `winner_${this.winnerPosition}`
             let winingAmount = this.tournament.winnerRow[win_key];
-            console.log('winingAmount',winingAmount );
+            console.log('winingAmount', winingAmount);
 
             player.winnerPosition = this.winnerPosition; // Assign the winner position and increment
             player.playerStatus = 'winner'; // Mark the winner as playing
@@ -653,14 +651,14 @@ console.log('handleLeftWinners',this.turnOrder );
                 winnerPosition: this.winnerPosition,
                 winner: player.userId,
                 winingAmount,
-                reason:'left',                
-                leftPlayerId:player.userId ,
+                reason: 'left',
+                leftPlayerId: player.userId,
             });
             this.checkGameStatus();
         }
     }
     botEndTurn(botPlayer, canContinue) {
-       
+
 
         if (canContinue) {
             clearTimeout(this.botTimer);
@@ -674,7 +672,7 @@ console.log('handleLeftWinners',this.turnOrder );
         this.io.to(this.roomName).emit('OnContinueTurn', {
             PlayerID: botPlayer.userId,
             canContinue: canContinue,
-            turnTimer :this.turnTimer?.remaining
+            turnTimer: this.turnTimer?.remaining
         });
     }
 
@@ -696,7 +694,7 @@ console.log('handleLeftWinners',this.turnOrder );
 
     endGame(reason) {
         this.currentPhase = 'finished';
-         this.handleResult({}, {});
+        this.handleResult({}, {});
         console.log(`Game ended in room: ${this.roomName}`);
 
         this.resetGame();
@@ -705,7 +703,7 @@ console.log('handleLeftWinners',this.turnOrder );
 
     playerKillEvent(socket, d) {
 
-        let targetUser = this.findPlayerByUserId( d.killedPlayerId);
+        let targetUser = this.findPlayerByUserId(d.killedPlayerId);
 
         let pasaIndex = d.killedPasaIndex;
         console.log('OnKillEvent', d, this.turnOrder);
@@ -722,17 +720,17 @@ console.log('handleLeftWinners',this.turnOrder );
 
     handlePlayerContinueTurn(socket, data) {
         let { canContinue } = data;
-        
-        
+
+
         if (canContinue) {
             this.turnTimer.reset(15);
             this.turnTimer.startTimer();
-            
+
         } else {
 
             this.nextTurn();
         }
-        data['turnTimer']=this.turnTimer?.remaining;
+        data['turnTimer'] = this.turnTimer?.remaining;
         this.io.to(this.roomName).emit('OnContinueTurn', data);
     }
 
@@ -740,9 +738,9 @@ console.log('handleLeftWinners',this.turnOrder );
         let { PlayerID } = data;
 
 
-        let player =this.findPlayerByUserId(PlayerID);;
+        let player = this.findPlayerByUserId(PlayerID);;
         if (player) {
- 
+
             if (this.currentPhase !== 'finished') {
                 player.playerStatus = 'Left';
                 player.winnerPosition = this.maxPlayers + 1;
@@ -784,7 +782,7 @@ console.log('handleLeftWinners',this.turnOrder );
                 return this.endGame('Game completed');
             }
         }
-        if (players <= 1 ) {
+        if (players <= 1) {
             this.endGame('All players left');
         }
 
@@ -792,7 +790,7 @@ console.log('handleLeftWinners',this.turnOrder );
     }
 
 
-     
+
 
     resetGame() {
 
@@ -818,14 +816,14 @@ console.log('handleLeftWinners',this.turnOrder );
     setBotDifficulty(difficulty) {
         const validDifficulties = ['easy', 'medium', 'hard'];
         let isValid = false;
-        
+
         for (let i = 0; i < validDifficulties.length; i++) {
             if (validDifficulties[i] === difficulty) {
                 isValid = true;
                 break;
             }
         }
-        
+
         if (isValid) {
             this.botDifficulty = difficulty;
             console.log(`Bot difficulty set to ${difficulty} for room ${this.roomName}`);
