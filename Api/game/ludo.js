@@ -786,7 +786,7 @@ class LudoGame {
         socket.leave(this.roomName);
         console.log('handlePlayerLeave',this.currentPhase)
         //if game is reday then check winner
-        if(this.currentPhase = 'playing'){
+        if(this.currentPhase === 'playing'){
             this.handleLeftWinners(player);
 
         }
