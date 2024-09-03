@@ -304,7 +304,9 @@ class LudoGame {
 
         this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
         console.log('result declared', sortedPlayers);
-        delete state[this.roomName]
+        delete state[this.roomName];
+        delete publicRoom[this.tournament._id];
+
 
     }
 
@@ -658,6 +660,7 @@ class LudoGame {
             this.endGame('All players left'); return;
         }
         if (players.length === 1) {
+            
             let player = this.findPlayerByUserId(players[0].userId);
 
             this.winnerPosition += 1;
@@ -797,10 +800,17 @@ class LudoGame {
         socket.leave(this.roomName);
         console.log('handlePlayerLeave',this.currentPhase, this.turnOrder)
         //if game is reday then check winner
-        if(this.currentPhase === 'playing' || this.currentPhase === 'createdroom'){
+        if(this.currentPhase === 'playing' ){
             this.handleLeftWinners(player);
 
-        }
+        }else if(this.currentPhase === 'createdroom'){
+           
+            this.deletePlayerByUserId(PlayerID);
+            
+            
+
+         }
+
        
     }
 
