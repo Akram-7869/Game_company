@@ -203,7 +203,7 @@ class LudoGame {
 
     async botTurn(botPlayer) {
         // Clear any existing timer to avoid multiple timers running at the same time
-        await sleep( this.botMoveDelay)
+        //await sleep( this.botMoveDelay)
 
          this.botRollDice(botPlayer);
     }
