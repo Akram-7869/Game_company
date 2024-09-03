@@ -814,9 +814,12 @@ class LudoGame {
             this.deletePlayerByUserId(PlayerID);
             this.emitJoinPlayer();
             let playerCount = this.countJoinedPlayers();
+            console.log('remaing--', playerCount)
                 if(playerCount === 0 ){
+                   
                     delete state[this.roomName];
                     publicRoom[this.tournament._id]['played'] = true;
+                    console.log('publicRoom--', publicRoom)
                 }
         }
 
