@@ -92,12 +92,15 @@ class LudoGame {
         }
     }
     initializePlayerScores() {
-        for (let i = 0; i < this.turnOrder.length; i++) {
+        if(this.turnOrder.length >= 1){
+ for (let i = 0; i < this.turnOrder.length; i++) {
             const player = this.turnOrder[i];
             player['score'] = 0;
             player['winnerPosition'] = this.maxPlayers;
             player['winingAmount'] = 0;
         }
+        }
+       
     }
 
     setupGame() {
