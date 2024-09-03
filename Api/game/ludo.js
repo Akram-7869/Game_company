@@ -109,9 +109,9 @@ class LudoGame {
             if (remaining === 5) {
                 this.checkAndAddBots();
             }
-            this.initializePlayerScores();
         }, () => {
             if (this.isGameReady) {
+                this.initializePlayerScores();
                 this.startGame();
             } else {
                 console.log("Not enough players to start the game.");
