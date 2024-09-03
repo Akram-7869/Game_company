@@ -378,7 +378,7 @@ class LudoGame {
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         });
-        await sleep(this.botChooseMove);
+        await sleep(this.botMoveDelay);
         this.botChooseMove(botPlayer, diceValue);
     }
 
