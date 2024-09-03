@@ -634,10 +634,10 @@ class LudoGame {
         }
         return filtered;
     }
-    handleLeftWinners(p) {
+    handleLeftWinners(leftPlayer) {
         let players = this.filterJoinedPlayers();
 
-        console.log('handleLeftWinners', this.turnOrder);
+        // console.log('handleLeftWinners', this.turnOrder);
         if (players.length < 1) {
             this.endGame('All players left'); return;
         }
@@ -658,7 +658,7 @@ class LudoGame {
                 winner: player.userId,
                 winingAmount,
                 reason: 'left',
-                leftPlayerId: p.userId,
+                leftPlayerId: leftPlayer.userId,
             });
             this.checkGameStatus();
         }
