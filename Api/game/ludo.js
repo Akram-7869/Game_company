@@ -124,6 +124,10 @@ class LudoGame {
 
     }
     sendCurrentStatus(socket) {
+        if(!this.isGameReady){
+             this.startGame();
+        }
+       
         let d = {
             gameType: 'Ludo',
             room: this.roomName,
@@ -142,7 +146,7 @@ class LudoGame {
         this.round += 1;
         console.log(`Game started in room: ${this.roomName}`);
 
-        await sleep(3000)
+        //await sleep(3000)
         this.nextTurn();
 
     }
