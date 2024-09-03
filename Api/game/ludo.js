@@ -663,14 +663,13 @@ class LudoGame {
             this.checkGameStatus();
         }
     }
-    async botEndTurn(botPlayer, canContinue) {
+    botEndTurn(botPlayer, canContinue) {
 
 
         if (canContinue) {
              this.turnTimer?.reset(15);
             this.turnTimer?.startTimer();
            
-            await sleep(this.botMoveDelay);
             this.botTurn(botPlayer)
 
         } else {
