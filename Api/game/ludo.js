@@ -140,10 +140,10 @@ class LudoGame {
         publicRoom[this.tournament._id]['played'] = true;
         this.currentPhase = 'playing';
         this.round += 1;
+        console.log(`Game started in room: ${this.roomName}`);
 
         await sleep(3000)
         this.nextTurn();
-        console.log(`Game started in room: ${this.roomName}`);
 
     }
 
@@ -157,6 +157,7 @@ class LudoGame {
         }
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
         let currentPlayer = this.turnOrder[this.currentTurnIndex];
+        console.log('OnNextTurn', this.currentTurnIndex);
 
         if (currentPlayer.playerStatus !== 'joined') {
             for (let i = 1; i < this.turnOrder.length; i++) {
@@ -183,7 +184,6 @@ class LudoGame {
             timer: 15
 
         });
-        console.log('OnNextTurn', this.currentTurnIndex);
 
         if (currentPlayer.type === 'bot') {
             this.botTurn(currentPlayer);
