@@ -25,7 +25,7 @@ class LudoGame {
         this.playerStartPositions = [0, 13, 26, 39];
         this.winnerPosition = 0; // Start tracking winners from position 1
 
-        
+
 
 
     }
@@ -147,11 +147,11 @@ class LudoGame {
 
     }
 
-      nextTurn(socket) {
-       
-        if (this.turnTimer ) {
+    nextTurn(socket) {
+
+        if (this.turnTimer) {
             this.turnTimer?.reset(15);
-            if( this.currentPhase === 'finshed'){
+            if (this.currentPhase === 'finshed') {
                 return;
             }
         }
@@ -190,7 +190,7 @@ class LudoGame {
             return;
         }
 
-        this.turnTimer = new Timer(15, undefined , () => {
+        this.turnTimer = new Timer(15, undefined, () => {
 
             if (this.currentPhase === 'playing') {
                 this.nextTurn();
@@ -203,12 +203,12 @@ class LudoGame {
 
     async botTurn(botPlayer) {
         // Clear any existing timer to avoid multiple timers running at the same time
-        if( this.currentPhase === 'finshed'){
+        if (this.currentPhase === 'finshed') {
             return;
         }
-        await sleep( this.botMoveDelay)
+        await sleep(this.botMoveDelay)
 
-         this.botRollDice(botPlayer);
+        this.botRollDice(botPlayer);
     }
 
     emitJoinPlayer() {
@@ -251,13 +251,13 @@ class LudoGame {
             player['score'] = this.calculatePlayerScore(player);
         })
         const sortedPlayers = this.turnOrder.map(({ userId, name, avtar, type, score, playerStatus, winnerPosition, winingAmount }) => ({
-                userId,
-                name,
-                avtar,
-                type,
-                score,
-                playerStatus, winnerPosition,winingAmount
-            }))
+            userId,
+            name,
+            avtar,
+            type,
+            score,
+            playerStatus, winnerPosition, winingAmount
+        }))
             .sort((a, b) => {
                 // 1. Sort by `winnerPosition` in ascending order if both have a winner position
                 if (a.winnerPosition && b.winnerPosition) {
@@ -267,35 +267,35 @@ class LudoGame {
                     }
                     return a.winnerPosition - b.winnerPosition; // Sort by `winnerPosition` in ascending order
                 }
-            
+
                 // 2. Prioritize players with a `winnerPosition` over others
                 if (a.winnerPosition) return -1;
                 if (b.winnerPosition) return 1;
-            
+
                 // 3. Sort 'joined' players by `score` in descending order
                 if (a.playerStatus === 'joined' && b.playerStatus === 'joined') {
                     return b.score - a.score;
                 }
-            
+
                 // 4. Place 'joined' players before 'left' players
                 if (a.playerStatus === 'joined') return -1;
                 if (b.playerStatus === 'joined') return 1;
-            
+
                 // 5. Sort 'left' players by `score` in descending order
                 if (a.playerStatus === 'left' && b.playerStatus === 'left') {
                     return b.score - a.score;
                 }
-            
+
                 return 0; // Default case
             });
 
- 
-                await sleep(3000)
 
-            this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
-            console.log('result declared', sortedPlayers);
-            delete state[this.roomName]
- 
+        await sleep(3000)
+
+        this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
+        console.log('result declared', sortedPlayers);
+        delete state[this.roomName]
+
     }
 
     // New method to calculate player's score
@@ -375,7 +375,7 @@ class LudoGame {
 
     async botRollDice(botPlayer) {
         // const diceValue = Math.floor(Math.random() * 6) + 1;
-        if( this.currentPhase === 'finshed'){
+        if (this.currentPhase === 'finshed') {
             return;
         }
         let diceValue = this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
@@ -602,7 +602,7 @@ class LudoGame {
             let winingAmount = this.tournament.winnerRow[win_key];
             player.winnerPosition = this.winnerPosition; // Assign the winner position and increment
             player.playerStatus = 'winner'; // Mark the winner as playing
-            player['winingAmount']=winingAmount;
+            player['winingAmount'] = winingAmount;
             this.io.to(this.roomName).emit('winner', {
                 message: 'Winner - this.winnerPosition',
                 winnerPosition: this.winnerPosition,
@@ -657,7 +657,7 @@ class LudoGame {
 
             player.winnerPosition = this.winnerPosition; // Assign the winner position and increment
             player.playerStatus = 'winner'; // Mark the winner as playing
-            player['winingAmount']=winingAmount;
+            player['winingAmount'] = winingAmount;
             this.io.to(this.roomName).emit('winner', {
                 message: 'Winner - this.winnerPosition',
                 winnerPosition: this.winnerPosition,
@@ -673,9 +673,9 @@ class LudoGame {
 
 
         if (canContinue) {
-             this.turnTimer?.reset(15);
+            this.turnTimer?.reset(15);
             this.turnTimer?.startTimer();
-           
+
             this.botTurn(botPlayer)
 
         } else {
@@ -701,7 +701,7 @@ class LudoGame {
         socket.on('OnContinueTurn', (data) => this.handlePlayerContinueTurn(socket, data));
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket, data));
         socket.on('OnKillEvent', (data) => this.playerKillEvent(socket, data));
-        socket.on('OnResult', (data) => this.handleResult(socket, data));
+        //socket.on('OnResult', (data) => this.handleResult(socket, data));
 
     }
 
@@ -777,7 +777,7 @@ class LudoGame {
 
         // Avoid unbinding onLeaveRoom itself during its execution
         socket.removeAllListeners('OnKillEvent');
-        socket.removeAllListeners('OnResult');
+        // socket.removeAllListeners('OnResult');
         socket.removeAllListeners('onLeaveRoom');
         socket.leave(this.roomName);
         this.handleLeftWinners(player);
