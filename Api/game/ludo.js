@@ -133,7 +133,7 @@ class LudoGame {
             turnTimer: this.turnTimer?.remaining,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
         };
-        console.log('OnCurrentStatus', JSON.stringify(d));
+        console.log('OnCurrentStatus');
         socket.emit('OnCurrentStatus', d);
     }
     async startGame() {
@@ -666,6 +666,7 @@ class LudoGame {
                 reason: 'left',
                 leftPlayerId: leftPlayer.userId,
             });
+            
             this.checkGameStatus();
         }
     }
@@ -780,6 +781,9 @@ class LudoGame {
         // socket.removeAllListeners('OnResult');
         socket.removeAllListeners('onLeaveRoom');
         socket.leave(this.roomName);
+        if( this.currentPhase === 'finshed'){
+            return;
+        }
         this.handleLeftWinners(player);
     }
 
