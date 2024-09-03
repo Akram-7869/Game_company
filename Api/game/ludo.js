@@ -784,8 +784,9 @@ class LudoGame {
         // socket.removeAllListeners('OnResult');
         socket.removeAllListeners('onLeaveRoom');
         socket.leave(this.roomName);
+        console.log('handlePlayerLeave',this.currentPhase)
         //if game is reday then check winner
-        if(this.isGameReady){
+        if(this.currentPhase = 'playing'){
             this.handleLeftWinners(player);
 
         }
