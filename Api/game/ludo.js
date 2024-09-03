@@ -815,6 +815,7 @@ class LudoGame {
             this.emitJoinPlayer();
             let playerCount = this.countJoinedPlayers();
                 if(playerCount === 0 ){
+                    delete state[this.roomName];
                     publicRoom[this.tournament._id]['played'] = true;
                 }
         }
