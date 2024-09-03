@@ -764,14 +764,17 @@ class LudoGame {
 
 
         let player = this.findPlayerByUserId(PlayerID);
+        console.log(' player',player);
         if (player) {
 
             if (this.currentPhase !== 'finished') {
+
                 player.playerStatus = 'Left';
                 player.winnerPosition = this.maxPlayers + 1;
             }
             // dont delete after game started 
             if (!this.isGameReady) {
+                console.log('deleteing player');
                 this.deletePlayerByUserId(PlayerID);
             }
 
