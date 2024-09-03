@@ -200,10 +200,8 @@ class LudoGame {
         this.turnTimer.startTimer();
     }
 
-    async botTurn(botPlayer) {
-        // Clear any existing timer to avoid multiple timers running at the same time
-        await sleep( this.botMoveDelay)
-
+    botTurn(botPlayer) {
+  
          this.botRollDice(botPlayer);
     }
 
