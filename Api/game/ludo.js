@@ -256,30 +256,34 @@ class LudoGame {
                 playerStatus, winnerPosition
             }))
             .sort((a, b) => {
-                // 1. Sort winners by winnerPosition in ascending order
+                // 1. Sort by `winnerPosition` in ascending order if both have a winner position
                 if (a.winnerPosition && b.winnerPosition) {
-                    return a.winnerPosition - b.winnerPosition;
+                    if (a.winnerPosition === b.winnerPosition) {
+                        // If both have the same `winnerPosition`, sort by score in descending order
+                        return b.score - a.score;
+                    }
+                    return a.winnerPosition - b.winnerPosition; // Sort by `winnerPosition` in ascending order
                 }
-
-                // Prioritize winners over joined or left
+            
+                // 2. Prioritize players with a `winnerPosition` over others
                 if (a.winnerPosition) return -1;
                 if (b.winnerPosition) return 1;
-
-                // 2. Sort joined players next by score in descending order
+            
+                // 3. Sort 'joined' players by `score` in descending order
                 if (a.playerStatus === 'joined' && b.playerStatus === 'joined') {
                     return b.score - a.score;
                 }
-
-                // Joined players before left players
+            
+                // 4. Place 'joined' players before 'left' players
                 if (a.playerStatus === 'joined') return -1;
                 if (b.playerStatus === 'joined') return 1;
-
-                // 3. Sort left players by score in descending order
+            
+                // 5. Sort 'left' players by `score` in descending order
                 if (a.playerStatus === 'left' && b.playerStatus === 'left') {
                     return b.score - a.score;
                 }
-
-                return 0; // Default case, if none of the above apply
+            
+                return 0; // Default case
             });
         clearTimeout(this.botTimer);
         this.botTimer = setTimeout(() => {

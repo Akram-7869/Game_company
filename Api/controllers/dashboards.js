@@ -31,8 +31,8 @@ exports.getFranchiseDashboard = asyncHandler(async (req, res, next) => {
  
   let d={
     
-  totalCommissions: 100,
-  totalBalance:110,
+  totalCommissions: 0,
+  totalBalance:0,
   livePlayers :req.io.engine.clientsCount
    }
   res.status(200).json(d);
@@ -40,8 +40,8 @@ exports.getFranchiseDashboard = asyncHandler(async (req, res, next) => {
 exports.getInfluencerDashboard = asyncHandler(async (req, res, next) => {
    let d={
     totalGifts:10,
-    totalCommissions: 100,
-    totalBalance:110,
+    totalCommissions: 0,
+    totalBalance:0,
     livePlayers :req.io.engine.clientsCount
    }
   res.status(200).json(d);
