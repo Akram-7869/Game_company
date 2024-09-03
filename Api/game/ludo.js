@@ -666,8 +666,8 @@ class LudoGame {
         if (canContinue) {
              this.turnTimer?.reset(15);
             this.turnTimer?.startTimer();
-            await sleep(this.botMoveDelay)
-             
+            await sleep(this.botMoveDelay);
+            this.botTurn(botPlayer);
         } else {
             //this.calculatePlayerScore(botPlayer);
             this.nextTurn();
