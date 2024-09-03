@@ -596,6 +596,7 @@ class LudoGame {
             let winingAmount = this.tournament.winnerRow[win_key];
             player.winnerPosition = this.winnerPosition; // Assign the winner position and increment
             player.playerStatus = 'winner'; // Mark the winner as playing
+            player['winingAmount']=winingAmount;
             this.io.to(this.roomName).emit('winner', {
                 message: 'Winner - this.winnerPosition',
                 winnerPosition: this.winnerPosition,
@@ -650,13 +651,14 @@ class LudoGame {
 
             player.winnerPosition = this.winnerPosition; // Assign the winner position and increment
             player.playerStatus = 'winner'; // Mark the winner as playing
+            player['winingAmount']=winingAmount;
             this.io.to(this.roomName).emit('winner', {
                 message: 'Winner - this.winnerPosition',
                 winnerPosition: this.winnerPosition,
                 winner: player.userId,
                 winingAmount,
                 reason: 'left',
-                leftPlayerId: player.userId,
+                leftPlayerId: p.userId,
             });
             this.checkGameStatus();
         }

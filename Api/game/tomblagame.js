@@ -240,7 +240,7 @@ console.log('onBetPlaced',d);
       const rewardType = d.ClaimType; // 'top', 'middle', 'bottom', 'earlyFive', 'fourCorners', or 'fullHouse'
      // const rewardAmount = this.calculateReward(rewardType);
 
-      if (d.rewardAmount > 0) {
+      if (this.claimed[rewardType] >  0) {
         this.claimed[rewardType] -= 1;
         this.claimed[`${rewardType}Total`] += d.rewardAmount;
         this.io.to(this.room).emit('OnClaimReward', {

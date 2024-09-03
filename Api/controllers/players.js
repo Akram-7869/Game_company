@@ -28,6 +28,8 @@ const cashfreeCtrl = require('./paymentsCashfree');
 var mongoose = require('mongoose');
 var path = require('path');
 const { uploadFile, deletDiskFile } = require('../utils/utils');
+const { state, gameName} = require('../utils/JoinRoom');
+
 
 
 let axios = require('axios');
@@ -808,7 +810,7 @@ exports.won = asyncHandler(async (req, res, next) => {
 
   let player = req.player;//await Player.findById(req.body.id);
   let { betNo = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
-  //console.log('creditAmount', gameId, req.body);
+  console.log('creditAmount',  req.body);
   if (req.body.logType !== "won") {
     return next(new ErrorResponse(`Invalid amount`));
   }
@@ -833,6 +835,10 @@ exports.won = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Tournament Not found`)
     );
   }
+//get amount 
+if(tournament.mode === gameName.tambola){
+  amount  = 
+}
 
 
   let betAmout = parseFloat(amount) + parseFloat(adminCommision);
