@@ -715,7 +715,7 @@ class LudoGame {
         this.io.to(this.roomName).emit('OnContinueTurn', {
             PlayerID: botPlayer.userId,
             canContinue: canContinue,
-            turnTimer: this.turnTimer?.remaining
+            turnTimer: 15
         });
     }
 
