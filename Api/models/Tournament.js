@@ -49,7 +49,8 @@ const TournamentSchema = new mongoose.Schema({
     },
     tournamentType: {
         type: String,
-        default: 'admin' //influencer,private ,
+        default: 'admin',
+        required:true //influencer,private ,
     },
     room: {
         type: String,
