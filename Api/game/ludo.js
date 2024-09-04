@@ -308,6 +308,7 @@ console.log('botTurn');
             return;
         }
 
+        clearTimeout(this.botTimer);
 
         this.botTimer = setTimeout(() => {
             this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
@@ -544,10 +545,11 @@ console.log('botTurn');
         if (winningMoves.length > 0) return winningMoves[0];
 
         const killMoves = this.filterPossibleKillMoves(botPlayer, possibleMoves);
-        console.log('killMoves ',killMoves.length );
+        
         if (killMoves.length > 0) return this.getRandomMove(killMoves);
 
         const safeMoves = this.filterSafeMoves(possibleMoves);
+        console.log('safeMoves ',safeMoves.length );
         if (safeMoves.length > 0) {
             return safeMoves.reduce((best, current) =>
                 current.newPosition > best.newPosition ? current : best
@@ -857,7 +859,6 @@ console.log('botTurn');
 
 
     resetGame() {
-        clearTimeout(this.botTimer);
 
         this.turnOrder = [];
         this.currentTurnIndex = 0;
