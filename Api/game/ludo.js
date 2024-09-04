@@ -164,12 +164,12 @@ class LudoGame {
 
     nextTurn(socket) {
 
-        // if (this.turnTimer) {
-        //     this.turnTimer?.reset(15);
-        //     if (this.currentPhase === 'finshed') {
-        //         return;
-        //     }
-        // }
+        if (this.turnTimer) {
+            this.turnTimer?.reset(15);
+            if (this.currentPhase === 'finshed') {
+                return;
+            }
+        }
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
         let currentPlayer = this.turnOrder[this.currentTurnIndex];
         console.log('OnNextTurn', this.currentTurnIndex);
@@ -190,38 +190,6 @@ class LudoGame {
 
 
 
-        // this.io.to(this.roomName).emit('OnNextTurn', {
-        //     gameType: 'Ludo',
-        //     room: this.roomName,
-        //     currentPhase: this.currentPhase,
-        //     currentTurnIndex: this.currentTurnIndex,
-        //     currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
-        //     timer: 15
-
-        // });
-
-        if (currentPlayer.type === 'bot') {
-            this.botTurn(currentPlayer);
-            
-        }else {
-                this.startTurnTimer();
-            }
-        
-
-        // this.turnTimer = new Timer(15, undefined, () => {
-
-        //     if (this.currentPhase === 'playing') {
-        //         this.nextTurn();
-        //     }
-
-        // });
-
-        // this.turnTimer.startTimer();
-    }
-    startTurnTimer() {
-        if (this.turnTimer) {
-            this.turnTimer.reset(15);
-        }
         this.io.to(this.roomName).emit('OnNextTurn', {
             gameType: 'Ludo',
             room: this.roomName,
@@ -229,30 +197,25 @@ class LudoGame {
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
             timer: 15
+
         });
- 
-        this.turnTimer = new Timer(15, (remaining) => undefined , () => {
-            this.handleTurnTimeout();
+
+        if (currentPlayer.type === 'bot') {
+            this.botTurn(currentPlayer);
+            return;
+        }
+
+        this.turnTimer = new Timer(15, undefined, () => {
+
+            if (this.currentPhase === 'playing') {
+                this.nextTurn();
+            }
+
         });
- 
+
         this.turnTimer.startTimer();
     }
-    handleTurnTimeout() {
-        // const currentPlayer = this.turnOrder[this.currentTurnIndex];
-        // if (this.players.has(currentPlayer.userId)) {
-        //     let playerObj = this.players.get(currentPlayer.userId);
-        //     playerObj.lives = (playerObj.lives || 3) - 1;
-        //     this.io.to(this.roomName).emit('player_lost_life', { playerId: currentPlayer.userId, lives: playerObj.lives });
- 
-        //     if (playerObj.lives <= 0) {
-        //         playerObj.player.playerStatus = 'Left';
-        //     }
-        // }
-        if (this.currentPhase === 'playing') {
-            this.nextTurn();
-        }
-       // this.nextTurn();
-    }
+    
 
     botTurn(botPlayer) {
         // Clear any existing timer to avoid multiple timers running at the same time
