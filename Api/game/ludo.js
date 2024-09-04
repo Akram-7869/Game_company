@@ -212,7 +212,7 @@ class LudoGame {
     botTurn(botPlayer) {
         // Clear any existing timer to avoid multiple timers running at the same time
         clearTimeout(this.botTimer);
-
+console.log('botTurn');
         this.botTimer = setTimeout(() => this.botRollDice(botPlayer), this.botMoveDelay);
     }
 
@@ -308,7 +308,6 @@ class LudoGame {
             return;
         }
 
-        clearTimeout(this.botTimer);
 
         this.botTimer = setTimeout(() => {
             this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
@@ -395,6 +394,7 @@ class LudoGame {
 
 
     botRollDice(botPlayer) {
+        console.log('botRollDice');
         // const diceValue = Math.floor(Math.random() * 6) + 1;
         if (this.currentPhase === 'finshed') {
             return;
@@ -410,6 +410,8 @@ class LudoGame {
     }
 
     botChooseMove(botPlayer, diceValue) {
+        console.log('botChooseMove');
+
         const possibleMoves = this.getBotPossibleMoves(botPlayer, diceValue);
         // console.log('Bot-possibleMoves', possibleMoves);
         if (possibleMoves.length > 0) {
@@ -564,6 +566,8 @@ class LudoGame {
 
 
     async executeBotMove(botPlayer, move, diceValue) {
+        console.log('executeBotMove');
+
         const { newPosition, pasaIndex, globalPosition } = move;
         const currentPosition = botPlayer.pasa[pasaIndex];
         botPlayer.pasa[pasaIndex] = newPosition;
@@ -704,13 +708,14 @@ class LudoGame {
         } else {
             //this.calculatePlayerScore(botPlayer);
             this.nextTurn();
-
         }
-        this.io.to(this.roomName).emit('OnContinueTurn', {
+        let data={
             PlayerID: botPlayer.userId,
             canContinue: canContinue,
             turnTimer: this.turnTimer?.remaining
-        });
+        };
+        console.log('OnContinueTurn-bot',data);
+        this.io.to(this.roomName).emit('OnContinueTurn',data );
     }
 
 
@@ -768,6 +773,7 @@ class LudoGame {
             this.nextTurn();
         }
         data['turnTimer'] = this.turnTimer?.remaining;
+        console.log('OnContinueTurn-player',data)
         this.io.to(this.roomName).emit('OnContinueTurn', data);
     }
 
@@ -848,6 +854,7 @@ class LudoGame {
 
 
     resetGame() {
+        clearTimeout(this.botTimer);
 
         this.turnOrder = [];
         this.currentTurnIndex = 0;
