@@ -429,6 +429,7 @@ console.log('botTurn');
                 default:
                     chosenMove = this.getRandomMove(possibleMoves);
             }
+            console.log(chosenMove)
             this.executeBotMove(botPlayer, chosenMove, diceValue);
         } else {
             this.botEndTurn(botPlayer, false);
@@ -541,6 +542,7 @@ console.log('botTurn');
         if (winningMoves.length > 0) return winningMoves[0];
 
         const killMoves = this.filterPossibleKillMoves(botPlayer, possibleMoves);
+        console.log('killMoves ',killMoves.length );
         if (killMoves.length > 0) return this.getRandomMove(killMoves);
 
         const safeMoves = this.filterSafeMoves(possibleMoves);
@@ -589,9 +591,8 @@ console.log('botTurn');
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
 
         const killed = this.checkForKills(botPlayer, globalPosition);
-        await sleep(diceValue * 250);
-
         if (killed.length > 0) {
+            await sleep(diceValue * 250);
 
             this.botKill(botPlayer, killed, pasaIndex);
             this.botEndTurn(botPlayer, true);
@@ -774,7 +775,6 @@ console.log('botTurn');
             this.nextTurn();
         }
         data['turnTimer'] = this.turnTimer?.remaining;
-        console.log('OnContinueTurn-player',data)
         this.io.to(this.roomName).emit('OnContinueTurn', data);
     }
 
