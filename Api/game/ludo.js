@@ -96,16 +96,14 @@ class LudoGame {
         }
     }
     initializePlayerScores() {
-        console.log('initializePlayerScores', this.turnOrder)
-        if (this.turnOrder.length >= 1) {
-            for (let i = 0; i < this.turnOrder.length; i++) {
+              for (let i = 0; i < this.turnOrder.length; i++) {
                 let player = this.turnOrder[i];
 
                 player['score'] = 0;
                 player['winnerPosition'] = this.maxPlayers;
                 player['winingAmount'] = 0;
             }
-        }
+        
 
     }
 
@@ -697,9 +695,9 @@ class LudoGame {
     }
     botEndTurn(botPlayer, canContinue) {
 
+        clearTimeout(this.botTimer);
 
         if (canContinue) {
-            clearTimeout(this.botTimer);
             this.turnTimer?.reset(15);
             this.turnTimer?.startTimer();
             this.botTimer = setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
