@@ -10,10 +10,10 @@ class TambolaGame {
     this.claimed = {
       upperRow: 5,
       lowerRow: 5,
-      fullHouse: 5,
+      fullHouse: 0,
       middle: 5,
       fourCorner: 5,
-      earlyFive: 5,
+      earlyFive: 0,
       upperRowTotal: 0,
       lowerRowTotal: 0,
       fullHouseTotal: 0,
