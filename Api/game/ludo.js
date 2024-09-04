@@ -709,8 +709,8 @@ class LudoGame {
             this.turnTimer?.startTimer();
             this.botTimer = setTimeout(() => this.botTurn(botPlayer), this.botMoveDelay);
         } else {
-            //this.calculatePlayerScore(botPlayer);
-            this.nextTurn();
+            
+            this.botTimer = setTimeout(() => this.nextTurn(), this.botMoveDelay);
         }
         this.io.to(this.roomName).emit('OnContinueTurn', {
             PlayerID: botPlayer.userId,
