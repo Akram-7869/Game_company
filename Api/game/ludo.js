@@ -164,12 +164,12 @@ class LudoGame {
 
     nextTurn(socket) {
 
-        if (this.turnTimer) {
-            this.turnTimer?.reset(15);
-            if (this.currentPhase === 'finshed') {
-                return;
-            }
-        }
+        // if (this.turnTimer) {
+        //     this.turnTimer?.reset(15);
+        //     if (this.currentPhase === 'finshed') {
+        //         return;
+        //     }
+        // }
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
         let currentPlayer = this.turnOrder[this.currentTurnIndex];
         console.log('OnNextTurn', this.currentTurnIndex);
