@@ -482,41 +482,6 @@ console.log('botTurn');
     getRandomMove(possibleMoves) {
         return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
     }
-    filterPossibleKillMoves(botPlayer, possibleMoves) {
-        const filteredMoves = [];
-        for (let i = 0; i < possibleMoves.length; i++) {
-            const move = possibleMoves[i];
-         let isKilled=   this.checkForKills(botPlayer, move.globalPosition)
-         console.log('isKilled',isKilled);
-            if (isKilled.length !==0) {
-                filteredMoves.push(move);
-            }
-        }
-        return filteredMoves;
-    }
-    // Method to filter moves with newPosition equal to 56
-    filterWinningMoves(possibleMoves) {
-        const filteredMoves = [];
-        for (let i = 0; i < possibleMoves.length; i++) {
-            const move = possibleMoves[i];
-            if (move.newPosition === 56) {
-                filteredMoves.push(move);
-            }
-        }
-        return filteredMoves;
-    }
-
-    // Method to filter moves with newPosition considered safe
-    filterSafeMoves(possibleMoves) {
-        const safeMoves = [];
-        for (let i = 0; i < possibleMoves.length; i++) {
-            const move = possibleMoves[i];
-            if (this.isSafePosition(move.newPosition)) {
-                safeMoves.push(move);
-            }
-        }
-        return safeMoves;
-    }
     // Method to find the move with the highest newPosition
     findBestMove(possibleMoves) {
         if (possibleMoves.length === 0) return null; // Handle empty array case
@@ -532,31 +497,41 @@ console.log('botTurn');
         return bestMove;
     }
 
+
+
     getMediumMove(botPlayer, possibleMoves) {
-        const killMoves = this.filterPossibleKillMoves(botPlayer, possibleMoves);
+        // Prioritize moves that can kill opponent tokens
+        const killMoves = possibleMoves.filter(move => this.checkForKills(botPlayer, move.globalPosition));
         if (killMoves.length > 0) {
             return this.getRandomMove(killMoves);
         }
-        return this.findBestMove(possibleMoves);
+ 
+        // Otherwise, move the farthest token
+        return possibleMoves.reduce((prev, current) => 
+            (current.newPosition > prev.newPosition) ? current : prev
+        );
     }
-
     getHardMove(botPlayer, possibleMoves) {
-        const winningMoves = this.filterWinningMoves(possibleMoves);
+        // Prioritize moves that can finish the game
+        const winningMoves = possibleMoves.filter(move => move.newPosition === 56);
         if (winningMoves.length > 0) return winningMoves[0];
-
-        const killMoves = this.filterPossibleKillMoves(botPlayer, possibleMoves);
-        
+ 
+        // Then prioritize kills
+        const killMoves = possibleMoves.filter(move => this.checkForKills(botPlayer, move.globalPosition));
         if (killMoves.length > 0) return this.getRandomMove(killMoves);
-
-        const safeMoves = this.filterSafeMoves(possibleMoves);
-        console.log('safeMoves ',safeMoves.length );
+ 
+        // Then prioritize safe moves
+        const safeMoves = possibleMoves.filter(move => this.isSafePosition(move.globalPosition));
         if (safeMoves.length > 0) {
-            return safeMoves.reduce((best, current) =>
-                current.newPosition > best.newPosition ? current : best
+            return safeMoves.reduce((prev, current) => 
+                (current.newPosition > prev.newPosition) ? current : prev
             );
         }
-
-        return this.findBestMove(possibleMoves);
+ 
+        // If no safe moves, choose the move that advances the farthest
+        return possibleMoves.reduce((prev, current) => 
+            (current.newPosition > prev.newPosition) ? current : prev
+        );
     }
 
 
