@@ -589,8 +589,9 @@ console.log('botTurn');
         this.io.to(this.roomName).emit('OnMovePasa', moveData);
 
         const killed = this.checkForKills(botPlayer, globalPosition);
+        await sleep(diceValue * 250);
+
         if (killed.length > 0) {
-            await sleep(diceValue * 250);
 
             this.botKill(botPlayer, killed, pasaIndex);
             this.botEndTurn(botPlayer, true);
