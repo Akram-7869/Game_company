@@ -13,7 +13,7 @@ class TambolaGame {
       fullHouse: 0,
       middle: 5,
       fourCorner: 5,
-      earlyFive: 0,
+      earlyFive: 5,
       upperRowTotal: 0,
       lowerRowTotal: 0,
       fullHouseTotal: 0,

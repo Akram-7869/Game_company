@@ -838,6 +838,8 @@ exports.won = asyncHandler(async (req, res, next) => {
 //get amount 
 if(tournament.mode === gameName.tambola){
   
+
+  
 }
 
 
