@@ -487,7 +487,7 @@ console.log('botTurn');
             const move = possibleMoves[i];
          let isKilled=   this.checkForKills(botPlayer, move.globalPosition)
          console.log('isKilled',isKilled);
-            if (isKilled) {
+            if (isKilled.length !==0) {
                 filteredMoves.push(move);
             }
         }
