@@ -28,7 +28,7 @@ const cashfreeCtrl = require('./paymentsCashfree');
 var mongoose = require('mongoose');
 var path = require('path');
 const { uploadFile, deletDiskFile } = require('../utils/utils');
-const { state, gameName} = require('../utils/JoinRoom');
+const { state, gameName } = require('../utils/JoinRoom');
 
 
 
@@ -810,7 +810,7 @@ exports.won = asyncHandler(async (req, res, next) => {
 
   let player = req.player;//await Player.findById(req.body.id);
   let { betNo = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
-  console.log('creditAmount',  req.body);
+  console.log('creditAmount', req.body);
   if (req.body.logType !== "won") {
     return next(new ErrorResponse(`Invalid amount`));
   }
@@ -835,12 +835,10 @@ exports.won = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Tournament Not found`)
     );
   }
-//get amount 
-if(tournament.mode === gameName.tambola){
-  
+  //get amount 
+  if (tournament.mode === gameName.tambola) {
 
-  
-}
+  }
 
 
   let betAmout = parseFloat(amount) + parseFloat(adminCommision);
@@ -874,11 +872,11 @@ if(tournament.mode === gameName.tambola){
 
 
   let commisonInf = {
-    'gameId': gameId,    
+    'gameId': gameId,
   }
   if (tournament.influencerId) {
     commisonInf['influencerId'] = tournament.influencerId;
-    commisonInf['influencerCommission'] =  parseFloat((adminCommision * 0.7).toFixed(2));
+    commisonInf['influencerCommission'] = parseFloat((adminCommision * 0.7).toFixed(2));
 
     await Influencer.findByIdAndUpdate(tournament.influencerId, {
       $inc: {
@@ -894,13 +892,14 @@ if(tournament.mode === gameName.tambola){
     let franchiseDoc = await Franchise.findOne({ stateCode: player.stateCode, status: 'active' });
     if (franchiseDoc) {
       commisonInf['franchiseId'] = franchiseDoc._id;
-      commisonInf['franchiseCommission'] =  parseFloat((adminCommision * 0.3).toFixed(2));
-      
-      await Franchise.findByIdAndUpdate(franchiseDoc._id, { 
-        $inc: { 
-          totalBalance: commisonInf['franchiseCommission'], 
-          totalCommissions: commisonInf['franchiseCommission'] 
-        } });
+      commisonInf['franchiseCommission'] = parseFloat((adminCommision * 0.3).toFixed(2));
+
+      await Franchise.findByIdAndUpdate(franchiseDoc._id, {
+        $inc: {
+          totalBalance: commisonInf['franchiseCommission'],
+          totalCommissions: commisonInf['franchiseCommission']
+        }
+      });
     }
   }
 
@@ -909,8 +908,8 @@ if(tournament.mode === gameName.tambola){
     new: true,          // Return the modified document rather than the original
     upsert: true,       // Create the document if it doesn't exist
     setDefaultsOnInsert: true  // Use schema default values if creating a new document
-};
-  await Commission.findOneAndUpdate({gameId},commisonInf, options);
+  };
+  await Commission.findOneAndUpdate({ gameId }, commisonInf, options);
 
 
   Dashboard.totalIncome(betAmout, amount, adminCommision);
@@ -1039,8 +1038,8 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     let c = { playerId: req.player._id, gameId, amountBet: amount, tournamentId, influencerId: tournament.influencerId }
 
     if (req.body.logType === 'influencer_gift') {
-       c.amountBet = 0;
-    } 
+      c.amountBet = 0;
+    }
     console.log('c', c)
     playerGame = await PlayerGame.create(c);
   }
@@ -1085,7 +1084,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
       }
     });
     await PlayerGame.findByIdAndUpdate(playerGame._id, {
-      $inc: {amountPrize: amount}
+      $inc: { amountPrize: amount }
     });
 
   }
