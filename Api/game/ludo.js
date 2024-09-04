@@ -24,7 +24,7 @@ class LudoGame {
         this.safeSpots = [0, 8, 13, 21, 26, 34, 39, 47];
         this.playerStartPositions = [0, 13, 26, 39];
         this.winnerPosition = 0; // Start tracking winners from position 1
-        this.botTimer =undefined;
+        this.botTimer = undefined;
 
 
 
@@ -53,15 +53,13 @@ class LudoGame {
 
     }
     checkAndAddBots() {
-        if (!this.tournament.bot) {
-            return;
-        }
-
-        this.setBotDifficulty(getBotName(this.tournament.complexity))
-        let totalPlayers = this.turnOrder.length;
-        if (totalPlayers < this.maxPlayers) {
-            const botsToAdd = this.maxPlayers - totalPlayers;
-            this.addBots(botsToAdd);
+        if (this.tournament.bot) {
+            this.setBotDifficulty(getBotName(this.tournament.complexity))
+            let totalPlayers = this.turnOrder.length;
+            if (totalPlayers < this.maxPlayers) {
+                const botsToAdd = this.maxPlayers - totalPlayers;
+                this.addBots(botsToAdd);
+            }
         }
         if (this.turnOrder.length === this.maxPlayers) {
             this.isGameReady = true;
@@ -98,11 +96,11 @@ class LudoGame {
         }
     }
     initializePlayerScores() {
-        console.log('initializePlayerScores',this.turnOrder)
+        console.log('initializePlayerScores', this.turnOrder)
         if (this.turnOrder.length >= 1) {
             for (let i = 0; i < this.turnOrder.length; i++) {
                 let player = this.turnOrder[i];
-                
+
                 player['score'] = 0;
                 player['winnerPosition'] = this.maxPlayers;
                 player['winingAmount'] = 0;
@@ -117,13 +115,13 @@ class LudoGame {
         this.currentPhase = 'createdroom';
         this.roomJoinTimers = new Timer(10, (remaining) => {
             this.io.to(this.roomName).emit('join_tick', { remaining });
-            if (remaining === 5) {
+            if (remaining === 3) {
                 this.checkAndAddBots();
             }
         }, () => {
             if (this.isGameReady) {
                 this.initializePlayerScores();
-                // this.startGame();
+                this.startGame();
             } else {
                 console.log("Not enough players to start the game.");
                 this.io.to(this.roomName).emit('game_cancelled', { reason: 'Not enough players' });
@@ -135,10 +133,6 @@ class LudoGame {
 
     }
     sendCurrentStatus(socket) {
-        if (this.isGameReady) {
-            this.startGame();
-        }
-
         let d = {
             gameType: 'Ludo',
             room: this.roomName,
@@ -215,7 +209,7 @@ class LudoGame {
 
         this.turnTimer.startTimer();
     }
-    
+
 
     botTurn(botPlayer) {
         // Clear any existing timer to avoid multiple timers running at the same time
@@ -317,14 +311,14 @@ class LudoGame {
         }
 
         clearTimeout(this.botTimer);
-        
+
         this.botTimer = setTimeout(() => {
             this.io.to(this.roomName).emit('OnResult', { result: sortedPlayers });
             clearTimeout(this.botTimer);
             console.log('result declared', sortedPlayers);
             publicRoom[this.tournament._id]['played'] = true;
-           delete  state[this.roomName]
-        }, 3000);        
+            delete state[this.roomName]
+        }, 3000);
     }
 
     // New method to calculate player's score
@@ -402,7 +396,7 @@ class LudoGame {
     }
 
 
-     botRollDice(botPlayer) {
+    botRollDice(botPlayer) {
         // const diceValue = Math.floor(Math.random() * 6) + 1;
         if (this.currentPhase === 'finshed') {
             return;
@@ -655,7 +649,7 @@ class LudoGame {
         for (let i = 0; i < this.turnOrder.length; i++) {
             if (this.turnOrder[i].userId === userId) {
                 this.turnOrder.splice(i, 1);// Return the player when a match is found
-                return ;
+                return;
             }
         }
         return null; // Return null if no matching player is found
@@ -712,7 +706,7 @@ class LudoGame {
         } else {
             //this.calculatePlayerScore(botPlayer);
             this.nextTurn();
-            
+
         }
         this.io.to(this.roomName).emit('OnContinueTurn', {
             PlayerID: botPlayer.userId,
@@ -824,15 +818,15 @@ class LudoGame {
             this.deletePlayerByUserId(PlayerID);
             this.emitJoinPlayer();
             let playerCount = this.countPlayers();
-                 if(playerCount <= 1 ){                   
-                    delete state[this.roomName];
-                    publicRoom[this.tournament._id]['played'] = true;
-                }
+            if (playerCount <= 1) {
+                delete state[this.roomName];
+                publicRoom[this.tournament._id]['played'] = true;
+            }
         }
 
 
     }
-    
+
     checkGameStatus() {
         let players = this.countJoinedPlayers();
         console.log('checkGameStatus', this.maxPlayers, players);
