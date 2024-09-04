@@ -543,9 +543,9 @@ console.log('botTurn');
     getHardMove(botPlayer, possibleMoves) {
         const winningMoves = this.filterWinningMoves(possibleMoves);
         if (winningMoves.length > 0) return winningMoves[0];
-
+        console.log('winningMoves ',winningMoves.length );
         const killMoves = this.filterPossibleKillMoves(botPlayer, possibleMoves);
-        
+        console.log('killMoves ',killMoves.length );
         if (killMoves.length > 0) return this.getRandomMove(killMoves);
 
         const safeMoves = this.filterSafeMoves(possibleMoves);
