@@ -809,7 +809,7 @@ exports.join = asyncHandler(async (req, res, next) => {
 exports.won = asyncHandler(async (req, res, next) => {
 
   let player = req.player;//await Player.findById(req.body.id);
-  let { betNo = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win' } = req.body;
+  let { betNo = 0, amount, note, gameId, adminCommision = 0, tournamentId, winner = 'winner_1', gameStatus = 'win', claimed = '' } = req.body;
   console.log('creditAmount', req.body);
   if (req.body.logType !== "won") {
     return next(new ErrorResponse(`Invalid amount`));
@@ -837,6 +837,17 @@ exports.won = asyncHandler(async (req, res, next) => {
   }
   //get amount 
   if (tournament.mode === gameName.tambola) {
+    winner = claimed;
+
+    const count = await PlayerGame.countDocuments({
+      gameId: gameId,
+      tournamentId: tournamentId,
+      winner: winner // Ensure this is defined
+    })
+    if (count >= tournament.numberOfWinners) {
+      return next(new ErrorResponse(`All Claimed`));
+    }
+    amount = tournament.winnerRow[claimed];
 
   }
 

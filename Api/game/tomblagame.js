@@ -162,17 +162,7 @@ console.log('onBetPlaced',d);
   }
 
   syncPlayer(socket, player) {
-
-    // Send current game state to the player
-    // this.io.to(playerId).emit('syncState', {
-    //   gameType: 'Tambola',
-    //   room: this.room,
-    //   numbers: Array.from(this.numbers),
-    //   claimed: this.claimed,
-    //   gameStarted: this.gameStarted,
-    //   player:player,
-    //   totalTicket:this.totalTicket
-    // });
+ 
     if(!this.players.has(player.userId)){
       const { playerTickets, betAmount } = player;
       this.totalTicket += playerTickets;
@@ -242,8 +232,7 @@ console.log('onBetPlaced',d);
 
       if (this.claimed[rewardType] >  0) {
         this.claimed[rewardType] -= 1;
-        this.claimed[`${rewardType}Total`] += d.rewardAmount;
-        this.io.to(this.room).emit('OnClaimReward', {
+         this.io.to(this.room).emit('OnClaimReward', {
           success: true,
           rewardType,
           name:d.name,

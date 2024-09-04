@@ -67,6 +67,10 @@ const TournamentSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Influencer',
     },
+    numberOfWinners: {
+        type: Number,
+        default: 0
+    },
     active: {
         type: Boolean,
         default: true
