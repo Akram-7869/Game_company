@@ -26,6 +26,10 @@ const PlayerGameSchema = new mongoose.Schema({
     default: 'paid',
     enum: ['free', 'paid']
   },
+  stateCode: {
+    type: String,
+    default: ''
+  },
   commissionStatus: {
     type: String,
     default: 'processing',
@@ -74,8 +78,7 @@ const PlayerGameSchema = new mongoose.Schema({
   amountGiven: {
     type: Number,
     default: 0
-  },
-  players: {},
+  }
 
 }, {
   timestamps: true,

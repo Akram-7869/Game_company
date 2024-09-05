@@ -42,6 +42,18 @@ const UserSchema = new mongoose.Schema({
     minlength: 6,
     select: false
   },
+  balance: {
+    type: Number,
+    default: 0,
+    min: 0
+
+  },
+  withdraw: {
+    type: Number,
+    default: 0,
+    min: 0
+
+  },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
   createdAt: {

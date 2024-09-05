@@ -20,7 +20,7 @@ const Poll = require('../models/Poll');
 const PlayerGame = require('../models/PlayerGame');
 const Franchise = require('../models/Franchise');
 const Influencer = require('../models/Influencer');
-
+const User = require('../models/User');
 const Version = require('../models/Version');
 const moment = require('moment');
 const cashfreeCtrl = require('./paymentsCashfree');
@@ -2187,3 +2187,139 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   });
 
 });
+
+exports.calculateDailyCommissions = asyncHandler(async (req, res, next) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Start of today
+
+  await Promise.all([
+    calculateFranchiseCommissions(today),
+    calculateInfluencerCommissions(today),
+    calculateAdminIncome(today)
+  ]);
+
+  console.log("Daily commissions calculated and updated successfully.");
+});
+
+async function calculateAdminIncome(today) {
+  const adminIncome = await PlayerGame.aggregate([
+    {
+      $match: {
+        date: { $gte: today, $lt: new Date(today).setDate(today.getDate() + 1) }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        totalBetAmount: { $sum: "$betAmount" },
+        totalWinningAmount: { $sum: "$winningAmount" }
+      }
+    }
+  ]);
+
+  const adminCommission = (adminIncome[0].totalBetAmount * 0.2) - adminIncome[0].totalWinningAmount;
+
+  // const adminTransaction = await Transaction.create({
+  //     userId: 'admin', // Static ID for admin
+  //     userType: 'admin',
+  //     amount: adminCommission,
+  //     type: 'credit',
+  //     date: today,
+  //     description: 'Daily admin income'
+  // });
+  let userAdmin = await User.findOne({ role: 'admin' });
+
+  await Commission.create({
+    date: today,
+    userType: 'admin',
+    userId: userAdmin._id, // Static ID for admin
+    totalBetAmount: adminIncome[0].totalBetAmount,
+    totalWinningAmount: adminIncome[0].totalWinningAmount,
+    commission: adminCommission
+  });
+  let userAddBal = await User.findOneAndUpdate({ _id: userAdmin._id }, { $inc: { balance: adminCommission } });
+  Dashboard.totalIncome(adminIncome[0].totalBetAmount, adminIncome[0].totalWinningAmount, adminCommission);
+}
+
+
+
+async function calculateInfluencerCommissions(today) {
+  const influencerCommissions = await PlayerGame.aggregate([
+    {
+      $match: {
+        date: { $gte: today, $lt: new Date(today).setDate(today.getDate() + 1) },
+        influencerId: { $exists: true }
+      }
+    },
+    {
+      $group: {
+        _id: "$influencerId",
+        totalBetAmount: { $sum: "$betAmount" },
+        commission: { $sum: { $multiply: ["$betAmount", 0.07] } } // 7% Commission
+      }
+    }
+  ]);
+
+  for (const influencer of influencerCommissions) {
+    let tranAdd = Transaction.create({
+      userId: influencer._id,
+      userType: 'influencer',
+      amount: influencer.commission,
+      type: 'credit',
+      date: today,
+      description: 'Daily influencer commission'
+    });
+
+    let reportAdd = Commission.create({
+      date: today,
+      userType: 'influencer',
+      userId: influencer._id,
+      totalBetAmount: influencer.totalBetAmount,
+      commission: influencer.commission
+    });
+    let userAddBal = Influencer.findOneAndUpdate({ _id: influencer._id }, { $inc: { balance: influencer.commission } });
+    await Promise.all([tranAdd, reportAdd, userAddBal]);
+  }
+}
+
+async function calculateFranchiseCommissions(today) {
+  const franchiseCommissions = await PlayerGame.aggregate([
+    {
+      $match: {
+        date: { $gte: today, $lt: new Date(today).setDate(today.getDate() + 1) },
+        stateCode: { $exists: true }
+      }
+    },
+    {
+      $group: {
+        _id: "$stateCode",
+        totalBetAmount: { $sum: "$betAmount" },
+        commission: { $sum: { $multiply: ["$betAmount", 0.03] } } // 3% Commission
+      }
+    }
+  ]);
+
+  for (const franchise of franchiseCommissions) {
+    let tranAdd = Transaction.create({
+      userId: franchise._id,
+      userType: 'franchise',
+      amount: franchise.commission,
+      type: 'credit',
+      date: today,
+      description: 'Daily franchise commission'
+    });
+
+    let reportAdd = Commission.create({
+      date: today,
+      userType: 'franchise',
+      userId: franchise._id,
+      stateCode: franchise._id,
+      totalBetAmount: franchise.totalBetAmount,
+      commission: franchise.commission,
+
+    });
+    let userAddBal = Franchise.findOneAndUpdate({ _id: franchise._id }, { $inc: { balance: franchise.commission } });
+
+    await Promise.all([tranAdd, reportAdd, userAddBal]);
+  }
+}
