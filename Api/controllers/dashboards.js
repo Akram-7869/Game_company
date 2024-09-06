@@ -221,19 +221,19 @@ let calIncome = async (s_date, e_date, userId ,role='influencer') => {
      
       {
         _id: null, // Group by null to get a single result
-        totalPrize: { $sum: "$amountPrize" },
+        totalGift: { $sum: "$amountGift" },
         totalCommission: { $sum: "$amountGiven" }
       },
     },
     {
       $project: {
         _id: 0, // Exclude _id from the result
-        totalPrize: 1,
+        totalGift: 1,
         totalCommission: 1
       }
     }
   ]);
-  return results.length > 0 ? results[0] : { totalPrize: 0, totalCommission: 0 };
+  return results.length > 0 ? results[0] : { totalGift: 0, totalCommission: 0 };
 
 
 }

@@ -51,7 +51,7 @@ const PlayerGameSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  amountPrize: {
+  amountGift: {
     type: Number,
     default: 0
   },

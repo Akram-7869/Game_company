@@ -882,48 +882,47 @@ exports.won = asyncHandler(async (req, res, next) => {
   player = await tran.creditPlayerWinings(amount);
 
 
-  let commisonInf = {
-    'gameId': gameId,
-  }
-  if (tournament.influencerId) {
-    commisonInf['influencerId'] = tournament.influencerId;
-    commisonInf['influencerCommission'] = parseFloat((adminCommision * 0.7).toFixed(2));
+  // let commisonInf = {
+  //   'gameId': gameId,
+  // }
+  // if (tournament.influencerId) {
+  //   commisonInf['influencerId'] = tournament.influencerId;
+  //   commisonInf['influencerCommission'] = parseFloat((adminCommision * 0.7).toFixed(2));
 
-    await Influencer.findByIdAndUpdate(tournament.influencerId, {
-      $inc: {
-        totalBalance: commisonInf['influencerCommission'],
-        totalCommissions: commisonInf['influencerCommission']
-      }
-    });
-
-
-  }
-
-  if (player.stateCode) {
-    let franchiseDoc = await Franchise.findOne({ stateCode: player.stateCode, status: 'active' });
-    if (franchiseDoc) {
-      commisonInf['franchiseId'] = franchiseDoc._id;
-      commisonInf['franchiseCommission'] = parseFloat((adminCommision * 0.3).toFixed(2));
-
-      await Franchise.findByIdAndUpdate(franchiseDoc._id, {
-        $inc: {
-          totalBalance: commisonInf['franchiseCommission'],
-          totalCommissions: commisonInf['franchiseCommission']
-        }
-      });
-    }
-  }
+  //   await Influencer.findByIdAndUpdate(tournament.influencerId, {
+  //     $inc: {
+  //       totalBalance: commisonInf['influencerCommission'],
+  //       totalCommissions: commisonInf['influencerCommission']
+  //     }
+  //   });
 
 
-  const options = {
-    new: true,          // Return the modified document rather than the original
-    upsert: true,       // Create the document if it doesn't exist
-    setDefaultsOnInsert: true  // Use schema default values if creating a new document
-  };
-  await Commission.findOneAndUpdate({ gameId }, commisonInf, options);
+  // }
+
+  // if (player.stateCode) {
+  //   let franchiseDoc = await Franchise.findOne({ stateCode: player.stateCode, status: 'active' });
+  //   if (franchiseDoc) {
+  //     commisonInf['franchiseId'] = franchiseDoc._id;
+  //     commisonInf['franchiseCommission'] = parseFloat((adminCommision * 0.3).toFixed(2));
+
+  //     await Franchise.findByIdAndUpdate(franchiseDoc._id, {
+  //       $inc: {
+  //         totalBalance: commisonInf['franchiseCommission'],
+  //         totalCommissions: commisonInf['franchiseCommission']
+  //       }
+  //     });
+  //   }
+  // }
 
 
-  Dashboard.totalIncome(betAmout, amount, adminCommision);
+  // const options = {
+  //   new: true,          // Return the modified document rather than the original
+  //   upsert: true,       // Create the document if it doesn't exist
+  //   setDefaultsOnInsert: true  // Use schema default values if creating a new document
+  // };
+  // await Commission.findOneAndUpdate({ gameId }, commisonInf, options);
+
+
   await PlayerGame.findOneAndUpdate({ 'gameId': gameId, 'playerId': req.player._id }, playerGame);
 
   res.status(200).json({
@@ -1095,7 +1094,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
       }
     });
     await PlayerGame.findByIdAndUpdate(playerGame._id, {
-      $inc: { amountPrize: amount }
+      $inc: { amountGift: amount }
     });
 
   }
@@ -2255,6 +2254,7 @@ async function calculateInfluencerCommissions(today) {
       $group: {
         _id: "$influencerId",
         totalBetAmount: { $sum: "$betAmount" },
+        totalGiftAmount: { $sum: "$amountGift" },
         commission: { $sum: { $multiply: ["$betAmount", 0.07] } } // 7% Commission
       }
     }
@@ -2275,9 +2275,10 @@ async function calculateInfluencerCommissions(today) {
       userType: 'influencer',
       userId: influencer._id,
       totalBetAmount: influencer.totalBetAmount,
-      commission: influencer.commission
+      commission: influencer.commission,
+      gift:influencer.totalGiftAmount
     });
-    let userAddBal = Influencer.findOneAndUpdate({ _id: influencer._id }, { $inc: { balance: influencer.commission } });
+    let userAddBal = Influencer.findOneAndUpdate({ _id: influencer._id }, { $inc: { totalBalance: influencer.commission } });
     await Promise.all([tranAdd, reportAdd, userAddBal]);
   }
 }
@@ -2318,7 +2319,7 @@ async function calculateFranchiseCommissions(today) {
       commission: franchise.commission,
 
     });
-    let userAddBal = Franchise.findOneAndUpdate({ _id: franchise._id }, { $inc: { balance: franchise.commission } });
+    let userAddBal = Franchise.findOneAndUpdate({ _id: franchise._id }, { $inc: { totalBalance: franchise.commission } });
 
     await Promise.all([tranAdd, reportAdd, userAddBal]);
   }

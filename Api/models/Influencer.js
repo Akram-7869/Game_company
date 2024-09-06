@@ -56,14 +56,6 @@ const InfluencerSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  giftPending: {
-    type: Number,
-    default: 0
-  },
-  commissionPending: {
-    type: Number,
-    default: 0
-  },
   totalGifts: {
     type: Number,
     default: 0

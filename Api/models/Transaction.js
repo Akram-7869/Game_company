@@ -6,8 +6,15 @@ const moment = require('moment');
 const TransactionsSchema = new mongoose.Schema({
     playerId: {
         type: mongoose.Schema.ObjectId,
-        required: true,
-        ref: 'Players'
+         ref: 'Players'
+    },
+    franchiseId: {
+        type: mongoose.Schema.ObjectId,
+         ref: 'Franchise'
+    },
+    influencerId: {
+        type: mongoose.Schema.ObjectId,
+         ref: 'influencer'
     },
     referer_playerId: {
         type: mongoose.Schema.ObjectId,
@@ -91,7 +98,6 @@ const TransactionsSchema = new mongoose.Schema({
     },
     betNo: {
         type: Number,
-        required: true,
         default: 0
     },
     gateWayCommision: {
