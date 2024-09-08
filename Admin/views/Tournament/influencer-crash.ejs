@@ -1,7 +1,7 @@
 <%- contentFor('HeaderCss') %>
   <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="/public/gameshtml/css/main.css">
-  <link rel="stylesheet" href="/public/gameshtml/css/dragonTiger.css">
+  <link rel="stylesheet" href="/public/gameshtml/css/crash.css">
   <style>
     .sso-hidden {
       display: block;
@@ -155,27 +155,29 @@
           </div>
         </div>
         <div class="col-12 col-md-8">
-          <div class="">
             <div id="game-container">
-              <div id="timer">Time: <span id="time-remaining">0</span></div>
-              <div id="cards-container">
-                <div id="dragon-card" class="card"></div>
-                <div id="tiger-card" class="card"></div>
-              </div>
-              <div id="board">
-                <div id="dragon-area" class="bet-area">
-                  <img src="/public/gameshtml/assets/dragonTiger/DragonBox.png" alt="Dragon Box">
+                <div id="game-state">
+                    <div id="timer">Betting Time: <span id="time-remaining">00</span></div>
+                    <div id="multiplier">1.00X</div>
                 </div>
-                <div id="tie-area" class="bet-area">
-                  <img src="/public/gameshtml/assets/dragonTiger/TieBox.png" alt="Tie Box">
+                <div id="game-scene">
+                    <div id="environment"></div>
+                    <div id="flight"></div>
                 </div>
-                <div id="tiger-area" class="bet-area">
-                  <img src="/public/gameshtml/assets/dragonTiger/TigerBox.png" alt="Tiger Box">
+                <div id="history-container"></div>
+                
+                <!-- New timer panel -->
+                <div id="timer-panel">
+                    <div class="circle-timer">
+                        <svg width="200" height="200">
+                            <circle class="timer-background" cx="100" cy="100" r="90"></circle>
+                            <circle class="timer-progress" cx="100" cy="100" r="90"></circle>
+                        </svg>
+                        <div class="timer-text">10</div>
+                    </div>
+                    <div class="timer-message">Flight will start in</div>
                 </div>
-              </div>
-              <div id="history-container"></div>
             </div>
-          </div>
         </div>
 
 
@@ -235,10 +237,12 @@
         <script src="/public/assets/js/game/basicMute.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.4/pako.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+
         <script src="/public/gameshtml/js/chat.js"></script>
 
         <script src="/public/gameshtml/js/socketHandler.js"></script>
-        <script src="/public/gameshtml/js/dragonTiger.js"></script>
+        <script src="/public/gameshtml/js/crash.js"></script>
         <!-- Sweet alert init js
   <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
         <script>
@@ -259,7 +263,7 @@
             role: "<%= row.tournamentType %>",
             maxp: 99999
           };
-          //SocketHandler.initialize('dragonTiger', '', data.lobbyId, io);
+          SocketHandler.initialize('crash', '', data.lobbyId, io);
  
           function handleSubmit(params) {
             if (params.checkValidity()) {

@@ -155,7 +155,7 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 
 
 exports.gameList = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Leader Board' };
+      res.locals = { title: 'Game List' };
       res.render('Influencer/leaderboard')
 });
 exports.gameData = asyncHandler(async (req, res, next) => {

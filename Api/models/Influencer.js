@@ -29,7 +29,7 @@ const InfluencerSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'Please add an email'],
-    unique: true,
+    
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Please add a valid email'
@@ -54,19 +54,32 @@ const InfluencerSchema = new mongoose.Schema({
   resetPasswordExpire: Date,
   totalBalance: {
     type: Number,
-    default: 0
+    default: 0,
+    required:true
+
   },
   totalGifts: {
     type: Number,
-    default: 0
+    default: 0,
+    required:true
+
   },
   totalCommissions: {
     type: Number,
-    default: 0
+    default: 0,
+    required:true
   },
   totalWithdrawals: {
     type: Number,
-    default: 0
+    default: 0,
+    required:true
+
+  },
+  totalBetAmount: {
+    type: Number,
+    default: 0,
+    required:true
+
   },
   createdAt: {
     type: Date,

@@ -7,7 +7,7 @@
                 <div class="page-title-box d-flex align-items-center justify-content-between">
                     <h4 class="mb-0">Dashboard </h4>
 
-                    <div class="float-end row">
+                    <!-- <div class="float-end row">
 
 
 
@@ -46,7 +46,7 @@
 
 
 
-                    </div>
+                    </div> -->
                 </div>
 
             </div>
@@ -65,9 +65,9 @@
                             </div>
                             <div>
                                 <h4 class="mb-1 mt-1"><span data-plugin="counterup">
-                                        <%=totalBalance%>
+                                        <%=parseInt(data.totalBalance)%>
                                     </span></h4>
-                                <p class="text-muted mb-0">Total Balance</p>
+                                <p class="text-muted mb-0">Balance</p>
                             </div>
                             <!-- <p class="text-muted mt-3 mb-0"><span class="text-success me-1"><i class="mdi mdi-arrow-up-bold me-1"></i>2.65%</span> since last week -->
                             </p>
@@ -85,7 +85,7 @@
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%>
                                         <span data-plugin="counterup">
-                                            <%=parseInt(totalGifts)%>
+                                            <%=parseInt(data.totalGifts)%>
                                         </span>
                                 </h4>
 
@@ -108,7 +108,7 @@
                             </div>
                             <div>
                                 <h4 class="mb-1 mt-1"><span data-plugin="counterup">
-                                        <%=livePlayers%>
+                                        <%=data.livePlayers%>
                                     </span></h4>
                                 <p class="text-muted mb-0">Live Player</p>
                             </div>
@@ -117,7 +117,8 @@
                         </div>
                     </div>
                 </div> <!-- end col-->
-                <div class="col-md-6 col-xl-3">
+                
+                 <!-- <div class="col-md-6 col-xl-3">
                     <div class="card">
                         <div class="card-body">
                             <div class="float-end mt-2">
@@ -134,7 +135,33 @@
                             </p>
                         </div>
                     </div>
+                </div>  -->
+
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="float-end mt-2">
+                                <div id="growth-chart"></div>
+                            </div>
+                            <div>
+                                <h4 class="mb-1 mt-1">
+                                    <span data-plugin="counterup">
+                                        <%=parseInt(0)%>
+                                    </span>
+                                </h4>
+                                <p class="text-muted mb-0"> Games Today</p>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
+
+
+
+
+
+                
                 <!-- end col-->
             </div> <!-- end row-->
             <div class="row">
@@ -149,10 +176,10 @@
                             <div>
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%> <span data-plugin="counterup">
-                                            <%=parseInt(totalCommissions)%>
+                                            <%=parseInt(data.totalCommissions)%>
                                         </span>
                                 </h4>
-                                <p class="text-muted mb-0">Commison</p>
+                                <p class="text-muted mb-0">Total Commison</p>
                             </div>
                             <!-- <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
                                         class="mdi mdi-arrow-down-bold me-1"></i>0.82%</span> since last week
@@ -170,10 +197,10 @@
                             <div>
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%> <span data-plugin="counterup">
-                                            <%=parseInt(0)%>
+                                            <%=parseInt(data.totalBetAmount)%>
                                         </span>
                                 </h4>
-                                <p class="text-muted mb-0">betAmount</p>
+                                <p class="text-muted mb-0">Total Bet  </p>
                             </div>
                             <!-- <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
                                         class="mdi mdi-arrow-down-bold me-1"></i>6.24%</span> since last week
@@ -182,26 +209,9 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 col-xl-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="float-end mt-2">
-                                <div id="growth-chart"></div>
-                            </div>
-                            <div>
-                                <h4 class="mb-1 mt-1">
-                                    <span data-plugin="counterup">
-                                        <%=parseInt(0)%>
-                                    </span>
-                                </h4>
-                                <p class="text-muted mb-0"> Payout Count</p>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
+                
                 <!-- end col-->
-                <div class="col-md-6 col-xl-3">
+                <!-- <div class="col-md-6 col-xl-3">
                     <div class="card">
                         <div class="card-body">
                             <div class="float-end mt-2">
@@ -217,10 +227,67 @@
 
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <!-- end col-->
             </div> <!-- end row-->
+            <div class="container mt-5">
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">Game Stat </h4>
 
+                    <div class="float-end row">
+                        <div class="col-md-3">
+                            <select onchange="view(event)" class="form-select" name="location" id="days_drop" required>
+                                <option value="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="week">Last Week</option>
+                                <option value="month">Last 30 days</option>
+                                <option value="custome">Custome</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="input-daterange input-group" id="datepicker6" data-date-format="yyyy-mm-dd"
+                                data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
+                                <input type="text" id="s_date" class="form-control text-start" placeholder="From"
+                                    name="From" data-date-format="yyyy-mm-dd" />
+                                <input type="text" id="e_date" class="form-control text-start" placeholder="To"
+                                    name="To" data-date-format="yyyy-mm-dd" />
+                            </div>
+
+                        </div>
+                        <div class="col-md-3 d ">
+                            <button onclick="getTotal()" class="btn btn-success">Refresh</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-end mt-2">
+                            <div id="total-revenue-chart">
+                            </div>
+                        </div>
+                        <div>
+                            <table class="table table-hover ">
+                                <thead class="table-info">
+                                  <tr>
+                                    <th>Game</th>
+                                    <th>Bets</th>
+                                    <th>Winnings</th>
+                                    <th>Income</th>
+                                    <th>Gift</th>
+                                    <th>Player Count</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="gameStatsTable">
+                                  <!-- Data will be dynamically populated -->
+                                </tbody>
+                              </table>
+                        </div>
+
+                    </div>
+                </div>
+                
+              </div>
             </div> <!-- end row-->
 
 
@@ -235,7 +302,9 @@
 
                 <%- contentFor('BottomJs') %>
                     <script>
-                        var minDate, maxDate;
+                let gameIdToName = JSON.parse('<%- gameIdToNameString %>');
+
+                         var minDate, maxDate;
                         let day = new Date();
                         let nextDay = new Date(day);
                         nextDay.setDate(day.getDate() + 1);
@@ -255,10 +324,19 @@
                                 success: (results) => {
                                     Swal.close();
                                     if (results.success) {
+                                        $('#gameSection').empty();
                                         $('.days_view').text(days_txt);
-                                         $('#WithdrawTotal').val(results.data.totalPrize);
+                                        $('#WithdrawTotal').text(results.data.totalGiftAmount);
+                                        $('#DepositTotal').text(results.data.commission);
+                                        if (results.data.gameWiseStats !== 0) {
+                                            $('#gameStatsTable').empty();
+                                            results.data.gameWiseStats.forEach(stat => {
+                                                    addRowToTable(stat);
+                                                });
 
-                                        $('#DepositTotal').val(results.data.totalCommission);
+                                            
+                                        }
+                                       
                                     } else {
                                         alert(results.error);
 
@@ -312,4 +390,23 @@
 
                         }
                         getTotal();
+
+                        // Function to add a row to the table
+                        function addRowToTable(stat) {
+                            // Create a new row with the data
+                            const newRow = `
+                                            <tr>
+                                                <td>${gameIdToName[stat._id]}</td>
+                                                <td>${stat.totalBets}</td>
+                                                <td>${stat.totalWinnings}</td>
+                                                <td>${stat.totalCommission}</td>
+                                                <td>${stat.totalGift}</td>
+                                                <td>${stat.playerCount}</td>
+                                            </tr>
+                                            `;
+
+                            // Append the new row to the table body
+                            $('#gameStatsTable').append(newRow);
+                        }
+                         
                     </script>

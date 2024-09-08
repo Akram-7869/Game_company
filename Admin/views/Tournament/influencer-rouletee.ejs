@@ -1,29 +1,8 @@
 <%- contentFor('HeaderCss') %>
   <link href="/public/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="/public/gameshtml/css/main.css">
+  <link rel="stylesheet" href="/public/gameshtml/css/roulette.css">
   <style>
-     
-    .number-grid {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .number-box {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background-color: #f4f4f4;
-      font-weight: bold;
-      font-size: 18px;
-    }
-    .number-box.highlighted {
-      background-color: yellow;
-    }
-  
     .sso-hidden {
       display: block;
     }
@@ -78,7 +57,7 @@
         width: 320px;
         height: 240px;
       }
-    }
+    }  
   </style>
   <%- contentFor('breadcrumb') %>
 
@@ -105,273 +84,135 @@
 
     <%- contentFor('body') %>
 
-      <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
-        <strong>Congratulations!</strong><span> You can invite others to watch your live by click </span><a href=""
-          target="_blank">here</a>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
+      
 
       <div class="container">
         <form id="join-form" name="join-form">
-          <div class="row join-info-group">
-            <div class="col-sm sso-hidden">
+          <div class="row join-info-group ">
+            <div class="col-sm sso-hidden d-none">
               <p class="join-info-text">AppID</p>
-              <input id="appid" type="text" placeholder="enter appid">
-              <p class="tips">If you don`t know what is your appid, checkout <a
-                  href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#a-nameappidaapp-id">this</a>
-              </p>
+              <input id="appid" type="text" value="<%=agodaAppId%>" placeholder="enter appid" readonly>
+
             </div>
-            <div class="col-sm sso-hidden">
+            <div class="col-sm sso-hidden d-none">
               <p class="join-info-text">Token(optional)</p>
               <input id="token" type="text" placeholder="enter token">
-              <p class="tips">If you don`t know what is your token, checkout <a
-                  href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#a-namekeyadynamic-key">this</a>
-              </p>
+
             </div>
             <div class="col-sm">
-              <p class="join-info-text">Channel</p>
-              <input id="channel" type="text" placeholder="enter channel name" required>
-              <p class="tips">If you don`t know what is your channel, checkout <a
-                  href="https://docs.agora.io/en/Agora%20Platform/terms?platform=All%20Platforms#channel">this</a></p>
+              <div class="d-none">
+                 <p class="join-info-text">Channel</p>
+              <input id="channel" type="text" placeholder="enter channel name" required readonly>
+              </div>
+             
+              <div class="button-group">
+                <button id="host-join" type="submit" class="btn btn-primary btn-sm">Join as host</button>
+                <!-- <div class="btn-group">
+                  <button id="audience-join" type="button" class="btn btn-primary btn-sm" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Join as audience
+                  </button>
+                  <div class="audience dropdown-menu">
+                    <a id="lowLatency" class="dropdown-item" label="Interactive Live Streaming Standard"
+                      href="#">Interactive
+                      Live Streaming Standard</a>
+                    <a id="ultraLowLatency" class="dropdown-item" label="Interactive Live Streaming Premium"
+                      href="#">Interactive Live Streaming Premium</a>
+                  </div>
+                </div> -->
+                <button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Leave</button>
+              </div>
             </div>
-            <div class="col-sm">
+            <div class="col-sm d-block d-none">
               <p class="join-info-text">User ID(optional)</p>
               <input id="uid" type="text" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"
                 onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Enter the user ID">
             </div>
+
+
           </div>
 
-          <div class="button-group">
-            <button id="host-join" type="submit" class="btn btn-primary btn-sm">Join as host</button>
-            <div class="btn-group">
-              <button id="audience-join" type="button" class="btn btn-primary btn-sm" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                Join as audience
-              </button>
-              <div class="audience dropdown-menu">
-                <a id="lowLatency" class="dropdown-item" label="Interactive Live Streaming Standard"
-                  href="#">Interactive
-                  Live Streaming Standard</a>
-                <a id="ultraLowLatency" class="dropdown-item" label="Interactive Live Streaming Premium"
-                  href="#">Interactive Live Streaming Premium</a>
-              </div>
-            </div>
-            <button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Leave</button>
-          </div>
+
 
         </form>
         <!-- Single button -->
-        <div class="row video-group">
-          <div class="col">
-            <p id="local-player-name" class="player-name"></p>
-            <div id="local-player" class="player"></div>
-          </div>
-          <div class="w-100"></div>
-          <div class="col">
-            <div id="remote-playerlist"></div>
-          </div>
-        </div>
 
       </div>
 
+      <div class="row">
+        <div class="col-12 col-md-4">
+          <div class="">
+            <div class="row video-group col-sm">
+              <div class="col">
+                <p id="local-player-name" class="player-name"></p>
+                <div id="local-player" class="player"></div>
+              </div>
+              <div class="w-100"></div>
+              <div class="col">
+                <div id="remote-playerlist"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-8">
+          <div class="">
+            <div id="game-container">
+              <div id="left-container">
+                  <div id="history-container">
+                      <div id="history-title">Game History</div>
+                      <div id="history-list"></div>
+                  </div>
+              </div>
+              <div id="timer-container">
+                  <div id="timer">Time: <span id="time-remaining">0</span></div>
+              </div>
+              <div id="center-container">
+                  <div id="wheel-container">
+                      <div id="roulette-wheel"></div>
+                  </div>
+                  <div id="result-container">
+                      <div id="current-number"></div>
+                      <div id="win-message"></div>
+                  </div>
+              </div>
+              <div id="board-container"></div>
+          </div>
+          </div>
+        </div>
 
 
+        <div class="row">
+        </div>
+        <div>
 
-      <div class="container">
-
+        </div>
       </div>
 
       <div class="d-lg-flex mb-4">
         <div class="chat-leftsidebar card">
           <div class="p-3 px-4">
             <div class="d-flex align-items-start">
-              <div class="row video-group">
-                <div class="col">
-                  <p id="local-player-name" class="player-name"></p>
-                  <div id="local-player" class="player"></div>
-                </div>
-                <div class="w-100"></div>
-                <div class="col">
-                  <div id="remote-playerlist"></div>
-                </div>
-              </div>
+
             </div>
           </div>
 
-          <div class="p-3">
+          <!-- <div class="p-3">
             <div class="search-box chat-search-box">
               <div class="position-relative">
                 <input type="text" class="form-control bg-light border-light rounded" placeholder="Search...">
                 <i class="uil uil-search search-icon"></i>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <div class="pb-3">
             <div data-simplebar style="max-height: 470px;">
               <div class="p-4 border-top">
-                <div>
-                  <div class="float-end">
-                    <a href="" class="text-primary"><i class="mdi mdi-plus"></i> New Group</a>
-                  </div>
-                  <h5 class="font-size-16 mb-3"><i class="uil uil-users-alt me-1"></i> Groups</h5>
 
-                  <ul class="list-unstyled chat-list group-list">
-                    <li>
-                      <a href="#">
-                        <div class="d-flex align-items-start align-items-center">
-                          <div class="avatar-xs me-3">
-                            <span class="avatar-title rounded-circle bg-soft-primary text-primary">
-                              G
-                            </span>
-                          </div>
-
-                          <div class="flex-1">
-                            <h5 class="font-size-14 mb-0">General</h5>
-                          </div>
-                        </div>
-                      </a>
-                    </li>
-                    <li class="active">
-                      <a href="#">
-                        <div class="d-flex align-items-start align-items-center">
-                          <div class="avatar-xs me-3">
-                            <span class="avatar-title rounded-circle bg-soft-primary text-primary">
-                              <i class="uil uil-edit-alt"></i>
-                            </span>
-                          </div>
-
-                          <div class="flex-1">
-                            <h5 class="font-size-14 mb-0">Designers</h5>
-                          </div>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <div class="d-flex align-items-start align-items-center">
-                          <div class="avatar-xs me-3">
-                            <span class="avatar-title rounded-circle bg-soft-primary text-primary">
-                              <i class="uil uil-users-alt"></i>
-                            </span>
-                          </div>
-
-                          <div class="flex-1">
-                            <h5 class="font-size-14 mb-0">Meeting</h5>
-                          </div>
-                        </div>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </div>
 
               <div class="p-4 border-top">
-                <div>
-                  <div class="float-end">
-                    <a href="" class="text-primary"><i class="mdi mdi-plus"></i> New Contact</a>
-                  </div>
-                  <h5 class="font-size-16 mb-3"><i class="uil uil-user me-1"></i> Contacts</h5>
 
-                  <ul class="list-unstyled chat-list">
-                    <li>
-                      <a href="#">
-                        <div class="d-flex align-items-start">
-
-                          <div class="user-img online align-self-center me-3">
-                            <img src="public/assets/images/users/avatar-2.jpg" class="rounded-circle avatar-xs" alt="">
-                            <span class="user-status"></span>
-                          </div>
-
-                          <div class="flex-1 overflow-hidden">
-                            <h5 class="text-truncate font-size-14 mb-1">John Howard</h5>
-                            <p class="text-truncate mb-0">Hey! there I'm available</p>
-                          </div>
-                          <div class="font-size-11">02 min</div>
-                        </div>
-                      </a>
-                    </li>
-                    <li class="unread">
-                      <a href="#">
-                        <div class="d-flex align-items-start">
-                          <div class="user-img online align-self-center me-3">
-                            <div class="avatar-xs align-self-center">
-                              <span class="avatar-title rounded-circle bg-soft-primary text-primary">
-                                G
-                              </span>
-                            </div>
-                            <span class="user-status"></span>
-                          </div>
-
-                          <div class="flex-1 overflow-hidden">
-                            <h5 class="text-truncate font-size-14 mb-1">Galen Rizo</h5>
-                            <p class="text-truncate mb-0">I've finished it! See you so</p>
-                          </div>
-                          <div class="font-size-11">10 min</div>
-                          <div class="unread-message">
-                            <span class="badge bg-danger rounded-pill">01</span>
-                          </div>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <div class="d-flex align-items-start">
-                          <div class="user-img away align-self-center me-3">
-                            <img src="public/assets/images/users/avatar-3.jpg" class="rounded-circle avatar-xs" alt="">
-                            <span class="user-status"></span>
-                          </div>
-
-                          <div class="flex-1 overflow-hidden">
-                            <h5 class="text-truncate font-size-14 mb-1">Bernard Spencer</h5>
-                            <p class="text-truncate mb-0">This theme is awesome!</p>
-                          </div>
-                          <div class="font-size-11">22 min</div>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <div class="d-flex align-items-start">
-
-                          <div class="user-img align-self-center me-3">
-                            <img src="public/assets/images/users/avatar-4.jpg" class="rounded-circle avatar-xs" alt="">
-                            <span class="user-status"></span>
-                          </div>
-
-                          <div class="flex-1 overflow-hidden">
-                            <h5 class="text-truncate font-size-14 mb-1">Annie Holder</h5>
-                            <p class="text-truncate mb-0">Nice to meet you</p>
-                          </div>
-                          <div class="font-size-11">01 Hr</div>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <div class="d-flex align-items-start">
-
-                          <div class="user-img online align-self-center me-3">
-                            <div class="avatar-xs align-self-center">
-                              <span class="avatar-title rounded-circle bg-soft-primary text-primary">
-                                V
-                              </span>
-                            </div>
-                            <span class="user-status"></span>
-                          </div>
-
-                          <div class="flex-1 overflow-hidden">
-                            <h5 class="text-truncate font-size-14 mb-1">Vernon Smith</h5>
-                            <p class="text-truncate mb-0">Wow that's great</p>
-                          </div>
-                          <div class="font-size-11">04 Hrs</div>
-                        </div>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </div>
             </div>
           </div>
@@ -379,133 +220,10 @@
         <!-- end chat-leftsidebar -->
 
         <div class="w-100 user-chat mt-4 mt-sm-0 ms-lg-1">
-          <div class="card">
-            <div class="p-3 px-lg-4 border-bottom">
-              <div class="row">
-                  <!-- Numbers Declared Grid -->
-    <div class="numbers-declared">
-      <h2>Numbers Declared</h2>
-      <div id="declaredNumbersGrid" class="number-grid">
-        <!-- Numbers 1 to 90 will be populated here -->
-      </div>
-    </div>
+          <%- include ('../Partials/Chat') %>
 
-    <!-- Rewards -->
-    <div class="rewards">
-      <h2>Rewards</h2>
-      <ul id="rewardsList">
-        <!-- Rewards will be populated here -->
-      </ul>
-    </div>
-
-    <!-- Available Rewards -->
-    <div class="available-rewards">
-      <h2>Available Rewards</h2>
-      <ul id="availableRewardsList">
-        <!-- Available rewards will be populated here -->
-      </ul>
-    </div>
-  </div>
-                <div class="col-md-4 col-6">
-
-                </div>
-                <div class="col-md-8 col-6">
-                  <ul class="list-inline user-chat-nav text-end mb-0">
-                    <li class="list-inline-item">
-                      <div class="dropdown">
-                        <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false">
-                          <i class="uil uil-search"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-md">
-                          <form class="p-2">
-                            <div>
-                              <input type="text" class="form-control rounded" placeholder="Search...">
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </li>
-
-
-                    <li class="list-inline-item">
-                      <div class="dropdown">
-                        <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false">
-                          <i class="uil uil-ellipsis-h"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end">
-                          <a class="dropdown-item" href="#">Profile</a>
-                          <a class="dropdown-item" href="#">Archive</a>
-                          <a class="dropdown-item" href="#">Muted</a>
-                          <a class="dropdown-item" href="#">Delete</a>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div class="px-lg-2">
-              <div class="chat-conversation p-3">
-                <ul id="messageList" class="list-unstyled mb-0" data-simplebar style="max-height: 455px;">
-                  <li class="chat-day-title">
-                    <div class="title">Today</div>
-                  </li>
-
-
-                  <li class="right">
-                    <div class="conversation-list">
-                      <div class="ctext-wrap">
-                        <div class="ctext-wrap-content">
-                          <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">Marcus</a> <span
-                              class="d-inline-block font-size-12 text-muted ms-2">10:02</span></h5>
-                          <p class="mb-0">
-                            Good morning everyone !
-                          </p>
-                        </div>
-                        <!-- <div class="dropdown align-self-start">
-                          <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <i class="uil uil-ellipsis-v"></i>
-                          </a>
-                          <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Copy</a>
-                            <a class="dropdown-item" href="#">Save</a>
-                            <a class="dropdown-item" href="#">Forward</a>
-                            <a class="dropdown-item" href="#">Delete</a>
-                          </div>
-                        </div> -->
-                      </div>
-                    </div>
-
-                  </li>
-
-
-                </ul>
-              </div>
-            </div>
-            <form id="form" action="">
-              <div class="p-3 chat-input-section">
-                <div class="row">
-                  <div class="col">
-                    <div class="position-relative">
-                      <input id="input" type="text" class="form-control chat-input rounded"
-                        placeholder="Enter Message...">
-
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                    <button type="submit" class="btn btn-primary chat-send w-md waves-effect waves-light"><span
-                        class="d-none d-sm-inline-block me-2">Send</span> <i
-                        class="mdi mdi-send float-end"></i></button>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
         </div>
+      </div>
       </div>
       <%- contentFor('FooterJs') %>
 
@@ -518,182 +236,39 @@
         <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
         <script src="/public/assets/js/game/basicMute.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.4/pako.min.js"></script>
+        <script src="/public/gameshtml/js/chat.js"></script>
 
+        <script src="/public/gameshtml/js/socketHandler.js"></script>
+        <script src="/public/gameshtml/js/roulette.js"></script>
         <!-- Sweet alert init js
   <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
         <script>
-          let socketId;
+          // var io = io("wss://daemon.cherrygames.io", {
+          //   transports: ['websocket'],
+          //   query: "EIO=3&transport=websocket"
+          // });;
 
-          var server = "http://localhost:3000";
-
-          var io = io(server);
-
-          const form = document.getElementById('form');
-          const input = document.getElementById('input');
-          const messages = document.getElementById('messages');
+          var io = io("ws://localhost:3000", {
+            transports: ['websocket'],
+            query: "EIO=3&transport=websocket"
+          });
           let room = '';
-          let data = {
-            userId: "kka", lobbyId: "65c38ed7e4ab182b20abce43", maxp: 4
-          }
-          form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            if (input.value) {
-              io.emit('chat_message', { ...data, message: input.value, room });
-              input.value = '';
-            }
-          });
-
-          io.emit('join', data);
-          io.on('join', function (msg) {
-            room = msg.room;
-            io.emit('OnCurrentStatus', { room });
-          });
-
-          io.on('OnCurrentStatus', function (data) {
-            const messageList = document.getElementById('messageList');
-            messageList.innerHTML = ''; // Clear the list first
-
-            data?.messages?.forEach(function (msg) {
-              const newMessage = document.createElement('li');
-              newMessage.innerHTML = `
-          <div class="conversation-list">
-            <div class="ctext-wrap">
-              <div class="ctext-wrap-content">
-                <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">${msg.username}</a> 
-                  <span class="d-inline-block font-size-12 text-muted ms-2">${msg.time}</span></h5>
-                <p class="mb-0">${msg.message}</p>
-              </div>
-            </div>
-          </div>
-        `;
-              messageList.appendChild(newMessage);
-            });
-
-            // Scroll to the bottom after populating the list
-            window.scrollTo(0, document.body.scrollHeight);
-
-            const declaredNumbersDiv = document.getElementById('declaredNumbers');
-      const rewardsList = document.getElementById('rewardsList');
-      const availableRewardsList = document.getElementById('availableRewardsList');
-
-     // Highlight declared numbers
-     data.numbers.forEach(function(number) {
-        const numberElement = document.getElementById(`number-${number}`);
-        if (numberElement) {
-          numberElement.classList.add('highlighted');
-        }
-      });
-
-      // Populate rewards given
-      rewardsList.innerHTML = '';
-      data.claimed?.forEach(function(reward) {
-        const rewardItem = document.createElement('li');
-        rewardItem.textContent = `${reward.type}: ${reward.winner}`;
-        rewardsList.appendChild(rewardItem);
-      });
-
-      // // Populate available rewards
-      // availableRewardsList.innerHTML = '';
-      // data.availableRewards.forEach(function(reward) {
-      //   const rewardItem = document.createElement('li');
-      //   rewardItem.textContent = `${reward.type}: ${reward.amount}`;
-      //   availableRewardsList.appendChild(rewardItem);
-      // });
-
-
-
-
-
-
-
-
-
-
-
-          });
-
-          io.on('chat_message', function (msg) {
-            const messageList = document.getElementById('messageList');
-            const newMessage = document.createElement('li');
-            newMessage.innerHTML = `
-        <div class="conversation-list">
-          <div class="ctext-wrap">
-            <div class="ctext-wrap-content">
-              <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">${msg.username}</a> 
-                <span class="d-inline-block font-size-12 text-muted ms-2">${msg.time}</span></h5>
-              <p class="mb-0">${msg.message}</p>
-            </div>
-          </div>
-        </div>
-      `;
-            messageList.appendChild(newMessage);
-            window.scrollTo(0, document.body.scrollHeight);  // Scroll to the bottom
-          });
-          $(function () {
-            $('#winner').change(function () {
-              var userNumber = $(this).val();
-              $("#userFields").empty();
-              //Dynamically create input fields based on user selection
-              create(userNumber);
-            });
-          });
+          const data = {
+            userId: "<%= row.influencerId%>",
+            firstName: "<%= user?.firstName %>",
+            lobbyId: "<%= row._id%>",
+            role: "<%= row.tournamentType %>",
+            maxp: 99999
+          };
+          SocketHandler.initialize('roulette', '', data.lobbyId, io);
+ 
           function handleSubmit(params) {
             if (params.checkValidity()) {
               Swal.showLoading();
             }
             return false;
           }
-          function create(userNumber) {
-            for (var i = 1; i <= userNumber; i++) {
-              $("userForm").append($("#userFields").append($("<div/>", {
-                id: 'heading', class: 'form-group'
-              }).append($("<lable/>").text("winner_" + i + " : "), $("<input/>", {
-                type: 'text',
-                placeholder: 'Wining Amount ',
-                name: 'winnerRow[winner_' + i + ']',
-                id: 'winner_' + i,
-                class: "form-control",
-                required: 'true'
-              })),
-
-
-              ))
-            }
-          }
-          function initializeNumberGrid() {
-      const declaredNumbersGrid = document.getElementById('declaredNumbersGrid');
-      for (let i = 1; i <= 90; i++) {
-        const numberElement = document.createElement('div');
-        numberElement.classList.add('number-box');
-        numberElement.id = `number-${i}`;
-        numberElement.textContent = i;
-        declaredNumbersGrid.appendChild(numberElement);
-      }
-    }
-
-    // Call the function to initialize the grid when the page loads
-    initializeNumberGrid();
-
-// Handle 'number_declared' event
-io.on('number', function(data) {
-      // Highlight the newly declared number
-      const numberElement = document.getElementById(`number-${data.number}`);
-      if (numberElement) {
-        numberElement.classList.add('highlighted');
-      }
-
-      // Update rewards given
-      const rewardsList = document.getElementById('rewardsList');
-      rewardsList.innerHTML = '';
-      data.rewardsGiven.forEach(function(reward) {
-        const rewardItem = document.createElement('li');
-        rewardItem.textContent = `${reward.type}: ${reward.winner}`;
-        rewardsList.appendChild(rewardItem);
-      });
-
-      // Scroll to the bottom to show the latest updates
-      window.scrollTo(0, document.body.scrollHeight);
-    });
         </script>
 
         <%- contentFor('BottomJs') %>

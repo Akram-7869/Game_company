@@ -128,7 +128,7 @@
     "Player_Banned":"Players",
     "Player_Delete":"Players",
     "Player_Kyc":"Player_Kyc",
-  "Leader_Board":"Leader Board",
+  "Leader_Board":"Game List",
   "Payments":"Payments",
     "Wallet":"Wallet",
     "History":"Wallet",
@@ -149,7 +149,7 @@
   "Staff":"Staff",
   "Manager":"Manager",
   
-  "Reports":"Leader Board",
+  "Reports":"Game List",
   "Players_Report":"Players Report",
   "Payments_Report":"Payments Report",
 

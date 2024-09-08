@@ -12,8 +12,8 @@ const tranCtl = require('../controllers/TransactionController');
 router.use(protect);
 
 // Route for login page
-router.route('/dashboard').get(dashCtl.dashBoardView);
-router.route('/dashboard/income').get(dashCtl.franchiseIncome);
+router.route('/dashboard').get(dashCtl.dashBoardfranchiseView);
+router.route('/dashboard/income').post(dashCtl.franchiseIncome);
 
 router.route('/commission').get(commissionCtl.influencerCommList);
 router.route('/commission/data').post(commissionCtl.influencerCommData);

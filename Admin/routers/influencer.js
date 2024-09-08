@@ -32,8 +32,8 @@ router.route('/tournament/:id').get(tournCtl.getTournament).post(tournCtl.update
 router.route('/commission').get(commissionCtl.influencerCommList);
 router.route('/commission/data').post(commissionCtl.influencerCommData);
 
-router.route('/transactions').get(tournCtl.listInfluencerTournament);
-router.route('/transactions/data').post(tournCtl.getInfluencerTournaments);
+// router.route('/transactions').get(tournCtl.listInfluencerTournament);
+// router.route('/transactions/data').post(tournCtl.getInfluencerTournaments);
 
 router.route('/leaderboard').get(influencerCtl.gameList);
 router.route('/leaderboard/data').post(influencerCtl.gameData);

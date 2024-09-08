@@ -30,22 +30,16 @@ exports.getDashboards = asyncHandler(async (req, res, next) => {
 exports.getFranchiseDashboard = asyncHandler(async (req, res, next) => {
  
   let d={
-    
-  totalCommissions: 0,
-  totalBalance:0,
-  livePlayers :req.io.engine.clientsCount
+    totalCommissions: req.user.totalCommissions,
+    totalBalance:req.user.totalBalance,
+    totalBetAmount:req.user.totalBetAmount,
+    livePlayers :req.io.engine.clientsCount,
+    totalPlayers :req.user.totalPlayers,
+    stateCode:req.user.stateCode,
    }
   res.status(200).json(d);
 });
-exports.getInfluencerDashboard = asyncHandler(async (req, res, next) => {
-   let d={
-    totalGifts:0,
-    totalCommissions: 0,
-    totalBalance:0,
-    livePlayers :req.io.engine.clientsCount
-   }
-  res.status(200).json(d);
-});
+
 // @desc      Get single Dashboard
 // @route     GET /api/v1/auth/Dashboards/:id
 // @access    Private/Admin
@@ -184,7 +178,7 @@ const adminCommision = async () => {
 // @route     GET /api/v1/auth/Dashboards/filter/:id
 // @access    Private/Admin
 exports.getFilterDashboard = asyncHandler(async (req, res, next) => {
-  const row = await Dashboard.findOne({ 'type': 'dashboard' }).lean();
+  const row = await Dashboard.findOne({ 'type': 'admin' }).lean();
   row['livePlayers'] = req.io.engine.clientsCount;
 
 
@@ -210,30 +204,92 @@ let calIncome = async (s_date, e_date, userId ,role='influencer') => {
   const results = await PlayerGame.aggregate([
     {
       $match: {
-        s_date: startDate,
-        e_date: endDate,
-        influencerId:userId,
- 
-      },
+        createdAt: { $gte: startDate, $lt: endDate },
+        influencerId: userId
+      }
     },
     {
-      $group:
-     
-      {
-        _id: null, // Group by null to get a single result
+      $group: {
+        _id: "$game",
+        totalBets: { $sum: "$amountBet" },
+        totalWinnings: { $sum: "$amountWon" },
         totalGift: { $sum: "$amountGift" },
-        totalCommission: { $sum: "$amountGiven" }
-      },
+        playerCount: { $sum: 1 }
+      }
+    },
+  
+    {
+      $addFields: {
+        totalCommission: {$round: [{ $multiply: ["$totalBets", 0.07] }, 2] } // Calculate 20% commission on total bets
+      }
     },
     {
       $project: {
-        _id: 0, // Exclude _id from the result
-        totalGift: 1,
-        totalCommission: 1
+        _id: 1,
+        
+        totalBets: 1,
+        totalWinnings: 1,
+        totalCommission: 1,
+        playerCount: 1,
+        totalGift:1
       }
-    }
+    },
+    { $sort: { totalBets: -1 } } // Optional: Sort by total bets descending
+  
+
   ]);
-  return results.length > 0 ? results[0] : { totalGift: 0, totalCommission: 0 };
+  return results;
+
+
+}
+let calfranchiseIncome = async (s_date, e_date, user ) => {
+  const today = new Date();
+  // Calculate tomorrow's date
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  // Set s_date to today if not provided
+  const startDate = s_date ? new Date(s_date) : today;
+  // Set e_date to tomorrow if not provided
+  const endDate = e_date ? new Date(e_date) : tomorrow;
+
+  const results = await PlayerGame.aggregate([
+    {
+      $match: {
+        createdAt: { $gte: startDate, $lt: endDate },
+        stateCode: user.stateCode,
+      },
+    },
+    
+     {
+      $group: {
+        _id: "$game",
+        totalBets: { $sum: "$amountBet" },
+        totalWinnings: { $sum: "$amountWon" },
+        playerCount: { $sum: 1 }
+      }
+    },
+  
+    {
+      $addFields: {
+        totalCommission: {$round: [{ $multiply: ["$totalBets", 0.07] }, 2] } // Calculate 20% commission on total bets
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        
+        totalBets: 1,
+        totalWinnings: 1,
+        totalCommission: 1,
+        playerCount: 1
+      }
+    },
+    { $sort: { totalBets: -1 } } // Optional: Sort by total bets descending
+  
+ 
+  
+  ]);
+  return results;
 
 
 }
@@ -322,21 +378,41 @@ exports.getGraphData = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Dashboards/filter/:id
 // @access    Private/Admin
 exports.totalIncome = asyncHandler(async (req, res, next) => {
-  let c = await calTotal();
+  let income = await calTotal();
+  let gameWiseStats = await getTopGames();
+
 
   //console.log('graph', graph, req.body)
   res.status(200).json({
     success: true,
-    data: c
+    data: {gameWiseStats , income}
   });
 });
+exports.getInfluencerDashboard = asyncHandler(async (req, res, next) => {
+  let d={
+   totalGifts:req.user.totalGifts,
+   totalCommissions: req.user.totalCommissions,
+   totalBalance:req.user.totalBalance,
+   totalBetAmount:req.user.totalBetAmount,
+   livePlayers :req.io.engine.clientsCount
+  }
+ res.status(200).json(d);
+});
 exports.influencerIncome = asyncHandler(async (req, res, next) => {
-  let c = await calIncome(req.body.s_date, req.body.e_date, req.user._id);
-
+  let  gameWiseStats = await calIncome(req.body.s_date, req.body.e_date, req.user._id);
   //console.log('graph', graph, req.body)
   res.status(200).json({
     success: true,
-    data: c
+    data:  {gameWiseStats}
+  });
+});
+
+exports.franchiseIncome = asyncHandler(async (req, res, next) => {
+  let gameWiseStats = await calfranchiseIncome(req.body.s_date, req.body.e_date, req.user);
+  //console.log('graph', graph, req.body)
+  res.status(200).json({
+    success: true,
+    data: {gameWiseStats}
   });
 });
 
@@ -391,3 +467,124 @@ exports.deleteDashboard = asyncHandler(async (req, res, next) => {
   });
 });
 
+let getTopGames  = async (s_date, e_date) => {
+
+ 
+  const today = new Date();
+  // Calculate tomorrow's date
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  // Set s_date to today if not provided
+  const startDate = s_date ? new Date(s_date) : today;
+  // Set e_date to tomorrow if not provided
+  const endDate = e_date ? new Date(e_date) : tomorrow;
+  
+  const results = await PlayerGame.aggregate([
+    {
+      $match: {
+        createdAt: { $gte: startDate, $lt: endDate }, // Filter documents by date range
+      },
+    },
+    {
+      $group: {
+        _id: "$game",
+        totalBets: { $sum: "$amountBet" },
+        totalWinnings: { $sum: "$amountWon" },
+      },
+    },
+    {
+      $addFields: {
+        totalCommission: { $subtract: ["$totalBets", "$totalWinnings"] }, // Calculate totalCommission
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        totalBets: 1,
+        totalWinnings: 1,
+        totalCommission: 1,
+      },
+    },
+    { $sort: { totalBets: -1 } }, // Optional: Sort by total bets descending
+  ]);
+  
+  
+  console.log('results',results);
+  return results;
+  }
+  exports.getTopTournament = asyncHandler(async (req, res, next) => {
+ 
+    const startDate = new Date("2024-09-01"); // Set your start date
+    const endDate = new Date("2024-09-07"); // Set your end date
+    
+    const results = await PlayerGame.aggregate(
+      [
+        {
+          $match: {
+            createdAt: { $gte: startDate, $lt: endDate } // Filter documents by date range
+          }
+        },
+        {
+          $group: {
+            _id: {
+              gameId: "$tournamentId", // Group by game
+            },
+            totalPlayers: { $sum: 1 } // Increment count for each document
+          }
+        },
+        {
+          $sort: { "_id.day": 1, "_id.gameId": 1 } // Sort by day and game
+        },
+        {
+          $project: {
+            _id: 0,
+            gameId: "$_id.gameId",
+            day: "$_id.day",
+            totalPlayers: 1
+          }
+        }
+      ]
+    );
+    
+    console.log('results',results);
+    let d = results.length > 0 ? results[0] : { totalBetAmount: 0, playerCount: 0, gameCount: 0, commission: 0 };
+    res.status(200).json(d);
+    });
+  exports.getTopPlayers = asyncHandler(async (req, res, next) => {
+ 
+      const startDate = new Date("2024-09-01"); // Set your start date
+      const endDate = new Date("2024-09-07"); // Set your end date
+      
+      const results = await PlayerGame.aggregate(
+        [
+          {
+            $match: {
+              createdAt: { $gte: startDate, $lt: endDate } // Filter documents by date range
+            }
+          },
+          {
+            $group: {
+              _id: {
+                gameId: "$playerId", // Group by game
+              },
+              totalPlayers: { $sum: 1 } // Increment count for each document
+            }
+          },
+          {
+            $sort: { "_id.day": 1, "_id.gameId": 1 } // Sort by day and game
+          },
+          {
+            $project: {
+              _id: 0,
+              gameId: "$_id.gameId",
+              day: "$_id.day",
+              totalPlayers: 1
+            }
+          }
+        ]
+      );
+      
+      console.log('results',results);
+      let d = results.length > 0 ? results[0] : { totalBetAmount: 0, playerCount: 0, gameCount: 0, commission: 0 };
+      res.status(200).json(d);
+      });

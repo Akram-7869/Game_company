@@ -45,14 +45,14 @@ exports.getCommissions = asyncHandler(async (req, res, next) => {
         limit: req.body.length,
         skip: req.body.start,
         find: req.query,
-        select: {influencerId:1, 'status': 1, 'gameId': 1, franchiseCommission:1,influencerCommission:1,giftRecevied:1,createdAt:1},
+        select: {userId:1,  commission:1,gift:1,totalBetAmount:1,date:1},
         search: {
 
         },
 
-        populate: {
-            path: 'influencerId', select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1, email: 1 }
-        },
+        // populate: {
+        //     // path: 'userId', select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1, email: 1 }
+        // },
         sort: {
             _id: -1
         }
@@ -94,7 +94,7 @@ exports.getCommissions = asyncHandler(async (req, res, next) => {
     }
 
     if (req.body.s_date && req.body.e_date) {
-        filter['find']['createdAt'] = {
+        filter['find']['date'] = {
             $gte: req.body.s_date,
             $lt: req.body.e_date
         }
@@ -104,8 +104,9 @@ exports.getCommissions = asyncHandler(async (req, res, next) => {
     if (req.body.stateCode) {
         filter['find']['stateCode'] = req.body.stateCode;
     }
-  
+    if (req.role !=='admin') {
         filter['find']['userId'] = req.user._id;
+    }
     
 
     Commission.dataTables(filter).then(function (table) {

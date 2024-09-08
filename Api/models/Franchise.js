@@ -20,7 +20,7 @@ const FranchiseSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'Please add an email'],
-    unique: true,
+    
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Please add a valid email'
@@ -53,10 +53,18 @@ const FranchiseSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  commissionPending: {
+  totalBetAmount: {
     type: Number,
-    default: 0
+    default: 0,
+    required:true
+
   },
+  totalPlayers: {
+    type: Number,
+    default: 0,
+    required:true
+  },
+  
   stateCode: {
     type: String,
     required: true,

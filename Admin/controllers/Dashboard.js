@@ -3,7 +3,7 @@ const asyncHandler = require('../middleware/async');
 // const {Players} = require('../models/Players');
 // const {User} = require('../models/User');
 let axios = require("axios");
-const { callApi, api_url, redirect } = require('../helper/common');
+const { callApi, api_url, gameIdToName } = require('../helper/common');
 let apiUrl = api_url + '/dashboards/';
 
 // @desc      Get all Players
@@ -19,7 +19,9 @@ exports.dashBoardView = asyncHandler(async (req, res, next) => {
             let sumDb = r.data.data.graph.map(d => {
                 return d.totalAmount
             });
-            res.render('Dashboard/index', { list: r.data.data.row, lableDb, sumDb })
+            const gameIdToNameString = JSON.stringify(gameIdToName);
+
+            res.render('Dashboard/index', { list: r.data.data.row, lableDb, gameIdToNameString})
        
             
              
@@ -81,7 +83,8 @@ exports.dashBoardInfluncerView = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Dashboard' };
     callApi(req).post(apiUrl + 'filter/influencer', { s_date: '2021-08-01', e_date: '2021-09-01', logType: 'game' })
         .then(r => {
-            res.render('Dashboard/influencer',  r.data )
+            const gameIdToNameString = JSON.stringify(gameIdToName);
+            res.render('Dashboard/influencer',  {data:r.data, gameIdToNameString} )
         })
         .catch(error => { req.flash('error', 'Incorrect email or password!'); })
 });
@@ -105,7 +108,8 @@ exports.dashBoardfranchiseView = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Dashboard' };
     callApi(req).post(apiUrl + 'filter/franchise', { s_date: '2021-08-01', e_date: '2021-09-01', logType: 'game' })
         .then(r => {
-            res.render('Dashboard/franchise', r.data)
+            const gameIdToNameString = JSON.stringify(gameIdToName);
+             res.render('Dashboard/franchise', {data:r.data, gameIdToNameString})
         })
         .catch(error => { req.flash('error', 'Incorrect email or password!'); })
 });

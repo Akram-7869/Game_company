@@ -14,7 +14,11 @@ router.route('/filter/dashboard').post(dash.getFilterDashboard);
 router.route('/chart/data').post(dash.getGraphData);
 router.route('/total-income').post(dash.totalIncome);
 router.route('/influencer-income').post(dash.influencerIncome);
-router.route('/franchise-income').post(dash.influencerIncome);
+router.route('/franchise-income').post(dash.franchiseIncome);
+
+// router.route('/top/games').post(dash.topGames);
+// router.route('/top/tournament').post(dash.topTournament);
+// router.route('/players').post(dash.getPlayers);
 
 
 router.route('/add').post(dash.createDashboard);

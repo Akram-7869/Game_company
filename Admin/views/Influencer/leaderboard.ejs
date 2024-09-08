@@ -79,18 +79,15 @@
                                 <thead>
                                     <tr>
                                         <th>Srno</th>
-                                        <th>Email</th>
+                                        <!-- <th>Email</th> -->
                                         <th>won</th>
                                         <th>bet</th>
                                         <th>gameName</th>
                                         <th>gameId</th>
                                         <th>status</th>
-                                        <th>bot</th>
-                                        <th>Note</th>
                                         <th>Played</th>
                                         <!-- <th>Players</th> -->
-                                        <th>pstatus</th>
-                                        <!-- <th>Action</th> -->
+                                         <!-- <th>Action</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -195,7 +192,7 @@
                                         return meta.row + 1;
                                     }
                                 },
-                                { data: 'playerId.email', "defaultContent": "" },
+                                // { data: 'playerId.email', "defaultContent": "" },
                                 { data: 'amountWon', "defaultContent": "0" },
                                 { data: 'amountBet', "defaultContent": "0" },
                                 {
@@ -205,11 +202,6 @@
                                     data: 'gameId', "defaultContent": ""
                                 },
                                 { data: 'gameStatus', "defaultContent": "lost" },
-
-                                {
-                                    data: 'isBot', "defaultContent": ""
-                                },
-                                { data: 'note', "defaultContent": "WON" },
 
                                 {
                                     data: 'createdAt', render: function (data) {
@@ -225,7 +217,7 @@
                                 //         return o;
                                 //     }
                                 // },
-                                { data: 'status', "defaultContent": "" },
+                                // { data: 'status', "defaultContent": "" },
                                 // {
                                 //     data: null, "render": function (data, type, full, meta) {
                                 //         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/playerhistory/'

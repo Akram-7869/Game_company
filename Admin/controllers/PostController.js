@@ -118,7 +118,7 @@ exports.createPost = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Post' };
       let { description, status } = req.body;
 
-      console.log('creating-image', req.files);
+     // console.log('creating-image', req.files);
       const file = req.files.file;
 
 

@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const Tournament = require('../models/Tournament');
+const { makeid } = require('../utils/utils');
 
 // @desc      Get all Tournaments
 // @route     GET /api/v1/auth/Tournaments
@@ -65,6 +66,8 @@ exports.createTournament = asyncHandler(async (req, res, next) => {
     if(req.role ==='influencer'){
         req.body['influencerId']= req.user._id;
         req.body['tournamentType']= 'influencer';
+        req.body['room']= makeid(6);
+
          
     }
     const row = await Tournament.create(req.body);

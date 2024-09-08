@@ -191,7 +191,7 @@ exports.getPlayerHistory = asyncHandler(async (req, res, next) => {
       res.render('Players/history', { playerId: req.params.id })
 });
 exports.getLeaderBoard = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Leader Board' };
+      res.locals = { title: 'Game List' };
       res.render('Players/leaderboard')
 });
 exports.getLeaderBoardList = asyncHandler(async (req, res, next) => {

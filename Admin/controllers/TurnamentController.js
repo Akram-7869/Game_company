@@ -135,8 +135,12 @@ exports.createTournaments = asyncHandler(async (req, res, next) => {
             console.log('response', r.data);
             // Assign value in session
             // req.flash('message', 'Data save');
+            if (req.role === 'admin') {
+                res.redirect(process.env.ADMIN_URL + '/admin/tournament/' + r.data.data._id);
+            } else if (req.role === 'influencer') {
+                res.redirect(process.env.ADMIN_URL + '/influencer/tournament/' + r.data.data._id);
+            }
 
-            res.redirect(process.env.ADMIN_URL + '/admin/tournament/' + r.data.data._id);
         })
         .catch(error => {
             req.flash('error', 'Data not updated');

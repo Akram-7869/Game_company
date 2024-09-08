@@ -40,6 +40,8 @@ exports.deletDiskFile= (filePath  )=> {
      }
   });
 }
+exports.gameIdToName = {1:'ludo',2:'Dragon Tiger',3:'Teen patti',4:'Rouletee',5:'Tambola',6:'Crash'}
+
 exports.stateList = [{ type: 'state', code: 'IN-AP', name: 'Andhra Pradesh' },
 { type: 'state', code: 'IN-AR', name: 'Arunachal Pradesh' },
 { type: 'state', code: 'IN-AS', name: 'Assam' },

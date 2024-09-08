@@ -85,7 +85,7 @@
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%>
                                         <span data-plugin="counterup">
-                                            <%=parseInt(list.totalIncome)%>
+                                            <%=parseInt(list.totalCommission)%>
                                         </span>
                                 </h4>
 
@@ -149,10 +149,10 @@
                             <div>
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%> <span data-plugin="counterup">
-                                            <%=parseInt(list.winAmount)%>
+                                            <%=parseInt(list.totalWinningAmount)%>
                                         </span>
                                 </h4>
-                                <p class="text-muted mb-0">winAmount</p>
+                                <p class="text-muted mb-0">Total win</p>
                             </div>
                             <!-- <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
                                         class="mdi mdi-arrow-down-bold me-1"></i>0.82%</span> since last week
@@ -170,10 +170,10 @@
                             <div>
                                 <h4 class="mb-1 mt-1">
                                     <%=currency_symbol%> <span data-plugin="counterup">
-                                            <%=parseInt(list.betAmount)%>
+                                            <%=parseInt(list.totalBetAmount)%>
                                         </span>
                                 </h4>
-                                <p class="text-muted mb-0">betAmount</p>
+                                <p class="text-muted mb-0">Total bet</p>
                             </div>
                             <!-- <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
                                         class="mdi mdi-arrow-down-bold me-1"></i>6.24%</span> since last week
@@ -220,6 +220,50 @@
                 </div>
                 <!-- end col-->
             </div> <!-- end row-->
+            <div class="container mt-5"></div>
+                <div class="page-title-box d-flex align-items-center justify-content-between">
+                    <h4 class="mb-0">Game Stat </h4>
+
+                    <!-- <div class="float-end row">
+                        <div class="col-md-3">
+                            <select onchange="view(event)" class="form-select" name="location" id="days_drop" required>
+                                <option value="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="week">Last Week</option>
+                                <option value="month">Last 30 days</option>
+                                <option value="custome">Custome</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="input-daterange input-group" id="datepicker6" data-date-format="yyyy-mm-dd"
+                                data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
+                                <input type="text" id="s_date" class="form-control text-start" placeholder="From"
+                                    name="From" data-date-format="yyyy-mm-dd" />
+                                <input type="text" id="e_date" class="form-control text-start" placeholder="To"
+                                    name="To" data-date-format="yyyy-mm-dd" />
+                            </div>
+
+                        </div>
+                        <div class="col-md-3 d ">
+                            <button onclick="getTotal()" class="btn btn-success">Refresh</button>
+                        </div>
+                    </div> -->
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Game</th>
+                            <th> Bets</th>
+                            <th> Winnings</th>
+                            <th> Commission</th>
+                         </tr>
+                    </thead>
+                    <tbody id="gameStatsTable">
+                        <!-- Data will be dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
 
             </div> <!-- end row-->
 
@@ -235,6 +279,8 @@
 
                 <%- contentFor('BottomJs') %>
                     <script>
+                                                let gameIdToName = JSON.parse('<%- gameIdToNameString %>');
+
                         var minDate, maxDate;
                         let day = new Date();
                         let nextDay = new Date(day);
@@ -260,6 +306,14 @@
                                         $('#WithdrawTotal').val(results.data.withdrawalsTotal);
 
                                         $('#DepositTotal').val(results.data.depositsTotal);
+                                        if (results.data.gameWiseStats !== 0) {
+                                            $('#gameStatsTable').empty();
+                                            results.data.gameWiseStats.forEach(stat => {
+                                                addRowToTable(stat);
+                                            });
+
+
+                                        }
                                     } else {
                                         alert(results.error);
 
@@ -313,4 +367,20 @@
 
                         }
                         getTotal();
+
+                        // Function to add a row to the table
+                        function addRowToTable(stat) {
+                            // Create a new row with the data
+                            const newRow = `
+      <tr>
+        <td>${gameIdToName[stat._id]}</td>
+        <td>${stat.totalBets}</td>
+        <td>${stat.totalWinnings}</td>
+        <td>${stat.totalCommission}</td>
+       </tr>
+    `;
+
+                            // Append the new row to the table body
+                            $('#gameStatsTable').append(newRow);
+                        }
                     </script>

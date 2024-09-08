@@ -3,30 +3,6 @@
   <link rel="stylesheet" href="/public/gameshtml/css/main.css">
   <link rel="stylesheet" href="/public/gameshtml/css/dragonTiger.css">
   <style>
-    .number-grid {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .number-box {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background-color: #f4f4f4;
-      font-weight: bold;
-      font-size: 18px;
-    }
-
-    .number-box.highlighted {
-      background-color: yellow;
-    }
-
     .sso-hidden {
       display: block;
     }
@@ -81,28 +57,7 @@
         width: 320px;
         height: 240px;
       }
-    }
-    #chat-container {
-            width: 300px;
-            height: 400px;
-            border: 1px solid #ccc;
-            overflow-y: scroll;
-            padding: 10px;
-        }
-        #emoji-container {
-            margin-top: 10px;
-        }
-        .emoji {
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            margin: 2px;
-        }
-        .flying-emoji {
-            position: fixed;
-            pointer-events: none;
-            transition: all 2s ease-out;
-        }
+    }  
   </style>
   <%- contentFor('breadcrumb') %>
 
@@ -129,12 +84,7 @@
 
     <%- contentFor('body') %>
 
-      <!-- <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
-        <strong>Congratulations!</strong><span> You can invite others to watch your live by click </span> 
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div> -->
+      
 
       <div class="container">
         <form id="join-form" name="join-form">
@@ -150,8 +100,11 @@
 
             </div>
             <div class="col-sm">
-              <p class="join-info-text">Channel</p>
+              <div class="d-none">
+                 <p class="join-info-text">Channel</p>
               <input id="channel" type="text" placeholder="enter channel name" required readonly>
+              </div>
+             
               <div class="button-group">
                 <button id="host-join" type="submit" class="btn btn-primary btn-sm">Join as host</button>
                 <!-- <div class="btn-group">
@@ -212,19 +165,15 @@
               <div id="board">
                 <div id="dragon-area" class="bet-area">
                   <img src="/public/gameshtml/assets/dragonTiger/DragonBox.png" alt="Dragon Box">
-                  <div class="bet-amount">Bet: <span id="dragon-bet">0</span></div>
                 </div>
                 <div id="tie-area" class="bet-area">
                   <img src="/public/gameshtml/assets/dragonTiger/TieBox.png" alt="Tie Box">
-                  <div class="bet-amount">Bet: <span id="tie-bet">0</span></div>
                 </div>
                 <div id="tiger-area" class="bet-area">
                   <img src="/public/gameshtml/assets/dragonTiger/TigerBox.png" alt="Tiger Box">
-                  <div class="bet-amount">Bet: <span id="tiger-bet">0</span></div>
                 </div>
               </div>
               <div id="history-container"></div>
-
             </div>
           </div>
         </div>
@@ -257,11 +206,11 @@
           <div class="pb-3">
             <div data-simplebar style="max-height: 470px;">
               <div class="p-4 border-top">
-                
+
               </div>
 
               <div class="p-4 border-top">
-               
+
               </div>
             </div>
           </div>
@@ -269,65 +218,8 @@
         <!-- end chat-leftsidebar -->
 
         <div class="w-100 user-chat mt-4 mt-sm-0 ms-lg-1">
-          <div class="card">
+          <%- include ('../Partials/Chat') %>
 
-          <div class="px-lg-2">
-            <div class="chat-conversation p-3">
-              <ul id="messageList" class="list-unstyled mb-0" data-simplebar style="max-height: 455px;">
-                <li class="chat-day-title">
-                  <div class="title">Today</div>
-                </li>
-
-
-                <li class="right">
-                  <div class="conversation-list">
-                    <div class="ctext-wrap">
-                      <!-- <div class="ctext-wrap-content">
-                        <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">Marcus</a> <span
-                            class="d-inline-block font-size-12 text-muted ms-2">10:02</span></h5>
-                        <p class="mb-0">
-                          Good morning everyone !
-                        </p>
-                      </div> -->
-                      <!-- <div class="dropdown align-self-start">
-                          <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <i class="uil uil-ellipsis-v"></i>
-                          </a>
-                          <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Copy</a>
-                            <a class="dropdown-item" href="#">Save</a>
-                            <a class="dropdown-item" href="#">Forward</a>
-                            <a class="dropdown-item" href="#">Delete</a>
-                          </div>
-                        </div> -->
-                    </div>
-                  </div>
-
-                </li>
-
-
-              </ul>
-            </div>
-          </div>
-          <form id="form" action="">
-            <div class="p-3 chat-input-section">
-              <div class="row">
-                <div class="col">
-                  <div class="position-relative">
-                    <input id="input" type="text" class="form-control chat-input rounded"
-                      placeholder="Enter Message...">
-
-                  </div>
-                </div>
-                <div class="col-auto">
-                  <button type="submit" class="btn btn-primary chat-send w-md waves-effect waves-light"><span
-                      class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send float-end"></i></button>
-                </div>
-              </div>
-            </div>
-          </form>
-          </div>
         </div>
       </div>
       </div>
@@ -343,25 +235,22 @@
         <script src="/public/assets/js/game/basicMute.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.4/pako.min.js"></script>
+        <script src="/public/gameshtml/js/chat.js"></script>
+
         <script src="/public/gameshtml/js/socketHandler.js"></script>
         <script src="/public/gameshtml/js/dragonTiger.js"></script>
-        <!-- <script src="/public/gameshtml/js/main.js"></script> -->
-
         <!-- Sweet alert init js
   <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
         <script>
-          let socketId;
+          // var io = io("wss://daemon.cherrygames.io", {
+          //   transports: ['websocket'],
+          //   query: "EIO=3&transport=websocket"
+          // });;
 
-          // var server = "wss://daemon.cherrygames.io";
-
-          var io = io("wss://daemon.cherrygames.io", {
+          var io = io("ws://localhost:3000", {
             transports: ['websocket'],
             query: "EIO=3&transport=websocket"
-          });;
-
-          const form = document.getElementById('form');
-          const input = document.getElementById('input');
-          const messages = document.getElementById('messages');
+          });
           let room = '';
           const data = {
             userId: "<%= row.influencerId%>",
@@ -370,168 +259,14 @@
             role: "<%= row.tournamentType %>",
             maxp: 99999
           };
-
-
-          form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            if (input.value) {
-              io.emit('chat_message', { ...data, message: compressMessage(input.value), room });
-              input.value = '';
-            }
-          });
-          io.on('connect', () => {
-            console.log('Connected to server');
-            io.emit('join', { ...data, gameType: 'sfsf', room });
-            initializeSocket(io, 'sfsf')
-          });
-          io.on('join', function (msg) {
-            room = msg.room;
-            $("#channel").val(room);
-            console.log('Joined room:', room);
-            io.emit('OnCurrentStatus', { room });
-          });
-          io.on('emoji_message', (emojiData) => {
-            displayEmoji(emojiData);
-        });
-          io.on('OnCurrentStatus', function (data) {
-            const messageList = document.getElementById('messageList');
-            messageList.innerHTML = ''; // Clear the list first
-
-            data?.messages?.forEach(function (msg) {
-              const newMessage = document.createElement('li');
-              newMessage.innerHTML = `
-          <div class="conversation-list">
-            <div class="ctext-wrap">
-              <div class="ctext-wrap-content">
-                <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">${msg.firstName}</a> 
-                  <span class="d-inline-block font-size-12 text-muted ms-2"></span>
-                  </h5>
-                <p class="mb-0">${msg.message}</p>
-              </div>
-            </div>
-          </div>
-        `;
-              messageList.appendChild(newMessage);
-            });
-
-            // Scroll to the bottom after populating the list
-            window.scrollTo(0, document.body.scrollHeight);
-          });
-
-          io.on('chat_message', function (msg) {
-            const messageList = document.getElementById('messageList');
-            const newMessage = document.createElement('li');
-            let msgde = decompressMessage(msg.message);
-            newMessage.innerHTML = `
-        <div class="conversation-list">
-          <div class="ctext-wrap">
-            <div class="ctext-wrap-content">
-              <h5 class="font-size-14 conversation-name"><a href="#" class="text-dark">${msg.firstName}</a> 
-                <span class="d-inline-block font-size-12 text-muted ms-2"></span>
-                </h5>
-              <p class="mb-0">${msgde}</p>
-            </div>
-          </div>
-        </div>
-      `;
-            messageList.appendChild(newMessage);
-            window.scrollTo(0, document.body.scrollHeight);  // Scroll to the bottom
-          });
-          $(function () {
-            $('#winner').change(function () {
-              var userNumber = $(this).val();
-              $("#userFields").empty();
-              //Dynamically create input fields based on user selection
-              create(userNumber);
-            });
-          });
+          SocketHandler.initialize('dragonTiger', '', data.lobbyId, io);
+ 
           function handleSubmit(params) {
             if (params.checkValidity()) {
               Swal.showLoading();
             }
             return false;
           }
-
-          function initializeNumberGrid() {
-
-
-          }
-
-          // Call the function to initialize the grid when the page loads
-          initializeNumberGrid();
-
-          // Handle 'number_declared' event
-          io.on('number', function (data) {
-            // Highlight the newly declared number
-            const numberElement = document.getElementById(`number-${data.number}`);
-            if (numberElement) {
-              numberElement.classList.add('highlighted');
-            }
-
-            // Update rewards given
-            const rewardsList = document.getElementById('rewardsList');
-            rewardsList.innerHTML = '';
-            data.rewardsGiven.forEach(function (reward) {
-              const rewardItem = document.createElement('li');
-              rewardItem.textContent = `${reward.type}: ${reward.winner}`;
-              rewardsList.appendChild(rewardItem);
-            });
-
-            // Scroll to the bottom to show the latest updates
-            window.scrollTo(0, document.body.scrollHeight);
-          });
-          function compressMessage(message) {
-            const encoder = new TextEncoder();
-            const messageBytes = encoder.encode(message);
-            const compressedBytes = pako.gzip(messageBytes);
-            return btoa(String.fromCharCode(...compressedBytes));
-          }
-          function decompressMessage(compressedMessage) {
-            const compressedBytes = Uint8Array.from(atob(compressedMessage), c => c.charCodeAt(0));
-            const decompressedBytes = pako.ungzip(compressedBytes);
-            const decoder = new TextDecoder('utf-8');
-            return decoder.decode(decompressedBytes);
-          }
-
-          
-          function displayEmoji(emojiData) {
-            const messageList = document.getElementById('messageList');
-            const emojiElement = document.createElement('li');
-            const emojiImg = document.createElement('img');
-            emojiImg.src = `/public/gameshtml/emojis/${emojiData.emojiIndex}.png`;
-            emojiImg.width = 30;
-            emojiImg.height = 30;
-            emojiElement.textContent = `${emojiData.firstName}: `;
-            emojiElement.appendChild(emojiImg);
-            messageList.appendChild(emojiElement);
-            messageList.scrollTop = chatContainer.scrollHeight;
-            // Create flying emoji
-            const flyingEmoji = document.createElement('img');
-            flyingEmoji.src = `/public/gameshtml/emojis/${emojiData.emojiIndex}.png`;
-            flyingEmoji.className = 'flying-emoji';
-            flyingEmoji.style.width = '60px';
-            flyingEmoji.style.height = '60px';
-            flyingEmoji.style.left = Math.random() * (window.innerWidth - 60) + 'px';
-            flyingEmoji.style.top = window.innerHeight + 'px';
-            document.body.appendChild(flyingEmoji);
-
-            setTimeout(() => {
-                flyingEmoji.style.top = '-60px';
-                flyingEmoji.style.opacity = '0';
-            }, 100);
-
-            setTimeout(() => {
-                document.body.removeChild(flyingEmoji);
-            }, 2100);
-        }
-
-
-
-
-
-
-
-
         </script>
 
         <%- contentFor('BottomJs') %>

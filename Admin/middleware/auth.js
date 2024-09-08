@@ -7,7 +7,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   // //console.log('auth',req.session);
   req.app.locals['role'] ='';
   if (!req.cookies.token) {
-    console.log('auth-session-not-found');
+    // console.log('auth-session-not-found');
     res.redirect(process.env.ADMIN_URL + '/login');
   } else {
     const decoded = jwt.decode(  req.cookies.token, { complete: true });

@@ -88,16 +88,12 @@
                                 <thead>
                                     <tr>
                                         <th>Srno</th>
-                                        <th>First name</th>
-                                        <th>Email</th>
-                                        <th>Amount</th>
-                                        <th>Type</th>
-                                        <th>Taxable</th>
-                                        <th>TDS</th>
-                                        <th>Total</th>
-                                        <th>Status</th>
+                                       
+                                        <th>Commission</th>
+                                        <th>Gift</th>
+                                        
+                                        <th>Total Bet</th>
                                         <th>Date</th>
-                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -214,30 +210,33 @@
                                         return meta.row + 1;
                                     }
                                 },
-                                { data: 'playerId.firstName', "defaultContent": "" },
-                                { data: 'playerId.email', "defaultContent": "" },
-                                { data: 'amount', "defaultContent": "" },
-                                { data: 'logType', "defaultContent": "" },
-                                { data: 'taxableAmount', "defaultContent": "" },
-                                { data: 'tds', "defaultContent": "" },
-                                { data: 'totalAmount', "defaultContent": "" },
-                                { data: 'paymentStatus', "defaultContent": "" },
-                                {
-                                    data: 'createdAt', render: function (data) {
-                                        return moment(data).format('DD-MM-YYYY h:mm a');
-                                    }
-                                },
-                                {
-                                    data: null, "render": function (data, type, full, meta) {
-                                        let a = '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/commission/edit/'
-                                            + full._id + '"><i class="uil uil-history font-size-18"></i></a>';
+                                { data: 'commission', "defaultContent": 0.00,render: function (data) {
+                                        return parseFloat(data).toFixed(2);
+                                    } },
+                                { data: 'gift', "defaultContent": 0.00,render: function (data) {
+                                        return parseFloat(data).toFixed(2);
+                                    } },
 
-                                        a += ' <a class="px-3 text-danger" onclick="delRec(\''
-                                            + full._id + '\')"><i class="uil uil-wallet font-size-18"></i></a> '
-
-                                        return a;
+                                { data: 'totalBetAmount', "defaultContent": "" },
+                                {
+                                    data: 'date', render: function (data) {
+                                        return data && moment(data).format('DD-MM-YYYY h:mm a');
                                     }
-                                },
+                                }
+                                // { data: 'playerId.firstName', "defaultContent": "" },
+                                // { data: 'playerId.email', "defaultContent": "" },
+                                 
+                                // {
+                                //     data: null, "render": function (data, type, full, meta) {
+                                //         let a = '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/commission/edit/'
+                                //             + full._id + '"><i class="uil uil-history font-size-18"></i></a>';
+
+                                //         a += ' <a class="px-3 text-danger" onclick="delRec(\''
+                                //             + full._id + '\')"><i class="uil uil-wallet font-size-18"></i></a> '
+
+                                //         return a;
+                                //     }
+                                // },
                             ]
                         });
                       

@@ -13,18 +13,14 @@ const PlayerGameSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Tournaments'
   },
+  game: {
+    type: Number,
+    default: 0
+  },
+  
   influencerId: {
     type: mongoose.Schema.ObjectId,
     ref: 'Influencer'
-  },
-  franchiseId: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Influencer'
-  },
-  gameType: {
-    type: String,
-    default: 'paid',
-    enum: ['free', 'paid']
   },
   stateCode: {
     type: String,
@@ -47,39 +43,14 @@ const PlayerGameSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  amountReverse: {
-    type: Number,
-    default: 0
-  },
   amountGift: {
     type: Number,
     default: 0
   },
-  rank: {
-    type: Number,
-    default: 0,
-  },
   winner: {
     type: String,
     default: 'winner_1',
-  },
-  note: {
-    type: String,
-    default: '',
-  },
-  isBot: {
-    type: Boolean,
-    default: false
-  },
-  opponentName: {
-    type: String,
-    default: ''
-  },
-  amountGiven: {
-    type: Number,
-    default: 0
   }
-
 }, {
   timestamps: true,
 });

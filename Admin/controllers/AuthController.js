@@ -2,7 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var urlencodeParser = bodyParser.urlencoded({ extended: false });
 const asyncHandler = require('../middleware/async');
-const { callApi, api_url, redirect } = require('../helper/common');
+const { api_url } = require('../helper/common');
 const querystring = require('querystring');
 
 let apiUrl = api_url;
@@ -30,18 +30,18 @@ exports.postLogin = asyncHandler(async (req, res, next) => {
 				return;
 			}
 			req.session.user = r.data;
-			console.log(r.data);
+			//console.log(r.data);
 			res.cookie('token', r.data.token, { httpOnly: true });
 			res.cookie('firstName', r.data.firstName, { httpOnly: true });
 
 			//req.app.locals['user'] = r.data;
-			if(r.data.role ==='admin'||r.data.role ==='superadmin'){
+			if(r.data.role ==='admin'){
 				res.redirect(process.env.ADMIN_URL + '/admin/dashboard');
-			}else{
+			}else if(r.data.role ==='influencer'){
 				res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
+			}else if(r.data.role ==='franchise'){
+				res.redirect(process.env.ADMIN_URL + '/franchise/dashboard');
 			}
- 			
-
 		})
 		.catch(error => {
 
