@@ -39,7 +39,7 @@ class TeenpattiGame {
 
         this.currentPhase = 'createdroom';
         this.roomJoinTimers = new Timer(10, (remaining) => {
-            console.log(remaining)
+            
             this.io.to(this.roomName).emit('join_tick', { remaining });
             // if (remaining === 3) {
             //     this.checkAndAddBots();
@@ -64,7 +64,6 @@ class TeenpattiGame {
         this.gameState = 'playing';
         this.io.to(this.roomName).emit('game_start', { players: Array.from(this.players) });
         console.log(`Game started in room: ${this.roomName}`);
-        this.dealCards();
     }
 
     dealCards() {
