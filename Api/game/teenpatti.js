@@ -39,6 +39,7 @@ class TeenpattiGame {
 
         this.currentPhase = 'createdroom';
         this.roomJoinTimers = new Timer(10, (remaining) => {
+            console.log(remaining)
             this.io.to(this.roomName).emit('join_tick', { remaining });
             // if (remaining === 3) {
             //     this.checkAndAddBots();
