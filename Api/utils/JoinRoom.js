@@ -23,12 +23,14 @@ const gameName = {
   }
 const tokenMiddleware = (socket, next) => {
     const { tkn } = socket.handshake.query;
-    console.log('c', tkn);
-    if (tkn !== '2873') {
-    //    return next(new Error(''));
-    }
-    // execute some code
-    next();
+      try {
+        // Your authentication or other logic
+        next();
+      } catch (err) {
+        console.error('Error in middleware:', err);
+        next(new Error('Middleware Error'));
+      }
+    
 }
 
 

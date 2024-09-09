@@ -5,6 +5,13 @@ const Player = require('../models/Player');
 const Transaction = require('../models/Transaction');
 const Ticket = require('../models/Ticket');
 const PlayerGame = require('../models/PlayerGame');
+const Commission = require('../models/Commission');
+const User = require('../models/User');
+const Influencer = require('../models/Influencer');
+const Franchise = require('../models/Franchise');
+
+
+
 // @desc      Get all Dashboards
 // @desc      Get all Dashboards
 // @route     GET /api/v1/auth/Dashboards
@@ -271,7 +278,7 @@ let calfranchiseIncome = async (s_date, e_date, user ) => {
   
     {
       $addFields: {
-        totalCommission: {$round: [{ $multiply: ["$totalBets", 0.07] }, 2] } // Calculate 20% commission on total bets
+        totalCommission: {$round: [{ $multiply: ["$totalBets", 0.03] }, 2] } // Calculate 20% commission on total bets
       }
     },
     {
@@ -378,8 +385,9 @@ exports.getGraphData = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/Dashboards/filter/:id
 // @access    Private/Admin
 exports.totalIncome = asyncHandler(async (req, res, next) => {
-  let income = await calTotal();
-  let gameWiseStats = await getTopGames();
+  let {s_date, e_date}= req.body
+  let income = await calTotal(s_date, e_date);
+  let gameWiseStats = await getTopGames(s_date, e_date);
 
 
   //console.log('graph', graph, req.body)
@@ -494,7 +502,13 @@ let getTopGames  = async (s_date, e_date) => {
     },
     {
       $addFields: {
-        totalCommission: { $subtract: ["$totalBets", "$totalWinnings"] }, // Calculate totalCommission
+        influencerCommission: { $multiply: ["$totalBets", 0.10] }, // Influencer commission (10% of total bets)
+        totalCommission: {
+          $subtract: [
+            "$totalBets", // Total bets
+            { $add: ["$influencerCommission", "$totalWinnings"] }, // Sum of influencer commission and total winnings
+          ],
+        },
       },
     },
     {
@@ -588,3 +602,324 @@ let getTopGames  = async (s_date, e_date) => {
       let d = results.length > 0 ? results[0] : { totalBetAmount: 0, playerCount: 0, gameCount: 0, commission: 0 };
       res.status(200).json(d);
       });
+
+exports.calculateDailyCommissions = asyncHandler(async (req, res, next) => {
+  let today = new Date();
+  today = today.toISOString().split('T')[0];
+
+  await Promise.all([
+    calculateFranchiseCommissions(today),
+    calculateInfluencerCommissions(today),
+    calculateAdminIncome(today)
+  ]);
+
+  console.log("Daily commissions calculated and updated successfully.");
+});
+async function calculateAdminIncome(today) {
+  try {
+    // Ensure today is a valid date
+    if (!today) {
+      throw new Error('Invalid date provided.');
+    }
+
+    // Calculate the start and end of the day for the date range
+    const startOfDay = today;
+    let endOfDay = new Date();
+    endOfDay.setDate(endOfDay.getDate() + 1);
+    // Format the date in YYYY-MM-DD format
+    endOfDay = endOfDay.toISOString().split('T')[0];
+
+    // Aggregate player game data
+    const [adminIncome] = await PlayerGame.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(startOfDay), $lte: new Date(endOfDay) }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalBetAmount: {
+            $sum: "$amountBet"
+          },
+          totalWinningAmount: {
+            $sum: "$amountWon"
+          }
+        }
+      },
+      {
+        $addFields: {
+          commissionGiven: { $multiply: ["$totalBetAmount", 0.10] }, // Influencer commission (10% of total bets)
+          totalCommission: {
+            $subtract: [
+              "$totalBetAmount", // Total bets
+              { $add: ["$commissionGiven", "$totalWinningAmount"] }, // Sum of influencer commission and total winnings
+            ],
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          totalBetAmount: 1,
+          totalWinningAmount: 1,
+          totalCommission: 1,
+        },
+      },
+    ]);
+
+    if (!adminIncome) {
+      throw new Error('No income data found for the specified date.');
+    }
+
+    
+    const adminCommission = adminIncome.totalCommission;
+
+    // Find the admin user
+    const userAdmin = await User.findOne({ role: 'admin' });
+
+    if (!userAdmin) {
+      throw new Error('Admin user not found.');
+    }
+
+    // Upsert commission record
+    await Commission.updateOne(
+      {
+        date: startOfDay,
+        userType: 'admin',
+        userId: userAdmin._id
+      },
+      {
+        $set: {
+          totalBetAmount: adminIncome.totalBetAmount,
+          totalWinningAmount: adminIncome.totalWinningAmount,
+          commission: adminCommission
+        }
+      },
+      {
+        upsert: true
+      }
+    );
+
+    // Update admin balance
+    await User.findByIdAndUpdate(
+      userAdmin._id,
+      { $inc: { balance: adminCommission } },
+      { new: true }
+    );
+
+    // Update the dashboard
+    Dashboard.totalIncome(adminIncome.totalBetAmount, adminIncome.totalWinningAmount, adminCommission);
+
+    console.log('Admin income calculation and update completed successfully.');
+
+  } catch (error) {
+    console.error('Error calculating admin income:', error);
+    // Handle or log the error appropriately
+  }
+}
+
+async function calculateFranchiseCommissions(today) {
+  try {
+    // Ensure today is a valid date
+    if (!today) {
+      throw new Error('Invalid date provided.');
+    }
+
+    // Calculate the start and end of the day for the date range
+    const startOfDay = today;
+    let endOfDay = new Date();
+    endOfDay.setDate(endOfDay.getDate() + 1);
+    endOfDay = endOfDay.toISOString().split('T')[0];
+
+    // Aggregate franchise commissions
+    const franchiseCommissions = await PlayerGame.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(startOfDay), $lte: new Date(endOfDay) },
+          stateCode: { $exists: true }
+        }
+      },
+      {
+        $group: {
+          _id: "$stateCode",
+          totalBetAmount: { $sum: "$amountBet" } // Sum the total amount bet first
+        }
+      },
+      {
+        $lookup: {
+          from: 'franchises', // The collection name for Franchise
+          let: { stateCode: "$_id" }, // Define local variable from the current document
+          pipeline: [
+            { $match: { $expr: { $and: [{ $eq: ["$stateCode", "$$stateCode"] }, { $eq: ["$status", "active"] }] } } }, // Match active franchises with the same stateCode
+            { $project: { _id: 1, stateCode: 1 } } // Only select necessary fields
+          ],
+          as: 'franchiseDetails'
+        }
+      },
+      {
+        $unwind: '$franchiseDetails'
+      },
+      {
+        $addFields: {
+          commission: { $round: [{ $multiply: ["$totalBetAmount", 0.03] }, 2] } // Calculate commission after the sum
+        }
+      }
+    ]);
+
+    // Process each franchise's commission
+    for (const franchise of franchiseCommissions) {
+      const franchiseId = franchise.franchiseDetails._id;
+
+      // Create transaction record
+      const tranAdd = Transaction.create({
+        franchiseId: franchiseId,
+        amount: franchise.commission,
+        prevBalance: 0,
+        transactionType: 'credit',
+        logType: 'commission',
+        status: 'complete',
+        paymentStatus: 'SUCCESS',
+        note: 'Daily franchise commission'
+      });
+
+      // Create or update commission record
+      const commissionAdd = Commission.updateOne(
+        {
+          date: startOfDay,
+          userType: 'franchise',
+          userId: franchiseId,
+          stateCode: franchise._id
+        },
+        {
+          $set: {
+            totalBetAmount: franchise.totalBetAmount,
+            commission: franchise.commission
+          }
+        },
+        {
+          upsert: true
+        }
+      );
+
+      // Update franchise balance
+      const userAddBal = Franchise.findByIdAndUpdate(
+        franchiseId,
+        {
+          $inc: {
+            totalBalance: franchise.commission,
+            totalCommissions: franchise.commission,
+            totalBetAmount: franchise.totalBetAmount
+          }
+        },
+        { new: true }
+      );
+
+      // Execute all operations in parallel
+      await Promise.all([tranAdd, commissionAdd, userAddBal]);
+    }
+
+    console.log('Franchise commissions calculated and updated successfully.');
+
+  } catch (error) {
+    console.error('Error calculating franchise commissions:', error);
+    // Handle or log the error appropriately
+  }
+}
+
+
+async function calculateInfluencerCommissions(today) {
+  try {
+    // Ensure today is a valid date
+    if (!today) {
+      throw new Error('Invalid date provided.');
+    }
+
+    // Calculate the start and end of the day for the date range
+    const startOfDay = today;
+    let endOfDay = new Date();
+    endOfDay.setDate(endOfDay.getDate() + 1);
+    endOfDay = endOfDay.toISOString().split('T')[0];
+
+    // Aggregate influencer commissions
+    const influencerCommissions = await PlayerGame.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(startOfDay), $lt: new Date(endOfDay) },
+          influencerId: { $exists: true }
+        }
+      },
+      {
+        $group: {
+          _id: "$influencerId",
+          totalBetAmount: { $sum: "$amountBet" },
+          totalGiftAmount: { $sum: "$amountGift" }
+        }
+      },
+      {
+        $addFields: {
+          commission: { $round: [{ $multiply: ["$totalBetAmount", 0.07] }, 2] } // Calculate commission outside the $group stage and round to 2 decimal places
+        }
+      }
+    ]);
+
+
+
+    // Process each influencer's commission
+    for (const influencer of influencerCommissions) {
+      // Create transaction record
+      const tranAdd = Transaction.create({
+        influencerId: influencer._id,
+        amount: influencer.commission,
+        transactionType: 'credit',
+        prevBalance: 0,
+        logType: 'commission',
+        status: 'complete',
+        paymentStatus: 'SUCCESS',
+        note: 'Daily influencer commission'
+      });
+
+      // Create or update commission record
+      const commissionAdd = Commission.updateOne(
+        {
+          date: startOfDay,
+          userType: 'influencer',
+          userId: influencer._id
+        },
+        {
+          $set: {
+            totalBetAmount: influencer.totalBetAmount,
+            commission: influencer.commission,
+            gift: influencer.totalGiftAmount
+          }
+        },
+        {
+          upsert: true
+        }
+      );
+
+      // Update influencer balance
+      const userAddBal = Influencer.findByIdAndUpdate(
+        influencer._id,
+        {
+          $inc: {
+            totalBalance: influencer.commission,
+            totalCommissions: influencer.commission,
+            totalGiftAmount: influencer.totalGiftAmount,
+            totalBetAmount: influencer.totalBetAmount
+          }
+        },
+        { new: true }
+      );
+
+      // Execute all operations in parallel
+      await Promise.all([tranAdd, commissionAdd, userAddBal]);
+    }
+
+    console.log('Influencer commissions calculated and updated successfully.');
+
+  } catch (error) {
+    console.error('Error calculating influencer commissions:', error);
+    // Handle or log the error appropriately
+  }
+}
