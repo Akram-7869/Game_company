@@ -89,7 +89,7 @@ let onConnection = (socket) => {
 
       io.emit('influencer_matches', { influencers });
     }
-    // io.to(roomName).emit('res', { ev: 'join', data });
+    
 
     switch (lobby.mode) {
       case gameName.ludo:
@@ -137,12 +137,13 @@ let onConnection = (socket) => {
         socket.emit('join', { ...d, gameType: gameName.rouletee, room: roomName, status: 'success' });
         break;
       case gameName.teen_patti:
+        io.to(roomName).emit('res', { ev: 'join', data });
         if (!state[roomName]['codeObj']) {
           state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobbyId);
           state[roomName]['codeObj'].startGame();
         }
         state[roomName]['codeObj'].syncPlayer(socket, d);
-        socket.emit('join', { ...d, gameType: gameName.teen_patti, room: roomName, status: 'success' });
+        //socket.emit('join', { ...d, gameType: gameName.teen_patti, room: roomName, status: 'success' });
         break;
     }
 

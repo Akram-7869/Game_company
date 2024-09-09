@@ -1,9 +1,12 @@
+const Timer = require("./Timer");
+
 class TeenpattiGame {
     constructor(io, roomName, maxPlayers ,lobbyId) {
         this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;
         this.roomName = roomName;
         this.players = new Set();
         this.gameState = 'waiting'; // possible states: waiting, playing, finished
+        this.roomJoinTimers = undefined;
     }
 
     addPlayer(socket) {
@@ -30,6 +33,29 @@ class TeenpattiGame {
         if (this.gameState === 'playing') {
             this.endGame();
         }
+    }
+    setupGame() {
+        if (this.roomJoinTimers) return; // Prevent multiple starts
+
+        this.currentPhase = 'createdroom';
+        this.roomJoinTimers = new Timer(10, (remaining) => {
+            this.io.to(this.roomName).emit('join_tick', { remaining });
+            // if (remaining === 3) {
+            //     this.checkAndAddBots();
+            // }
+        }, () => {
+            // if (this.isGameReady) {
+            //     this.initializePlayerScores();
+            //     this.startGame();
+            // } else {
+            //     console.log("Not enough players to start the game.");
+            //     this.io.to(this.roomName).emit('game_cancelled', { reason: 'Not enough players' });
+            // }
+        });
+
+        this.roomJoinTimers.startTimer();
+        console.log(`Game setup in room: ${this.roomName}`);
+
     }
 
     startGame() {
