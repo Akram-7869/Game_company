@@ -28,6 +28,9 @@ let onConnection = (socket) => {
     userSocketMap[userId]['socket_id'] = socket.id;
   });
   socket.on('join', async (d) => {
+    try {
+      
+    
     console.log('join', d);
     let dataParsed = d;// JSON.parse(d);
     let { userId, lobbyId, maxp = 4, role = 'player' } = dataParsed;
@@ -147,6 +150,11 @@ let onConnection = (socket) => {
         break;
     }
 
+  } catch (error) {
+    console.log('error-join',error)
+  
+  } 
+
   });
 
   socket.on('lobbyStat', (d) => {
@@ -188,6 +196,9 @@ let onConnection = (socket) => {
   });
   //leave
   socket.on('leave', (d) => {
+    try {
+      
+    
     let { room, userId } = d;
 
     userLeave(d);
@@ -198,6 +209,10 @@ let onConnection = (socket) => {
     };
     console.log('leave-', d, data);
     io.to(room).emit('res', { ev: 'leave', data });
+
+  } catch (error) {
+      
+  }
   });
   //chat_message
   socket.on('chat_message', (d) => {
@@ -238,7 +253,7 @@ let onConnection = (socket) => {
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
-
+try {
     let { room, userId, lobbyId } = socket;
  
     delete userSocketMap[userId];
@@ -257,6 +272,9 @@ let onConnection = (socket) => {
     }
     
     io.to(socket.room).emit('res', { ev: 'disconnect', data });
+  } catch (error) {
+  console.log('error-discconect',error)
+  }
 
   });
   // Runs when client disconnects

@@ -91,20 +91,24 @@ class TeenpattiGame {
         this.gameState = 'waiting';
     }
     syncPlayer(socket, player) {
-        // Send current game state to the player
-        // this.io.to(socket.id).emit('OnCurrentTimer', {
-        //     gameType: 'TeenPatti',
-        //     room: this.roomName,
-        //     currentPhase: this.currentPhase,
-        //     player: player,
-        //     postion: this.players.indexOf(socket),
-        //     total_players: this.players.size,
-        //     betting_remaing: this.bettingTimer?.remaining,
-        //     winList: this.winList
-
-        // });
         // this.onBetPlaced(socket);
-        // this.onleaveRoom(socket);
+        socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
+    }
+    handlePlayerLeave(socket) {
+        socket.on('onleaveRoom', function (data) {
+            try {
+                console.log('OnleaveRoom--teenpatii')
+                socket.leave(this.roomName);
+        
+                socket.removeAllListeners('onleaveRoom');
+                // playerManager.RemovePlayer(socket.id);
+                socket.emit('onleaveRoom', {
+                    success: `successfully leave ${this.roomName} game.`,
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        });
     }
 }
 
