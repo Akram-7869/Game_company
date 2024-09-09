@@ -138,13 +138,11 @@ let onConnection = (socket) => {
         break;
       case gameName.teen_patti:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobby);
-          state[roomName]['codeObj'].setupGame();
+          state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobbyId);
+          state[roomName]['codeObj'].startGame();
         }
-
         state[roomName]['codeObj'].syncPlayer(socket, d);
-        socket.emit('join', { ...d, gameType: gameName.ludo, room: roomName, status: 'success' });
-        state[roomName]['codeObj'].emitJoinPlayer();
+        socket.emit('join', { ...d, gameType: gameName.teen_patti, room: roomName, status: 'success' });
         break;
     }
 
