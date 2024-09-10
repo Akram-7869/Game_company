@@ -203,7 +203,7 @@ class DragonTigerGame {
 
     }
     handlePlayerLeave(socket) {
-        socket.on('onleaveRoom', function (data) {
+        
             try {
                 console.log('OnleaveRoom--dragon')
                 if(this.lobby.tournamentType ==='influencer'){
@@ -232,7 +232,7 @@ class DragonTigerGame {
             } catch (err) {
                 console.log(err);
             }
-        });
+        
     }
     OnCurrentStatus(socket) {
         socket.on('OnCurrentStatus', (d) => {

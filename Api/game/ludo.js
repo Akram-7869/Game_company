@@ -818,7 +818,7 @@ console.log('botTurn');
         // socket.removeAllListeners('OnResult');
         socket.removeAllListeners('onLeaveRoom');
         socket.leave(this.roomName);
-        console.log('handlePlayerLeave', this.currentPhase, this.isGameReady, this.turnOrder)
+        // console.log('handlePlayerLeave', this.currentPhase, this.isGameReady, this.turnOrder)
         //if game is reday then check winner
         if (this.currentPhase === 'playing') {
             this.handleLeftWinners(player);

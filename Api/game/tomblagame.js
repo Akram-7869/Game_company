@@ -179,7 +179,6 @@ console.log('onBetPlaced',d);
 
 
   handlePlayerLeave(socket) {
-    socket.on('onleaveRoom', function (data) {
       try {
         console.log('OnleaveRoom--tambola')
         socket.leave(this.roomName);
@@ -198,7 +197,7 @@ console.log('onBetPlaced',d);
       } catch (err) {
         console.log(err);
       }
-    });
+    
   }
 
 

@@ -171,8 +171,7 @@ class RolletGame {
         this.OnCurrentStatus(socket);
     }
     handlePlayerLeave(socket) {
-        socket.on('onleaveRoom', function (data) {
-            try {
+             try {
                 console.log('OnleaveRoom--dragon')
                 if (this.lobby.tournamentType === 'influencer') {
                     this.continueGame = false;
@@ -200,7 +199,7 @@ class RolletGame {
             } catch (err) {
                 console.log(err);
             }
-        });
+        
     }
     OnCurrentStatus(socket) {
         socket.on('OnCurrentStatus', (d) => {

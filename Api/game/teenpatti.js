@@ -95,8 +95,7 @@ class TeenpattiGame {
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
     }
     handlePlayerLeave(socket) {
-        socket.on('onleaveRoom', function (data) {
-            try {
+             try {
                 console.log('OnleaveRoom--teenpatii')
                 socket.leave(this.roomName);
         
@@ -108,7 +107,7 @@ class TeenpattiGame {
             } catch (err) {
                 console.log(err);
             }
-        });
+        
     }
 }
 
