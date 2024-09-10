@@ -96,7 +96,7 @@ class AviatorGame {
             } else {
                 this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
             }
-            console.log('x',this.altitude,'t,', this.cashoutTime)
+            console.log('x',this.altitude,'t,', this.cashoutTime, 'h',this.maxHeight)
         }, () => {
             this.triggerBlastEvent();
         });
