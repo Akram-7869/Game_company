@@ -81,6 +81,7 @@ class AviatorGame {
                          
             if (this.altitude >= this.maxHeight) {
                 this.triggerBlastEvent();
+                this.flightTimer.pause();
             }  
             this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
             console.log(this.altitude ,'>=', this.maxHeight);
