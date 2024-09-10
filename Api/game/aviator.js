@@ -82,10 +82,7 @@ class AviatorGame {
                 // Linear growth phase from 1x to 3x
                 this.altitude += linearIncrement;
             } else {
-                // Accelerated growth phase after 3x
-                let timeElapsed = (this.cashoutTime - remaining) / 1000; // Time elapsed in seconds
-                let adjustedTime = timeElapsed - (linearGrowthLimit / linearIncrement); // Adjusted time after reaching 3x
-                this.altitude = linearGrowthLimit + (0.1 * adjustedTime) + Math.pow(adjustedTime, 1.2); // Exponential growth adjustment
+                linearIncrement+=0.3;
             }
     
             if (this.altitude >= this.maxHeight) {
@@ -93,6 +90,7 @@ class AviatorGame {
             } else {
                 this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
             }
+            console.log(this.altitude ,'>=', this.maxHeight);
         }, () => {
             this.triggerBlastEvent();
         });
