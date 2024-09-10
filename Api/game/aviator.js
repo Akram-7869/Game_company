@@ -71,19 +71,33 @@ class AviatorGame {
             this.maxHeight = Math.random() * (20 - 10) + 10; // Random value between 10 and 20
         }
     
-        // Adjust cashoutTime to sync with maxHeight
-        const baseCashoutTime = 5000; // Base time in milliseconds for a multiplier of 1x
-        this.cashoutTime = baseCashoutTime * this.maxHeight; // Adjust cashoutTime according to maxHeight
+        // Adjust cashoutTime to sync with maxHeight (target: 20x in 30 seconds)
+        this.cashoutTime = 30000; // 30 seconds in milliseconds
+        let linearGrowthLimit = 3; // Linear growth up to 3x
+        let linearIncrement = 0.1; // Linear increment rate up to 3x
     
         this.flightTimer = new Timer(this.cashoutTime, (remaining) => {
-            this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
-            this.altitude += 0.10;
+            if (this.altitude < linearGrowthLimit) {
+                // Linear growth phase from 1x to 3x
+                this.altitude += linearIncrement;
+            } else {
+                // Accelerated growth phase after 3x
+                let timeElapsed = (this.cashoutTime - remaining) / 1000; // Time elapsed in seconds
+                this.altitude = linearGrowthLimit + Math.pow(timeElapsed, 1.5); // Exponential growth
+            }
+    
+            if (this.altitude >= this.maxHeight) {
+                this.triggerBlastEvent();
+            } else {
+                this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
+            }
         }, () => {
             this.triggerBlastEvent();
         });
     
         this.flightTimer.startTimer();
     }
+    
     
     triggerBlastEvent() {
         this.currentPhase = 'blast';
