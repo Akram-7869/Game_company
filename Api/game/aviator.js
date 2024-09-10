@@ -70,7 +70,7 @@ class AviatorGame {
             }
         } else {
             // No bets placed, set maxHeight randomly between 10x and 20x
-            this.maxHeight = Math.random() * (15 - 1) + 3; // Random value between 10 and 20
+            this.maxHeight =Math.random() * (10 - 1) + 1; // Random value between 10 and 20
         }
     
         // Adjust cashoutTime to sync with maxHeight (target: 20x in 30 seconds)
@@ -83,7 +83,7 @@ class AviatorGame {
  
         // Dynamically increases the altitude based on the delay
         increaseAltitude() {
-            let delay = this.getDelayForCurrentAltitude(); // Get delay based on altitude
+           // let delay = this.getDelayForCurrentAltitude(); // Get delay based on altitude
     
             // Increase altitude by 0.1
             this.altitude += 0.1;
@@ -99,7 +99,7 @@ class AviatorGame {
             }
     
             // Schedule the next increase
-            this.flightTimer = setTimeout(() => this.increaseAltitude(), delay);
+            this.flightTimer = setTimeout(() => this.increaseAltitude(), 1000);
         }
     
         // Determines the delay based on the current altitude
