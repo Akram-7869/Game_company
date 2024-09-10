@@ -218,7 +218,7 @@ class AviatorGame {
     handlePlayerLeave(socket) {
         socket.on('onleaveRoom', function (data) {
             try {
-                if(this.lobby.type ==='influencer'){
+                if(this.lobby.tournamentType ==='influencer'){
                     this.continueGame=false;
                 }
                 socket.leave(this.roomName);
