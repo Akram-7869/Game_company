@@ -18,6 +18,7 @@ class AviatorGame {
         this.winList = ['1X','2X','3X','4X','5X'];
         this.timerInterval=null;
         this.maxHeight=1;
+        this.flightTimer=null;
     }
 
     startGame() {
@@ -74,26 +75,60 @@ class AviatorGame {
     
         // Adjust cashoutTime to sync with maxHeight (target: 20x in 30 seconds)
         
-        this.flightTimer = new Timer(this.cashoutTime, (remaining) => {
-           
-                
-                this.altitude += 0.1;
-                         
+         this.increaseAltitude();
+    }
+   
+ 
+    
+ 
+        // Dynamically increases the altitude based on the delay
+        increaseAltitude() {
+            let delay = this.getDelayForCurrentAltitude(); // Get delay based on altitude
+    
+            // Increase altitude by 0.1
+            this.altitude += 0.1;
+    
+            // Emit flight tick event
+            this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
+            console.log(`Current altitude: ${this.altitude.toFixed(2)} (Max Height: ${this.maxHeight})`);
+    
+            // Check if max height is reached
             if (this.altitude >= this.maxHeight) {
                 this.triggerBlastEvent();
-                this.flightTimer.pause();
-            }  
-            this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
-            console.log(this.altitude ,'>=', this.maxHeight);
-        }, () => {
-            this.triggerBlastEvent();
-        });
+                return; // Stop further execution
+            }
     
-        this.flightTimer.startTimer();
-    }
+            // Schedule the next increase
+            this.flightTimer = setTimeout(() => this.increaseAltitude(), delay);
+        }
     
+        // Determines the delay based on the current altitude
+        getDelayForCurrentAltitude() {
+            if (this.altitude < 2) {
+                return 1000; // 0.1 increase every 1 second
+            } else if (this.altitude < 8) {
+                return 5000; // 0.1 increase every 5 seconds
+            } else {
+                return 2500; // 0.1 increase every 2.5 seconds
+            }
+        }
+    
+        
+    
+        // Pauses the flight
+        pauseFlight() {
+            if (this.flightTimer) {
+                clearTimeout(this.flightTimer);
+                this.flightTimer = null;
+                console.log("Flight paused.");
+            }
+        }
+    
+    
+ 
     
     triggerBlastEvent() {
+        this.pauseFlight();
         this.currentPhase = 'blast';
         this.io.to(this.roomName).emit('OnFlightBlast', { message: 'Blast event!' });
         console.log(`Blast event triggered in room: ${this.roomName}`);
