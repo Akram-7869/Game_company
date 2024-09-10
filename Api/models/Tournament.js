@@ -9,10 +9,12 @@ const TournamentSchema = new mongoose.Schema({
         type: Number
     },
     betAmount: {
-        type: String
+        type: String,
+        default: 0
     },
     players: {
-        type: Number
+        type: Number,
+        default: 0
     },
     winner: {
         type: Number

@@ -103,9 +103,9 @@ exports.getTransactions = asyncHandler(async (req, res, next) => {
     filter['find']['stateCode'] = req.body.stateCode;
   }
 
-  if(req.user.role === 'influencer'){
+  if(req.role === 'influencer'){
     filter['find']['influencerId'] = req.user._id;
-}else if(req.user.role === 'franchise'){
+}else if(req.role === 'franchise'){
     filter['find']['franchiseId'] = req.user._id;
 
 }
@@ -863,7 +863,7 @@ let handleCoupon = async (tran) => {
       'stateCode': player.stateCode
 
     }
-    bonusTran = await Transaction.create(tranBonusData);
+   let bonusTran = await Transaction.create(tranBonusData);
     bonusTran.creditPlayerBonus(bonusAmount);
     console.log('bonus added');
 

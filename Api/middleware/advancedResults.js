@@ -112,13 +112,13 @@ exports.ownResults = (model, populate, filter = '') => async (req, res, next) =>
   // if (!req.user) {
   //   reqQuery['groupId'] = req.defaultGroup;
   // } else {
-  //   if (req.user.role === 'author') {
+  //   if (req.role === 'author') {
   //     //own
   //     if (filter == 'my')
   //       reqQuery['createdBy'] = req.user._id;
   //   }
 
-  //   if (req.user.role !== 'superadmin') {
+  //   if (req.role !== 'superadmin') {
   //     //users in multiple organization
   //     if (filter === 'in') {
   //       reqQuery['groupId'] = { 'in': [req.user.selectedGroup] }
@@ -130,7 +130,7 @@ exports.ownResults = (model, populate, filter = '') => async (req, res, next) =>
   //   }
   // }
 console.log('oooo',req.user)
-  if (req.user.role == 'user') {
+  if (req.role == 'user') {
     //own
     reqQuery['user'] = req.user._id;
   }
@@ -222,7 +222,7 @@ let hideRole =["superadmin"];
   if (!req.user) {
     reqQuery['groupId'] = req.defaultGroup;
   } else {
-    if (req.user.role === 'author') {
+    if (req.role === 'author') {
       //own
       if (filter == 'my') {
         reqQuery['createdBy'] = req.user._id;
@@ -231,7 +231,7 @@ let hideRole =["superadmin"];
       reqQuery['role'] = 'user';
     }
 
-    if (req.user.role != 'superadmin') {
+    if (req.role != 'superadmin') {
       //users in multiple organization
       if (filter === 'in') {
         reqQuery['groupId'] = { 'in': [req.user.selectedGroup] }
@@ -245,7 +245,7 @@ let hideRole =["superadmin"];
     }
   }
 
-  // if (req.user.role == 'admin') {
+  // if (req.role == 'admin') {
   //   //own
     
   //   reqQuery['role'] =hideRole;
@@ -261,11 +261,11 @@ let hideRole =["superadmin"];
 
   let sql = JSON.parse(queryStr);
   //do not change JSON.parse(queryStr) not working
-  if (req.user.role === 'admin') {
+  if (req.role === 'admin') {
     sql = { "groupId._id": req.user.selectedGroup }
-  } else if (req.user.role === 'teacher') {
+  } else if (req.role === 'teacher') {
     sql = { 'groupId._id': req.user.selectedGroup, role: 'student',"createdBy":req.user._id }
-  } else if (req.user.role === 'author') {
+  } else if (req.role === 'author') {
     sql = { 'groupId._id': req.user.selectedGroup, role: 'user' }
   }
 

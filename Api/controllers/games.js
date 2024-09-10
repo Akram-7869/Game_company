@@ -51,7 +51,7 @@ exports.getPlayerGames = asyncHandler(async (req, res, next) => {
     }
 
   }
-  if(req.user.role === 'influencer'){
+  if(req.role === 'influencer'){
     filter['find']['influencerId'] = req.user._id;
 } 
   // await Player.populate(row, { path: "_id", select: { phone: 1, firstName: 1, lastName: 1, rank: 1, profilePic: 1 } });
