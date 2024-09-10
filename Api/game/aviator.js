@@ -92,7 +92,7 @@ class AviatorGame {
 
         // Emit flight tick event with rounded altitude
         this.io.to(this.roomName).emit('flight_tick', { h: this.altitude });
-        console.log(`Current altitude: ${this.altitude} (Max Height: ${roundedMaxHeight})`);
+        // console.log(`Current altitude: ${this.altitude} (Max Height: ${roundedMaxHeight})`);
 
         // Check if max height is reached
         if (this.altitude >= roundedMaxHeight) {
