@@ -89,7 +89,7 @@ let onConnection = (socket) => {
       let influencers = await Tournament.find({ _id: { $in: validIds }, tournamentType: 'influencer' }).populate('influencerId', 'displayName');
 
       setkey('influencer_matches', influencers);
-
+      console.log('seting _influencer_matches', influencers);
       io.emit('influencer_matches', { influencers });
     }
     
@@ -236,6 +236,7 @@ let onConnection = (socket) => {
   });
   socket.on('influencer_matches', (d) => {
     const influencers = getKey('influencer_matches')
+    console.log('influencer_matches', influencers);
     io.to(socket.id).emit('influencer_matches', { influencers });
   });
   socket.on('emoji_message', (d) => {
