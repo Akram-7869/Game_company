@@ -242,15 +242,7 @@
         <!-- Sweet alert init js
   <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
         <script>
-          var io = io("wss://daemon.cherrygames.io", {
-            transports: ['websocket'],
-            query: "EIO=3&transport=websocket"
-          });;
-
-          // var io = io("ws://localhost:3000", {
-          //   transports: ['websocket'],
-          //   query: "EIO=3&transport=websocket"
-          // });
+          
           let room = '';
           const data = {
             userId: "<%= row.influencerId%>",
@@ -259,7 +251,7 @@
             role: "<%= row.tournamentType %>",
             maxp: 99999
           };
-          //SocketHandler.initialize('dragonTiger', '', data.lobbyId, io);
+          //SocketHandler.initialize('dragonTiger', data);
  
           function handleSubmit(params) {
             if (params.checkValidity()) {
