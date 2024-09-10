@@ -9,7 +9,7 @@ class AviatorGame {
         this.bets = [];
         this.totalBets = 0;
         this.bettingTime = 10; // 20 seconds
-        this.cashoutTime = 15; // 15 seconds
+        this.cashoutTime = 75; // 15 seconds
         this.blastDelay = 3; // 3 seconds
         this.players = new Set();
         this.altitude = 1.00;
@@ -69,7 +69,7 @@ class AviatorGame {
             }
         } else {
             // No bets placed, set maxHeight randomly between 10x and 20x
-            this.maxHeight = Math.random() * (20 - 10) + 10; // Random value between 10 and 20
+            this.maxHeight = Math.random() * (15 - 1) + 3; // Random value between 10 and 20
         }
     
         // Adjust cashoutTime to sync with maxHeight (target: 20x in 30 seconds)
