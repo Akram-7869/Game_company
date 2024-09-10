@@ -5,7 +5,7 @@ const router = express.Router({ mergeParams: true });
 const { protect } = require('../middleware/auth');
 
 //router.use(protect);
-router.route('/dalykamision').post(dash.calculateDailyCommissions);
+router.route('/dalykamision').get(dash.calculateDailyCommissions);
 router.route('/filter/dashboard').post(protect, dash.getFilterDashboard);
  router.route('/filter/influencer').post(protect, dash.getInfluencerDashboard);
  router.route('/filter/franchise').post(protect, dash.getFranchiseDashboard);
