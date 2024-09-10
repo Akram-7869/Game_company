@@ -107,9 +107,9 @@ class AviatorGame {
             if (this.altitude < 2) {
                 return 1000; // 0.1 increase every 1 second
             } else if (this.altitude < 8) {
-                return 5000; // 0.1 increase every 5 seconds
+                return 600; // 0.1 increase every 5 seconds
             } else {
-                return 2500; // 0.1 increase every 2.5 seconds
+                return 300; // 0.1 increase every 2.5 seconds
             }
         }
     
