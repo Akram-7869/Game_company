@@ -3,9 +3,9 @@
 const Timer = require("./Timer");
 
 class AviatorGame {
-    constructor(io, roomName, maxPlayers ,lobbyId) {
-        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;
-         this.currentPhase = 'betting';
+    constructor(io, roomName, maxPlayers, lobbyId) {
+        this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.lobbyId = lobbyId;
+        this.currentPhase = 'betting';
         this.bets = [];
         this.totalBets = 0;
         this.bettingTime = 10; // 20 seconds
@@ -13,12 +13,12 @@ class AviatorGame {
         this.blastDelay = 3; // 3 seconds
         this.players = new Set();
         this.altitude = 1.00;
-        this.round=0;
+        this.round = 0;
         this.totalPayout = 0;
-        this.winList = ['1X','2X','3X','4X','5X'];
-        this.timerInterval=null;
-        this.maxHeight=1;
-        this.flightTimer=null;
+        this.winList = ['1X', '2X', '3X', '4X', '5X'];
+        this.timerInterval = null;
+        this.maxHeight = 1;
+        this.flightTimer = null;
     }
 
     startGame() {
@@ -31,37 +31,37 @@ class AviatorGame {
         this.totalPayout = 0;
 
 
-        this.round +=1;
-        
+        this.round += 1;
+
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
-//            console.log(remaining);
+            //            console.log(remaining);
             this.io.to(this.roomName).emit('betting_tick', { remainingTime: remaining });
         }, () => {
             this.startFlightPhase();
         });
-        this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer?.remaining,round:this.round });
+        this.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer?.remaining, round: this.round });
         //console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer.startTimer();
-        
+
     }
 
     startFlightPhase() {
         this.currentPhase = 'flight';
         let chance = 0.5;
         this.io.to(this.roomName).emit('OnTimeUp', { phase: 'flight' });
-    
+
         if (this.totalBets > 0) {
             this.totalPayout = this.totalBets * 3;
             this.maxMultiplier = this.totalPayout / this.totalBets;
-    
+
             if (Math.random() <= chance) {
                 // Win: payout is bet times a random multiplier between 1 and maxMultiplier
                 this.maxHeight = 1 + Math.random() * (this.maxMultiplier - 1);
             } else {
                 this.maxHeight = 1; // No win scenario, height remains at minimum
             }
-    
+
             if (this.maxHeight <= 1.00) {
                 // Round ended, restart the timers
                 this.triggerBlastEvent();
@@ -70,63 +70,65 @@ class AviatorGame {
             }
         } else {
             // No bets placed, set maxHeight randomly between 10x and 20x
-            this.maxHeight =Math.random() * (10 - 1) + 1; // Random value between 10 and 20
+            this.maxHeight = Math.random() * (10 - 1) + 1; // Random value between 10 and 20
         }
-    
+
         // Adjust cashoutTime to sync with maxHeight (target: 20x in 30 seconds)
-        
-         this.increaseAltitude();
+
+        this.increaseAltitude();
     }
-   
- 
-    
- 
-        // Dynamically increases the altitude based on the delay
-        increaseAltitude() {
-           // let delay = this.getDelayForCurrentAltitude(); // Get delay based on altitude
-    
-            // Increase altitude by 0.1
-            this.altitude += 0.1;
-    
-            // Emit flight tick event
-            this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
-            console.log(`Current altitude: ${this.altitude.toFixed(2)} (Max Height: ${this.maxHeight})`);
-    
-            // Check if max height is reached
-            if (this.altitude >= this.maxHeight) {
-                this.triggerBlastEvent();
-                return; // Stop further execution
-            }
-    
-            // Schedule the next increase
+
+
+
+
+    // Dynamically increases the altitude based on the delay
+    increaseAltitude() {
+        // let delay = this.getDelayForCurrentAltitude(); // Get delay based on altitude
+
+        // Increase altitude and round it to the specified precision
+        this.altitude = parseFloat((this.altitude + 0.1).toFixed(2));
+
+        // Round max height for comparison
+        const roundedMaxHeight = parseFloat(this.maxHeight.toFixed(2));
+
+        // Emit flight tick event with rounded altitude
+        this.io.to(this.roomName).emit('flight_tick', { h: this.altitude });
+        console.log(`Current altitude: ${this.altitude} (Max Height: ${roundedMaxHeight})`);
+
+        // Check if max height is reached
+        if (this.altitude >= roundedMaxHeight) {
+            this.triggerBlastEvent();
+        } else {
+            // Schedule the next altitude increase
             this.flightTimer = setTimeout(() => this.increaseAltitude(), 1000);
         }
-    
-        // Determines the delay based on the current altitude
-        getDelayForCurrentAltitude() {
-            if (this.altitude < 2) {
-                return 1000; // 0.1 increase every 1 second
-            } else if (this.altitude < 8) {
-                return 600; // 0.1 increase every 5 seconds
-            } else {
-                return 300; // 0.1 increase every 2.5 seconds
-            }
+    }
+
+    // Determines the delay based on the current altitude
+    getDelayForCurrentAltitude() {
+        if (this.altitude < 2) {
+            return 1000; // 0.1 increase every 1 second
+        } else if (this.altitude < 8) {
+            return 600; // 0.1 increase every 5 seconds
+        } else {
+            return 300; // 0.1 increase every 2.5 seconds
         }
-    
-        
-    
-        // Pauses the flight
-        pauseFlight() {
-            if (this.flightTimer) {
-                clearTimeout(this.flightTimer);
-                this.flightTimer = null;
-                console.log("Flight paused.");
-            }
+    }
+
+
+
+    // Pauses the flight
+    pauseFlight() {
+        if (this.flightTimer) {
+            clearTimeout(this.flightTimer);
+            this.flightTimer = null;
+            console.log("Flight paused.");
         }
-    
-    
- 
-    
+    }
+
+
+
+
     triggerBlastEvent() {
         this.pauseFlight();
         this.currentPhase = 'blast';
@@ -134,7 +136,7 @@ class AviatorGame {
         console.log(`Blast event triggered in room: ${this.roomName}`);
         // Clear bets after blast
         this.bets = [];
-        this.timerInterval = new Timer(this.blastDelay, (remaining) => {}, () => {
+        this.timerInterval = new Timer(this.blastDelay, (remaining) => { }, () => {
             this.resetTimers();
         }).startTimer();
     }
@@ -229,27 +231,27 @@ class AviatorGame {
         });
     }
     syncPlayer(socket, player) {
-        
+
         this.OnBetsPlaced(socket);
-         this.OnCashOut(socket);
+        this.OnCashOut(socket);
         this.OnCurrentStatus(socket);
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
 
     }
-    OnCurrentStatus(socket){
+    OnCurrentStatus(socket) {
         socket.on('OnCurrentStatus', (d) => {
-        this.io.to(socket.id).emit('OnCurrentStatus', {
-            gameType: 'DragonTiger',
-            room: this.roomName,
-            currentPhase: this.currentPhase,
-            total_players: this.players.size,
-            betting_remaing: this.bettingTimer?.remaining,
-            pause_remaing: this.flightTimer?.remaining,
-            winList: this.winList,
-            round:this.round
+            this.io.to(socket.id).emit('OnCurrentStatus', {
+                gameType: 'DragonTiger',
+                room: this.roomName,
+                currentPhase: this.currentPhase,
+                total_players: this.players.size,
+                betting_remaing: this.bettingTimer?.remaining,
+                pause_remaing: this.flightTimer?.remaining,
+                winList: this.winList,
+                round: this.round
 
+            });
         });
-    });
     }
 }
 
