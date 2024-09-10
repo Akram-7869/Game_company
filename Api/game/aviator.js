@@ -60,7 +60,7 @@ class AviatorGame {
                 // Win: payout is bet times a random multiplier between 1 and maxMultiplier
                 this.maxHeight = 1 + Math.random() * (this.maxMultiplier - 1);
             } else {
-                this.maxHeight = 1; // No win scenario, height remains at minimum
+                this.maxHeight = 1.00; // No win scenario, height remains at minimum
             }
 
             if (this.maxHeight <= 1.00) {
