@@ -107,7 +107,7 @@ let onConnection = (socket) => {
         break;
       case gameName.tambola:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new TambolaGame(io, roomName, maxp, lobbyId);
+          state[roomName]['codeObj'] = new TambolaGame(io, roomName, maxp, lobby);
           state[roomName]['codeObj'].setupGame();
         }
 
@@ -116,7 +116,7 @@ let onConnection = (socket) => {
         break;
       case gameName.dragon_tiger:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new DragonTigerGame(io, roomName, maxp, lobbyId);
+          state[roomName]['codeObj'] = new DragonTigerGame(io, roomName, maxp, lobby);
           state[roomName]['codeObj'].startGame();
         }
         state[roomName]['codeObj'].syncPlayer(socket, d);
@@ -124,7 +124,7 @@ let onConnection = (socket) => {
         break;
       case gameName.crash:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new AviatorGame(io, roomName, maxp, lobbyId);
+          state[roomName]['codeObj'] = new AviatorGame(io, roomName, maxp, lobby);
           state[roomName]['codeObj'].startGame();
         }
         state[roomName]['codeObj'].syncPlayer(socket, d);
@@ -132,7 +132,7 @@ let onConnection = (socket) => {
         break;
       case gameName.rouletee:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new RolletGame(io, roomName, maxp, lobbyId);
+          state[roomName]['codeObj'] = new RolletGame(io, roomName, maxp, lobby);
           state[roomName]['codeObj'].startGame();
 
         }
@@ -142,7 +142,7 @@ let onConnection = (socket) => {
       case gameName.teen_patti:
         io.to(roomName).emit('res', { ev: 'join', data });
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobbyId);
+          state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobby);
         }
         state[roomName]['codeObj'].syncPlayer(socket, d);
         state[roomName]['codeObj'].setupGame();

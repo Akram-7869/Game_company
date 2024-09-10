@@ -3,8 +3,8 @@ const { publicRoom } = require("../utils/JoinRoom");
 const Timer = require("./Timer");
 
 class TambolaGame {
-  constructor(io, roomName, maxPlayers ,lobbyId) {
-    this.io = io;this.room = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;    this.io = io;
+  constructor(io, roomName, maxPlayers ,lobby) {
+    this.io = io;this.room = roomName;this.maxPlayers = maxPlayers;        this.lobby = lobby;    this.io = io;
     this.numbers = new Set();
     this.numbersArray = this.generateNumbers();
     this.claimed = {
@@ -40,7 +40,7 @@ class TambolaGame {
     this.intervalId = null;
     this.currentPhase = 'joining';
     this.messages = []; 
-  }
+   }
 
   updatePlayers(players) {
     this.players = players;
@@ -70,7 +70,7 @@ class TambolaGame {
 }
   startGame() {
     if (this.gameStarted) return; // Prevent multiple starts
-    publicRoom[this.lobbyId]['played']=true;
+    publicRoom[this.lobby._id]['played']=true;
     this.gameStarted = true;
     // for (let value of this.players.values()) {
     //   const ticket = this.generateTicket();

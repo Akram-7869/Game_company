@@ -24,8 +24,8 @@ class DragonTigerGame {
         { cardNo: 10, color: 4 }, { cardNo: 11, color: 4 }, { cardNo: 12, color: 4 }, { cardNo: 13, color: 4 },
         { cardNo: 14, color: 4 }
     ];
-    constructor(io, roomName, maxPlayers ,lobbyId) {
-        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;
+    constructor(io, roomName, maxPlayers ,lobby) {
+        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobby = lobby;
         DragonTigerGame.io = io;
          this.currentPhase = 'betting';
         this.winList = [1, 2, 3, 3, 1, 2, 1,3];
@@ -38,7 +38,7 @@ class DragonTigerGame {
         this.pauseTime = 9; // 5 seconds
         this.players = new Set();
         this.timerRunning = false; // To track if the timer is running
-
+        this.continueGame=false
 
     }
 
@@ -144,7 +144,9 @@ class DragonTigerGame {
 
     resetTimers() {
         this.timerRunning = false;
-        this.startGame();
+        if(  this.continueGame){
+            this.startGame();
+        }
     }
 
     updatePlayers(players) {
@@ -204,6 +206,9 @@ class DragonTigerGame {
         socket.on('onleaveRoom', function (data) {
             try {
                 console.log('OnleaveRoom--dragon')
+                if(this.lobby.type ==='influencer'){
+                    this.continueGame=false;
+                }
                 socket.leave(this.roomName);
                 socket.removeAllListeners('OnBetsPlaced');
                 socket.removeAllListeners('OnCurrentStatus');

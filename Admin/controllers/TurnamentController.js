@@ -1,7 +1,7 @@
 const asyncHandler = require('../middleware/async');
-const { callApi, api_url, redirect } = require('../helper/common');
-var apiUrl = api_url + '/Tournaments/';
-
+const { callApi, api_url } = require('../helper/common');
+const apiUrl = api_url + '/Tournaments/';
+const agodaAppId ='0f62fbaad9c446a3b1b7be2ba203be49'
 
 exports.listTournament = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Tournament' };
@@ -40,17 +40,17 @@ exports.getInfluencerTournament = asyncHandler(async (req, res, next) => {
             res.locals = { title: 'Tournament' };
             const sessionData = req.session.user;
             if (r.data.data.mode == 5) {
-                res.render('Tournament/influencer-tambola', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+                res.render('Tournament/influencer-tambola', { row: r.data.data, agodaAppId, user: req.session.user });
             } else if (r.data.data.mode == 1) {
-                res.render('Tournament/influencer-ludo', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+                res.render('Tournament/influencer-ludo', { row: r.data.data, agodaAppId, user: req.session.user });
             } else if (r.data.data.mode == 3) {
-                res.render('Tournament/influencer-teen-patti', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+                res.render('Tournament/influencer-teen-patti', { row: r.data.data, agodaAppId, user: req.session.user });
             } else if (r.data.data.mode == 2) {
-                res.render('Tournament/influencer-lion', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+                res.render('Tournament/influencer-lion', { row: r.data.data, agodaAppId, user: req.session.user });
             } else if (r.data.data.mode == 4) {
-                res.render('Tournament/influencer-rouletee', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+                res.render('Tournament/influencer-rouletee', { row: r.data.data, agodaAppId, user: req.session.user });
             } else if (r.data.data.mode == 6) {
-                res.render('Tournament/influencer-crash', { row: r.data.data, agodaAppId: '0f62fbaad9c446a3b1b7be2ba203be49', user: req.session.user });
+                res.render('Tournament/influencer-crash', { row: r.data.data, agodaAppId, user: req.session.user });
             }
         })
         .catch(error => {

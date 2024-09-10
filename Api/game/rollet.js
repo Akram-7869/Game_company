@@ -3,8 +3,8 @@ const Timer = require("./Timer");
 class RolletGame {
     static io;
 
-    constructor(io, roomName, maxPlayers ,lobbyId) {
-        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;
+    constructor(io, roomName, maxPlayers, lobby) {
+        this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.lobby = lobby;
         RolletGame.io = io;
         this.roomName = roomName;
         this.currentPhase = 'betting';
@@ -15,7 +15,7 @@ class RolletGame {
         this.pauseTime = 12; // 5 seconds
         this.players = new Set();
         this.timerRunning = false; // To track if the timer is running
-
+        this.continueGame = true;
         this.betList = {};
 
 
@@ -37,7 +37,7 @@ class RolletGame {
         this.tieBet = 0;
         this.round += 1;
         RolletGame.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer?.remaining, round: this.round });
-       // console.log(`Betting phase started in room: ${this.roomName}`);
+        // console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
             // console.log(remaining);
@@ -52,23 +52,23 @@ class RolletGame {
     startPausePhase() {
         this.currentPhase = 'pause';
         RolletGame.io.to(this.roomName).emit('OnTimeUp', { phase: 'pause' });
-       // console.log(`Pause phase started in room: ${this.roomName}`);
-        let betWin= this.getKeyWithMinValue(this.betList)
+        // console.log(`Pause phase started in room: ${this.roomName}`);
+        let betWin = this.getKeyWithMinValue(this.betList)
         this.winList.shift();
         this.winList.push(betWin);
 
         // Emit the result to all clients immediately
- 
 
-            let data = { room: this.roomName, betWin}
-            console.log('getBetData', data);
-            this.betList = this.defaultRolletValue();        
-            RolletGame.io.to(this.roomName).emit('OnWinNo', data);
+
+        let data = { room: this.roomName, betWin }
+        console.log('getBetData', data);
+        this.betList = this.defaultRolletValue();
+        RolletGame.io.to(this.roomName).emit('OnWinNo', data);
 
         this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
-          //  console.log(remaining);
+            //  console.log(remaining);
             if (remaining == 2) {
-               // console.log('reseting');
+                // console.log('reseting');
                 RolletGame.io.to(this.roomName).emit('OnReset', { phase: 'reset' });
             }
             //  RolletGame.io.to(this.roomName).emit('pause_tick', { remainingTime: remaining });
@@ -81,7 +81,9 @@ class RolletGame {
 
     resetTimers() {
         this.timerRunning = false;
-        this.startGame();
+        if (this.continueGame) {
+            this.startGame();
+        }
     }
 
     updatePlayers(players) {
@@ -95,38 +97,38 @@ class RolletGame {
                 socket.emit('error', 'Can only join during betting phase.');
                 return;
             }
-              
-            
-                let { room, betNo, amount, action = 'bet', manyBet = '[]' } = d; //JSON.parse(d);
-                console.log('setBetData', d);
-                amount = parseInt(amount);
-                if (betNo <= 36 && amount > 0) {
-                    if (action === 'bet') {
-                        this.betList[betNo] = amount + parseInt(this.betList[betNo]);
-                    } else if (action === 'unbet' && this.betList[betNo] > 0) {
-                        let x = parseInt(this.betList[betNo]) - amount;
-                        this.betList[betNo] = x < 0 ? 0 : x;
+
+
+            let { room, betNo, amount, action = 'bet', manyBet = '[]' } = d; //JSON.parse(d);
+            console.log('setBetData', d);
+            amount = parseInt(amount);
+            if (betNo <= 36 && amount > 0) {
+                if (action === 'bet') {
+                    this.betList[betNo] = amount + parseInt(this.betList[betNo]);
+                } else if (action === 'unbet' && this.betList[betNo] > 0) {
+                    let x = parseInt(this.betList[betNo]) - amount;
+                    this.betList[betNo] = x < 0 ? 0 : x;
+                }
+
+            } else if (betNo > 36 && amount > 0) {
+                const betArray = JSON.parse(manyBet);
+                let amountMany = amount / manyBet.length;
+                if (action === 'bet') {
+                    for (const id of betArray) {
+                        this.betList[id] = amountMany + parseInt(this.betList[betNo][id]);
                     }
-    
-                } else if (betNo > 36 && amount > 0) {
-                    const betArray = JSON.parse(manyBet);
-                    let amountMany = amount / manyBet.length;
-                    if (action === 'bet') {
-                        for (const id of betArray) {
-                            this.betList[id] = amountMany + parseInt(this.betList[betNo][id]);
+                } else if (action === 'unbet') {
+                    for (const id of betArray) {
+                        if (this.betList[id] > 0) {
+                            let x = parseInt(this.betList[id]) - amountMany;
+                            this.betList[id] = x < 0 ? 0 : x;
                         }
-                    } else if (action === 'unbet') {
-                        for (const id of betArray) {
-                            if (this.betList[id] > 0) {
-                                let x = parseInt(this.betList[id]) - amountMany;
-                                this.betList[id] = x < 0 ? 0 : x;
-                            }
-    
-    
-                        }
+
+
                     }
                 }
-                RolletGame.io.to(this.roomName).emit('onBetPlaced', d);
+            }
+            RolletGame.io.to(this.roomName).emit('onBetPlaced', d);
         });
     }
 
@@ -164,25 +166,28 @@ class RolletGame {
 
         // });
         this.onBetPlaced(socket);
-         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
+        socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
 
         this.OnCurrentStatus(socket);
-     }
-     handlePlayerLeave(socket) {
+    }
+    handlePlayerLeave(socket) {
         socket.on('onleaveRoom', function (data) {
             try {
                 console.log('OnleaveRoom--dragon')
+                if (this.lobby.type === 'influencer') {
+                    this.continueGame = false;
+                }
                 socket.leave(this.roomName);
                 socket.removeAllListeners('OnBetsPlaced');
                 socket.removeAllListeners('OnCurrentStatus');
 
- 
 
 
-        
-        
-        
-        
+
+
+
+
+
                 socket.removeAllListeners('onleaveRoom');
 
 
@@ -212,8 +217,8 @@ class RolletGame {
             });
         });
     }
-  
-  
+
+
 
     defaultRolletValue = () => {
         return {

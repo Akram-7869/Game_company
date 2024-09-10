@@ -1,8 +1,8 @@
 const Timer = require("./Timer");
 
 class TeenpattiGame {
-    constructor(io, roomName, maxPlayers ,lobbyId) {
-        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobbyId = lobbyId;
+    constructor(io, roomName, maxPlayers ,lobby) {
+        this.io = io;this.roomName = roomName;this.maxPlayers = maxPlayers;        this.lobby = lobby;
         this.roomName = roomName;
         this.players = new Set();
         this.gameState = 'waiting'; // possible states: waiting, playing, finished

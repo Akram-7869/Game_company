@@ -3,8 +3,8 @@
 const Timer = require("./Timer");
 
 class AviatorGame {
-    constructor(io, roomName, maxPlayers, lobbyId) {
-        this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.lobbyId = lobbyId;
+    constructor(io, roomName, maxPlayers, lobby) {
+        this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.lobby = lobby;
         this.currentPhase = 'betting';
         this.bets = [];
         this.totalBets = 0;
@@ -19,6 +19,7 @@ class AviatorGame {
         this.timerInterval = null;
         this.maxHeight = 1;
         this.flightTimer = null;
+        this.continueGame=true;
     }
 
     startGame() {
@@ -70,7 +71,7 @@ class AviatorGame {
             }
         } else {
             // No bets placed, set maxHeight randomly between 10x and 20x
-            this.maxHeight = Math.random() * (10 - 1) + 1; // Random value between 10 and 20
+            this.maxHeight = this.getRandomValue();
         }
 
         // Adjust cashoutTime to sync with maxHeight (target: 20x in 30 seconds)
@@ -78,7 +79,20 @@ class AviatorGame {
         this.increaseAltitude();
     }
 
-
+      getRandomValue() {
+        // Generate a random number between 0 and 1
+        const randomSelector = Math.random();
+        
+        // 50% chance to select the range from 1.0 to 2.0
+        if (randomSelector < 0.5) {
+            // Generate a random number in the range [1.0, 2.0)
+            return (Math.random() * (10.0 - 2.0) + 2.0).toFixed(1);
+        } else {
+            return (Math.random() * (2.0 - 1.0) + 1.0).toFixed(1);
+            // Generate a random number in the range [2.0, 10.0)
+           
+        }
+    }
 
 
     // Dynamically increases the altitude based on the delay
@@ -144,7 +158,10 @@ class AviatorGame {
     }
     resetTimers() {
         this.timerRunning = false;
-        this.startGame();
+        if(  this.continueGame){
+            this.startGame();
+        }
+        
     }
     OnBetsPlaced(socket, amount) {
         socket.on("OnBetsPlaced", async (data) => {
@@ -216,7 +233,9 @@ class AviatorGame {
     handlePlayerLeave(socket) {
         socket.on('onleaveRoom', function (data) {
             try {
-                console.log('OnleaveRoom--Aviatot')
+                if(this.lobby.type ==='influencer'){
+                    this.continueGame=false;
+                }
                 socket.leave(this.roomName);
                 socket.removeAllListeners('OnBetsPlaced');
                 socket.removeAllListeners('OnCashOut');
