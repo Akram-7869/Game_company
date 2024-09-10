@@ -63,23 +63,16 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
     );
   }
   //  Make sure user is provider owner
-  if (req.staff.role == 'superadmin') {
-    if (req.staff.role == user.role && user.id !== req.staff.id) {
+  if (req.role === 'admin') {
+     
       return next(
         new ErrorResponse(
           `User  is not authorized to update`)
       );
-    }
+    
+    user.status = req.body.status;
 
-  } else if (req.staff.role == 'admin') {
-    if (user.role == 'superadmin') {
-      return next(
-        new ErrorResponse(
-          `User  is not authorized to update`)
-      );
-    }
-
-  } else if (user.id !== req.staff.id) {
+  } else if (user.id !== req.user.id) {
     return next(
       new ErrorResponse(
         `User  is not authorized to update`)
@@ -88,8 +81,9 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 
   user.firstName = req.body.firstName;
   user.lastName = req.body.lastName;
-  user.status = req.body.status;
   user.phone = req.body.phone;
+  user.displayName = req.body.displayName;
+
 
   //user.isNew = false;
   await user.save();
@@ -124,25 +118,13 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.resetPassword = asyncHandler(async (req, res, next) => {
   const { code, password, oldpass } = req.body;
-  let user = req.staff;
+  let user = req.user;
   if (!user) {
     return next(
       new ErrorResponse(`User  not found`)
     );
   }
-  //  Make sure user is provider owner
-  if (user.role === 'superadmin') {
-
-    if (user.resetPasswordToken !== code) {
-      return next(
-        new ErrorResponse(`Invalid code`)
-      );
-    };
-
-    user.password = req.body.password;
-
-
-  } else {
+  
     // Check for user
     user = await User.findById(user._id).select('+password');
 
@@ -159,7 +141,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
     user.password = req.body.password;
 
-  }
+  
   await user.save();
   res.status(200).json({
     success: true,

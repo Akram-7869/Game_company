@@ -46,6 +46,11 @@
                                         class="form-control" required placeholder="Last name" />
                                 </div>
                                 <div class="mb-3">
+                                    <label class="form-label">Display Name</label>
+                                    <input type="text" name="displayName" value="<%=row.displayName?row.displayName:'' %>"
+                                        class="form-control" required placeholder="Display Name " />
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Phone</label>
                                     <input type="text" name="phone" value="<%=row.phone?row.phone:'' %>"
                                         class="form-control" required placeholder="Phone" />

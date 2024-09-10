@@ -48,35 +48,39 @@ class AviatorGame {
         this.currentPhase = 'flight';
         let chance = 0.5;
         this.io.to(this.roomName).emit('OnTimeUp', { phase: 'flight' });
-        //console.log(`Flight phase started in room: ${this.roomName}`);
-
-        let maxHeight = 1;
+    
         if (this.totalBets > 0) {
             this.totalPayout = this.totalBets * 3;
             this.maxMultiplier = this.totalPayout / this.totalBets;
+    
             if (Math.random() <= chance) {
                 // Win: payout is bet times a random multiplier between 1 and maxMultiplier
                 this.maxHeight = 1 + Math.random() * (this.maxMultiplier - 1);
+            } else {
+                this.maxHeight = 1; // No win scenario, height remains at minimum
             }
-
-            //   console.log('maxHeight', maxHeight, 'totalPayout', totalPayout, 'maxMultiplier', maxMultiplier);
-            if (maxHeight <= 1.00) {
-                //round ended restart the timers
+    
+            if (this.maxHeight <= 1.00) {
+                // Round ended, restart the timers
                 this.triggerBlastEvent();
                 console.log('reset Aviator');
+                return; // Exit if round has ended
             }
+        } else {
+            // No bets placed, set maxHeight randomly between 10x and 20x
+            this.maxHeight = Math.random() * (20 - 10) + 10; // Random value between 10 and 20
         }
+    
         this.flightTimer = new Timer(this.cashoutTime, (remaining) => {
-
             this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
             this.altitude += 0.10;
         }, () => {
             this.triggerBlastEvent();
         });
-
+    
         this.flightTimer.startTimer();
     }
-
+    
     triggerBlastEvent() {
         this.currentPhase = 'blast';
         this.io.to(this.roomName).emit('OnFlightBlast', { message: 'Blast event!' });

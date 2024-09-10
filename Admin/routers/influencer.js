@@ -8,6 +8,8 @@ const commissionCtl = require('../controllers/CommissionController');
 const influencerCtl = require('../controllers/InfluencerController');
 const tranCtl = require('../controllers/TransactionController');
 const postCtl = require('../controllers/PostController');
+const influenecrCtl = require('../controllers/InfluencerController');
+
 
 
 
@@ -17,6 +19,11 @@ const postCtl = require('../controllers/PostController');
 router.use(protect);
 
 // Route for login page
+router.route('/profile').get(influenecrCtl.profile).post(influencerCtl.updateInfluencer);
+router.route('/restpassword').get(influenecrCtl.resetPassword);
+router.route('/restpassword').post(influenecrCtl.updatePassword);
+
+
 router.route('/dashboard').get(dashCtl.dashBoardInfluncerView);
 router.route('/dashboard/income').post(dashCtl.influencerIncome);
 

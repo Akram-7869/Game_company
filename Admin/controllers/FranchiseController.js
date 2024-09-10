@@ -34,8 +34,11 @@ exports.updatefranchise = asyncHandler(async (req, res, next) => {
                   } else {
                         req.flash('error', r.data.error);
                   }
-                  res.redirect(process.env.ADMIN_URL + '/admin/manager');
-            })
+                  if(req.role ==='admin'){
+                        res.redirect(process.env.ADMIN_URL + '/admin/influencer');
+                  }else{
+                        res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
+                  }            })
             .catch(error => {
 
 
@@ -142,7 +145,7 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'franchise' };
                   req.flash('message', 'Data save');
-                  res.redirect(process.env.ADMIN_URL + '/admin/manager');
+                  res.redirect(process.env.ADMIN_URL + '/franchise/dashboard');
 
             })
             .catch(error => {

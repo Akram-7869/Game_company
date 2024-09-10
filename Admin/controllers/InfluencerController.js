@@ -22,11 +22,24 @@ exports.getInfluencer = asyncHandler(async (req, res, next) => {
             })
 });
 
+exports.profile = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Datatables' };
+      callApi(req).get(apiUrl + req.userId)
+            .then(r => {
+
+                  res.locals = { title: 'Influencer' };
+                  res.render('Influencer/edit', { row: r.data.data });
+            })
+            .catch(error => {
+
+            })
+});
+
 
 exports.updateInfluencer = asyncHandler(async (req, res, next) => {
 
       res.locals = { title: 'Datatables' };
-      callApi(req).put(apiUrl + req.params.id, req.body)
+      callApi(req).put(apiUrl +  req.userId, req.body)
             .then(r => {
                   if (r.data.success) {
                         // Assign value in session
@@ -34,7 +47,12 @@ exports.updateInfluencer = asyncHandler(async (req, res, next) => {
                   } else {
                         req.flash('error', r.data.error);
                   }
-                  res.redirect(process.env.ADMIN_URL + '/admin/manager');
+                  if(req.role ==='admin'){
+                        res.redirect(process.env.ADMIN_URL + '/admin/influencer');
+                  }else{
+                        res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
+                  }
+                  
             })
             .catch(error => {
 
@@ -142,7 +160,7 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Influencer' };
                   req.flash('message', 'Data save');
-                  res.redirect(process.env.ADMIN_URL + '/admin/manager');
+                  res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
 
             })
             .catch(error => {

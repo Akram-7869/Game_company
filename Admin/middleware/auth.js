@@ -12,6 +12,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   } else {
     const decoded = jwt.decode(  req.cookies.token, { complete: true });
      req.role=decoded.payload.role;
+     req.userId=decoded.payload.id;
      req.app.locals['role'] = decoded.payload.role;
     //decoded.payload.exp
     next();

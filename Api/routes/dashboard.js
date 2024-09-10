@@ -4,30 +4,25 @@ const dash = require('../controllers/dashboards');
 const router = express.Router({ mergeParams: true });
 const { protect } = require('../middleware/auth');
 
-router.use(protect);
-
-router.route('/filter/dashboard').post(dash.getFilterDashboard);
- router.route('/filter/influencer').post(dash.getInfluencerDashboard);
- router.route('/filter/franchise').post(dash.getFranchiseDashboard);
-
-
-router.route('/chart/data').post(dash.getGraphData);
-router.route('/total-income').post(dash.totalIncome);
-router.route('/influencer-income').post(dash.influencerIncome);
-router.route('/franchise-income').post(dash.franchiseIncome);
-
-// router.route('/top/games').post(dash.topGames);
-// router.route('/top/tournament').post(dash.topTournament);
-// router.route('/players').post(dash.getPlayers);
+//router.use(protect);
+router.route('/dalykamision').post(dash.calculateDailyCommissions);
+router.route('/filter/dashboard').post(protect, dash.getFilterDashboard);
+ router.route('/filter/influencer').post(protect, dash.getInfluencerDashboard);
+ router.route('/filter/franchise').post(protect, dash.getFranchiseDashboard);
 
 
-router.route('/add').post(dash.createDashboard);
-router.route('/').post(dash.getDashboards);
+router.route('/chart/data').post(protect,dash.getGraphData);
+router.route('/total-income').post(protect, dash.totalIncome);
+router.route('/influencer-income').post(protect, dash.influencerIncome);
+router.route('/franchise-income').post(protect, dash.franchiseIncome);
+
+router.route('/add').post(protect, dash.createDashboard);
+router.route('/').post(protect, dash.getDashboards);
 
 router
   .route('/:id')
-  .get(dash.getDashboard)
-  .post(dash.updateDashboard)
-  .delete(dash.deleteDashboard);
+  .get(protect, dash.getDashboard)
+  .post(protect, dash.updateDashboard)
+  .delete(protect, dash.deleteDashboard);
 
 module.exports = router;

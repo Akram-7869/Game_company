@@ -260,7 +260,7 @@
                     <i class="fas fa-user-circle"></i>
                     <!-- <img class="rounded-circle header-profile-user" src="" alt="Header Avatar"> -->
                     <span class="d-none d-xl-inline-block ms-1 fw-medium font-size-15">
-
+                        <%=role%>
                     </span>
                     <i class="uil-angle-down d-none d-xl-inline-block font-size-15"></i>
                 </button>
@@ -281,11 +281,30 @@
                             class="align-middle">
                             <%=translation.Settings%>
                            </span> <span class="badge bg-soft-success rounded-pill mt-1 ms-2">03</span></a>-->
+                          
+                          
+                       
+                        <% if(role==='admin') { %>
                     <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/admin/manager/restpassword"><i
                             class="uil uil-lock-alt font-size-18 align-middle me-1 text-muted"></i> <span
                             class="align-middle">
                             Reset Password
                         </span></a>
+                        <% } else {%>
+                            <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/influencer/profile"><i
+                                class="uil uil-lock-alt font-size-18 align-middle me-1 text-muted"></i> <span
+                                class="align-middle">
+                                profile 
+                            </span></a>
+                            <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/influencer/restpassword"><i
+                                class="uil uil-lock-alt font-size-18 align-middle me-1 text-muted"></i> <span
+                                class="align-middle">
+                                Reset Password
+                            </span></a>
+                            <% } %>
+
+
+
                     <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/logout"><i
                             class="uil uil-sign-out-alt font-size-18 align-middle me-1 text-muted"></i> <span
                             class="align-middle">
