@@ -71,27 +71,12 @@ class AviatorGame {
             }
         } else {
             // No bets placed, set maxHeight randomly between 10x and 20x
-            this.maxHeight = this.getRandomValue();
+            this.maxHeight = Math.random() * (10 - 1) + 1;
         }
 
         // Adjust cashoutTime to sync with maxHeight (target: 20x in 30 seconds)
 
         this.increaseAltitude();
-    }
-
-      getRandomValue() {
-        // Generate a random number between 0 and 1
-        const randomSelector = Math.random();
-        
-        // 50% chance to select the range from 1.0 to 2.0
-        if (randomSelector < 0.5) {
-            // Generate a random number in the range [1.0, 2.0)
-            return (Math.random() * (10.0 - 2.0) + 2.0).toFixed(1);
-        } else {
-            return (Math.random() * (2.0 - 1.0) + 1.0).toFixed(1);
-            // Generate a random number in the range [2.0, 10.0)
-           
-        }
     }
 
 
@@ -103,7 +88,7 @@ class AviatorGame {
         this.altitude = parseFloat((this.altitude + 0.1).toFixed(2));
 
         // Round max height for comparison
-        const roundedMaxHeight = parseFloat(this.maxHeight.toFixed(2));
+        const roundedMaxHeight = parseFloat(this.maxHeight).toFixed(2);
 
         // Emit flight tick event with rounded altitude
         this.io.to(this.roomName).emit('flight_tick', { h: this.altitude });
