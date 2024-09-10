@@ -132,6 +132,8 @@ class AviatorGame {
     triggerBlastEvent() {
         this.pauseFlight();
         this.currentPhase = 'blast';
+        this.winList.shift();
+        this.winList.push(`$this.altitudeX`);
         this.io.to(this.roomName).emit('OnFlightBlast', { message: 'Blast event!' });
         console.log(`Blast event triggered in room: ${this.roomName}`);
         // Clear bets after blast
