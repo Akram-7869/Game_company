@@ -17,7 +17,7 @@ class AviatorGame {
         this.totalPayout = 0;
         this.winList = ['1X', '2X', '3X', '4X', '5X'];
         this.timerInterval = null;
-        this.maxHeight = 1;
+        this.maxHeight = 1.00;
         this.flightTimer = null;
         this.continueGame=true;
     }
@@ -107,7 +107,7 @@ class AviatorGame {
 
         // Emit flight tick event with rounded altitude
         this.io.to(this.roomName).emit('flight_tick', { h: this.altitude });
-        //console.log(`Current altitude: ${this.altitude} (Max Height: ${roundedMaxHeight})`);
+        console.log(`Current altitude: ${this.altitude} (Max Height: ${roundedMaxHeight})`);
 
         // Check if max height is reached
         if (this.altitude >= roundedMaxHeight) {
