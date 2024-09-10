@@ -17,6 +17,7 @@ class AviatorGame {
         this.totalPayout = 0;
         this.winList = ['1X','2X','3X','4X','5X'];
         this.timerInterval=null;
+        this.maxHeight=1;
     }
 
     startGame() {
@@ -68,7 +69,7 @@ class AviatorGame {
             }
         } else {
             // No bets placed, set maxHeight randomly between 10x and 20x
-            this.maxHeight = Math.random() * (20 - 10) + 10; // Random value between 10 and 20
+            this.maxHeight = Math.random() * (10 - 4) + 10; // Random value between 10 and 20
         }
     
         // Adjust cashoutTime to sync with maxHeight (target: 20x in 30 seconds)
@@ -87,10 +88,15 @@ class AviatorGame {
             }
     
             if (this.altitude >= this.maxHeight) {
+
                 this.triggerBlastEvent();
+                this.flightTimer.pause();
+
+                
             } else {
                 this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
             }
+            console.log('x',this.altitude,'t,', this.cashoutTime)
         }, () => {
             this.triggerBlastEvent();
         });
