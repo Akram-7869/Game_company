@@ -78,18 +78,18 @@ class AviatorGame {
         let linearIncrement = 0.1; // Linear increment rate up to 3x
     
         this.flightTimer = new Timer(this.cashoutTime, (remaining) => {
-            if (this.altitude < linearGrowthLimit) {
+            if (this.altitude > linearGrowthLimit) {
                 // Linear growth phase from 1x to 3x
+                
+                this.altitude += 0.5;
+                        } else {
                 this.altitude += linearIncrement;
-            } else {
-                linearIncrement+=0.3;
             }
     
             if (this.altitude >= this.maxHeight) {
                 this.triggerBlastEvent();
-            } else {
-                this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
-            }
+            }  
+            this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
             console.log(this.altitude ,'>=', this.maxHeight);
         }, () => {
             this.triggerBlastEvent();
