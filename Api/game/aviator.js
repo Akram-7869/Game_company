@@ -74,11 +74,11 @@ class AviatorGame {
     
         // Adjust cashoutTime to sync with maxHeight (target: 20x in 30 seconds)
         this.cashoutTime = 30; // 30 seconds in milliseconds
-        let linearGrowthLimit = 3; // Linear growth up to 3x
+         
         let linearIncrement = 0.1; // Linear increment rate up to 3x
     
         this.flightTimer = new Timer(this.cashoutTime, (remaining) => {
-            if (this.altitude > linearGrowthLimit) {
+            if (this.altitude > 3) {
                 // Linear growth phase from 1x to 3x
                 
                 this.altitude += 0.5;
