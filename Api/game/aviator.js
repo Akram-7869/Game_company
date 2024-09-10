@@ -71,6 +71,10 @@ class AviatorGame {
             this.maxHeight = Math.random() * (20 - 10) + 10; // Random value between 10 and 20
         }
     
+        // Adjust cashoutTime to sync with maxHeight
+        const baseCashoutTime = 5000; // Base time in milliseconds for a multiplier of 1x
+        this.cashoutTime = baseCashoutTime * this.maxHeight; // Adjust cashoutTime according to maxHeight
+    
         this.flightTimer = new Timer(this.cashoutTime, (remaining) => {
             this.io.to(this.roomName).emit('flight_tick', { h: this.altitude.toFixed(2) });
             this.altitude += 0.10;
