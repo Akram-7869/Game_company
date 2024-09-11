@@ -166,6 +166,7 @@ class RolletGame {
 
         // });
         this.onBetPlaced(socket);
+        this.continueGame=true;
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
 
         this.OnCurrentStatus(socket);
