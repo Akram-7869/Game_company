@@ -19,7 +19,7 @@ let io;
 
 let onConnection = (socket) => {
   console.log('contedt', socket.id);
- 
+
   //socket.join('notification_channel');
   socket.on('associateUserId', (d) => {
     let dataParsed = d;// JSON.parse(d);
@@ -29,135 +29,135 @@ let onConnection = (socket) => {
   });
   socket.on('join', async (d) => {
     try {
-      
-    
-    console.log('join', d);
-    let dataParsed = d;// JSON.parse(d);
-    let { userId, lobbyId, maxp = 4, role = 'player' } = dataParsed;
-    let lobby = await Tournament.findById(lobbyId).lean();
-    if (!lobby) {
-      console.log('looby-not-found');
-      return;
-    }
 
-    let roomName = '';
 
-    if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
-      roomName = publicRoom[lobbyId]['roomName'];
-      console.log('join-exisitng', roomName);
-    } else {
-      roomName = makeid(5);
-      publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
-      state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [], status: 'open', codeObj: null, messages:[] };
-      console.log('create-room-', roomName);
-    }
-
-    if (userSocketMap[userId]) {
-      const playerRoom = userSocketMap[userId].room;
-      console.log(playerRoom, roomName, userSocketMap);
-      if (playerRoom === roomName) {
-        console.log('not registering');
+      console.log('join', d);
+      let dataParsed = d;// JSON.parse(d);
+      let { userId, lobbyId, maxp = 4, role = 'player' } = dataParsed;
+      let lobby = await Tournament.findById(lobbyId).lean();
+      if (!lobby) {
+        console.log('looby-not-found');
         return;
-      } else {
-        socket.leave(playerRoom);
-        userLeave({ userId, room: playerRoom })
       }
-    }
 
-    // console.log('room', roomName);
-    joinRoom(socket, userId, roomName, dataParsed);
-    socket.join(roomName);
+      let roomName = '';
 
-    let data = {
-      roomName, users: getRoomLobbyUsers(roomName, lobbyId),
-      userId: userId,
-    }
-    if (state[roomName]) {
-      publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
-      // if (data.users.length == maxp || data.users.length == 0) {
-      //   delete publicRoom[lobbyId];
-      // }
-    } else {
-      // delete publicRoom[lobbyId];
-    }
-    if (d.role === 'influencer') {
-      // io.emit('influencer_matches', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
-      const validIds = Object.entries(userSocketMap)
-        .filter(([playerId, user]) => user.role === 'influencer')
-        .map(([userId, user]) => user.lobbyId);
+      if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
+        roomName = publicRoom[lobbyId]['roomName'];
+        console.log('join-exisitng', roomName);
+      } else {
+        roomName = makeid(5);
+        publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
+        state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [], status: 'open', codeObj: null, messages: [] };
+        console.log('create-room-', roomName);
+      }
 
-      let influencers = await Tournament.find({ _id: { $in: validIds }, tournamentType: 'influencer' }).populate('influencerId', 'displayName');
-
-      setkey('influencer_matches', influencers);
-      console.log('seting _influencer_matches', influencers);
-      io.emit('influencer_matches', { influencers });
-    }
-    
-
-    switch (lobby.mode) {
-      case gameName.ludo:
-        if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new LudoGame(io, roomName, maxp, lobby);
-          state[roomName]['codeObj'].setupGame();
+      if (userSocketMap[userId]) {
+        const playerRoom = userSocketMap[userId].room;
+        console.log(playerRoom, roomName, userSocketMap);
+        if (playerRoom === roomName) {
+          console.log('not registering');
+          return;
+        } else {
+          socket.leave(playerRoom);
+          userLeave({ userId, room: playerRoom })
         }
+      }
 
-        state[roomName]['codeObj'].syncPlayer(socket, d);
-        socket.emit('join', { ...d, gameType: gameName.ludo, room: roomName, status: 'success' });
-        state[roomName]['codeObj'].emitJoinPlayer();
-        break;
-      case gameName.tambola:
-        if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new TambolaGame(io, roomName, maxp, lobby);
-          state[roomName]['codeObj'].setupGame();
-        }
+      // console.log('room', roomName);
+      joinRoom(socket, userId, roomName, dataParsed);
+      socket.join(roomName);
 
-        state[roomName]['codeObj'].syncPlayer(socket, d);
-        socket.emit('join', { ...d, gameType: gameName.tambola, room: roomName, status: 'success' });
-        break;
-      case gameName.dragon_tiger:
-        if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new DragonTigerGame(io, roomName, maxp, lobby);    
-          if (lobby.tournamentType === 'admin') {
+      let data = {
+        roomName, users: getRoomLobbyUsers(roomName, lobbyId),
+        userId: userId,
+      }
+      if (state[roomName]) {
+        publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
+        // if (data.users.length == maxp || data.users.length == 0) {
+        //   delete publicRoom[lobbyId];
+        // }
+      } else {
+        // delete publicRoom[lobbyId];
+      }
+      if (d.role === 'influencer') {
+        // io.emit('influencer_matches', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
+        const validIds = Object.entries(userSocketMap)
+          .filter(([playerId, user]) => user.role === 'influencer')
+          .map(([userId, user]) => user.lobbyId);
+
+        let influencers = await Tournament.find({ _id: { $in: validIds }, tournamentType: 'influencer' }).populate('influencerId', 'displayName');
+
+        setkey('influencer_matches', influencers);
+        console.log('seting _influencer_matches', influencers);
+        io.emit('influencer_matches', { influencers });
+      }
+
+
+      switch (lobby.mode) {
+        case gameName.ludo:
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new LudoGame(io, roomName, maxp, lobby);
+            state[roomName]['codeObj'].setupGame();
+          }
+
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          socket.emit('join', { ...d, gameType: gameName.ludo, room: roomName, status: 'success' });
+          state[roomName]['codeObj'].emitJoinPlayer();
+          break;
+        case gameName.tambola:
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new TambolaGame(io, roomName, maxp, lobby);
+            state[roomName]['codeObj'].setupGame();
+          }
+
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          socket.emit('join', { ...d, gameType: gameName.tambola, room: roomName, status: 'success' });
+          break;
+        case gameName.dragon_tiger:
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new DragonTigerGame(io, roomName, maxp, lobby);
+            if (lobby.tournamentType === 'admin') {
+              state[roomName]['codeObj'].startGame();
+            }
+          }
+
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          socket.emit('join', { ...d, gameType: gameName.dragon_tiger, room: roomName, status: 'success' });
+          break;
+        case gameName.crash:
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new AviatorGame(io, roomName, maxp, lobby);
             state[roomName]['codeObj'].startGame();
           }
-        }
-        
-        state[roomName]['codeObj'].syncPlayer(socket, d);
-        socket.emit('join', { ...d, gameType: gameName.dragon_tiger, room: roomName, status: 'success' });
-        break;
-      case gameName.crash:
-        if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new AviatorGame(io, roomName, maxp, lobby);
-          state[roomName]['codeObj'].startGame();
-        }
-        state[roomName]['codeObj'].syncPlayer(socket, d);
-        socket.emit('join', { ...d, gameType: gameName.crash, room: roomName, status: 'success' });
-        break;
-      case gameName.rouletee:
-        if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new RolletGame(io, roomName, maxp, lobby);
-          state[roomName]['codeObj'].startGame();
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          socket.emit('join', { ...d, gameType: gameName.crash, room: roomName, status: 'success' });
+          break;
+        case gameName.rouletee:
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new RolletGame(io, roomName, maxp, lobby);
+            state[roomName]['codeObj'].startGame();
 
-        }
-        state[roomName]['codeObj'].syncPlayer(socket, d);
-        socket.emit('join', { ...d, gameType: gameName.rouletee, room: roomName, status: 'success' });
-        break;
-      case gameName.teen_patti:
-        io.to(roomName).emit('res', { ev: 'join', data });
-        if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobby);
-        }
-        state[roomName]['codeObj'].syncPlayer(socket, d);
-        state[roomName]['codeObj'].setupGame();
+          }
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          socket.emit('join', { ...d, gameType: gameName.rouletee, room: roomName, status: 'success' });
+          break;
+        case gameName.teen_patti:
+          io.to(roomName).emit('res', { ev: 'join', data });
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobby);
+          }
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          state[roomName]['codeObj'].setupGame();
 
-        //socket.emit('join', { ...d, gameType: gameName.teen_patti, room: roomName, status: 'success' });
-        break;
+          //socket.emit('join', { ...d, gameType: gameName.teen_patti, room: roomName, status: 'success' });
+          break;
+      }
+
+    } catch (error) {
+      console.log('error-join', error)
+
     }
-
-  } catch (error) {
-    console.log('error-join',error)
-  
-  } 
 
   });
 
@@ -186,9 +186,9 @@ let onConnection = (socket) => {
   socket.on('starGame', (d) => {
 
     let { room } = d;//JSON.parse(d);
-    
-      state[room]['codeObj'].continueGame =true;;
-    
+
+    state[room]['codeObj'].continueGame = true;;
+console.log('start',room,  state[room]['codeObj'].continueGame);
     state[room]['codeObj'].startGame();
 
   });
@@ -210,22 +210,22 @@ let onConnection = (socket) => {
   //leave
   socket.on('leave', (d) => {
     try {
-      
-    
-    let { room, userId } = d;
 
-    userLeave(d);
-    socket.leave(room);
-    let data = {
-      room: room, userId,
-      users: getRoomUsers(room)
-    };
-    console.log('leave-', d, data);
-    io.to(room).emit('res', { ev: 'leave', data });
 
-  } catch (error) {
-      
-  }
+      let { room, userId } = d;
+
+      userLeave(d);
+      socket.leave(room);
+      let data = {
+        room: room, userId,
+        users: getRoomUsers(room)
+      };
+      console.log('leave-', d, data);
+      io.to(room).emit('res', { ev: 'leave', data });
+
+    } catch (error) {
+
+    }
   });
   //chat_message
   socket.on('chat_message', (d) => {
@@ -267,28 +267,28 @@ let onConnection = (socket) => {
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
-try {
-    let { room, userId, lobbyId } = socket;
- 
-    delete userSocketMap[userId];
+    try {
+      let { room, userId, lobbyId } = socket;
 
-    userLeave(socket);
-    //console.log('disconnect-inputstring');
-    let data = {
-      room: room,
-      users: getRoomUsers(room),
-      userId: userId
-    };
+      delete userSocketMap[userId];
 
-    console.log('disconnect-', room, userId, lobbyId);
-    if(state[room]&& userId){
-      state[room].codeObj.handlePlayerLeave(socket, {PlayerID:userId});
+      userLeave(socket);
+      //console.log('disconnect-inputstring');
+      let data = {
+        room: room,
+        users: getRoomUsers(room),
+        userId: userId
+      };
+
+      console.log('disconnect-', room, userId, lobbyId);
+      if (state[room] && userId) {
+        state[room].codeObj.handlePlayerLeave(socket, { PlayerID: userId });
+      }
+
+      io.to(socket.room).emit('res', { ev: 'disconnect', data });
+    } catch (error) {
+      console.log('error-discconect', error)
     }
-    
-    io.to(socket.room).emit('res', { ev: 'disconnect', data });
-  } catch (error) {
-  console.log('error-discconect',error)
-  }
 
   });
   // Runs when client disconnects
