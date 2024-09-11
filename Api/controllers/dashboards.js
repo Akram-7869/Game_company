@@ -496,29 +496,29 @@ let getTopGames = async (s_date, e_date) => {
     {
       $group: {
         _id: "$game",
-        totalBets: { $sum: "$amountBet" },
-        totalWinnings: { $sum: "$amountWon" },
+        totalBets: { $sum: "$amountBet" }, // Handle null values
+        totalWinnings: { $sum: "$amountWon" } // Handle null values
       },
     },
     {
       $addFields: {
-        influencerCommission: { $multiply: ["$totalBets", 0.10] }, // Influencer commission (10% of total bets)
-        totalCommission: {
-          $subtract: [
-            "$totalBets", // Total bets
-            { $add: ["$influencerCommission", "$totalWinnings"] }, // Sum of influencer commission and total winnings
-          ],
-        },
+        commissionGiven: { $multiply: ["$totalBets", 0.10] },
       },
     },
     {
       $project: {
         _id: 1,
-        totalBets: 1,
-        totalWinnings: 1,
-        totalCommission: 1,
+        totalBets: { $ifNull: ["$totalBets", 0] },
+        totalWinnings: { $ifNull: ["$totalWinnings", 0] },
+        totalCommission: {
+          $subtract: [
+            { $ifNull: ["$totalBets", 0] },
+            {$add: [{ $add: [{ $ifNull: ["$commissionGiven", 0] } , { $ifNull: ["$totalWinnings", 0] }]}]}
+          ]
+        },
       },
     },
+
     { $sort: { totalBets: -1 } }, // Optional: Sort by total bets descending
   ]);
 
@@ -610,7 +610,7 @@ exports.calculateDailyCommissions = asyncHandler(async (req, res, next) => {
   today = today.toISOString().split('T')[0];
 
   const startDate = s_date ? s_date : today;
-  
+
   await calculateAdminIncome(startDate);
   res.status(200).json({
     success: true,
@@ -626,11 +626,10 @@ async function calculateAdminIncome(today) {
 
     // Calculate the start and end of the day for the date range
     const startOfDay = today;
-    let endOfDay = new Date();
+    let endOfDay = new Date(today);
     endOfDay.setDate(endOfDay.getDate() + 1);
     // Format the date in YYYY-MM-DD format
     endOfDay = endOfDay.toISOString().split('T')[0];
-
     // Aggregate player game data
     const [adminIncome] = await PlayerGame.aggregate([
       {
@@ -652,12 +651,6 @@ async function calculateAdminIncome(today) {
       {
         $addFields: {
           commissionGiven: { $multiply: ["$totalBetAmount", 0.10] }, // Influencer commission (10% of total bets)
-          totalCommission: {
-            $subtract: [
-              "$totalBetAmount", // Total bets
-              { $add: ["$commissionGiven", "$totalWinningAmount"] }, // Sum of influencer commission and total winnings
-            ],
-          },
         },
       },
       {
@@ -665,18 +658,16 @@ async function calculateAdminIncome(today) {
           _id: 1,
           totalBetAmount: 1,
           totalWinningAmount: 1,
-          totalCommission: 1,
+          commissionGiven: 1
         },
       },
     ]);
 
-    if (!adminIncome) {
+    if (!adminIncome ||adminIncome.totalBetAmount < 1) {
       return '';
     }
 
-
-    const adminCommission = adminIncome.totalCommission;
-
+    const adminCommission = adminIncome.totalBetAmount - (adminIncome.totalWinningAmount + adminIncome.commissionGiven);
     // Find the admin user
     const userAdmin = await User.findOne({ role: 'admin' });
 
@@ -702,7 +693,6 @@ async function calculateAdminIncome(today) {
         upsert: true
       }
     );
-
     // Update admin balance
     await User.findByIdAndUpdate(
       userAdmin._id,
@@ -773,7 +763,7 @@ async function calculateFranchiseCommissions(today) {
         }
       }
     ]);
-
+    console.log('franchiseCommissions', franchiseCommissions)
     // Process each franchise's commission
     for (const franchise of franchiseCommissions) {
       const franchiseId = franchise.franchiseDetails._id;
@@ -871,6 +861,7 @@ async function calculateInfluencerCommissions(today) {
     ]);
 
 
+    console.log('influencerCommissions', influencerCommissions)
 
     // Process each influencer's commission
     for (const influencer of influencerCommissions) {
