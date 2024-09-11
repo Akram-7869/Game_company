@@ -57,7 +57,7 @@
         width: 320px;
         height: 240px;
       }
-    }  
+    }
   </style>
   <%- contentFor('breadcrumb') %>
 
@@ -84,7 +84,7 @@
 
     <%- contentFor('body') %>
 
-      
+
 
       <div class="container">
         <form id="join-form" name="join-form">
@@ -101,12 +101,12 @@
             </div>
             <div class="col-sm">
               <div class="d-none">
-                 <p class="join-info-text">Channel</p>
-              <input id="channel" type="text" placeholder="enter channel name" required readonly>
+                <p class="join-info-text">Channel</p>
+                <input id="channel" type="text" placeholder="enter channel name" required readonly>
               </div>
-             
+
               <div class="button-group">
-                <button id="host-join" type="button" class="btn btn-primary btn-sm">Join as host</button>
+                <button id="host-join" type="submit" class="btn btn-primary btn-sm">Join as host</button>
                 <!-- <div class="btn-group">
                   <button id="audience-join" type="button" class="btn btn-primary btn-sm" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
@@ -242,7 +242,7 @@
         <!-- Sweet alert init js
   <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
         <script>
-         
+
           let room = '';
           const data = {
             userId: "<%= row.influencerId%>",
@@ -251,22 +251,21 @@
             role: "<%= row.tournamentType %>",
             maxp: 99999
           };
-          document.getElementById('host-join').addEventListener('click', function() {
-    // Your code to handle the click event
-    SocketHandler.initialize('dragonTiger', data);
-    document.getElementById('join-form').submit();
-    // Add any other logic you need here
-});      
-document.getElementById('leave').addEventListener('click', function() {
-    // Your code to handle the click event
-    SocketHandler.emit_disconnect();
+          SocketHandler.initialize('dragonTiger', data);
+          document.getElementById('leave').addEventListener('click', function () {
+            // Your code to handle the click event
+            SocketHandler.emit_disconnect('dragonTiger', data);
 
-    // Add any other logic you need here
-});      
+            // Add any other logic you need here
+          });
+          document.getElementById('host-join').addEventListener('click', function () {
+            // Your code to handle the click event
+            SocketHandler.requestCurrentStatus();
 
+            // Add any other logic you need here
+          });
 
-
-function handleSubmit(params) {
+          function handleSubmit(params) {
             if (params.checkValidity()) {
               Swal.showLoading();
             }
