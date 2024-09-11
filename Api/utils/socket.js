@@ -116,9 +116,12 @@ let onConnection = (socket) => {
         break;
       case gameName.dragon_tiger:
         if (!state[roomName]['codeObj']) {
-          state[roomName]['codeObj'] = new DragonTigerGame(io, roomName, maxp, lobby);
-          state[roomName]['codeObj'].startGame();
+          state[roomName]['codeObj'] = new DragonTigerGame(io, roomName, maxp, lobby);    
+          if (lobby.tournamentType === 'admin') {
+            state[roomName]['codeObj'].startGame();
+          }
         }
+        
         state[roomName]['codeObj'].syncPlayer(socket, d);
         socket.emit('join', { ...d, gameType: gameName.dragon_tiger, room: roomName, status: 'success' });
         break;
@@ -183,6 +186,9 @@ let onConnection = (socket) => {
   socket.on('starGame', (d) => {
 
     let { room } = d;//JSON.parse(d);
+    
+      state[room]['codeObj'].continueGame =true;;
+    
     state[room]['codeObj'].startGame();
 
   });

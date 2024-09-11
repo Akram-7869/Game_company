@@ -200,10 +200,7 @@ class DragonTigerGame {
         // this.onleaveRoom(socket);
         this.OnCurrentStatus(socket);
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
-        if(this.continueGame === false && this.lobby.tournamentType ==='influencer'){
-            this.continueGame =true;
-            this.startGame();
-        }
+       
 
     }
     handlePlayerLeave(socket) {
