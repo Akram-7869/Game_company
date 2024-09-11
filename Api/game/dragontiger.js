@@ -116,7 +116,7 @@ class DragonTigerGame {
     startPausePhase() {
         this.currentPhase = 'pause';
         DragonTigerGame.io.to(this.roomName).emit('OnTimeUp', { phase: 'pause' });
-       // console.log(`Pause phase started in room: ${this.roomName}`);
+        console.log(`Pause phase started in room: ${this.roomName}`);
         const { dragonCardIndex, tigerCardIndex, winner } = this.selectWinningCards();
         this.winList.shift();
         this.winList.push(winner);
