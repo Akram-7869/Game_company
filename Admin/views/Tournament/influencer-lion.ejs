@@ -106,7 +106,7 @@
               </div>
              
               <div class="button-group">
-                <button id="host-join" type="submit" class="btn btn-primary btn-sm">Join as host</button>
+                <button id="host-join" type="button" class="btn btn-primary btn-sm">Join as host</button>
                 <!-- <div class="btn-group">
                   <button id="audience-join" type="button" class="btn btn-primary btn-sm" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
@@ -254,7 +254,6 @@
           document.getElementById('host-join').addEventListener('click', function() {
     // Your code to handle the click event
     SocketHandler.initialize('dragonTiger', data);
-
     // Add any other logic you need here
 });      
 document.getElementById('leave').addEventListener('click', function() {
