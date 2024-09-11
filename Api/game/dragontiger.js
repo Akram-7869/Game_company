@@ -38,8 +38,7 @@ class DragonTigerGame {
         this.pauseTime = 9; // 5 seconds
         this.players = new Set();
         this.timerRunning = false; // To track if the timer is running
-        this.continueGame = false;
-        this.influencerOnline = false;
+         this.influencerOnline = false;
 
     }
 
@@ -148,9 +147,9 @@ class DragonTigerGame {
 
     resetTimers() {
         this.timerRunning = false;
-        if (this.continueGame) {
+        
             this.startGame();
-        }
+        
     }
 
     updatePlayers(players) {
