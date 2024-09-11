@@ -104,7 +104,7 @@ class DragonTigerGame {
         this.tieBet = 0;
         this.round += 1;
         DragonTigerGame.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer?.remaining, round: this.round });
-        //console.log(`Betting phase started in room: ${this.roomName}`);
+        console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
             // console.log(remaining);
