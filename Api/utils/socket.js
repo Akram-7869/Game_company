@@ -117,12 +117,10 @@ let onConnection = (socket) => {
         case gameName.dragon_tiger:
           if (!state[roomName]['codeObj']) {
             state[roomName]['codeObj'] = new DragonTigerGame(io, roomName, maxp, lobby);
-            if (lobby.tournamentType === 'admin') {
-              state[roomName]['codeObj'].startGame();
-            }
+           
           }
 
-          state[roomName]['codeObj'].syncPlayer(socket, d);
+          state[roomName]['codeObj'].handlePlayerJoin(socket, d);
           socket.emit('join', { ...d, gameType: gameName.dragon_tiger, room: roomName, status: 'success' });
           break;
         case gameName.crash:
@@ -183,15 +181,22 @@ let onConnection = (socket) => {
     io.to(room).emit('res', { ev, data });
 
   });
-  socket.on('starGame', (d) => {
+  socket.on('influencer_join', (d) => {
     console.log('starGame',d);
 
     let { room } = d;//JSON.parse(d);
 
     state[room]['codeObj'].continueGame = true;;
-    state[room]['codeObj'].startGame();
+    state[room]['codeObj'].handleInfluencerJoin(socket);
 
   });
+  socket.on('influencer_leave', (d) => {
+    let { room } = d;//JSON.parse(d);
+
+     state[room]['codeObj'].handleInfluencerLeave(socket);
+    
+}); 
+  
 
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
@@ -267,13 +272,14 @@ let onConnection = (socket) => {
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
+          console.log('disconnect-event');
+
     try {
       let { room, userId, lobbyId } = socket;
 
       delete userSocketMap[userId];
 
       userLeave(socket);
-      //console.log('disconnect-inputstring');
       let data = {
         room: room,
         users: getRoomUsers(room),

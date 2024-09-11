@@ -106,7 +106,7 @@
               </div>
 
               <div class="button-group">
-                <button id="host-join" type="click" class="btn btn-primary btn-sm">Join as host</button>
+                <button id="host-join" type="click" class="btn btn-primary btn-sm">Start Camera</button>
                 <!-- <div class="btn-group">
                   <button id="audience-join" type="button" class="btn btn-primary btn-sm" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
@@ -120,7 +120,7 @@
                       href="#">Interactive Live Streaming Premium</a>
                   </div>
                 </div> -->
-                <button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Leave</button>
+                <button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Stop Camera</button>
               </div>
             </div>
             <div class="col-sm d-block d-none">
@@ -135,6 +135,9 @@
 
 
         </form>
+        <button onclick="leaveg()" class="btn btn-primary btn-sm"> Stop Game </button>
+        <button onclick="startg()" class="btn btn-primary btn-sm"> Start Game </button>
+
         <!-- Single button -->
 
       </div>
@@ -252,22 +255,22 @@
             maxp: 99999
           };
           SocketHandler.initialize('dragonTiger', data);
-          document.getElementById('leave').addEventListener('click', function () {
+          function leaveg () {
             // Your code to handle the click event
-            alert('disconnect');
-            SocketHandler.emit_disconnect('dragonTiger', data);
+          
+            SocketHandler.emit_disconnect();
 
             // Add any other logic you need here
-          });
+          };
           
-          document.getElementById('host-join').addEventListener('click', function () {
+           function startg () {
             // Your code to handle the click event
             SocketHandler.startGame();
             SocketHandler.requestCurrentStatus();
             $("#join-form").submit();
 
             // Add any other logic you need here
-          });
+          };
            
 
           function handleSubmit(params) {
