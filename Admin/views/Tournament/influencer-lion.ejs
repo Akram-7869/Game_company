@@ -251,9 +251,12 @@
             role: "<%= row.tournamentType %>",
             maxp: 99999
           };
-          SocketHandler.initialize('dragonTiger', data);
- 
-          function handleSubmit(params) {
+          document.getElementById('host-join').addEventListener('click', function() {
+    // Your code to handle the click event
+    SocketHandler.initialize('dragonTiger', data);
+    
+    // Add any other logic you need here
+});          function handleSubmit(params) {
             if (params.checkValidity()) {
               Swal.showLoading();
             }
