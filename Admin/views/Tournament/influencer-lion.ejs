@@ -260,9 +260,12 @@
           });
           document.getElementById('host-join').addEventListener('click', function () {
             // Your code to handle the click event
+            SocketHandler.startGame();
             SocketHandler.requestCurrentStatus();
-
             // Add any other logic you need here
+          });
+          $("#leave").click(function (e) {
+            SocketHandler.emit_disconnect();
           });
 
           function handleSubmit(params) {

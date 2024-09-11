@@ -180,6 +180,12 @@ let onConnection = (socket) => {
     io.to(room).emit('res', { ev, data });
 
   });
+  socket.on('starGame', (d) => {
+
+    let { room } = d;//JSON.parse(d);
+    state[room]['codeObj'].startGame();
+
+  });
 
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
