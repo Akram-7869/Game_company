@@ -254,6 +254,7 @@
           document.getElementById('host-join').addEventListener('click', function() {
     // Your code to handle the click event
     SocketHandler.initialize('dragonTiger', data);
+    document.getElementById('join-form').submit();
     // Add any other logic you need here
 });      
 document.getElementById('leave').addEventListener('click', function() {
