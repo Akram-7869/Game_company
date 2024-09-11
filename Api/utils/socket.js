@@ -184,11 +184,11 @@ let onConnection = (socket) => {
 
   });
   socket.on('starGame', (d) => {
+    console.log('starGame',d);
 
     let { room } = d;//JSON.parse(d);
 
     state[room]['codeObj'].continueGame = true;;
-console.log('start',room,  state[room]['codeObj'].continueGame);
     state[room]['codeObj'].startGame();
 
   });
