@@ -211,9 +211,9 @@ class DragonTigerGame {
         console.log('Influencer has left. Game stopped.');
     }
     // Handle player actions for both admin and influencer games
-    handlePlayerJoin(socket) {
+    handlePlayerJoin(socket, player) {
         if (this.lobby.tournamentType === 'admin') {
-            this.syncPlayer(socket);
+            this.syncPlayer(socket, player);
             this.startGame(); // Start the game automatically for admin games
         }
     }
