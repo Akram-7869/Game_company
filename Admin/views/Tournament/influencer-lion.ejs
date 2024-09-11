@@ -254,6 +254,7 @@
           SocketHandler.initialize('dragonTiger', data);
           document.getElementById('leave').addEventListener('click', function () {
             // Your code to handle the click event
+            alert('disconnect');
             SocketHandler.emit_disconnect('dragonTiger', data);
 
             // Add any other logic you need here
@@ -262,11 +263,10 @@
             // Your code to handle the click event
             SocketHandler.startGame();
             SocketHandler.requestCurrentStatus();
+            
             // Add any other logic you need here
           });
-          $("#leave").click(function (e) {
-            SocketHandler.emit_disconnect();
-          });
+           
 
           function handleSubmit(params) {
             if (params.checkValidity()) {
