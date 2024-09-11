@@ -223,10 +223,15 @@ class DragonTigerGame {
             this.handleInfluencerLeave(socket);
         } 
         this.players.delete(socket.id);
+        socket.leave(this.roomName);
 
         socket.removeAllListeners('OnBetsPlaced');
         socket.removeAllListeners('OnCurrentStatus');
         socket.removeAllListeners('onleaveRoom');
+        socket.emit('onleaveRoom', {
+            success: `successfully leave ${this.roomName} game.`,
+        });
+
     }
 
 
