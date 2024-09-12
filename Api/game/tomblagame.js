@@ -3,8 +3,8 @@ const { publicRoom } = require("../utils/JoinRoom");
 const Timer = require("./Timer");
 
 class TambolaGame {
-  constructor(io, roomName, maxPlayers ,lobby) {
-    this.io = io;this.room = roomName;this.maxPlayers = maxPlayers;        this.lobby = lobby;    this.io = io;
+  constructor(io, roomName, maxPlayers, lobby) {
+    this.io = io; this.room = roomName; this.maxPlayers = maxPlayers; this.lobby = lobby; this.io = io;
     this.numbers = new Set();
     this.numbersArray = this.generateNumbers();
     this.claimed = {
@@ -26,8 +26,8 @@ class TambolaGame {
     this.gameStarted = false;
     this.totalTicket = 0;
     this.totalAmount = 0;
-    this.roomJoinTimers=null;
-    this.bettingTimer=null;
+    this.roomJoinTimers = null;
+    this.bettingTimer = null;
     this.prizeDistribution = {
       top: 0.15,
       middle: 0.15,
@@ -39,38 +39,38 @@ class TambolaGame {
     this.adminCommission = 0.2;
     this.intervalId = null;
     this.currentPhase = 'joining';
-    this.messages = []; 
-   }
+     this.influencerOnline = false;
+
+  }
 
   updatePlayers(players) {
     this.players = players;
   }
-  addMessage(message) {
-    if (this.messages.length >= 100) {
-      this.messages.shift(); // Remove the oldest message to maintain the limit
-    }
-    this.messages.push(message);
-  }
+ 
   setupGame() {
     if (this.roomJoinTimers) return; // Prevent multiple starts
 
     this.currentPhase = 'joining';
- 
-    this.io.to(this.room).emit('OnTimerStart', { phase: 'joining', joining_remaing: this.bettingTimer?.remaining});
 
-    this.roomJoinTimers =  new Timer(10, (remaining) => {
-        this.io.to(this.room).emit('join_tick', { remaining });
+    this.io.to(this.room).emit('OnTimerStart', { phase: 'joining', joining_remaing: this.bettingTimer?.remaining });
+
+    this.roomJoinTimers = new Timer(10, (remaining) => {
+      this.io.to(this.room).emit('join_tick', { remaining });
     }, () => {
-        this.startGame();
+      this.startGame();
     });
 
     this.roomJoinTimers.startTimer();
     console.log(`Game started in room: ${this.room}`);
-    
-}
+
+  }
   startGame() {
     if (this.gameStarted) return; // Prevent multiple starts
-    publicRoom[this.lobby._id]['played']=true;
+    if (this.lobby.tournamentType === 'influencer' && this.influencerOnline === false) {
+      this.currentPhase = 'complete';
+      return;
+    }
+    publicRoom[this.lobby._id]['played'] = true;
     this.gameStarted = true;
     // for (let value of this.players.values()) {
     //   const ticket = this.generateTicket();
@@ -86,9 +86,9 @@ class TambolaGame {
   startGameLogic() {
     console.log(`Tambola game started in room: ${this.room}`);
     let delay = 5;
-    let delayMicrosec = delay*1000;
+    let delayMicrosec = delay * 1000;
 
-    this.intervalId  = setInterval(() => {
+    this.intervalId = setInterval(() => {
       if (this.currentPhase === 'paused') return; // Skip drawing numbers if game is paused
 
       const number = this.drawNumber();
@@ -97,7 +97,7 @@ class TambolaGame {
         this.io.to(this.room).emit('gameEnded', { message: 'All numbers have been drawn' });
       } else {
         console.log(`newnumber--->`, number)
-        this.io.to(this.room).emit('newNumber', { gameType: 'tambola', room: this.room, number , intervel:delay, playerCount:this.players.size});
+        this.io.to(this.room).emit('newNumber', { gameType: 'tambola', room: this.room, number, intervel: delay, playerCount: this.players.size });
       }
     }, delayMicrosec); // Draw a number every second
   }
@@ -147,7 +147,7 @@ class TambolaGame {
     socket.removeAllListeners('onBetPlaced');
 
     socket.on('onBetPlaced', (d) => {
-console.log('onBetPlaced',d);
+      console.log('onBetPlaced', d);
       const { playerTickets, betAmount } = d;
       this.totalTicket += playerTickets;
       this.totalAmount += betAmount;
@@ -162,42 +162,63 @@ console.log('onBetPlaced',d);
   }
 
   syncPlayer(socket, player) {
- 
-    if(!this.players.has(player.userId)){
+
+    if (!this.players.has(player.userId)) {
       const { playerTickets, betAmount } = player;
       this.totalTicket += playerTickets;
       this.totalAmount += betAmount;
       this.players.set(player.userId, socket);
     }
-    
+
 
     this.onBetPlaced(socket);
     socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
     this.OnCurrentStatus(socket);
     this.OnClaimReward(socket);
+    if (this.lobby.tournamentType === 'admin') {
+      this.startGame(); // Start the game automatically for admin games
+    }
   }
-
-
-  handlePlayerLeave(socket) {
-      try {
-        console.log('OnleaveRoom--tambola')
-        socket.leave(this.roomName);
-        socket.removeAllListeners('OnBetsPlaced');
-        socket.removeAllListeners('OnCurrentStatus');
-        socket.removeAllListeners('OnClaimReward');
-
-
-
-        socket.removeAllListeners('onleaveRoom');
-
-        // playerManager.RemovePlayer(socket.id);
-        socket.emit('onleaveRoom', {
-          success: `successfully leave ${this.roomName} game.`,
-        });
-      } catch (err) {
-        console.log(err);
-      }
+//   resetTimers() {
+//     this.gameStarted = false;
     
+//         this.startGame();
+    
+// }
+  // Method to handle influencer joining
+  handleInfluencerJoin(socket) {
+    this.influencerOnline = true;
+    this.startGame(); // Start the game when influencer joins
+    console.log('Influencer has joined. Game started.');
+}
+
+// Method to handle influencer leaving
+handleInfluencerLeave(socket) {
+    this.influencerOnline = false;
+   // this.resetTimers(); // Stop the game and mark it completed
+    this.io.to(this.room).emit('game_completed', { message: 'Game stopped as influencer left.' });
+    console.log('Influencer has left. Game stopped.');
+}
+  handlePlayerLeave(socket, data) {
+    try {
+      console.log('OnleaveRoom--tambola')
+      socket.leave(this.room);
+      socket.removeAllListeners('OnBetsPlaced');
+      socket.removeAllListeners('OnCurrentStatus');
+      socket.removeAllListeners('OnClaimReward');
+
+
+
+      socket.removeAllListeners('onleaveRoom');
+
+      this.players.delete(data.userId);
+      socket.emit('onleaveRoom', {
+        success: `successfully leave ${this.room} game.`,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+
   }
 
 
@@ -210,7 +231,7 @@ console.log('onBetPlaced',d);
         claimed: this.claimed,
         gameStarted: this.gameStarted,
         joining_remaing: this.bettingTimer?.remaining,
-        currentPhase:this.currentPhase,
+        currentPhase: this.currentPhase,
         // player:player,
         totalTicket: this.totalTicket,
         totalAmount: this.totalAmount
@@ -220,22 +241,22 @@ console.log('onBetPlaced',d);
   }
   OnClaimReward(socket) {
     socket.on('OnClaimReward', (d) => {
-      console.log('OnClaimReward',d);
+      console.log('OnClaimReward', d);
 
       // Pause the game
       this.currentPhase = 'paused';
       this.io.to(this.room).emit('gamePaused', { message: 'Game paused to validate claims.' });
 
       const rewardType = d.ClaimType; // 'top', 'middle', 'bottom', 'earlyFive', 'fourCorners', or 'fullHouse'
-     // const rewardAmount = this.calculateReward(rewardType);
+      // const rewardAmount = this.calculateReward(rewardType);
 
-      if (this.claimed[rewardType] >  0) {
+      if (this.claimed[rewardType] > 0) {
         this.claimed[rewardType] -= 1;
-         this.io.to(this.room).emit('OnClaimReward', {
+        this.io.to(this.room).emit('OnClaimReward', {
           success: true,
           rewardType,
-          name:d.name,
-          rewardAmount:d.rewardAmount,
+          name: d.name,
+          rewardAmount: d.rewardAmount,
           claimed: this.claimed
         });
         console.log('OnClaimReward<<<-----', this.claimed);

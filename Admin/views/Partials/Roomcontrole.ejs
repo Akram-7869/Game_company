@@ -1,0 +1,69 @@
+<div class="container">
+    <form id="join-form" name="join-form">
+      <div class="row join-info-group ">
+        <div class="col-sm sso-hidden d-none">
+          <p class="join-info-text">AppID</p>
+          <input id="appid" type="text" value="<%=agodaAppId%>" placeholder="enter appid" readonly>
+
+        </div>
+        <div class="col-sm sso-hidden d-none">
+          <p class="join-info-text">Token(optional)</p>
+          <input id="token" type="text" placeholder="enter token">
+
+        </div>
+        <div class="col-sm">
+          <div class="d-none">
+            <p class="join-info-text">Channel</p>
+            <input id="channel" type="text" placeholder="enter channel name" required readonly>
+          </div>
+
+          <div class="button-group">
+            <button id="host-join" type="click" class="btn btn-primary btn-sm">Start Streaming</button>
+            <!-- <div class="btn-group">
+              <button id="audience-join" type="button" class="btn btn-primary btn-sm" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Join as audience
+              </button>
+              <div class="audience dropdown-menu">
+                <a id="lowLatency" class="dropdown-item" label="Interactive Live Streaming Standard"
+                  href="#">Interactive
+                  Live Streaming Standard</a>
+                <a id="ultraLowLatency" class="dropdown-item" label="Interactive Live Streaming Premium"
+                  href="#">Interactive Live Streaming Premium</a>
+              </div>
+            </div> -->
+            <button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Stop Streaming</button>
+          </div>
+        </div>
+        <div class="col-sm d-block d-none">
+          <p class="join-info-text">User ID(optional)</p>
+          <input id="uid" type="text" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"
+            onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Enter the user ID">
+        </div>
+
+
+      </div>
+
+
+
+    </form>
+    <button onclick="leaveg()" class="btn btn-primary btn-sm"> Stop Game </button>
+    <button onclick="startg()" class="btn btn-primary btn-sm"> Start Game </button>
+
+    <!-- Single button -->
+
+  </div>
+  <script>
+               function leaveg () {
+            SocketHandler.emit_disconnect();
+          };
+          
+           function startg () {
+            // Your code to handle the click event
+            SocketHandler.startGame();
+            SocketHandler.requestCurrentStatus();
+            $("#join-form").submit();
+
+            // Add any other logic you need here
+          };
+  </script>

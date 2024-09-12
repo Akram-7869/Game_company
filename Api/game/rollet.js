@@ -15,21 +15,20 @@ class RolletGame {
         this.pauseTime = 12; // 5 seconds
         this.players = new Set();
         this.timerRunning = false; // To track if the timer is running
-        this.continueGame = true;
+        this.influencerOnline = false;
         this.betList = {};
 
 
 
     }
 
-    selectWinningCards() {
-        let dragonCardIndex, tigerCardIndex, winner;
-        return { dragonCardIndex, tigerCardIndex, winner };
-    }
-
 
     startGame() {
         if (this.timerRunning) return; // Prevent multiple timers
+        if (this.lobby.tournamentType === 'influencer' && this.influencerOnline === false) {
+            this.currentPhase = 'complete';
+            return;
+        }
         this.timerRunning = true;
         this.currentPhase = 'betting';
         this.dragonBet = 0;
@@ -80,16 +79,12 @@ class RolletGame {
     }
 
     resetTimers() {
-        this.timerRunning = false;
-        if (this.continueGame) {
-            this.startGame();
-        }
+        this.timerRunning = false;   
+        this.startGame();
+        
     }
 
-    updatePlayers(players) {
-        this.players = players;
-    }
-
+   
     onBetPlaced(socket) {
         socket.removeAllListeners('onBetPlaced');
         socket.on('onBetPlaced', (d) => {
@@ -131,69 +126,41 @@ class RolletGame {
             RolletGame.io.to(this.roomName).emit('onBetPlaced', d);
         });
     }
-
-
-    addPlayer(socket) {
-        if (this.currentPhase === 'betting') {
-            this.players.add(socket.id);
-            socket.join(this.roomName);
-            RolletGame.io.to(this.roomName).emit('player_joined', { id: socket.id });
-            console.log(`Player ${socket.id} joined room ${this.roomName}`);
-        } else {
-            socket.emit('error', 'Can only join during betting phase.');
-        }
-    }
-
-    removePlayer(socket) {
-        this.players.delete(socket.id);
-        socket.leave(this.roomName);
-        RolletGame.io.to(this.roomName).emit('player_left', { id: socket.id });
-        console.log(`Player ${socket.id} left room ${this.roomName}`);
-    }
     syncPlayer(socket, player) {
-        // Send current game state to the player
-        // RolletGame.io.to(socket.id).emit('OnCurrentTimer', {
-        //     gameType: 'Roulette',
-        //     room: this.roomName,
-        //     currentPhase: this.currentPhase,
-        //     player: player,
-        //     postion: this.players.indexOf(socket),
-        //     total_players: this.players.size,
-        //     betting_remaing: this.bettingTimer?.remaining,
-        //     pause_remaing: this.pauseTimer?.remaining,
-        //     winList: this.winList,
-        //     round: this.round
-
-        // });
         this.onBetPlaced(socket);
         this.continueGame=true;
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
 
         this.OnCurrentStatus(socket);
+        if (this.lobby.tournamentType === 'admin') {  
+            this.startGame(); // Start the game automatically for admin games
+        }
+    }
+       // Method to handle influencer joining
+       handleInfluencerJoin(socket) {
+        this.influencerOnline = true;
+        this.startGame(); // Start the game when influencer joins
+        console.log('Influencer has joined. Game started.');
+    }
+
+    // Method to handle influencer leaving
+    handleInfluencerLeave(socket) {
+        this.influencerOnline = false;
+        this.resetTimers(); // Stop the game and mark it completed
+        RolletGame.io.to(this.roomName).emit('game_completed', { message: 'Game stopped as influencer left.' });
+        console.log('Influencer has left. Game stopped.');
     }
     handlePlayerLeave(socket) {
              try {
                 console.log('OnleaveRoom--dragon')
                 if (this.lobby.tournamentType === 'influencer') {
-                    this.continueGame = false;
+                    this.handleInfluencerLeave(socket);
                 }
                 socket.leave(this.roomName);
                 socket.removeAllListeners('OnBetsPlaced');
                 socket.removeAllListeners('OnCurrentStatus');
 
-
-
-
-
-
-
-
                 socket.removeAllListeners('onleaveRoom');
-
-
-
-
-                // playerManager.RemovePlayer(socket.id);
                 socket.emit('onleaveRoom', {
                     success: `successfully leave ${this.roomName} game.`,
                 });

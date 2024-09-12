@@ -19,11 +19,15 @@ class AviatorGame {
         this.timerInterval = null;
         this.maxHeight = 1.00;
         this.flightTimer = null;
-        this.continueGame=true;
+        this.influencerOnline = false;
     }
 
     startGame() {
         if (this.timerRunning) return; // Prevent multiple timers
+        if (this.lobby.tournamentType === 'influencer' && this.influencerOnline === false) {
+            this.currentPhase = 'complete';
+            return;
+        }
         this.timerRunning = true;
         this.currentPhase = 'betting';
         this.bets = [];
@@ -143,9 +147,7 @@ class AviatorGame {
     }
     resetTimers() {
         this.timerRunning = false;
-        if(  this.continueGame){
             this.startGame();
-        }
         
     }
     OnBetsPlaced(socket, amount) {
@@ -194,34 +196,33 @@ class AviatorGame {
     getRandomMultiplier() {
         return (1 + Math.random() * 4).toFixed(2); // Random multiplier between 1 and 5
     }
-    updatePlayers(players) {
-        this.players = players;
-    }
-    addPlayer(socket) {
-        if (this.currentPhase === 'betting') {
-            this.players.add(socket.id);
-            socket.join(this.roomName);
-            this.io.to(this.roomName).emit('player_joined', { id: socket.id });
-            console.log(`Player ${socket.id} joined room ${this.roomName}`);
-        } else {
-            socket.emit('error', 'Can only join during betting phase.');
-        }
+    
+    
+    
+
+       // Method to handle influencer joining
+    handleInfluencerJoin(socket) {
+        this.influencerOnline = true;
+        this.startGame(); // Start the game when influencer joins
+        console.log('Influencer has joined. Game started.');
     }
 
-    removePlayer(socket) {
-        this.players.delete(socket.id);
-        socket.leave(this.roomName);
-        this.bets = this.bets.filter(bet => bet.id !== socket.id);
-        this.io.to(this.roomName).emit('player_left', { id: socket.id });
-        console.log(`Player ${socket.id} left room ${this.roomName}`);
+    // Method to handle influencer leaving
+    handleInfluencerLeave(socket) {
+        this.influencerOnline = false;
+        this.resetTimers(); // Stop the game and mark it completed
+        this.io.to(this.roomName).emit('game_completed', { message: 'Game stopped as influencer left.' });
+        console.log('Influencer has left. Game stopped.');
     }
-    handlePlayerLeave(socket) {
+    handlePlayerLeave(socket,data) {
              try {
                 if(this.lobby.tournamentType ==='influencer'){
                     console.log('paused');
                     this.continueGame=false;
                 }
                 socket.leave(this.roomName);
+                this.players.delete(data.userId);
+
                 socket.removeAllListeners('OnBetsPlaced');
                 socket.removeAllListeners('OnCashOut');
                 socket.removeAllListeners('OnFlightBlast');
@@ -242,7 +243,9 @@ class AviatorGame {
         this.OnCashOut(socket);
         this.OnCurrentStatus(socket);
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
-
+        if (this.lobby.tournamentType === 'admin') {  
+            this.startGame(); // Start the game automatically for admin games
+        }
     }
     OnCurrentStatus(socket) {
         socket.on('OnCurrentStatus', (d) => {

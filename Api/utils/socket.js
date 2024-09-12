@@ -20,7 +20,6 @@ let io;
 let onConnection = (socket) => {
   console.log('contedt', socket.id);
 
-  //socket.join('notification_channel');
   socket.on('associateUserId', (d) => {
     let dataParsed = d;// JSON.parse(d);
     let { userId } = dataParsed;
@@ -117,7 +116,7 @@ let onConnection = (socket) => {
         case gameName.dragon_tiger:
           if (!state[roomName]['codeObj']) {
             state[roomName]['codeObj'] = new DragonTigerGame(io, roomName, maxp, lobby);
-           
+
           }
 
           state[roomName]['codeObj'].handlePlayerJoin(socket, d);
@@ -182,8 +181,6 @@ let onConnection = (socket) => {
 
   });
   socket.on('influencer_join', (d) => {
-    console.log('starGame',d);
-
     let { room } = d;//JSON.parse(d);
 
     state[room]['codeObj'].continueGame = true;;
@@ -192,11 +189,9 @@ let onConnection = (socket) => {
   });
   socket.on('influencer_leave', (d) => {
     let { room } = d;//JSON.parse(d);
+    state[room]['codeObj'].handleInfluencerLeave(socket);
+  });
 
-     state[room]['codeObj'].handleInfluencerLeave(socket);
-    
-}); 
-  
 
   socket.on('setGameId', async (d) => {
     let { room, lobbyId } = d;//JSON.parse(d);
@@ -215,10 +210,7 @@ let onConnection = (socket) => {
   //leave
   socket.on('leave', (d) => {
     try {
-
-
       let { room, userId } = d;
-
       userLeave(d);
       socket.leave(room);
       let data = {
@@ -272,7 +264,7 @@ let onConnection = (socket) => {
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
-          console.log('disconnect-event');
+    console.log('disconnect-event');
 
     try {
       let { room, userId, lobbyId } = socket;

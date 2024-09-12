@@ -27,7 +27,7 @@ class DragonTigerGame {
     constructor(io, roomName, maxPlayers, lobby) {
         this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.lobby = lobby;
         DragonTigerGame.io = io;
-        this.currentPhase = 'pause';
+        this.currentPhase = 'betting';
         this.winList = [1, 2, 3, 3, 1, 2, 1, 3];
 
         this.dragonBet = 0;
@@ -95,7 +95,7 @@ class DragonTigerGame {
     startGame() {
         if (this.timerRunning) return; // Prevent multiple timers
         if (this.lobby.tournamentType === 'influencer' && this.influencerOnline === false) {
-            
+            this.currentPhase = 'complete';
             return;
         }
         this.timerRunning = true;
@@ -105,7 +105,7 @@ class DragonTigerGame {
         this.tieBet = 0;
         this.round += 1;
         DragonTigerGame.io.to(this.roomName).emit('OnTimerStart', { phase: 'betting', winList: this.winList, betting_remaing: this.bettingTimer?.remaining, round: this.round });
-        console.log(`Betting phase started in room: ${this.roomName}`);
+       // console.log(`Betting phase started in room: ${this.roomName}`);
 
         this.bettingTimer = new Timer(this.bettingTime, (remaining) => {
             // console.log(remaining);
@@ -120,7 +120,7 @@ class DragonTigerGame {
     startPausePhase() {
         this.currentPhase = 'pause';
         DragonTigerGame.io.to(this.roomName).emit('OnTimeUp', { phase: 'pause' });
-        console.log(`Pause phase started in room: ${this.roomName}`);
+       // console.log(`Pause phase started in room: ${this.roomName}`);
         const { dragonCardIndex, tigerCardIndex, winner } = this.selectWinningCards();
         this.winList.shift();
         this.winList.push(winner);
@@ -153,9 +153,6 @@ class DragonTigerGame {
         
     }
 
-    updatePlayers(players) {
-        this.players = players;
-    }
 
     onBetPlaced(socket) {
         socket.removeAllListeners('onBetPlaced');
@@ -181,20 +178,15 @@ class DragonTigerGame {
         });
     }
 
-
-
-    removePlayer(socket) {
-        DragonTigerGame.io.to(this.roomName).emit('player_left', { id: socket.id });
-        
-        console.log(`Player ${socket.id} left room ${this.roomName}`);
-    }
     syncPlayer(socket, player) {
         this.players.add(player.userId);
 
         this.onBetPlaced(socket);
         this.OnCurrentStatus(socket);
-        socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket));
-
+        socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket,data));
+        if (this.lobby.tournamentType === 'admin') {  
+            this.startGame(); // Start the game automatically for admin games
+        }
 
     }
     // Method to handle influencer joining
@@ -211,18 +203,13 @@ class DragonTigerGame {
         DragonTigerGame.io.to(this.roomName).emit('game_completed', { message: 'Game stopped as influencer left.' });
         console.log('Influencer has left. Game stopped.');
     }
-    // Handle player actions for both admin and influencer games
-    handlePlayerJoin(socket, player) { this.syncPlayer(socket, player);
-        if (this.lobby.tournamentType === 'admin') {  
-            this.startGame(); // Start the game automatically for admin games
-        }
-    }
+ 
 
-    handlePlayerLeave(socket) {
+    handlePlayerLeave(socket, data) {
         if (this.lobby.tournamentType === 'influencer') {
             this.handleInfluencerLeave(socket);
         } 
-        this.players.delete(socket.id);
+        this.players.delete(data.userId);
         socket.leave(this.roomName);
 
         socket.removeAllListeners('OnBetsPlaced');

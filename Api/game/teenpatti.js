@@ -9,31 +9,6 @@ class TeenpattiGame {
         this.roomJoinTimers = undefined;
     }
 
-    addPlayer(socket) {
-        if (this.players.size < 2) {
-            this.players.add(socket.id);
-            socket.join(this.roomName);
-            this.io.to(this.roomName).emit('player_joined', { id: socket.id });
-            console.log(`Player ${socket.id} joined room ${this.roomName}`);
-
-            if (this.players.size === 2) {
-                this.startGame();
-            }
-        } else {
-            socket.emit('error', 'Room is full.');
-        }
-    }
-
-    removePlayer(socket) {
-        this.players.delete(socket.id);
-        socket.leave(this.roomName);
-        this.io.to(this.roomName).emit('player_left', { id: socket.id });
-        console.log(`Player ${socket.id} left room ${this.roomName}`);
-
-        if (this.gameState === 'playing') {
-            this.endGame();
-        }
-    }
     setupGame() {
         if (this.roomJoinTimers) return; // Prevent multiple starts
 
