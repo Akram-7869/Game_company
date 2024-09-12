@@ -119,13 +119,12 @@ let onConnection = (socket) => {
 
           }
 
-          state[roomName]['codeObj'].handlePlayerJoin(socket, d);
+          state[roomName]['codeObj'].syncPlayer(socket, d);
           socket.emit('join', { ...d, gameType: gameName.dragon_tiger, room: roomName, status: 'success' });
           break;
         case gameName.crash:
           if (!state[roomName]['codeObj']) {
             state[roomName]['codeObj'] = new AviatorGame(io, roomName, maxp, lobby);
-            state[roomName]['codeObj'].startGame();
           }
           state[roomName]['codeObj'].syncPlayer(socket, d);
           socket.emit('join', { ...d, gameType: gameName.crash, room: roomName, status: 'success' });
@@ -133,7 +132,6 @@ let onConnection = (socket) => {
         case gameName.rouletee:
           if (!state[roomName]['codeObj']) {
             state[roomName]['codeObj'] = new RolletGame(io, roomName, maxp, lobby);
-            state[roomName]['codeObj'].startGame();
 
           }
           state[roomName]['codeObj'].syncPlayer(socket, d);
