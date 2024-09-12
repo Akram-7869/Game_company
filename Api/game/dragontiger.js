@@ -27,7 +27,7 @@ class DragonTigerGame {
     constructor(io, roomName, maxPlayers, lobby) {
         this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.lobby = lobby;
         DragonTigerGame.io = io;
-        this.currentPhase = 'betting';
+        this.currentPhase = 'pause';
         this.winList = [1, 2, 3, 3, 1, 2, 1, 3];
 
         this.dragonBet = 0;
@@ -95,6 +95,7 @@ class DragonTigerGame {
     startGame() {
         if (this.timerRunning) return; // Prevent multiple timers
         if (this.lobby.tournamentType === 'influencer' && this.influencerOnline === false) {
+            
             return;
         }
         this.timerRunning = true;
