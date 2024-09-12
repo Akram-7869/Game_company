@@ -234,7 +234,7 @@ let onConnection = (socket) => {
   });
   socket.on('gift_message', (d) => {
     let { room } = d;
-    console.log(d);
+    console.log('gift_message',d);
     if (state[room].messages.length >= 100) {
       state[room].messages.shift(); // Remove the oldest message to maintain the limit
     }
@@ -248,7 +248,7 @@ let onConnection = (socket) => {
   });
   socket.on('emoji_message', (d) => {
     let { room } = d;
-    console.log(d);
+    console.log('emoji_message',d);
     if (state[room].messages.length >= 100) {
       state[room].messages.shift(); // Remove the oldest message to maintain the limit
     }
