@@ -176,7 +176,7 @@ class TambolaGame {
     this.OnCurrentStatus(socket);
     this.OnClaimReward(socket);
     if (this.lobby.tournamentType === 'admin') {
-      this.startGame(); // Start the game automatically for admin games
+      this.setupGame(); // Start the game automatically for admin games
     }
   }
 //   resetTimers() {
