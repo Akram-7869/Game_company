@@ -188,7 +188,7 @@ class TambolaGame {
   // Method to handle influencer joining
   handleInfluencerJoin(socket) {
     this.influencerOnline = true;
-    this.startGame(); // Start the game when influencer joins
+    this.setupGame(); // Start the game when influencer joins
     console.log('Influencer has joined. Game started.');
 }
 
