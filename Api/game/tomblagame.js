@@ -38,7 +38,7 @@ class TambolaGame {
     };
     this.adminCommission = 0.2;
     this.intervalId = null;
-    this.currentPhase = 'joining';
+    this.currentPhase = 'notstarted';
      this.influencerOnline = false;
 
   }
