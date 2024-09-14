@@ -42,8 +42,8 @@
         </div>
       </div>
 </form>
-    <button onclick="leaveg()" class="btn btn-primary btn-sm"> Stop Game </button>
-    <button onclick="startg()" class="btn btn-primary btn-sm"> Start Game </button>
+    <button onclick="leaveg()" class="btn btn-primary btn-sm" id="stopbtn" > Stop Game </button>
+    <button onclick="startg()" class="btn btn-primary btn-sm" id="startbtn"> Start Game </button>
 
     <!-- Single button -->
 
@@ -51,6 +51,10 @@
   <script>
                function leaveg () {
             SocketHandler.emit_disconnect();
+            $("#startbtn").attr("disabled", false);
+            // $("#stopbtn").attr("disabled", true);
+
+
           };
           
            function startg () {
@@ -58,6 +62,10 @@
             SocketHandler.startGame();
             SocketHandler.requestCurrentStatus();
             // $("#join-form").submit();
+            $("#startbtn").attr("disabled", true);
+            // $("#stopbtn").attr("disabled", false);
+
+
 
             // Add any other logic you need here
           };
