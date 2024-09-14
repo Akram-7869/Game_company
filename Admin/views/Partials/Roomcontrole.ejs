@@ -18,7 +18,7 @@
           </div>
 
           <div class="button-group">
-            <button id="host-join" type="click" class="btn btn-primary btn-sm">Start Streaming</button>
+            <button id="host-join" type="submit" class="btn btn-primary btn-sm">Start Streaming</button>
             <!-- <div class="btn-group">
               <button id="audience-join" type="button" class="btn btn-primary btn-sm" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
@@ -40,13 +40,8 @@
           <input id="uid" type="text" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"
             onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Enter the user ID">
         </div>
-
-
       </div>
-
-
-
-    </form>
+</form>
     <button onclick="leaveg()" class="btn btn-primary btn-sm"> Stop Game </button>
     <button onclick="startg()" class="btn btn-primary btn-sm"> Start Game </button>
 
@@ -62,7 +57,7 @@
             // Your code to handle the click event
             SocketHandler.startGame();
             SocketHandler.requestCurrentStatus();
-            $("#join-form").submit();
+            // $("#join-form").submit();
 
             // Add any other logic you need here
           };
