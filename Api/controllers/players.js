@@ -1062,7 +1062,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'transactionType': "debit",
     'note': note,
     'prevBalance': req.player.balance,
-    influencerId: tournament.influencerId,
+    "influencerId": tournament.influencerId?? '',
     'logType': req.body.logType,
     betNo,
     'gameId': gameId,
