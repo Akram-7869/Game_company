@@ -139,7 +139,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '<%=process.env.ADMIN_URL%>/admin/game/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/influencer/game/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -176,7 +176,7 @@
                             "serverSide": true,
                             "ordering": true,
                             "ajax": {
-                                url: "<%=process.env.ADMIN_URL%>/admin/game/data", type: "post",
+                                url: "<%=process.env.ADMIN_URL%>/influencer/game/data", type: "post",
                                 data: function (d) {
                                     d['s_date'] = $('#s_date').val();
                                     d['e_date'] = $('#e_date').val();
@@ -222,7 +222,7 @@
                                 // { data: 'status', "defaultContent": "" },
                                 // {
                                 //     data: null, "render": function (data, type, full, meta) {
-                                //         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/playerhistory/'
+                                //         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/influencer/playerhistory/'
                                 //             + full.playerId._id + '"><i class="uil uil-history font-size-18"></i></a> ';
                                 //     }
                                 // },

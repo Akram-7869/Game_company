@@ -17,7 +17,9 @@ router.get('/register/franchise', authCtrl.authRegister);
 
 router.get('/forgot-password', authCtrl.forgotPassword);
 router.post('/post-forgot-password', authCtrl.postForgotPassword);
-
+router.get('/unauthorized', (req, res) => {
+    res.render('unauthorized'); // unauthorized.ejs
+  });
 router.get('/logout', authCtrl.logout);
 
 router.get('/auth-recoverpw', authCtrl.authRecoverpw);

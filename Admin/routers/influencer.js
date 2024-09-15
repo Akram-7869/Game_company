@@ -9,14 +9,18 @@ const influencerCtl = require('../controllers/InfluencerController');
 const tranCtl = require('../controllers/TransactionController');
 const postCtl = require('../controllers/PostController');
 const influenecrCtl = require('../controllers/InfluencerController');
+const palyerCtrl = require('../controllers/Players');
+
+
+
+const {authorize} = require('../middleware/auth');
 
 
 
 
 
 
-
-router.use(protect);
+router.use(protect,authorize('influencer'));
 
 // Route for login page
 router.route('/profile').get(influenecrCtl.profile).post(influencerCtl.updateInfluencer);
@@ -39,16 +43,17 @@ router.route('/tournament/:id').get(tournCtl.getTournament).post(tournCtl.update
 router.route('/commission').get(commissionCtl.influencerCommList);
 router.route('/commission/data').post(commissionCtl.influencerCommData);
 
-// router.route('/transactions').get(tournCtl.listInfluencerTournament);
-// router.route('/transactions/data').post(tournCtl.getInfluencerTournaments);
+router.route('/game/data').post(palyerCtrl.getLeaderBoardList);
+
+ 
 
 router.route('/leaderboard').get(influencerCtl.gameList);
 router.route('/leaderboard/data').post(influencerCtl.gameData);
 
-router.route('/transaction').get(tranCtl.transcationList);
+router.route('/transaction').get(tranCtl.influencerList);
 router.route('/transaction/data').post(tranCtl.getTranscations);
 
-router.route('/posts').get(postCtl.postList); 
+router.route('/posts').get(postCtl.influencerPostList); 
 router.route('/posts/data').post(postCtl.getPosts);
 router.route('/posts/add').get(postCtl.postAdd).post(postCtl.createPost);
 router.route('/posts/:id').get(postCtl.editPost).post(postCtl.updatePost).delete(postCtl.deletePost);

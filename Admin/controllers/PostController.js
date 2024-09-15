@@ -8,6 +8,10 @@ exports.postList = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Post', apiUrl, image_url: process.env.IMAGE_URL ,originalUrl: req.originalUrl};
       res.render('Post/list')
 });
+exports.influencerPostList = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Post', apiUrl, image_url: process.env.IMAGE_URL ,originalUrl: req.originalUrl};
+      res.render('Post/influencer-list')
+});
 exports.getPosts = asyncHandler(async (req, res, next) => {
       callApi(req).post(apiUrl, { ...req.body })
             .then(r => {

@@ -13,10 +13,9 @@ const franchiseRoutes = require('../routers/franchise');
 
 
 
-
 router.use('/', siteRoutes);
-router.use('/admin', adminRoutes);
-router.use('/influencer', influencerRoutes);
+router.use('/admin',adminRoutes);
+router.use('/influencer',influencerRoutes);
 router.use('/franchise', franchiseRoutes);
 
 // Mount routers

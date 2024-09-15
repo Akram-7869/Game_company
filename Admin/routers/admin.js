@@ -27,13 +27,14 @@ const commissionCtrl = require('../controllers/CommissionController');
 const pollCtrl = require('../controllers/PollController');
 const gameMangCtrl = require('../controllers/GameManagerController');
 
+const {authorize} = require('../middleware/auth');
 
 const { protect } = require('../middleware/auth');
 const router = express.Router({ mergeParams: true });
 
 
 //var upload = multer({ storage: storage })
-router.use(protect);
+router.use(protect,authorize('admin'));
 router.route('/commission').get(commissionCtrl.commissionList);
 router.route('/commission/data').post(commissionCtrl.getCommissions);
 

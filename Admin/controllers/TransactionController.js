@@ -7,7 +7,14 @@ exports.transcationList = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Datatables', stateList };
       res.render('Transaction/list');
 });
-
+exports.influencerList = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Datatables', stateList };
+      res.render('Transaction/influencer-list');
+});
+exports.franchiseList = asyncHandler(async (req, res, next) => {
+      res.locals = { title: 'Transaction', stateList };
+      res.render('Transaction/franchise-list');
+});
 
 exports.getTransaction = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Datatables' };
