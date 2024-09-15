@@ -1050,7 +1050,6 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     }
   } else {
     let c = { game: tournament.mode, stateCode: req.player.stateCode, playerId: req.player._id, gameId, amountBet: amount, tournamentId, influencerId: tournament.influencerId }
-
     if (req.body.logType === 'influencer_gift') {
       c.amountBet = 0;
     }
@@ -1063,6 +1062,7 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     'transactionType': "debit",
     'note': note,
     'prevBalance': req.player.balance,
+    influencerId: tournament.influencerId,
     'logType': req.body.logType,
     betNo,
     'gameId': gameId,
