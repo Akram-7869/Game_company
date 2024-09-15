@@ -1091,19 +1091,8 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
 
 
   if (logType === 'influencer_gift') {
-    const influencerTransactionData = {
-      'playerId': req.player._id,
-      'amount': amount,
-      'transactionType': "credit",
-      'note': `Gift received-${gameId}`,
-      influencerId: tournament.influencerId,
-      'logType': req.body.logType,
-      betNo,
-      'gameId': gameId,
-      status: 'complete', paymentStatus: 'SUCCESS'
-    }
-    await Transaction.create(influencerTransactionData);
-    await Influencer.findByIdAndUpdate(playerGame.influencerId, {
+   
+   let influencerUser=  await Influencer.findByIdAndUpdate(playerGame.influencerId, {
       $inc: {
         totalBalance: amount,
         totalGifts: amount
@@ -1112,6 +1101,20 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
     await PlayerGame.findByIdAndUpdate(playerGame._id, {
       $inc: { amountGift: amount }
     });
+    const influencerTransactionData = {
+      'playerId': req.player._id,
+      'amount': amount,
+      'transactionType': "credit",
+      'note': `Gift received-${gameId}`,
+      influencerId: tournament.influencerId,
+      'prevBalance': influencerUser.totalBalance,
+
+      'logType': req.body.logType,
+      betNo,
+      'gameId': gameId,
+      status: 'complete', paymentStatus: 'SUCCESS'
+    }
+    await Transaction.create(influencerTransactionData);
 
   }
   res.status(200).json({
