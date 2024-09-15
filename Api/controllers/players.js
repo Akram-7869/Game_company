@@ -1045,9 +1045,11 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
 
   let playerGame = await PlayerGame.findOne({ playerId: req.player._id, gameId }).select({ _id: 1, influencerId: 1 }).lean();
   if (playerGame) {
-    await PlayerGame.findOneAndUpdate({ playerId: req.player._id, gameId }, { $inc: { amountBet: amount } });
+    if (req.body.logType !== 'influencer_gift') {
+      await PlayerGame.findOneAndUpdate({ playerId: req.player._id, gameId }, { $inc: { amountBet: amount } });
+    }
   } else {
-    let c = {game:tournament.mode, stateCode: req.player.stateCode, playerId: req.player._id, gameId, amountBet: amount, tournamentId, influencerId: tournament.influencerId }
+    let c = { game: tournament.mode, stateCode: req.player.stateCode, playerId: req.player._id, gameId, amountBet: amount, tournamentId, influencerId: tournament.influencerId }
 
     if (req.body.logType === 'influencer_gift') {
       c.amountBet = 0;
