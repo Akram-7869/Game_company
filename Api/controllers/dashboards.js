@@ -3,6 +3,8 @@ const asyncHandler = require('../middleware/async');
 const Dashboard = require('../models/Dashboard');
 const Player = require('../models/Player');
 const Transaction = require('../models/Transaction');
+const Tournament = require('../models/Tournament');
+
 const Ticket = require('../models/Ticket');
 const PlayerGame = require('../models/PlayerGame');
 const Commission = require('../models/Commission');
@@ -396,13 +398,33 @@ exports.totalIncome = asyncHandler(async (req, res, next) => {
     data: { gameWiseStats, income }
   });
 });
+async function getTournamentsCount(influencerId) {
+  const now = new Date(); // Current date and time
+
+  try {
+    let count = await Tournament.countDocuments({
+      influencerId: influencerId,
+      active: true,
+      startTime: { $gt: now }
+    });
+
+    console.log(`Number of tournaments: ${count}`);
+    return count;
+  } catch (error) {
+    console.error('Error counting tournaments:', error);
+    throw error; // Or handle the error as needed
+  }
+}
+ 
 exports.getInfluencerDashboard = asyncHandler(async (req, res, next) => {
+ let todayGames = await getTournamentsCount(req.user._id);
   let d = {
     totalGifts: req.user.totalGifts,
     totalCommissions: req.user.totalCommissions,
     totalBalance: req.user.totalBalance,
     totalBetAmount: req.user.totalBetAmount,
-    livePlayers: req.io.engine.clientsCount
+    livePlayers: req.io.engine.clientsCount,
+    todayGames: todayGames
   }
   res.status(200).json(d);
 });
