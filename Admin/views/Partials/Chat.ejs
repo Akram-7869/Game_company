@@ -1,3 +1,54 @@
+<style>
+     .flying-emojis {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 150px;
+            height: 100%;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .emoji {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-size: cover; /* Ensure the image covers the element */
+            background-position: center;
+            bottom: -100px; /* Initial position for animation */
+            animation: floatingAnimation 10s ease-out forwards;
+        }
+
+        @keyframes floatingAnimation {
+            
+            0% {
+                bottom: -100px;
+                opacity: 1;
+            }
+            60% {
+                opacity: 1;
+            }
+            100% {
+                bottom: 90vh;
+                opacity: 0;
+            }
+        }
+
+        .control-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .control-panel button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+</style>
 <div class="card">
 
     <div class="px-lg-2">
