@@ -42,7 +42,7 @@ if(req.role == 'influencer'){
 // @access    Private/Admin
 exports.getPostFeed = asyncHandler(async (req, res, next) => {
 
-  const posts = await Post.find({ status: 'active' }).select({comments:-1, likes:-1});
+  const posts = await Post.find({ status: 'active' }).select({comments:0, likes:0});
 
   //.populate('likes', 'firstName').populate('player', 'firstName').populate('comments.player', 'firstName');
 
@@ -63,7 +63,7 @@ exports.getPostLikes = asyncHandler(async (req, res, next) => {
 exports.getPostComments = asyncHandler(async (req, res, next) => {
 
   const posts = await Post.findOne({ status: 'active' }).select({comments:1}).populate('comments.player', 'firstName').lean();
-  
+
 
   res.status(200).json({
     success: true,
