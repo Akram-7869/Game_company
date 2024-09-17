@@ -194,19 +194,34 @@ exports.deletePost = asyncHandler(async (req, res, next) => {
 exports.likePost = asyncHandler(async (req, res, next) => {
   const row = await Post.findById(req.params.id);
   if (!row) {
-    return next(
-      new ErrorResponse(`Post  not found`)
-    );
+    return next(new ErrorResponse(`Post not found`));
   }
-  let post = await Post.updateOne(
+
+  // Check if the player already liked the post
+  const hasLiked = row.likes.includes(req.player._id);
+
+  let update;
+  
+  if (hasLiked) {
+    // Unlike: remove player ID from likes
+    update = { $pull: { likes: req.player._id } };
+  } else {
+    // Like: add player ID to likes
+    update = { $addToSet: { likes: req.player._id } };
+  }
+
+  const post = await Post.updateOne(
     { _id: req.params.id },
-    { $addToSet: { likes: req.player._id } }
-  )
+    update
+  );
+
   res.status(200).json({
     success: true,
-    data: post
+    data: post,
+    // message: hasLiked ? 'Post unliked' : 'Post liked',
   });
 });
+
 
 exports.commentOnPost = asyncHandler(async (req, res, next) => {
   const row = await Post.findById(req.params.id);
