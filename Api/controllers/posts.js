@@ -42,7 +42,13 @@ if(req.role == 'influencer'){
 // @access    Private/Admin
 exports.getPostFeed = asyncHandler(async (req, res, next) => {
 
-  const posts = await Post.find({ status: 'active' }).select({comments:0, likes:0});
+  const posts  = await Post.find(
+    { status: 'active' },
+    { 
+      comments: 0, // Exclude comments
+      likes: { $elemMatch: { $eq: req.player_id } } // Only include the user's like
+    }
+  );
 
   //.populate('likes', 'firstName').populate('player', 'firstName').populate('comments.player', 'firstName');
 
