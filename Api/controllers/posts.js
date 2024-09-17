@@ -71,7 +71,7 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
         imageId: 1,
         description: 1,
         status: 1,
-        likes: 1,
+        likes: { $elemMatch: { $eq: req.player._id } ,
         comments: 0,
         createdAt: 1,
         updatedAt: 1,
