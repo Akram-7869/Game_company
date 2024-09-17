@@ -53,17 +53,17 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
     {
       $match: { status: 'active' }, // Filter by the post status
     },
-    {
-      $addFields: {
-        likeCount: { $size: '$likes' }, // Add likeCount by counting likes array
-        commentCount: { $size: '$comments' }, // Add commentCount by counting comments array
-        postImageUrl: { $concat: [process.env.IMAGE_URL, '$imageId'] }, // Add postImageUrl by concatenating imageId
-      },
-    },
+    // {
+    //   $addFields: {
+    //     likeCount: { $size: '$likes' }, // Add likeCount by counting likes array
+    //     commentCount: { $size: '$comments' }, // Add commentCount by counting comments array
+    //     postImageUrl: { $concat: [process.env.IMAGE_URL, '$imageId'] }, // Add postImageUrl by concatenating imageId
+    //   },
+    // },
     {
       $project: {
         // Project all existing fields using "$$ROOT"
-        _id: 1,
+        
         owner: 1,
         userType: 1,
         displayName: 1,
@@ -71,13 +71,21 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
         imageId: 1,
         description: 1,
         status: 1,
-        likes: { $elemMatch: { $eq: req.player._id } },
-        comments: 0,
         createdAt: 1,
         updatedAt: 1,
-        likeCount: 1, // Include likeCount from the previous $addFields
-        commentCount: 1, // Include commentCount from the previous $addFields
-        postImageUrl: 1, // Include postImageUrl from the previous $addFields
+       
+       
+        
+        likeCount: { $size: '$likes' }, // Count the number of likes
+        commentCount: { $size: '$comments' }, // Count the number of comments
+        postImageUrl: { $concat: [process.env.IMAGE_URL, '$imageId'] }, 
+        likes: {
+          $filter: {
+            input: '$likes', // The array to filter
+            as: 'like', // Alias for each element in the array
+            cond: { $eq: ['$$like', req.player._id] }, // Condition: Check if the element equals the player's ID
+          },
+        },
       },
     },
   ]);
