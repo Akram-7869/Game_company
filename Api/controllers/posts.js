@@ -46,7 +46,7 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
     { status: 'active' },
     { 
       comments: 0, // Exclude comments
-      likes: { $elemMatch: { $eq: req.player_id } } // Only include the user's like
+      likes: { $elemMatch: { $eq: req.player._id } } // Only include the user's like
     }
   );
 
@@ -68,7 +68,7 @@ exports.getPostLikes = asyncHandler(async (req, res, next) => {
 });
 exports.getPostComments = asyncHandler(async (req, res, next) => {
 
-  const posts = await Post.findOne({ status: 'active' }).select({comments:1}).populate('comments.player', 'firstName').lean();
+  const posts = await Post.findOne({_id:req.params.id, status: 'active' }).select({comments:1}).populate('comments.player', 'firstName').lean();
 
 
   res.status(200).json({
