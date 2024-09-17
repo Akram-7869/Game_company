@@ -62,7 +62,8 @@ exports.getPostLikes = asyncHandler(async (req, res, next) => {
 });
 exports.getPostComments = asyncHandler(async (req, res, next) => {
 
-  const posts = await Post.findOne({ status: 'active' }).select({comments:1,commentCount:1}).populate('comments.player', 'firstName');
+  const posts = await Post.findOne({ status: 'active' }).select({comments:1}).populate('comments.player', 'firstName').lean();
+  
 
   res.status(200).json({
     success: true,
