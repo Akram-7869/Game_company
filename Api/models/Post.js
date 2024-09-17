@@ -25,12 +25,4 @@ const PostSchema = new mongoose.Schema({
 });
 
 PostSchema.plugin(dataTables);
-PostSchema.virtual('postImageUrl').get(function () { return process.env.IMAGE_URL  + this.imageId; });
-PostSchema.virtual('likeCount').get(function() {
-    return this.likes ? this.likes.length:0;
-  });
-  
-  PostSchema.virtual('commentCount').get(function() {
-      return this.comments ? this.comments.length : 0;
-  });
 module.exports = mongoose.model('Posts', PostSchema);

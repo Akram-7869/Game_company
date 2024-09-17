@@ -42,13 +42,45 @@ if(req.role == 'influencer'){
 // @access    Private/Admin
 exports.getPostFeed = asyncHandler(async (req, res, next) => {
 
-  const posts  = await Post.find(
-    { status: 'active' },
-    { 
-      comments: 0, // Exclude comments
-      likes: { $elemMatch: { $eq: req.player._id } } // Only include the user's like
-    }
-  );
+  // const posts  = await Post.find(
+  //   { status: 'active' },
+  //   { 
+  //     comments: 0, // Exclude comments
+  //     likes: { $elemMatch: { $eq: req.player._id } } // Only include the user's like
+  //   }
+  // );
+  const posts = await Post.aggregate([
+    {
+      $match: { status: 'active' }, // Filter by the post status
+    },
+    {
+      $addFields: {
+        likeCount: { $size: '$likes' }, // Add likeCount by counting likes array
+        commentCount: { $size: '$comments' }, // Add commentCount by counting comments array
+        postImageUrl: { $concat: [process.env.IMAGE_URL, '$imageId'] }, // Add postImageUrl by concatenating imageId
+      },
+    },
+    {
+      $project: {
+        // Project all existing fields using "$$ROOT"
+        _id: 1,
+        owner: 1,
+        userType: 1,
+        displayName: 1,
+        profileImage: 1,
+        imageId: 1,
+        description: 1,
+        status: 1,
+        likes: 1,
+        comments: 0,
+        createdAt: 1,
+        updatedAt: 1,
+        likeCount: 1, // Include likeCount from the previous $addFields
+        commentCount: 1, // Include commentCount from the previous $addFields
+        postImageUrl: 1, // Include postImageUrl from the previous $addFields
+      },
+    },
+  ]);
 
   //.populate('likes', 'firstName').populate('player', 'firstName').populate('comments.player', 'firstName');
 
