@@ -53,13 +53,13 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
     {
       $match: { status: 'active' }, // Filter by the post status
     },
-    {
-      $addFields: {
-        likeCount: { $size: '$likes' }, // Add likeCount by counting likes array
-        commentCount: { $size: '$comments' }, // Add commentCount by counting comments array
-        postImageUrl: { $concat: [process.env.IMAGE_URL, '$imageId'] }, // Add postImageUrl by concatenating imageId
-      },
-    },
+    // {
+    //   $addFields: {
+    //     likeCount: { $size: '$likes' }, // Add likeCount by counting likes array
+    //     commentCount: { $size: '$comments' }, // Add commentCount by counting comments array
+    //     postImageUrl: { $concat: [process.env.IMAGE_URL, '$imageId'] }, // Add postImageUrl by concatenating imageId
+    //   },
+    // },
     {
       $project: {
         // Project all existing fields using "$$ROOT"
@@ -73,6 +73,11 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
         status: 1,
         createdAt: 1,
         updatedAt: 1,
+       
+       
+        
+        likeCount: { $size: '$likes' }, // Count the number of likes
+        commentCount: { $size: '$comments' }, // Count the number of comments
         postImageUrl: { $concat: [process.env.IMAGE_URL, '$imageId'] }, 
         likes: {
           $filter: {
