@@ -207,7 +207,7 @@ class DragonTigerGame {
 
     handlePlayerLeave(socket, data) {
         if (this.lobby.tournamentType === 'influencer') {
-            this.handleInfluencerLeave(socket);
+           // this.handleInfluencerLeave(socket);
         } 
         this.players.delete(data.userId);
         socket.leave(this.roomName);

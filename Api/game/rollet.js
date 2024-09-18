@@ -154,7 +154,7 @@ class RolletGame {
              try {
                 console.log('OnleaveRoom--dragon')
                 if (this.lobby.tournamentType === 'influencer') {
-                    this.handleInfluencerLeave(socket);
+                    //this.handleInfluencerLeave(socket);
                 }
                 socket.leave(this.roomName);
                 socket.removeAllListeners('OnBetsPlaced');
