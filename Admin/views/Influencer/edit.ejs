@@ -32,56 +32,135 @@
                         <div class="card-body">
                             <!--  <h4 class="card-title">Validation type</h4>
                 <p class="card-title-desc"> </p> -->
+                            <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#sitename" role="tab">
+                                        <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                        <span class="d-none d-sm-block">Profile</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#bank" role="tab">
+                                        <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                                        <span class="d-none d-sm-block">Bank</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#upi" role="tab">
+                                        <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                                        <span class="d-none d-sm-block">UPI</span>
+                                    </a>
+                                </li>
 
-                            <form class="custom-validation" action="" onsubmit="handleSubmit(this)" method="POST"
-                                name="player" enctype="application/x-www-form-urlencoded">
-                                <div class="mb-3">
-                                    <label class="form-label">FirstName</label>
-                                    <input type="text" name="firstName" value="<%=row.firstName?row.firstName:'' %>"
-                                        class="form-control" required placeholder="First name" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">LastName</label>
-                                    <input type="text" name="lastName" value="<%=row.lastName?row.lastName:'' %>"
-                                        class="form-control" required placeholder="Last name" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Display Name</label>
-                                    <input type="text" name="displayName" value="<%=row.displayName?row.displayName:'' %>"
-                                        class="form-control" required placeholder="Display Name " />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Phone</label>
-                                    <input type="text" name="phone" value="<%=row.phone?row.phone:'' %>"
-                                        class="form-control" required placeholder="Phone" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="text" name="email" value="<%=row.email?row.email:'' %>"
-                                        class="form-control" required placeholder="Email" />
-                                </div>
-                                <!-- <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" name="password" value="" class="form-control"  placeholder="Password min 6 letter"/>
-                    </div> -->
-                                <div class="mb-3">
-                                    <label class="form-label">Status</label>
-                                    <div class="col-md-10">
-                                        <select class="form-select" name="status" required>
-                                            <option value="">Change Status</option>
-                                            <option value="notverified" <%=row.status==='notverified' ?'selected':'' %>
-                                                >notverified</option>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#withdraw" role="tab">
+                                        <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                                        <span class="d-none d-sm-block">Withdraw</span>
+                                    </a>
+                                </li>
 
-                                            <option value="active" <%=row.status==='active' ?'selected':'' %>>active
-                                            </option>
-                                            <option value="inactive" <%=row.status==='inactive' ?'selected':'' %>
-                                                >inactive</option>
-                                        </select>
-                                    </div>
+
+                            </ul>
+                            <div class="tab-content p-3 text-muted">
+
+                                <div class="tab-pane active" id="sitename" role="tabpanel">
+                                    <form class="custom-validation" action="" onsubmit="handleSubmit(this)"
+                                        method="POST" name="player" enctype="application/x-www-form-urlencoded">
+                                        <div class="mb-3">
+                                            <label class="form-label">FirstName</label>
+                                            <input type="text" name="firstName"
+                                                value="<%=row.firstName?row.firstName:'' %>" class="form-control"
+                                                required placeholder="First name" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">LastName</label>
+                                            <input type="text" name="lastName"
+                                                value="<%=row.lastName?row.lastName:'' %>" class="form-control" required
+                                                placeholder="Last name" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Display Name</label>
+                                            <input type="text" name="displayName"
+                                                value="<%=row.displayName?row.displayName:'' %>" class="form-control"
+                                                required placeholder="Display Name " />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Phone</label>
+                                            <input type="text" name="phone" value="<%=row.phone?row.phone:'' %>"
+                                                class="form-control" required placeholder="Phone" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="text" name="email" value="<%=row.email?row.email:'' %>"
+                                                class="form-control" required placeholder="Email" />
+                                        </div>
+                                         
+                                        <div class="mb-3">
+                                            <label class="form-label">Status : <%=row.status%></label>
+                                        </div>
+
+                                        <div>
+                                            <div>
+                                                <button type="submit"
+                                                    class="btn btn-primary waves-effect waves-light me-1">
+                                                    Submit
+                                                </button>
+                                                <button type="reset" class="btn btn-secondary waves-effect">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+
                                 </div>
 
-                                <div>
-                                    <div>
+
+                                <div class="tab-pane" id="bank" role="tabpanel">
+                                    <form id="bank" action="<%=process.env.ADMIN_URL%>/influencer/bank"
+                                        onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
+                                        <div class="mb-3">
+                                            <label class="form-label">Bank Account Holder Name</label>
+                                           <input type="text" name="bankAccountHolder"
+                                               value="<%=row.bankAccountHolder?row.bankAccountHolder:'' %>" class="form-control"
+                                               required placeholder="Account Holder Name" />
+                                       </div>
+                                        <div class="mb-3">
+                                             
+                                            <label class="form-label">Bank Account Number</label>
+                                            <input type="text" name="bankAccount"
+                                                value="<%=row.bankAccount?row.bankAccount:'' %>" class="form-control"
+                                                required placeholder="First name" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Bank IFC Code</label>
+                                            <input type="text" name="bankIfc"
+                                                value="<%=row.bankIfc?row.bankIfc:'' %>" class="form-control"
+                                                required placeholder="First name" />
+                                        </div>
+                                        
+                                            <div>
+                                                <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                                    Submit
+                                                </button>
+                                                <button type="reset" class="btn btn-secondary waves-effect">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        
+                                         
+                                    </form>
+                                </div>
+                                <div class="tab-pane" id="upi" role="tabpanel">
+                                    <form id="upi" action="<%=process.env.ADMIN_URL%>/influencer/upi"
+                                        onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
+                                        <div class="mb-3">
+                                            <label class="form-label">UPI ID</label>
+                                           <input type="text" name="upiId"
+                                               value="<%=row.upiId?row.upiId:'' %>" class="form-control"
+                                               required placeholder="UPI ID" />
+                                       </div>
+                                       <div>
                                         <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
                                             Submit
                                         </button>
@@ -89,12 +168,48 @@
                                             Cancel
                                         </button>
                                     </div>
+                                       
+                                    </form>
                                 </div>
-                            </form>
+
+                                <div class="tab-pane" id="withdraw" role="tabpanel">
+
+                                    <form class="custom-validation" action="<%=process.env.ADMIN_URL%>/influencer/withdraw"
+                                        onsubmit="handleSubmit(this)" method="POST" name="player"
+                                        enctype="application/x-www-form-urlencoded">
+    
+                                        <div class="mb-3">
+                                            <label class="form-label">Balance:<%= row.totalBalance%> </label>
+    
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Amount</label>
+                                            <input type="number" name="amount" value="" class="form-control"
+                                                placeholder="Amount Withdraw" max="<%= row.totalBalance%> " />
+                                        </div>
+    
+                                        <div>
+                                            <div>
+                                                <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                                    Submit
+                                                </button>
+                                                <button type="reset" class="btn btn-secondary waves-effect">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </div>
+
 
                         </div>
+
+
                     </div>
-                </div> <!-- end col -->
+                </div>
+            </div> <!-- end col -->
 
 
             </div> <!-- end row -->

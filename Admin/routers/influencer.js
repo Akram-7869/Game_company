@@ -24,6 +24,12 @@ router.use(protect,authorize('influencer'));
 
 // Route for login page
 router.route('/profile').get(influenecrCtl.profile).post(influencerCtl.updateInfluencer);
+router.route('/withdraw').post(influenecrCtl.postwithdraw);
+router.route('/bank').post(influenecrCtl.addBank);
+
+router.route('/upi').post(influenecrCtl.addUpi);
+
+
 router.route('/restpassword').get(influenecrCtl.resetPassword);
 router.route('/restpassword').post(influenecrCtl.updatePassword);
 

@@ -72,6 +72,14 @@ const FranchiseSchema = new mongoose.Schema({
 
   resetPasswordToken: String,
   resetPasswordExpire: Date,
+  bank: {
+    select: false,
+    type: Map,
+  },
+  upi: {
+    select: false,
+    type: Map,
+  },
   createdAt: {
     type: Date,
     default: Date.now

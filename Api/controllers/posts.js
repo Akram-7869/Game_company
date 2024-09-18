@@ -65,14 +65,14 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
         // Project all existing fields using "$$ROOT"
         
         owner: 1,
-        userType: 1,
+        userType: 0,
         displayName: 1,
         profileImage: 1,
-        imageId: 1,
+        imageId: 0,
         description: 1,
         status: 1,
-        createdAt: 1,
-        updatedAt: 1,
+        createdAt: 0,
+        updatedAt: 0,
        
        
         

@@ -81,6 +81,14 @@ const InfluencerSchema = new mongoose.Schema({
     required:true
 
   },
+  bank: {
+    select: false,
+    type: Map,
+  },
+  upi: {
+    select: false,
+    type: Map,
+  },
   createdAt: {
     type: Date,
     default: Date.now

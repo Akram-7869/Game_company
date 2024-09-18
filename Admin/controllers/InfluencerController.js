@@ -171,7 +171,73 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
             })
 });
 
+exports.withdraw = asyncHandler(async (req, res, next) => {
+     
+      res.locals = { title: 'Influencer' };
+      callApi(req).get(apiUrl + req.userId)
+            .then(r => {
 
+                  res.locals = { title: 'Influencer' };
+                  res.render('Influencer/withdraw', { row: r.data.data });
+            })
+            .catch(error => {
+
+            }) 
+      
+});
+
+exports.postwithdraw = asyncHandler(async (req, res, next) => {
+
+      // res.locals = { title: 'Datatables' };
+      callApi(req).post(apiUrl + 'withdraw', req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'Influencer' };
+                  req.flash('message', 'With draw request success');
+                  res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
+
+            })
+            .catch(error => {
+
+
+                  req.flash('error', 'Data not updated');
+
+            })
+});
+
+exports.addBank = asyncHandler(async (req, res, next) => {
+      callApi(req).post(apiUrl + 'bank', req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'Influencer' };
+                  req.flash('message', 'With draw request success');
+                  res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
+
+            })
+            .catch(error => {
+
+
+                  req.flash('error', 'Data not updated');
+
+            })
+});
+exports.addUpi = asyncHandler(async (req, res, next) => {
+
+       callApi(req).post(apiUrl + 'upi', req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'Influencer' };
+                  req.flash('message', 'With draw request success');
+                  res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
+
+            })
+            .catch(error => {
+
+
+                  req.flash('error', 'Data not updated');
+
+            })
+});
 exports.gameList = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Game List' };
       res.render('Influencer/leaderboard')
