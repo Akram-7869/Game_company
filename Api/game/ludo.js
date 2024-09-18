@@ -396,11 +396,11 @@ console.log('botTurn');
 
     botRollDice(botPlayer) {
         console.log('botRollDice');
-        // const diceValue = Math.floor(Math.random() * 6) + 1;
+        const diceValue = Math.floor(Math.random() * 6) + 1;
         if (this.currentPhase === 'finshed') {
             return;
         }
-        let diceValue = this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
+       // let diceValue = this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
         this.io.to(this.roomName).emit('OnRollDice', {
             dice: diceValue,
             currentTurnIndex: this.currentTurnIndex,
