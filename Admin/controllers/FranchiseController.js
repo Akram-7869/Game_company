@@ -5,7 +5,7 @@ var apiUrl = api_url + '/franchises/';
 
 exports.listfranchise = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'franchise' };
-      res.render('franchise/list', { 'message': req.flash('message'), 'error': req.flash('error') });
+      res.render('Franchise/list', { 'message': req.flash('message'), 'error': req.flash('error') });
 });
 
 
@@ -15,7 +15,7 @@ exports.getfranchise = asyncHandler(async (req, res, next) => {
             .then(r => {
 
                   res.locals = { title: 'franchise' };
-                  res.render('franchise/edit', { row: r.data.data ,stateList});
+                  res.render('Franchise/edit', { row: r.data.data ,stateList});
             })
             .catch(error => {
 
@@ -92,7 +92,7 @@ exports.getfranchises = asyncHandler(async (req, res, next) => {
 
 exports.addfranchise = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'franchise' };
-      res.render('franchise/add', { row: {},stateList });
+      res.render('Franchise/add', { row: {},stateList });
 });
 
 
@@ -120,7 +120,7 @@ exports.showfranchise = asyncHandler(async (req, res, next) => {
                   // Assign value in session
 
                   res.locals = { title: 'franchise' };
-                  res.render('franchise/view', { row: r.data.data });
+                  res.render('Franchise/view', { row: r.data.data });
 
 
             })
@@ -134,7 +134,7 @@ exports.showfranchise = asyncHandler(async (req, res, next) => {
 
 exports.resetPassword = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'franchise' };
-      res.render('franchise/resetpassword');
+      res.render('Franchise/resetpassword');
 });
 
 exports.updatePassword = asyncHandler(async (req, res, next) => {
@@ -145,7 +145,7 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'franchise' };
                   req.flash('message', 'Data save');
-                  res.redirect(process.env.ADMIN_URL + '/franchise/dashboard');
+                  res.redirect(process.env.ADMIN_URL + '/Franchise/dashboard');
 
             })
             .catch(error => {
