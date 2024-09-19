@@ -383,10 +383,10 @@ console.log('botTurn');
 
 
     handlePlayerRollDice(socket) {
-        this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
-        // this.lastDiceValue = Math.floor(Math.random() * 6) + 1;
+        //this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
+        let diceValue = this.lastDiceValue = this.lastDiceValue === 1 ? 6 : 1;
         this.io.to(this.roomName).emit('OnRollDice', {
-            dice: this.lastDiceValue,
+            dice: diceValue,
             currentTurnIndex: this.currentTurnIndex,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
 
