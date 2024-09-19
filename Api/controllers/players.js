@@ -1606,7 +1606,7 @@ let buildProfileUrl = (player) => {
 
 }
 exports.getTournaments = asyncHandler(async (req, res, next) => {
-  const rows = await Tournament.find({ active: true });
+  const rows = await Tournament.find({ active: true , tournamentType:'admin'});
 
   res.status(200).json({
     success: true,
