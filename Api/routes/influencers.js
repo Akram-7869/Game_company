@@ -7,13 +7,15 @@ const router = express.Router({ mergeParams: true });
 
 const { protect, authorize } = require('../middleware/auth');
 
-router.use(protect);
+//router.use(protect);
 //router.use(authorize('admin', 'superadmin'));
 router.route('/withdraw').post(userCtrl.withDrawRequest);
-router.route('/bank').post(userCtrl.addBank);
-router.route('/upi').post(userCtrl.addUpi);
 
-router.route('/resetpassword').post(userCtrl.resetPassword);
+router.route('/follow').post(userCtrl.followInfulencer);
+router.route('/unfollow').post(userCtrl.unfollowInfulencer);
+router.route('/list').get(userCtrl.getUserList);
+
+router.route('/push/online').post(userCtrl.onlineNotifcation);
 router.route('/add').post(userCtrl.createUser);
 router.route('/').post(userCtrl.getUsers);
 

@@ -64,12 +64,12 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   }
   //  Make sure user is provider owner
   if (req.role === 'admin') {
-     
-      return next(
-        new ErrorResponse(
-          `User  is not authorized to update`)
-      );
-    
+
+    return next(
+      new ErrorResponse(
+        `User  is not authorized to update`)
+    );
+
     user.status = req.body.status;
 
   } else if (user.id !== req.user.id) {
@@ -124,24 +124,24 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`User  not found`)
     );
   }
-  
-    // Check for user
-    user = await User.findById(user._id).select('+password');
 
-    if (!user) {
-      return next(new ErrorResponse('User not found'));
-    }
+  // Check for user
+  user = await User.findById(user._id).select('+password');
 
-    // Check if password matches
-    const isMatch = await user.matchPassword(oldpass);
+  if (!user) {
+    return next(new ErrorResponse('User not found'));
+  }
 
-    if (!isMatch) {
-      return next(new ErrorResponse('Invalid credentials'));
-    }
+  // Check if password matches
+  const isMatch = await user.matchPassword(oldpass);
 
-    user.password = req.body.password;
+  if (!isMatch) {
+    return next(new ErrorResponse('Invalid credentials'));
+  }
 
-  
+  user.password = req.body.password;
+
+
   await user.save();
   res.status(200).json({
     success: true,
@@ -206,7 +206,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     tranData['withdraw'] = { 'upiId': upiId };
     req.body['upiId'] = upiId;
   }
- 
+
 
   let taxableAmount = (user.totalWithdraw + parseFloat(amount)) - user.totalDeposit - user.totalTaxableAmount - user.openingBalance;
   let tds = 0;
@@ -236,7 +236,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     runValidators: true
   });
 
- 
+
   res.status(200).json({
     success: true,
     data: user
@@ -342,4 +342,62 @@ exports.addUpi = asyncHandler(async (req, res, next) => {
     success: true,
     data: user
   });
+});
+
+
+
+exports.onlineNotifcation = asyncHandler(async (req, res, next) => {
+  const data = {
+    "app_id":process.env.ONE_SINAL_APPID,
+    "contents": { "en": "English Message" },
+    "headings": { "en": "English " },
+    "target_channel": "push",
+    "filters": [
+      { "field": "tag", "key": "influencer", "relation": "=", "value": "1234567" },
+    ]
+
+  };
+
+  const config = {
+    method: 'post',
+    url: 'https://api.onesignal.com/notifications',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Authorization': 'Basic ' +process.env.ONE_SINAL_SECARET
+    },
+    data: data
+  };
+
+  axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+
+});
+exports.unfollowInfulencer = asyncHandler(async (req, res, next) => {
+
+});
+exports.followInfulencer = asyncHandler(async (req, res, next) => {
+
+});
+
+exports.getUserList = asyncHandler(async (req, res, next) => {
+  User.dataTables({
+    limit: req.query.pageSize ?? 20,
+    skip: req.query.page ?? 0,
+    select: { 'firstName': 1, 'displayName': 1 },
+    search: {
+      value:  req.query.search ?? '',
+      fields: ['email']
+    },
+    sort: {
+      _id: 1
+    }
+  }).then(function (table) {
+    res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
+  })
 });

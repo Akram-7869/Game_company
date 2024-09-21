@@ -89,6 +89,8 @@ const InfluencerSchema = new mongoose.Schema({
     select: false,
     type: Map,
   },
+  followCount: { type: Number, default: 0 }, // Optional Field
+
   createdAt: {
     type: Date,
     default: Date.now
