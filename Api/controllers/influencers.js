@@ -389,7 +389,7 @@ exports.getUserList = asyncHandler(async (req, res, next) => {
   User.dataTables({
     limit: req.query.pageSize ?? 20,
     skip: req.query.page ?? 0,
-    select: { 'firstName': 1, 'displayName': 1 },
+    select: { 'firstName': 1, 'displayName': 1, imageId:1 },
     search: {
       value:  req.query.search ?? '',
       fields: ['email']
