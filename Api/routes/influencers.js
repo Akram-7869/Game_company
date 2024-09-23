@@ -7,9 +7,8 @@ const router = express.Router({ mergeParams: true });
 
 const { protect, authorize } = require('../middleware/auth');
 
-//router.use(protect);
-//router.use(authorize('admin', 'superadmin'));
-router.route('/withdraw').post(userCtrl.withDrawRequest);
+router.use(protect);
+ router.route('/withdraw').post(userCtrl.withDrawRequest);
 
 router.route('/follow').post(userCtrl.followInfulencer);
 router.route('/unfollow').post(userCtrl.unfollowInfulencer);

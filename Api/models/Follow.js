@@ -16,4 +16,4 @@ const FollowSchema = new mongoose.Schema({
 });
 
 FollowSchema.plugin(dataTables)
-module.exports = mongoose.model('PlayerGames', FollowSchema);
+module.exports = mongoose.model('PlayerInfluencer', FollowSchema);

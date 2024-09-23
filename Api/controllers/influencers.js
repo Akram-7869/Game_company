@@ -1,6 +1,11 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/Influencer');
+const Follow = require('../models/Follow');
+
+const axios = require('Axios');
+const Influencer = require('../models/Influencer');
+
 
 // @desc      Get all users
 // @route     GET /api/v1/auth/users
@@ -345,15 +350,15 @@ exports.addUpi = asyncHandler(async (req, res, next) => {
 });
 
 
-
+const ONE_SINAL_APPID = process.env.ONE_SINAL_APPID;
 exports.onlineNotifcation = asyncHandler(async (req, res, next) => {
   const data = {
-    "app_id":process.env.ONE_SINAL_APPID,
+    "app_id": process.env.ONE_SINAL_APPID,
     "contents": { "en": "English Message" },
     "headings": { "en": "English " },
     "target_channel": "push",
     "filters": [
-      { "field": "tag", "key": "influencer", "relation": "=", "value": "1234567" },
+      { "field": "tag", "key": "influencer", "relation": "=", "value": "1234568" },
     ]
 
   };
@@ -363,7 +368,7 @@ exports.onlineNotifcation = asyncHandler(async (req, res, next) => {
     url: 'https://api.onesignal.com/notifications',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
-      'Authorization': 'Basic ' +process.env.ONE_SINAL_SECARET
+      'Authorization': 'Basic ' + process.env.ONE_SINAL_SECARET
     },
     data: data
   };
@@ -379,25 +384,115 @@ exports.onlineNotifcation = asyncHandler(async (req, res, next) => {
 
 });
 exports.unfollowInfulencer = asyncHandler(async (req, res, next) => {
+  let { influencerId } = req.body;
+
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  let playerId = req.player._id;
+
+  await Follow.deleteMany({ influencerId, playerId });
+  await Influencer.findByIdAndUpdate(influencerId, { $inc: { followerCount: -1 } })
+
+
+  res.status(200).json({
+    success: true,
+    data: req.player
+  });
 
 });
 exports.followInfulencer = asyncHandler(async (req, res, next) => {
+  let { influencerId } = req.body;
+
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  let playerId = req.player._id;
+
+  await Follow.create({ influencerId, playerId });
+  const followerCount = await Follow.countDocuments({ influencerId: influencerId });
+  await Influencer.findOneAndUpdate(
+    { _id: influencerId },
+    { $set: { followerCount: followerCount } }
+  );
+
+  res.status(200).json({
+    success: true,
+    data: req.player
+  });
+
 
 });
 
+
+
 exports.getUserList = asyncHandler(async (req, res, next) => {
-  User.dataTables({
-    limit: req.query.pageSize ?? 20,
-    skip: req.query.page ?? 0,
-    select: { 'firstName': 1, 'displayName': 1, imageId:1 },
-    search: {
-      value:  req.query.search ?? '',
-      fields: ['email']
+
+  const playerId = req.player._id; // Replace with the current player's ID
+
+  const page = 1; // The current page (1-indexed)
+  const limit = 10; // The number of influencers per page
+  const searchTerm = ""; // Replace with the search term (empty if no search)
+
+  const pipeline = [
+    {
+      $lookup: {
+        from: "follows",
+        let: { influencerId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$influencerId", "$$influencerId"] },
+                  { $eq: ["$playerId", playerId] }
+                ]
+              }
+            }
+          }
+        ],
+        as: "isFollowing"
+      }
     },
-    sort: {
-      _id: 1
+    
+    {
+    $project: {
+      _id: 1,
+      firstName: 1,
+      displayName: 1,
+      isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] },
+      profilePic: 1,
+
     }
-  }).then(function (table) {
-    res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
-  })
+  }, 
+  { $skip: (page - 1) * limit }, 
+  { $limit: limit }
+
+
+  ];
+
+  // Conditionally add the $match stage only if a search term is provided
+  if (searchTerm) {
+    pipeline.unshift({
+      $match: {
+        $or: [
+          { firstname: { $regex: searchTerm, $options: "i" } },  // Case-insensitive search on firstname
+          { displayname: { $regex: searchTerm, $options: "i" } } // Case-insensitive search on displayname
+        ]
+      }
+    });
+  }
+
+  
+
+  // Run the aggregation pipeline
+  let rows = await Influencer.aggregate(pipeline);
+
+
+  res.json({ data: rows }); // table.total, table.dat
+
 });
