@@ -343,6 +343,7 @@
                                     </form>
                                     </p>
                                 </div>
+
                                 <div class="tab-pane" id="settings1" role="tabpanel">
                                     <p class="mb-0">
                                     <form class="custom-validation"
@@ -393,6 +394,40 @@
                                                 <button type="submit"
                                                     class="btn btn-primary waves-effect waves-light me-1">
                                                     Submit
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                    </form>
+                                    </p>
+                                </div>
+                                <div class="tab-pane" id="gift" role="tabpanel">
+                                    <p class="mb-0">
+                                    <form class="custom-validation"
+                                        action="<%=process.env.ADMIN_URL%>/admin/player/gift-amount/<%=row._id %>"
+                                        onsubmit="handleSubmit(this)" method="POST" name="player"
+                                        enctype="application/x-www-form-urlencoded">
+
+
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Gift Amount</label>
+                                            <input type="text" name="aadharNumber"
+                                                value="<%=row.giftAmount?row.giftAmount:'' %>" class="form-control"
+                                                required placeholder="Enter Adhar Number" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">firebaseToken</label>
+                                            <p>
+                                                <%=row.firebaseToken?row.firebaseToken:'' %>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                <button type="submit"
+                                                    class="btn btn-primary waves-effect waves-light me-1">
+                                                    Change Status
                                                 </button>
 
                                             </div>

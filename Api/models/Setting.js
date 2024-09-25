@@ -49,9 +49,15 @@ const SettingSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    gift_commission: {
+        type: Number,
+        default: 50
+    },
     admin_referral_commission: {
         type: Number,
-        default: 0
+        default: 0,
+        min:0,
+        max:100
     },
     lvl1_commission: {
         type: Number,

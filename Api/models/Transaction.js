@@ -105,7 +105,7 @@ const TransactionsSchema = new mongoose.Schema({
     },
     logType: {
         type: String,
-        enum: ['bet','join', 'deposit', 'withdraw', 'game', 'won', 'bonus', 'payment', 'fees', 'adjustment', 'membership', 'reverse', 'refer_bonus','influencer_gift','commission'],
+        enum: ['bet','join', 'deposit', 'withdraw', 'game', 'won', 'bonus', 'payment', 'fees', 'adjustment', 'membership', 'reverse', 'refer_bonus','influencer_gift','commission','player_gift'],
         required: true,
         default: 'game'
     },

@@ -47,6 +47,10 @@ const PlayerGameSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  adminGiftCommision: {
+    type: Number,
+    default: 0
+  },
   winner: {
     type: String,
     default: 'winner_1',

@@ -667,6 +667,9 @@ async function calculateAdminIncome(today) {
           },
           totalWinningAmount: {
             $sum: "$amountWon"
+          },
+          totalGiftAmount: {
+            $sum: "$adminGiftCommision"
           }
         }
       },
@@ -680,7 +683,8 @@ async function calculateAdminIncome(today) {
           _id: 1,
           totalBetAmount: 1,
           totalWinningAmount: 1,
-          commissionGiven: 1
+          commissionGiven: 1,
+          totalGiftAmount:1
         },
       },
     ]);
@@ -689,7 +693,7 @@ async function calculateAdminIncome(today) {
       return '';
     }
 
-    const adminCommission = adminIncome.totalBetAmount - (adminIncome.totalWinningAmount + adminIncome.commissionGiven);
+    const adminCommission = adminIncome.totalBetAmount - (adminIncome.totalWinningAmount + adminIncome.commissionGiven)+ adminIncome.totalGiftAmount;
     // Find the admin user
     const userAdmin = await User.findOne({ role: 'admin' });
 
@@ -708,7 +712,8 @@ async function calculateAdminIncome(today) {
         $set: {
           totalBetAmount: adminIncome.totalBetAmount,
           totalWinningAmount: adminIncome.totalWinningAmount,
-          commission: adminCommission
+          commission: adminCommission,
+          gift:adminIncome.totalGiftAmount
         }
       },
       {

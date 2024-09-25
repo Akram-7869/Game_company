@@ -12,9 +12,13 @@ router.post('/sendAppUrl', playerCtl.sendAppUrl);
 router.get('/tournaments', playerCtl.getTournaments);
 
 router.get('/versionlist', playerCtl.getVersion);
-router.get('/myrefrer', protect, playerCtl.getReferList);
-router.post('/paymentadd', protect, playerCtl.paymentAdd);
 
+
+router.get('/my-gift', protect, playerCtl.getGift);
+router.post('/claim-gift', protect, playerCtl.calimedGift);
+
+router.get('/myrefrer', protect, playerCtl.getReferList);
+ 
 router.post('/saveleaderboard', protect, playerCtl.saveLeaderBoard);
 router.post('/paymentadd', protect, playerCtl.paymentAdd);
 

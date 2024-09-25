@@ -194,6 +194,11 @@ const PlayerSchema = new mongoose.Schema({
     default: 0
 
   },
+  giftAmount: {
+    type: Number,
+    default: 0
+  },
+
 
   refrer_player_id: {
     type: mongoose.Schema.ObjectId,

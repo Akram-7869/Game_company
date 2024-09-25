@@ -1088,27 +1088,31 @@ exports.debiteAmount = asyncHandler(async (req, res, next) => {
   } else {
     player = await tran.debitPlayerDeposit(amount);
   }
+  let setting = getKey('site_setting');
 
 
   if (logType === 'influencer_gift') {
-   
+    let influencerAmount = amount *setting.gift_commission * 0.01;
+    let adminAmount = amount - influencerAmount;
+
+
    let influencerUser=  await Influencer.findByIdAndUpdate(playerGame.influencerId, {
       $inc: {
-        totalBalance: amount,
-        totalGifts: amount
+        totalBalance: influencerAmount,
+        totalGifts: influencerAmount
       }
     });
     await PlayerGame.findByIdAndUpdate(playerGame._id, {
-      $inc: { amountGift: amount }
+      $inc: { amountGift: influencerAmount , adminCommision:adminAmount, }
     });
     const influencerTransactionData = {
       'playerId': req.player._id,
-      'amount': amount,
+      'amount': influencerAmount ,
       'transactionType': "credit",
-      'note': `Gift received-${gameId}`,
+      'note': `Gift received ${amount} -${gameId}`,
       influencerId: tournament.influencerId,
       'prevBalance': influencerUser.totalBalance,
-
+      adminCommision:adminAmount,
       'logType': req.body.logType,
       betNo,
       'gameId': gameId,
@@ -2204,4 +2208,55 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
     data: player
   });
 
+});
+exports.getGift = asyncHandler(async (req, res, next) => {
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  let data = {title:'better luck', giftAmount:req.player.giftAmount}
+  if (req.player.giftAmount > 0 ) {
+     
+  }
+  const gift = await PlayerGift.findOne({_id:req.player._id, status:'notclaimed'});
+ 
+  res.status(200).json({
+    success: true,
+    data: gift
+  });
+});
+
+exports.calimedGift = asyncHandler(async (req, res, next) => {
+  let {giftId}=req.body;
+  if (!giftId) {
+    return next(
+      new ErrorResponse(`giftId  not found`)
+    );
+  }
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+ 
+  const player = await Player.findByIdAndUpdate(req.player._id, {giftAmount:0});
+  
+  let tranData = {
+    playerId: req.player._id,
+    amount:req.player.giftAmount,
+    transactionType: 'credit',
+    note: 'player gift',
+    prevBalance: req.player.balance,
+    status: 'complete', paymentStatus: 'SUCCESS',
+    'stateCode': req.player.stateCode,
+    'logType': 'player_gift',
+
+  }
+  let tran = await Transaction.create(tranData);
+ 
+  res.status(200).json({
+    success: true,
+    data: player
+  });
 });

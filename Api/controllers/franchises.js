@@ -9,7 +9,7 @@ exports.getFranchises = asyncHandler(async (req, res, next) => {
   Franchise.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-    select: { 'firstName': 1, 'phone': 1, 'email': 1, 'status': 1, 'createdAt': 1, 'role': 1 },
+    select: { 'firstName': 1, 'phone': 1, 'email': 1, 'status': 1, 'createdAt': 1, 'role': 1 ,totalBalance:1},
     search: {
       value: req.body.search ? req.body.search.value : '',
       fields: ['email']

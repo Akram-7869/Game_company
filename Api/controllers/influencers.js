@@ -5,6 +5,7 @@ const Follow = require('../models/Follow');
 
 const axios = require('Axios');
 const Influencer = require('../models/Influencer');
+const admin = require('../utils/fiebase');
 
 
 // @desc      Get all users
@@ -14,7 +15,7 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
   User.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-    select: { 'firstName': 1, 'phone': 1, 'email': 1, 'status': 1, 'createdAt': 1, 'role': 1 },
+    select: { 'firstName': 1, 'phone': 1, 'email': 1, 'status': 1, 'createdAt': 1, 'role': 1,totalBalance:1 },
     search: {
       value: req.body.search ? req.body.search.value : '',
       fields: ['email']
@@ -349,17 +350,45 @@ exports.addUpi = asyncHandler(async (req, res, next) => {
   });
 });
 
+const sendOnlineNotification = async (influencerId) => {
+  const message = {
+    notification: {
+      title: 'Influencer Online!',
+      body: `Your favorite influencer is now online!`
+    },
+    topic: influencerId.toString()
+  };
 
+console.log('test');
+    await admin.messaging().send(message)
+    .then((response) => {
+      // Response is a message ID string.
+      console.log('Successfully sent message:', response);
+
+    })
+    .catch((error) => {
+      console.log('Error sending message:', error);
+    });
+};
 const ONE_SINAL_APPID = process.env.ONE_SINAL_APPID;
 exports.onlineNotifcation = asyncHandler(async (req, res, next) => {
+//   let { influencerId } = req.body;
+ 
+//  let result =  await sendOnlineNotification(influencerId);
+//  res.status(200).json({
+//   success: true,
+//   data: {}
+// }); return ;
+ 
+ 
   const data = {
     "app_id": process.env.ONE_SINAL_APPID,
     "contents": { "en": "English Message" },
     "headings": { "en": "English " },
     "target_channel": "push",
-    "filters": [
-      { "field": "tag", "key": "influencer", "relation": "=", "value": "1234568" },
-    ]
+    "include_aliases":{"external_id": [
+      '66619f8f980bf75b5ec9ac0d','664f4345447e35c8799cfe53'
+    ]}
 
   };
 
@@ -394,7 +423,12 @@ exports.unfollowInfulencer = asyncHandler(async (req, res, next) => {
   let playerId = req.player._id;
 
   await Follow.deleteMany({ influencerId, playerId });
-  await Influencer.findByIdAndUpdate(influencerId, { $inc: { followerCount: -1 } })
+  const followerCount = await Follow.countDocuments({ influencerId: influencerId });
+  await Influencer.findOneAndUpdate(
+    { _id: influencerId },
+    { $set: { followCount: followerCount } }
+  );
+ // await admin.messaging().unsubscribeFromTopic(player.deviceToken, influencerId.toString());
 
 
   res.status(200).json({
@@ -403,6 +437,7 @@ exports.unfollowInfulencer = asyncHandler(async (req, res, next) => {
   });
 
 });
+
 exports.followInfulencer = asyncHandler(async (req, res, next) => {
   let { influencerId } = req.body;
 
@@ -413,12 +448,17 @@ exports.followInfulencer = asyncHandler(async (req, res, next) => {
   }
   let playerId = req.player._id;
 
-  await Follow.create({ influencerId, playerId });
-  const followerCount = await Follow.countDocuments({ influencerId: influencerId });
+  await Follow.updateOne(
+    { influencerId, playerId }, // Filter to check if the follow relationship exists
+    { $setOnInsert: { influencerId, playerId } }, // Only set these fields if inserting a new document
+    { upsert: true } // Perform an upsert
+  );
+    const followerCount = await Follow.countDocuments({ influencerId: influencerId });
   await Influencer.findOneAndUpdate(
     { _id: influencerId },
-    { $set: { followerCount: followerCount } }
+    { $set: { followCount: followerCount } }
   );
+ // await admin.messaging().subscribeToTopic(player.deviceToken, influencerId.toString());
 
   res.status(200).json({
     success: true,
@@ -453,7 +493,8 @@ exports.getUserList = asyncHandler(async (req, res, next) => {
                 ]
               }
             }
-          }
+          },
+          { $limit: 1 }
         ],
         as: "isFollowing"
       }

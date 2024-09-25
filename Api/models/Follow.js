@@ -5,11 +5,13 @@ var dataTables = require('mongoose-datatables')
 const FollowSchema = new mongoose.Schema({
   playerId: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Players'
+    ref: 'Players',
+    required:true
   },
   influencerId: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Influencer'
+    ref: 'Influencer',
+    required:true
   },
   
  
