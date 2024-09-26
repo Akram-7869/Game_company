@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 var dataTables = require('mongoose-datatables')
 
  
-const FollowSchema = new mongoose.Schema({
+const PlayerInfluencerSchema = new mongoose.Schema({
   playerId: {
     type: mongoose.Schema.ObjectId,
     ref: 'Players',
@@ -17,5 +17,5 @@ const FollowSchema = new mongoose.Schema({
  
 });
 
-FollowSchema.plugin(dataTables)
-module.exports = mongoose.model('PlayerInfluencer', FollowSchema);
+PlayerInfluencerSchema.plugin(dataTables)
+module.exports = mongoose.model('PlayerInfluencer', PlayerInfluencerSchema);

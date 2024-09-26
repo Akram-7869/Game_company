@@ -1,7 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/Influencer');
-const Follow = require('../models/Follow');
+const PlayerInfluencer = require('../models/PlayerInfluencer');
 
 const axios = require('axios');
 const Influencer = require('../models/Influencer');
@@ -426,8 +426,8 @@ exports.unfollowInfulencer = asyncHandler(async (req, res, next) => {
   }
   let playerId = req.player._id;
 
-  await Follow.deleteMany({ influencerId, playerId });
-  const followerCount = await Follow.countDocuments({ influencerId: influencerId });
+  await PlayerInfluencer.deleteMany({ influencerId, playerId });
+  const followerCount = await PlayerInfluencer.countDocuments({ influencerId: influencerId });
   await Influencer.findOneAndUpdate(
     { _id: influencerId },
     { $set: { followCount: followerCount } }
@@ -452,12 +452,12 @@ exports.followInfulencer = asyncHandler(async (req, res, next) => {
   }
   let playerId = req.player._id;
 
-  await Follow.updateOne(
+  await PlayerInfluencer.updateOne(
     { influencerId, playerId }, // Filter to check if the follow relationship exists
     { $setOnInsert: { influencerId, playerId } }, // Only set these fields if inserting a new document
     { upsert: true } // Perform an upsert
   );
-    const followerCount = await Follow.countDocuments({ influencerId: influencerId });
+    const followerCount = await PlayerInfluencer.countDocuments({ influencerId: influencerId });
   await Influencer.findOneAndUpdate(
     { _id: influencerId },
     { $set: { followCount: followerCount } }
@@ -485,7 +485,7 @@ exports.getUserList = asyncHandler(async (req, res, next) => {
   const pipeline = [
     {
       $lookup: {
-        from: "follows",
+        from: "playerinfluencers",
         let: { influencerId: "$_id" },
         pipeline: [
           {
@@ -590,7 +590,7 @@ exports.getFollowingList = asyncHandler(async (req, res, next) => {
   }
 
   // Run the aggregation pipeline
-  const influencers = await Follows.aggregate(pipeline);
+  const influencers = await PlayerInfluencer.aggregate(pipeline);
 
   res.json({ data: influencers }); // Return the list of following influencers
 });
