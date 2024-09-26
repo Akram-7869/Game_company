@@ -128,9 +128,9 @@
                                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th>Srno</th>
+                                        <th>Srno</th><th>Player</th>
                                         <!-- <th>State</th>
-                                        <th>Email</th> -->
+                                         -->
                                         <!-- <th>Type</th> -->
                                         <th>Amount</th>
                                         <th>note</th>
@@ -251,7 +251,7 @@
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
                                 // { data: 'stateCode', "defaultContent": "" },
-                                // { data: 'playerId.email', "defaultContent": "" },
+                                { data: 'playerId._id', "defaultContent": "" },
                                 // { data: 'transactionType', "defaultContent": "" },
                                 // { data: 'amount', "defaultContent": "" },
                                 {

@@ -66,7 +66,12 @@ let onConnection = (socket) => {
       // console.log('room', roomName);
       joinRoom(socket, userId, roomName, dataParsed);
       socket.join(roomName);
-
+      let numberOfClients = 0;
+      io.in(roomName).clients((error, clients) => {
+        if (!error) {
+          numberOfClients = clients.length;
+        }
+      });
       let data = {
         roomName, users: getRoomLobbyUsers(roomName, lobbyId),
         userId: userId,
@@ -88,7 +93,6 @@ let onConnection = (socket) => {
         let influencers = await Tournament.find({ _id: { $in: validIds }, tournamentType: 'influencer' }).populate('influencerId', 'displayName');
 
         setkey('influencer_matches', influencers);
-        console.log('seting _influencer_matches', influencers);
         io.emit('influencer_matches', { influencers });
       }
 
@@ -101,7 +105,7 @@ let onConnection = (socket) => {
           }
 
           state[roomName]['codeObj'].syncPlayer(socket, d);
-          socket.emit('join', { ...d, gameType: gameName.ludo, room: roomName, status: 'success' });
+          socket.emit('join', { ...d, gameType: gameName.ludo, room: roomName, status: 'success', numberOfClients });
           state[roomName]['codeObj'].emitJoinPlayer();
           break;
         case gameName.tambola:
@@ -111,7 +115,7 @@ let onConnection = (socket) => {
           }
 
           state[roomName]['codeObj'].syncPlayer(socket, d);
-          socket.emit('join', { ...d, gameType: gameName.tambola, room: roomName, status: 'success' });
+          socket.emit('join', { ...d, gameType: gameName.tambola, room: roomName, status: 'success', numberOfClients });
           break;
         case gameName.dragon_tiger:
           if (!state[roomName]['codeObj']) {
@@ -120,14 +124,14 @@ let onConnection = (socket) => {
           }
 
           state[roomName]['codeObj'].syncPlayer(socket, d);
-          socket.emit('join', { ...d, gameType: gameName.dragon_tiger, room: roomName, status: 'success' });
+          socket.emit('join', { ...d, gameType: gameName.dragon_tiger, room: roomName, status: 'success', numberOfClients });
           break;
         case gameName.crash:
           if (!state[roomName]['codeObj']) {
             state[roomName]['codeObj'] = new AviatorGame(io, roomName, maxp, lobby);
           }
           state[roomName]['codeObj'].syncPlayer(socket, d);
-          socket.emit('join', { ...d, gameType: gameName.crash, room: roomName, status: 'success' });
+          socket.emit('join', { ...d, gameType: gameName.crash, room: roomName, status: 'success', numberOfClients });
           break;
         case gameName.rouletee:
           if (!state[roomName]['codeObj']) {
@@ -135,7 +139,7 @@ let onConnection = (socket) => {
 
           }
           state[roomName]['codeObj'].syncPlayer(socket, d);
-          socket.emit('join', { ...d, gameType: gameName.rouletee, room: roomName, status: 'success' });
+          socket.emit('join', { ...d, gameType: gameName.rouletee, room: roomName, status: 'success', numberOfClients });
           break;
         case gameName.teen_patti:
           io.to(roomName).emit('res', { ev: 'join', data });
@@ -145,7 +149,7 @@ let onConnection = (socket) => {
           state[roomName]['codeObj'].syncPlayer(socket, d);
           state[roomName]['codeObj'].setupGame();
 
-          //socket.emit('join', { ...d, gameType: gameName.teen_patti, room: roomName, status: 'success' });
+          //socket.emit('join', { ...d, gameType: gameName.teen_patti, room: roomName, status: 'success', numberOfClients });
           break;
       }
 
@@ -234,7 +238,7 @@ let onConnection = (socket) => {
   });
   socket.on('gift_message', (d) => {
     let { room } = d;
-    console.log('gift_message',d);
+    console.log('gift_message', d);
     if (state[room].messages.length >= 100) {
       state[room].messages.shift(); // Remove the oldest message to maintain the limit
     }
@@ -248,7 +252,7 @@ let onConnection = (socket) => {
   });
   socket.on('emoji_message', (d) => {
     let { room } = d;
-    console.log('emoji_message',d);
+    console.log('emoji_message', d);
     if (state[room].messages.length >= 100) {
       state[room].messages.shift(); // Remove the oldest message to maintain the limit
     }
@@ -287,6 +291,9 @@ let onConnection = (socket) => {
     }
 
   });
+  socket.on('error', (err) => {
+    console.error('Socket error:', err);
+   });
   // Runs when client disconnects
   socket.on('gameStart', async (d) => {
 

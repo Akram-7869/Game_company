@@ -95,7 +95,10 @@ server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
-  console.log(err);
-  // Close server & exit process
-  // server.close(() => process.exit(1));
+  console.log('unhandledRejection', err);
+ });
+// Handle uncaught exceptions globally
+process.on('uncaughtException', (err) => {
+  console.log('uncaughtException', err);
+  // Prevent server restart
 });
