@@ -13,6 +13,8 @@ router.use(protect);
 router.route('/follow').post(userCtrl.followInfulencer);
 router.route('/unfollow').post(userCtrl.unfollowInfulencer);
 router.route('/list').get(userCtrl.getUserList);
+router.route('/following-list').get(userCtrl.getFollowingList);
+
 
 router.route('/push/online').post(userCtrl.onlineNotifcation);
 router.route('/add').post(userCtrl.createUser);

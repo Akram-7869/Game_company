@@ -64,17 +64,18 @@
                             <div class="tab-content p-3 text-muted">
 
                                 <div class="tab-pane active" id="sitename" role="tabpanel">
-                                    <form class="custom-validation" action="" onsubmit="handleSubmit(this)"
-                                        method="POST" name="player" enctype="application/x-www-form-urlencoded">
+                                    <form id="myForm" action="" method="POST" enctype="multipart/form-data">
+                                        <input id="imageId" type="text" name="imageId"
+                                            value="<%=row.imageId?row.imageId:'' %>" />
                                         <div class="mb-3">
                                             <label class="form-label">FirstName</label>
-                                            <input type="text" name="firstName"
+                                            <input id="firstName" type="text" name="firstName"
                                                 value="<%=row.firstName?row.firstName:'' %>" class="form-control"
                                                 required placeholder="First name" />
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">LastName</label>
-                                            <input type="text" name="lastName"
+                                            <input id="lastName" type="text" name="lastName"
                                                 value="<%=row.lastName?row.lastName:'' %>" class="form-control" required
                                                 placeholder="Last name" />
                                         </div>
@@ -86,25 +87,33 @@
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Phone</label>
-                                            <input type="text" name="phone" value="<%=row.phone?row.phone:'' %>"
-                                                class="form-control" required placeholder="Phone" />
+                                            <input id="phone" type="text" name="phone"
+                                                value="<%=row.phone?row.phone:'' %>" class="form-control" required
+                                                placeholder="Phone" />
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Email</label>
                                             <input type="text" name="email" value="<%=row.email?row.email:'' %>"
-                                                class="form-control" required placeholder="Email" />
+                                                class="form-control" required placeholder="Email" disabled />
                                         </div>
-                                         
+                                        <img cals="" width=100 src="<%= process.env.IMAGE_URL + row.imageId %>">
+
+
+                                        <div class="mb-3">
+                                            <label for="photo">Change Pic</label>
+                                            <input class="input" id="photo" name="file" type="file" />
+                                        </div>
+
                                         <div class="mb-3">
                                             <label class="form-label">Status : <%=row.status%></label>
                                         </div>
 
                                         <div>
                                             <div>
-                                                <button type="submit"
-                                                    class="btn btn-primary waves-effect waves-light me-1">
-                                                    Submit
-                                                </button>
+
+                                                <button type="submit" class="btn btn-primary"
+                                                    id="submitBtn">Submit</button>
+
                                                 <button type="reset" class="btn btn-secondary waves-effect">
                                                     Cancel
                                                 </button>
@@ -121,12 +130,12 @@
                                         onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
                                         <div class="mb-3">
                                             <label class="form-label">Bank Account Holder Name</label>
-                                           <input type="text" name="bankAccountHolder"
-                                               value="<%=row.bankAccountHolder?row.bankAccountHolder:'' %>" class="form-control"
-                                               required placeholder="Account Holder Name" />
-                                       </div>
+                                            <input type="text" name="bankAccountHolder"
+                                                value="<%=row.bankAccountHolder?row.bankAccountHolder:'' %>"
+                                                class="form-control" required placeholder="Account Holder Name" />
+                                        </div>
                                         <div class="mb-3">
-                                             
+
                                             <label class="form-label">Bank Account Number</label>
                                             <input type="text" name="bankAccount"
                                                 value="<%=row.bankAccount?row.bankAccount:'' %>" class="form-control"
@@ -134,21 +143,20 @@
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Bank IFC Code</label>
-                                            <input type="text" name="bankIfc"
-                                                value="<%=row.bankIfc?row.bankIfc:'' %>" class="form-control"
-                                                required placeholder="First name" />
+                                            <input type="text" name="bankIfc" value="<%=row.bankIfc?row.bankIfc:'' %>"
+                                                class="form-control" required placeholder="First name" />
                                         </div>
-                                        
-                                            <div>
-                                                <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                                                    Submit
-                                                </button>
-                                                <button type="reset" class="btn btn-secondary waves-effect">
-                                                    Cancel
-                                                </button>
-                                            </div>
-                                        
-                                         
+
+                                        <div>
+                                            <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                                Submit
+                                            </button>
+                                            <button type="reset" class="btn btn-secondary waves-effect">
+                                                Cancel
+                                            </button>
+                                        </div>
+
+
                                     </form>
                                 </div>
                                 <div class="tab-pane" id="upi" role="tabpanel">
@@ -156,41 +164,42 @@
                                         onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
                                         <div class="mb-3">
                                             <label class="form-label">UPI ID</label>
-                                           <input type="text" name="upiId"
-                                               value="<%=row.upiId?row.upiId:'' %>" class="form-control"
-                                               required placeholder="UPI ID" />
-                                       </div>
-                                       <div>
-                                        <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                                            Submit
-                                        </button>
-                                        <button type="reset" class="btn btn-secondary waves-effect">
-                                            Cancel
-                                        </button>
-                                    </div>
-                                       
+                                            <input type="text" name="upiId" value="<%=row.upiId?row.upiId:'' %>"
+                                                class="form-control" required placeholder="UPI ID" />
+                                        </div>
+                                        <div>
+                                            <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                                Submit
+                                            </button>
+                                            <button type="reset" class="btn btn-secondary waves-effect">
+                                                Cancel
+                                            </button>
+                                        </div>
+
                                     </form>
                                 </div>
 
                                 <div class="tab-pane" id="withdraw" role="tabpanel">
 
-                                    <form class="custom-validation" action="<%=process.env.ADMIN_URL%>/influencer/withdraw"
+                                    <form class="custom-validation"
+                                        action="<%=process.env.ADMIN_URL%>/influencer/withdraw"
                                         onsubmit="handleSubmit(this)" method="POST" name="player"
                                         enctype="application/x-www-form-urlencoded">
-    
+
                                         <div class="mb-3">
                                             <label class="form-label">Balance:<%= row.totalBalance%> </label>
-    
+
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Amount</label>
                                             <input type="number" name="amount" value="" class="form-control"
                                                 placeholder="Amount Withdraw" max="<%= row.totalBalance%> " />
                                         </div>
-    
+
                                         <div>
                                             <div>
-                                                <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                                <button id="submit-all" type="submit"
+                                                    class="btn btn-primary waves-effect waves-light me-1">
                                                     Submit
                                                 </button>
                                                 <button type="reset" class="btn btn-secondary waves-effect">
@@ -215,6 +224,7 @@
             </div> <!-- end row -->
 
             <%- contentFor('FooterJs') %>
+                <script src="/public/assets/libs/dropzone/min/dropzone.min.js"></script>
 
                 <!-- parsleyjs -->
                 <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
@@ -239,6 +249,5 @@
                             // });
                         }
 
-                    }
                 </script>
                 <%- contentFor('BottomJs') %>

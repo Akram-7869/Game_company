@@ -21,6 +21,9 @@ const InfluencerSchema = new mongoose.Schema({
     type: String,
 
   },
+  imageId: {
+    type: String,
+  },
 
   phone: {
     type: String,

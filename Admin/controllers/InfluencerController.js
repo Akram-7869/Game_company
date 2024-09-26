@@ -1,5 +1,6 @@
 const asyncHandler = require('../middleware/async');
-const { callApi, api_url, redirect } = require('../helper/common');
+const { callApi, api_url, redirect, uploadFile, deletDiskFile } = require('../helper/common');
+const path = require('path');
 var apiUrl = api_url + '/influencers/';
 
 
@@ -7,14 +8,19 @@ exports.listInfluencer = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Datatables' };
       res.render('Influencer/list', { 'message': req.flash('message'), 'error': req.flash('error') });
 });
-
+let handleIndexUrl = (req) => {
+      if (req.role === 'influencer') {
+            return process.env.ADMIN_URL + '/influencer/profile';
+      } else {
+            return process.env.ADMIN_URL + '/admin/influencer'
+      }
+}
 
 exports.getInfluencer = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Post', apiUrl, indexUrl: handleIndexUrl(req), originalUrl: req.originalUrl };
+
       callApi(req).get(apiUrl + req.params.id)
             .then(r => {
-
-                  res.locals = { title: 'Influencer' };
                   res.render('Influencer/edit', { row: r.data.data });
             })
             .catch(error => {
@@ -23,11 +29,10 @@ exports.getInfluencer = asyncHandler(async (req, res, next) => {
 });
 
 exports.profile = asyncHandler(async (req, res, next) => {
-      res.locals = { title: 'Datatables' };
+      res.locals = { title: 'Post', apiUrl, indexUrl: handleIndexUrl(req), originalUrl: req.originalUrl };
       callApi(req).get(apiUrl + req.userId)
             .then(r => {
 
-                  res.locals = { title: 'Influencer' };
                   res.render('Influencer/edit', { row: r.data.data });
             })
             .catch(error => {
@@ -37,9 +42,21 @@ exports.profile = asyncHandler(async (req, res, next) => {
 
 
 exports.updateInfluencer = asyncHandler(async (req, res, next) => {
+      let { description, imageId } = req.body;
+      const file = req.files.file;
 
+      let filename;
+      let filePath;
+      if (file) {
+            filename = '/img/inf/' + file.name;
+            if (imageId) {
+                  filePath = path.resolve(__dirname, '../../assets/' + imageId);
+                  deletDiskFile(filePath);
+            }
+            uploadFile(req, filename, res);
+      }
       res.locals = { title: 'Datatables' };
-      callApi(req).put(apiUrl +  req.userId, req.body)
+      callApi(req).put(apiUrl + req.userId, { ...req.body, filename })
             .then(r => {
                   if (r.data.success) {
                         // Assign value in session
@@ -47,18 +64,14 @@ exports.updateInfluencer = asyncHandler(async (req, res, next) => {
                   } else {
                         req.flash('error', r.data.error);
                   }
-                  if(req.role ==='admin'){
+                  if (req.role === 'admin') {
                         res.redirect(process.env.ADMIN_URL + '/admin/influencer');
-                  }else{
+                  } else {
                         res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
                   }
-                  
             })
             .catch(error => {
-
-
                   req.flash('error', 'Data not updated');
-
             })
 });
 
@@ -73,19 +86,13 @@ exports.deleteInfluencer = asyncHandler(async (req, res, next) => {
 
             })
             .catch(error => {
-
-
                   req.flash('error', 'Data not updated');
-
             })
       res.status(200).json({
             success: true,
             data: {}
       });
 });
-
-
-
 
 exports.getInfluencers = asyncHandler(async (req, res, next) => {
 
@@ -172,7 +179,7 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 });
 
 exports.withdraw = asyncHandler(async (req, res, next) => {
-     
+
       res.locals = { title: 'Influencer' };
       callApi(req).get(apiUrl + req.userId)
             .then(r => {
@@ -182,8 +189,8 @@ exports.withdraw = asyncHandler(async (req, res, next) => {
             })
             .catch(error => {
 
-            }) 
-      
+            })
+
 });
 
 exports.postwithdraw = asyncHandler(async (req, res, next) => {
@@ -223,7 +230,7 @@ exports.addBank = asyncHandler(async (req, res, next) => {
 });
 exports.addUpi = asyncHandler(async (req, res, next) => {
 
-       callApi(req).post(apiUrl + 'upi', req.body)
+      callApi(req).post(apiUrl + 'upi', req.body)
             .then(r => {
                   // Assign value in session
                   res.locals = { title: 'Influencer' };

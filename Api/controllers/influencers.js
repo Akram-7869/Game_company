@@ -6,6 +6,10 @@ const Follow = require('../models/Follow');
 const axios = require('axios');
 const Influencer = require('../models/Influencer');
 const admin = require('../utils/fiebase');
+const { deletDiskFile, uploadFile } = require('../utils/utils');
+const path = require('path');
+const fs = require('fs');
+
 
 
 // @desc      Get all users
@@ -63,6 +67,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.params.id);
+  let {filename} =req.body;
   if (!user) {
     return next(
       new ErrorResponse(`User  not found`)
@@ -75,21 +80,20 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
       new ErrorResponse(
         `User  is not authorized to update`)
     );
-
-    user.status = req.body.status;
-
   } else if (user.id !== req.user.id) {
     return next(
       new ErrorResponse(
         `User  is not authorized to update`)
     );
   }
-
+    
   user.firstName = req.body.firstName;
   user.lastName = req.body.lastName;
   user.phone = req.body.phone;
   user.displayName = req.body.displayName;
-
+  if(filename){
+     user.imageId = filename;
+  }
 
   //user.isNew = false;
   await user.save();
@@ -507,7 +511,7 @@ exports.getUserList = asyncHandler(async (req, res, next) => {
       displayName: 1,
       followCount:1,
       isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] },
-      profilePic: 1,
+      profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
 
     }
   }, 
@@ -537,4 +541,56 @@ exports.getUserList = asyncHandler(async (req, res, next) => {
 
   res.json({ data: rows }); // table.total, table.dat
 
+});
+
+exports.getFollowingList = asyncHandler(async (req, res, next) => {
+  const playerId = req.player._id; // The current player's ID
+  const page = parseInt(req.query.page) || 1; // Current page (1-indexed)
+  const limit = parseInt(req.query.limit) || 10; // Number of influencers per page
+  const searchTerm = req.query.search || ""; // Search term from query
+
+  // First step: Get the list of influencer IDs the player is following
+  const pipeline = [
+    {
+      $match: { playerId } // Match the playerId in the follows collection
+    },
+    {
+      $lookup: {
+        from: "influencers", // Join the influencers collection
+        localField: "influencerId", // Field from follows collection
+        foreignField: "_id", // Field from influencers collection
+        as: "influencerInfo" // Name of the array to hold the matched influencers
+      }
+    },
+    { $unwind: "$influencerInfo" }, // Unwind the matched influencers to avoid arrays
+    {
+      $project: {
+        _id: 0, // Exclude the original _id from follows
+        influencerId: "$influencerInfo._id", // Include influencer's ID
+        firstName: "$influencerInfo.firstName",
+        displayName: "$influencerInfo.displayName",
+        followCount: "$influencerInfo.followCount",
+        profilePic: "$influencerInfo.profilePic"
+      }
+    },
+    { $skip: (page - 1) * limit }, // Skip for pagination
+    { $limit: limit } // Limit for pagination
+  ];
+
+  // Conditionally add search logic if a search term is provided
+  if (searchTerm) {
+    pipeline.unshift({
+      $match: {
+        $or: [
+          { "influencerInfo.firstName": { $regex: searchTerm, $options: "i" } },  // Case-insensitive search on firstName
+          { "influencerInfo.displayName": { $regex: searchTerm, $options: "i" } } // Case-insensitive search on displayName
+        ]
+      }
+    });
+  }
+
+  // Run the aggregation pipeline
+  const influencers = await Follows.aggregate(pipeline);
+
+  res.json({ data: influencers }); // Return the list of following influencers
 });
