@@ -505,6 +505,7 @@ exports.getUserList = asyncHandler(async (req, res, next) => {
       _id: 1,
       firstName: 1,
       displayName: 1,
+      followCount:1,
       isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] },
       profilePic: 1,
 

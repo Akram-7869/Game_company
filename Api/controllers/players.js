@@ -2215,21 +2215,21 @@ exports.getGift = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
-  let data = {title:'better luck', giftAmount:req.player.giftAmount}
+  let data = {title:'better luck next time', giftAmount:req.player.giftAmount}
   if (req.player.giftAmount > 0 ) {
+    let data = {title:'Reward', giftAmount:req.player.giftAmount}
+
      
-  }
-  const gift = await PlayerGift.findOne({_id:req.player._id, status:'notclaimed'});
- 
+  } 
   res.status(200).json({
     success: true,
-    data: gift
+    data: data
   });
 });
 
 exports.calimedGift = asyncHandler(async (req, res, next) => {
-  let {giftId}=req.body;
-  if (!giftId) {
+  let {playerId}=req.body;
+  if (!playerId) {
     return next(
       new ErrorResponse(`giftId  not found`)
     );
@@ -2240,7 +2240,7 @@ exports.calimedGift = asyncHandler(async (req, res, next) => {
     );
   }
  
-  const player = await Player.findByIdAndUpdate(req.player._id, {giftAmount:0});
+  const player = await Player.findByIdAndUpdate(playerId, {giftAmount:0});
   
   let tranData = {
     playerId: req.player._id,
