@@ -3,7 +3,7 @@ const asyncHandler = require('../middleware/async');
 const User = require('../models/Influencer');
 const Follow = require('../models/Follow');
 
-const axios = require('Axios');
+const axios = require('axios');
 const Influencer = require('../models/Influencer');
 const admin = require('../utils/fiebase');
 
