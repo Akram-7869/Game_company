@@ -198,6 +198,10 @@ const PlayerSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  isCalimed: {
+    type: Boolean,
+    default: false
+  },
 
 
   refrer_player_id: {

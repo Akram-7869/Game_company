@@ -2240,7 +2240,7 @@ exports.calimedGift = asyncHandler(async (req, res, next) => {
     );
   }
  
-  const player = await Player.findByIdAndUpdate(playerId, {giftAmount:0});
+  const player = await Player.findByIdAndUpdate(playerId, {giftAmount:0, isCalimed:true});
   
   let tranData = {
     playerId: req.player._id,
