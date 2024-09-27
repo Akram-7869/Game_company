@@ -565,12 +565,13 @@ exports.getFollowingList = asyncHandler(async (req, res, next) => {
     { $unwind: "$influencerInfo" }, // Unwind the matched influencers to avoid arrays
     {
       $project: {
-        _id: 0, // Exclude the original _id from follows
-        influencerId: "$influencerInfo._id", // Include influencer's ID
+        // _id: 0, // Exclude the original _id from follows
+        _id: "$influencerInfo._id", // Include influencer's ID
         firstName: "$influencerInfo.firstName",
         displayName: "$influencerInfo.displayName",
         followCount: "$influencerInfo.followCount",
-        profilePic: "$influencerInfo.profilePic"
+        profilePic: { $concat: [process.env.IMAGE_URL, '$influencerInfo.imageId'] },
+        isFollowing:true
       }
     },
     { $skip: (page - 1) * limit }, // Skip for pagination
