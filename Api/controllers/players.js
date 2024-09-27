@@ -2229,31 +2229,29 @@ exports.getGift = asyncHandler(async (req, res, next) => {
 
 exports.calimedGift = asyncHandler(async (req, res, next) => {
   let {playerId}=req.body;
-  if (!playerId) {
-    return next(
-      new ErrorResponse(`giftId  not found`)
-    );
-  }
-  if (!req.player) {
+  
+  if (!req.player ) {
     return next(
       new ErrorResponse(`Player  not found`)
     );
   }
  
   const player = await Player.findByIdAndUpdate(playerId, {giftAmount:0, isCalimed:true});
+  if(req.player.giftAmount > 0){
+    let tranData = {
+      playerId: req.player._id,
+      amount:req.player.giftAmount,
+      transactionType: 'credit',
+      note: 'player gift',
+      prevBalance: req.player.balance,
+      status: 'complete', paymentStatus: 'SUCCESS',
+      'stateCode': req.player.stateCode,
+      'logType': 'player_gift',
   
-  let tranData = {
-    playerId: req.player._id,
-    amount:req.player.giftAmount,
-    transactionType: 'credit',
-    note: 'player gift',
-    prevBalance: req.player.balance,
-    status: 'complete', paymentStatus: 'SUCCESS',
-    'stateCode': req.player.stateCode,
-    'logType': 'player_gift',
-
+    }
+    let tran = await Transaction.create(tranData);
   }
-  let tran = await Transaction.create(tranData);
+  
  
   res.status(200).json({
     success: true,
