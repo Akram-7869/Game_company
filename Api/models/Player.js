@@ -200,7 +200,9 @@ const PlayerSchema = new mongoose.Schema({
   },
   isCalimed: {
     type: Boolean,
-    default: false
+    default: false,
+    required: true,
+
   },
 
 
