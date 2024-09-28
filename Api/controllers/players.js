@@ -2215,9 +2215,9 @@ exports.getGift = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Player  not found`)
     );
   }
-  let data = {title:'better luck next time', giftAmount:req.player.giftAmount}
+  let data = {title:'better luck next time', giftAmount:req.player.giftAmount , isCalimed: req.player.isCalimed}
   if (req.player.giftAmount > 0 ) {
-    let data = {title:'Reward', giftAmount:req.player.giftAmount}
+    let data = {title:'Reward', giftAmount:req.player.giftAmount, isCalimed: req.player.isCalimed}
 
      
   } 
@@ -2236,7 +2236,10 @@ exports.calimedGift = asyncHandler(async (req, res, next) => {
     );
   }
  
-  const player = await Player.findByIdAndUpdate(playerId, {giftAmount:0, isCalimed:true});
+  const player = await Player.findByIdAndUpdate(req.player._id, {giftAmount:0, isCalimed:true},  {
+    new: true,
+    runValidators: true
+  });
   if(req.player.giftAmount > 0){
     let tranData = {
       playerId: req.player._id,
