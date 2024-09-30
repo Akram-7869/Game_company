@@ -146,8 +146,8 @@ let onConnection = (socket) => {
           if (!state[roomName]['codeObj']) {
             state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobby);
           }
-          state[roomName]['codeObj'].syncPlayer(socket, d);
-          state[roomName]['codeObj'].setupGame();
+          // state[roomName]['codeObj'].syncPlayer(socket, d);
+          // state[roomName]['codeObj'].setupGame();
 
           //socket.emit('join', { ...d, gameType: gameName.teen_patti, room: roomName, status: 'success', numberOfClients });
           break;
