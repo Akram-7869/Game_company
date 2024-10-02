@@ -48,7 +48,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="tab" href="#upi" role="tab">
                                         <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
-                                        <span class="d-none d-sm-block">UPI</span>
+                                        <span class="d-none d-sm-block">UPI / USDT</span>
                                     </a>
                                 </li>
 
@@ -171,12 +171,27 @@
                                             <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
                                                 Submit
                                             </button>
-                                            <button type="reset" class="btn btn-secondary waves-effect">
-                                                Cancel
-                                            </button>
+                                            
                                         </div>
 
                                     </form>
+                                    <div class="mt-3">
+                                    <form id="upi" action="<%=process.env.ADMIN_URL%>/influencer/usdt"
+                                        onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
+                                        <div class="mb-3">
+                                            <label class="form-label">USDT(trc20)</label>
+                                            <input type="text" name="usdt" value="<%=row.usdt?row.usdt:'' %>"
+                                                class="form-control" required placeholder="usdt(trc20)" />
+                                        </div>
+                                        <div>
+                                            <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
+                                                Submits
+                                            </button>
+                                            
+                                        </div>
+
+                                    </form>
+                                    </div>
                                 </div>
 
                                 <div class="tab-pane" id="withdraw" role="tabpanel">
@@ -185,7 +200,21 @@
                                         action="<%=process.env.ADMIN_URL%>/influencer/withdraw"
                                         onsubmit="handleSubmit(this)" method="POST" name="player"
                                         enctype="application/x-www-form-urlencoded">
-
+                                        <div class="mb-3">
+                                            <label class="form-label">WithDrawTO</label>
+                                        <div class="col-md-10">
+                                            
+                                            <select class="form-select" name="withdrawTo" required>
+                                                <option value="">select...</option>
+                                                <option value="notverified" <%=row.withdrawTo==='usdt' ?'selected':'' %>
+                                                    >USDT</option>
+                                                <option value="inactive" <%=row.withdrawTo==='upi' ?'selected':'' %>
+                                                    >upi</option>
+                                                <option value="inactive" <%=row.withdrawTo==='bank' ?'selected':'' %>
+                                                    >bank</option>
+                                            </select>
+                                        </div>
+                                        </div>
                                         <div class="mb-3">
                                             <label class="form-label">Balance:<%= row.totalBalance%> </label>
 
