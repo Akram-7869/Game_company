@@ -39,6 +39,9 @@ class TeenpattiGame {
         if (this.turnOrder.length < this.maxPlayers && !playerExit) {
 
             player['hand'] = [];
+            player['seen'] = false;
+            player['pack'] = false;
+            player['isDealer'] = false;
             this.turnOrder.push(player);
             this.setupPlayerListeners(socket)
 
@@ -57,12 +60,27 @@ class TeenpattiGame {
         // socket.on('OnRaise', (data) => this.handlePlayerRaise(socket, data));
         // socket.on('OnSeen', (data) => this.handlePlayerSeen(socket, data));
         // socket.on('OnPack', (data) => this.handlePlayerPack(socket, data));
+          // socket.on('OnPack', (data) => this.handlePlayerPack(socket, data));
+          socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
 
 
 
 
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket, data));
 
+    }
+    sendCurrentStatus(socket) {
+        let d = {
+            gameType: 'TeenPatti',
+            room: this.roomName,
+            currentPhase: this.currentPhase,
+            players: this.turnOrder,
+            currentTurnIndex: this.currentTurnIndex,
+            turnTimer: this.turnTimer?.remaining,
+            currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
+        };
+        console.log('OnCurrentStatus');
+        socket.emit('OnCurrentStatus', d);
     }
     setupGame() {
         if (this.roomJoinTimers) return; // Prevent multiple starts
@@ -131,8 +149,13 @@ class TeenpattiGame {
                 type: 'bot',
                 playerStatus: 'joined',
                 avtar: pathurl,
+
                 score: 0,
-                winingAmount: 0
+                winingAmount: 0,
+                hand:[],
+                'seen':false,
+            'pack': false,
+            'isDealer': false,
             }
 
             this.turnOrder.push(botPlayer);
