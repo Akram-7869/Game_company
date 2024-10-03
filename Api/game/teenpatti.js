@@ -78,6 +78,8 @@ class TeenpattiGame {
             currentTurnIndex: this.currentTurnIndex,
             turnTimer: this.turnTimer?.remaining,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
+            currentBet:this.currentBet,
+            pot:this.pot
         };
         console.log('OnCurrentStatus');
         socket.emit('OnCurrentStatus', d);
