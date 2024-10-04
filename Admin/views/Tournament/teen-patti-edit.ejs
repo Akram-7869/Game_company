@@ -57,9 +57,14 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Poll Amount</label>
-                                    <input type="number" name="pollAmount" value="<%=row.pollAmount?row.pollAmount:'100' %>"
-                                        class="form-control" required placeholder="pollAmount" />
+                                    <label class="form-label">Bet Amount</label>
+                                    <input type="number" name="betAmount" value="<%=row.betAmount?row.betAmount:'100' %>"
+                                        class="form-control" required placeholder="betAmount" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">PotLimit</label>
+                                    <input type="number" name="potLimit" value="<%=row.potLimit?row.potLimit:100 %>"
+                                        class="form-control" required placeholder="potLimit" />
                                 </div>
 
                                 <div class="mb-3">
