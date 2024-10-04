@@ -27,7 +27,7 @@ class TeenpattiGame {
         let deck = [];
 
         this.pot = 0;
-        this.currentBet = tournament.betAmount;
+        this.currentBet = 5; //tournament.betAmount;
 
 
 
@@ -49,7 +49,7 @@ class TeenpattiGame {
 
 
     }
-    
+
 
     setupPlayerListeners(socket) {
         // socket.on('OnCall', (data) => this.handlePlayerCall(socket, data));
@@ -60,8 +60,8 @@ class TeenpattiGame {
         // socket.on('OnRaise', (data) => this.handlePlayerRaise(socket, data));
         // socket.on('OnSeen', (data) => this.handlePlayerSeen(socket, data));
         // socket.on('OnPack', (data) => this.handlePlayerPack(socket, data));
-          // socket.on('OnPack', (data) => this.handlePlayerPack(socket, data));
-          socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
+        // socket.on('OnPack', (data) => this.handlePlayerPack(socket, data));
+        socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
 
 
 
@@ -78,8 +78,8 @@ class TeenpattiGame {
             currentTurnIndex: this.currentTurnIndex,
             turnTimer: this.turnTimer?.remaining,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
-            currentBet:this.currentBet,
-            pot:this.pot
+            currentBet: this.currentBet,
+            pot: this.pot
         };
         console.log('OnCurrentStatus');
         socket.emit('OnCurrentStatus', d);
@@ -110,16 +110,17 @@ class TeenpattiGame {
     }
     initializePlayerScores() {
         for (let i = 0; i < this.turnOrder.length; i++) {
-          let player = this.turnOrder[i];
+            let player = this.turnOrder[i];
+            if (i == 0) {
+                player['isDealer'] = true;
+            }
+            player['score'] = 0;
+            player['winnerPosition'] = this.maxPlayers;
+            player['winingAmount'] = 0;
+        }
+        this.post = this.currentBet * this.turnOrder.length;
+    }
 
-          player['score'] = 0;
-          player['winnerPosition'] = this.maxPlayers;
-          player['winingAmount'] = 0;
-      }
-  
-
-}
-  
 
     checkAndAddBots() {
         if (this.tournament.bot) {
@@ -135,11 +136,11 @@ class TeenpattiGame {
             this.emitJoinPlayer();
         }
     }
-    
+
     addBots(count) {
         for (let i = 0; i < count; i++) {
             let botId = `${i + 1}-bot`;
-             
+
             let name = generateName();
             let pathurl = process.env.IMAGE_URL + '/img/logo/profile_default.png';
             let botPlayer = {
@@ -154,10 +155,10 @@ class TeenpattiGame {
 
                 score: 0,
                 winingAmount: 0,
-                hand:[],
-                'seen':false,
-            'pack': false,
-            'isDealer': false,
+                hand: [],
+                'seen': false,
+                'pack': false,
+                'isDealer': false,
             }
 
             this.turnOrder.push(botPlayer);
@@ -366,17 +367,17 @@ class TeenpattiGame {
 
 
     //game function
-     sideshow(currentPlayer, previousPlayer) {
+    sideshow(currentPlayer, previousPlayer) {
         if (!currentPlayer || !previousPlayer) {
             throw new Error('Both current and previous players must be defined.');
         }
-    
-        const result = this.compareHands(currentPlayer ,previousPlayer);
-     
-       return result;
+
+        const result = this.compareHands(currentPlayer, previousPlayer);
+
+        return result;
     }
-    
- 
+
+
     createDeck() {
         this.deck = [];
         for (let suit of this.suits) {
