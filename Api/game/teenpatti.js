@@ -78,6 +78,8 @@ class TeenpattiGame {
             currentTurnIndex: this.currentTurnIndex,
             turnTimer: this.turnTimer?.remaining,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
+            ante: this.currentBet,
+
             currentBet: this.currentBet,
             pot: this.pot
         };
