@@ -120,7 +120,7 @@ class TeenpattiGame {
             player['winnerPosition'] = this.maxPlayers;
             player['winingAmount'] = 0;
         }
-        this.post = this.currentBet * this.turnOrder.length;
+        this.pot = this.currentBet * this.turnOrder.length;
     }
 
 
