@@ -108,7 +108,7 @@ class TeenpattiGame {
         // console.log(`Pause phase started in room: ${this.roomName}`);
          
 
-        this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
+        this.pauseTimer = new Timer(this.pauseTime, (remaining) => {}, () => {
             if (this.isGameReady) {
                 this.initializePlayerScores();
                 this.currentPhase = 'initializing';
@@ -117,8 +117,6 @@ class TeenpattiGame {
                 console.log("Not enough players to start the game.");
                 this.io.to(this.roomName).emit('game_cancelled', { reason: 'Not enough players' });
             }
-         }, () => {
-            //this.resetTimers();
         });
 
         this.pauseTimer.startTimer();
