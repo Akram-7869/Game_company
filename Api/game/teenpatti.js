@@ -186,13 +186,14 @@ class TeenpattiGame {
 
     async startGame() {
         publicRoom[this.tournament._id]['played'] = true;
-        this.currentPhase = 'playing';
-        this.round += 1;
+       
         // this.createDeck();
         // this.dealCards();
         console.log(`Game started in room: ${this.roomName}`);
 
-        await sleep(3000)
+        await sleep(3000);
+        this.currentPhase = 'playing';
+        this.round += 1;
         this.nextTurn();
 
     }
