@@ -7,7 +7,7 @@ class TeenpattiGame {
         this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.tournament = tournament;
 
         this.turnOrder = [];
-        this.currentTurnIndex = 1;
+        this.currentTurnIndex = 0;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.turnTimer = undefined;
         this.roomJoinTimers = undefined;
