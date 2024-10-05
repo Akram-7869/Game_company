@@ -361,18 +361,19 @@ class TeenpattiGame {
     }
     botTurn(socket,data) {
         // Function for bot decision-making
-        //  let {PlayerID, amount} = data;
-        //  let player = this.findPlayerByUserId(PlayerID);
-        //  const handValue = this.evaluateHand(player.hand);
-        // // Simple logic for bots to decide to bet, call, or fold
-        // if (handValue === 'Trail or Set' || handValue === 'Pair') {
-        //     this.handlePlayerBet(socket,data);
-        // } else if (Math.random() > 0.5) {
-        //     this.handlePlayerBet(socket,data);
-        // } else {
-        //     this.handlefold(socket,data );
-        // }
-        this.botTimer = setTimeout(() => this.nextTurn(), this.botMoveDelay);
+         let {PlayerID, amount} = data;
+         let player = this.findPlayerByUserId(PlayerID);
+         const handValue = this.evaluateHand(player.hand);
+        // Simple logic for bots to decide to bet, call, or fold
+        if (handValue === 'Trail or Set' || handValue === 'Pair') {
+            this.botTimer = setTimeout(() =>  this.handlePlayerBet(socket,data), this.botMoveDelay);
+        } else if (Math.random() > 0.5) {
+            this.botTimer = setTimeout(() =>  this.handlePlayerBet(socket,data), this.botMoveDelay);
+        } else {
+            this.handlefold(socket,data );
+             this.botTimer = setTimeout(() =>  this.handlefold(socket,data ), this.botMoveDelay);
+        }
+       
          
 
 
