@@ -203,11 +203,9 @@ class TeenpattiGame {
 
     async startGame() {
         publicRoom[this.tournament._id]['played'] = true;
-       
         // this.createDeck();
         // this.dealCards();
         console.log(`Game started in room: ${this.roomName}`);
-
         // await sleep(5000);
         this.currentPhase = 'playing';
         this.round += 1;
@@ -274,36 +272,46 @@ class TeenpattiGame {
 
     handlePlayerBet(socket ,data) {
         let {player, amount} = data;
-        this.playerBet(player, amount);
-
+        if (amount < this.currentBet) {
+            throw new Error("Bet amount must be equal to or higher than the current bet");
+        }
+  
+        this.pot += amount;
+        this.currentBet = amount; // Update the current bet
         this.io.to(this.roomName).emit('OnBetPlaced', {
             player, amount, type: 'CALL'
 
         });
-    }
-    playerBet(player, amount) {
-        if (amount < this.currentBet) {
-            throw new Error("Bet amount must be equal to or higher than the current bet");
-        }
-
-        // player.bet = amount;
-        // player.balance -= amount;
-        this.pot += amount;
-        this.currentBet = amount; // Update the current bet
         this.nextTurn();
     }
-    handlefold(socket, player) {
-        console.log(`${player.name} has folded.`);
-        player.fold = true;
-        this.activePlayers = this.activePlayers.filter(p => p !== player);
-        this.nextTurn();
-    }
-    handleSeen(socket, data) {
+   
+    handlefold(socket, data) {
         let {player}=data;
+        console.log(`${player.name} has folded.`);
+        
+        player.fold = true;
+        player.playerStatus = 'fold';
+        
+        
+        this.io.to(this.roomName).emit('OnFold', {
+            player
+        });
+
+        this.nextTurn();
+    }
+    
+    handleSeen(socket, data) {
+        
+        let {player}=data;
+        console.log(`${player.name} has seen.`);
+        player.seen =true;
         this.io.to(this.roomName).emit('OnSeen', {
             player
         });
+        this.nextTurn();
     }
+
+   
 
     nextTurn(socket) {
 
@@ -351,6 +359,8 @@ class TeenpattiGame {
         this.turnTimer = new Timer(15, undefined, () => {
 
             if (this.currentPhase === 'playing') {
+                let data={};
+                this.handlefold(socket, data);
                 this.nextTurn();
             }
 
@@ -358,17 +368,17 @@ class TeenpattiGame {
 
         this.turnTimer.startTimer();
     }
-    botTurn(bot) {
+    botTurn(socket,data) {
         // Function for bot decision-making
-
-        const handValue = this.evaluateHand(bot.hand);
+        let {player} = data;
+        const handValue = this.evaluateHand(player.hand);
         // Simple logic for bots to decide to bet, call, or fold
         if (handValue === 'Trail or Set' || handValue === 'Pair') {
-            return 'bet'; // Bet with good hands
+            this.handlePlayerBet(socket,data);
         } else if (Math.random() > 0.5) {
-            return 'call'; // Random chance to call
+            this.handlePlayerBet(socket,data);
         } else {
-            return 'fold'; // Random chance to fold
+            this.handlefold(socket,data );
         }
 
 
@@ -479,10 +489,6 @@ class TeenpattiGame {
         if (isHighCard(cards)) return "High Card";
       
 }
-
-
-
-
 
     // Compare two hands to determine the better hand
     compareHands(hand1, hand2) {
