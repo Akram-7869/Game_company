@@ -266,8 +266,8 @@ class TeenpattiGame {
 
 
     handlePlayerBet(socket ,data) {
-        let {userId, amount} = data;
-        let player = this.findPlayerByUserId(userId);
+        let {PlayerID, amount} = data;
+        let player = this.findPlayerByUserId(PlayerID);
         if (amount < this.currentBet) {
             throw new Error("Bet amount must be equal to or higher than the current bet");
         }
@@ -282,8 +282,8 @@ class TeenpattiGame {
     }
    
     handlefold(socket, data) {
-        let {userId} = data;
-        let player = this.findPlayerByUserId(userId);
+        let {PlayerID} = data;
+        let player = this.findPlayerByUserId(PlayerID);
         console.log(`${player.name} has folded.`);
         
         player.fold = true;
@@ -299,8 +299,8 @@ class TeenpattiGame {
     
     handleSeen(socket, data) {
         
-        let {userId} = data;
-        let player = this.findPlayerByUserId(userId);
+        let {PlayerID} = data;
+        let player = this.findPlayerByUserId(PlayerID);
         console.log(`${player.name} has seen.`);
         player.seen =true;
         this.io.to(this.roomName).emit('OnSeen', {
@@ -350,7 +350,7 @@ class TeenpattiGame {
         this.io.to(this.roomName).emit('OnNextTurn',d);
 
         if (currentPlayer.type === 'bot') {
-            this.botTurn(socket, {userId: d.currentPalyerId , amount: this.currentBet});
+            this.botTurn(socket, {PlayerID: d.currentPalyerId , amount: this.currentBet});
             return;
         }
 
@@ -368,8 +368,8 @@ class TeenpattiGame {
     }
     botTurn(socket,data) {
         // Function for bot decision-making
-         let {userId, amount} = data;
-         let player = this.findPlayerByUserId(userId);
+         let {PlayerID, amount} = data;
+         let player = this.findPlayerByUserId(PlayerID);
          const handValue = this.evaluateHand(player.hand);
         // Simple logic for bots to decide to bet, call, or fold
         if (handValue === 'Trail or Set' || handValue === 'Pair') {
