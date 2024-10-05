@@ -94,6 +94,7 @@ class TeenpattiGame {
         }, () => {
             if (this.isGameReady) {
                 this.initializePlayerScores();
+                this.currentPhase = 'initializing';
                 this.startGame();
             } else {
                 console.log("Not enough players to start the game.");
