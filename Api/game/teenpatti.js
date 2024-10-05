@@ -281,15 +281,13 @@ class TeenpattiGame {
     handlefold(socket, data) {
         let {PlayerID} = data;
         let player = this.findPlayerByUserId(PlayerID);
-        console.log(`${player.name} has folded.`);
+        console.log(`has folded.`);
         
         player.fold = true;
         player.playerStatus = 'fold';
         
         
-        this.io.to(this.roomName).emit('OnFold', {
-            player
-        });
+        this.io.to(this.roomName).emit('OnFold', data);
 
         this.nextTurn();
     }
@@ -300,9 +298,7 @@ class TeenpattiGame {
         let player = this.findPlayerByUserId(PlayerID);
         console.log(`${player.name} has seen.`);
         player.seen =true;
-        this.io.to(this.roomName).emit('OnSeen', {
-            player
-        });
+        this.io.to(this.roomName).emit('OnSeen', data);
         this.nextTurn();
     }
 
