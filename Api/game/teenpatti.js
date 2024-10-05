@@ -80,7 +80,7 @@ class TeenpattiGame {
             currentBet: this.currentBet,
             pot: this.pot
         };
-        console.log('OnCurrentStatus');
+        console.log('OnCurrentStatus',d);
         socket.emit('OnCurrentStatus', d);
     }
     setupGame() {
@@ -301,7 +301,7 @@ class TeenpattiGame {
         }
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
         let currentPlayer = this.turnOrder[this.currentTurnIndex];
-        console.log('OnNextTurn', JSON.stringify(this.turnOrder, null, 4));
+        console.log('OnNextTurn');
 
         if (currentPlayer.playerStatus !== 'joined') {
             for (let i = 1; i < this.turnOrder.length; i++) {
