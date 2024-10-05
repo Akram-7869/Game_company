@@ -209,7 +209,7 @@ class TeenpattiGame {
         // this.dealCards();
         console.log(`Game started in room: ${this.roomName}`);
 
-        await sleep(5000);
+        // await sleep(5000);
         this.currentPhase = 'playing';
         this.round += 1;
         this.nextTurn();
