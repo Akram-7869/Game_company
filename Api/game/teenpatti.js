@@ -283,7 +283,6 @@ class TeenpattiGame {
    
     handlefold(socket, data) {
         let {PlayerID} = data;
-        
         let player = this.findPlayerByUserId(PlayerID);
         console.log(`${player.name} has folded.`);
         
@@ -322,7 +321,7 @@ class TeenpattiGame {
         }
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
         let currentPlayer = this.turnOrder[this.currentTurnIndex];
-        console.log('OnNextTurn');
+        console.log('OnNextTurn', this.currentTurnIndex);
 
         if (currentPlayer.playerStatus !== 'joined') {
             for (let i = 1; i < this.turnOrder.length; i++) {
