@@ -130,7 +130,7 @@ class TeenpattiGame {
                 player['isDealer'] = true;
             }
             player.hand = this.deck.splice(0, 3); 
-            player.rank = this.evaluateHand(player.hand);
+            player.cardRank = this.evaluateHand(player.hand);
     
         }
         this.pot = this.currentBet * this.turnOrder.length;
