@@ -57,6 +57,9 @@ class TeenpattiGame {
         socket.on('OnSideShow', (data) => this.handleSideShow(socket, data));
         socket.on('OnFold', (data) => this.handlefold(socket, data));
         socket.on('OnSeen', (data) => this.handleSeen(socket, data));
+        socket.on('OnSideShowResponse', (data) => this.handleSideShowResponse(socket, data));
+        socket.on('OnShow', (data) => this.handleShow(socket, data));
+       
         socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket, data));
 
@@ -220,7 +223,16 @@ class TeenpattiGame {
     resetGame() {
         this.gameState = 'waiting';
     }
+    handleShow(socket ,data){
+        let {PlayerID, amount} = data;
+        let player = this.findPlayerByUserId(PlayerID);
 
+    }
+    handleSideShowResponse(socket ,data){
+        let {PlayerID, amount} = data;
+        let player = this.findPlayerByUserId(PlayerID);
+
+    }
     handlePlayerLeave(socket) {
         try {
             console.log('OnleaveRoom--teenpatii')
@@ -299,7 +311,7 @@ class TeenpattiGame {
         console.log(`${player.name} has seen.`);
         player.seen =true;
         this.io.to(this.roomName).emit('OnSeen', data);
-        this.nextTurn();
+        // this.nextTurn();
     }
 
    
@@ -370,7 +382,6 @@ class TeenpattiGame {
         } else if (Math.random() > 0.5) {
             this.botTimer = setTimeout(() =>  this.handlePlayerBet(socket,data), this.botMoveDelay);
         } else {
-            this.handlefold(socket,data );
              this.botTimer = setTimeout(() =>  this.handlefold(socket,data ), this.botMoveDelay);
         }
        
@@ -400,10 +411,7 @@ class TeenpattiGame {
         let {currentPlayer, previousPlayer} =data;
         let result = this.sideshow(currentPlayer, previousPlayer);
 
-        this.io.to(this.roomName).emit('OnSideShow', {
-            result
-
-        });
+        this.io.to(this.roomName).emit('OnSideShow', {...data });
     }
 
     //game function
