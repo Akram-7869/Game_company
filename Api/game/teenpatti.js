@@ -92,8 +92,10 @@ class TeenpattiGame {
             this.io.to(this.roomName).emit('join_tick', { remaining });
             if (remaining === 3) {
                 this.checkAndAddBots();
+                
             }
         }, () => {
+            this.initializePlayerScores();
             this.startPausePhase();
             
         });
@@ -110,7 +112,7 @@ class TeenpattiGame {
 
         this.pauseTimer = new Timer(this.pauseTime, (remaining) => {}, () => {
             if (this.isGameReady) {
-                this.initializePlayerScores();
+              
                 this.currentPhase = 'initializing';
                 this.startGame();
             } else {
