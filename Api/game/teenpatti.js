@@ -16,7 +16,7 @@ class TeenpattiGame {
         this.round = 0;
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 5; // 5 seconds
-        this.botMoveDelay = 2000;
+        this.botMoveDelay = 5000;
         this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
 
@@ -379,7 +379,8 @@ class TeenpattiGame {
         // } else {
         //     this.handlefold(socket,data );
         // }
-        // this.nextTurn();
+        this.botTimer = setTimeout(() => this.nextTurn(), this.botMoveDelay);
+         
 
 
     }
