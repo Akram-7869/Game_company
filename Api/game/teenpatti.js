@@ -379,7 +379,7 @@ class TeenpattiGame {
         // } else {
         //     this.handlefold(socket,data );
         // }
-        this.nextTurn();
+        // this.nextTurn();
 
 
     }
