@@ -7,7 +7,7 @@ class TeenpattiGame {
         this.io = io; this.roomName = roomName; this.maxPlayers = maxPlayers; this.tournament = tournament;
 
         this.turnOrder = [];
-        this.currentTurnIndex = -1;
+        this.currentTurnIndex = 0;
         this.currentPhase = 'waiting'; // possible states: waiting, playing, finished
         this.turnTimer = undefined;
         this.roomJoinTimers = undefined;
@@ -15,7 +15,7 @@ class TeenpattiGame {
 
         this.round = 0;
         this.bettingTime = 20; // 20 seconds
-        this.pauseTime = 9; // 5 seconds
+        this.pauseTime = 5; // 5 seconds
         this.botMoveDelay = 2000;
         this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
@@ -94,6 +94,21 @@ class TeenpattiGame {
                 this.checkAndAddBots();
             }
         }, () => {
+            this.startPausePhase();
+            
+        });
+
+        this.roomJoinTimers.startTimer();
+        console.log(`Game setup in room: ${this.roomName}`);
+
+    }
+    startPausePhase() {
+        this.currentPhase = 'initializing';
+        // RolletGame.io.to(this.roomName).emit('OnTimeUp', { phase: 'pause' });
+        // console.log(`Pause phase started in room: ${this.roomName}`);
+         
+
+        this.pauseTimer = new Timer(this.pauseTime, (remaining) => {
             if (this.isGameReady) {
                 this.initializePlayerScores();
                 this.currentPhase = 'initializing';
@@ -102,11 +117,11 @@ class TeenpattiGame {
                 console.log("Not enough players to start the game.");
                 this.io.to(this.roomName).emit('game_cancelled', { reason: 'Not enough players' });
             }
+         }, () => {
+            //this.resetTimers();
         });
 
-        this.roomJoinTimers.startTimer();
-        console.log(`Game setup in room: ${this.roomName}`);
-
+        this.pauseTimer.startTimer();
     }
     initializePlayerScores() {
         this.createDeck();
