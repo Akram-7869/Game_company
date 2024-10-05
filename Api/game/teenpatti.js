@@ -283,6 +283,7 @@ class TeenpattiGame {
    
     handlefold(socket, data) {
         let {PlayerID} = data;
+        
         let player = this.findPlayerByUserId(PlayerID);
         console.log(`${player.name} has folded.`);
         
@@ -358,7 +359,7 @@ class TeenpattiGame {
 
             if (this.currentPhase === 'playing') {
                 let data={};
-                this.handlefold(socket, data);
+               // this.handlefold(socket, data);
                 this.nextTurn();
             }
 
