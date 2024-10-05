@@ -274,10 +274,7 @@ class TeenpattiGame {
   
         this.pot += amount;
         this.currentBet = amount; // Update the current bet
-        this.io.to(this.roomName).emit('OnBetPlaced', {
-            player, amount, type: 'CALL'
-
-        });
+        this.io.to(this.roomName).emit('OnBetPlaced', {...data , pot:this.pot});
         this.nextTurn();
     }
    
