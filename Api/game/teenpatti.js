@@ -73,7 +73,7 @@ class TeenpattiGame {
             currentPhase: this.currentPhase,
             players: this.turnOrder,
             currentTurnIndex: this.currentTurnIndex,
-            turnTimer: this.turnTimer.remaining ?? 15,
+            turnTimer: !this.turnTimer ?15 : this.turnTimer.remaining,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
             ante: this.currentBet,
 
