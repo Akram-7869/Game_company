@@ -46,7 +46,7 @@ class TeenpattiGame {
             player['fold'] = false;
             player['isDealer'] = false;
             player['playerStatus'] = 'joined',
-            player['rank'] = '';
+            player['cardRank'] = '';
 
             this.turnOrder.push(player);
             this.setupPlayerListeners(socket)
@@ -106,8 +106,7 @@ class TeenpattiGame {
     }
     startPausePhase() {
         this.currentPhase = 'initializing';
-        // RolletGame.io.to(this.roomName).emit('OnTimeUp', { phase: 'pause' });
-        // console.log(`Pause phase started in room: ${this.roomName}`);
+        console.log(`Pause phase started in room: ${this.roomName}`);
          
 
         this.pauseTimer = new Timer(this.pauseTime, (remaining) => {}, () => {
@@ -172,7 +171,7 @@ class TeenpattiGame {
                 'seen': false,
                 'fold': false,
                 'isDealer': false,
-                'rank':''
+                'cardRank':''
             }
 
             this.turnOrder.push(botPlayer);
