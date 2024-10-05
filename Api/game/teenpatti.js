@@ -39,7 +39,6 @@ class TeenpattiGame {
 
         let playerExit = this.findPlayerByUserId(player.userId);
         if (this.turnOrder.length < this.maxPlayers && !playerExit) {
-
             player['hand'] = [];
             player['type'] = 'player';
             player['seen'] = false;
@@ -47,13 +46,9 @@ class TeenpattiGame {
             player['isDealer'] = false;
             player['playerStatus'] = 'joined',
             player['cardRank'] = '';
-
             this.turnOrder.push(player);
             this.setupPlayerListeners(socket)
-
         }
-
-
     }
 
 
@@ -80,7 +75,7 @@ class TeenpattiGame {
             currentBet: this.currentBet,
             pot: this.pot
         };
-        console.log('OnCurrentStatus',d);
+        console.log('OnCurrentStatus');
         socket.emit('OnCurrentStatus', d);
     }
     setupGame() {
@@ -271,7 +266,8 @@ class TeenpattiGame {
 
 
     handlePlayerBet(socket ,data) {
-        let {player, amount} = data;
+        let {userId, amount} = data;
+        let player = this.findPlayerByUserId(userId);
         if (amount < this.currentBet) {
             throw new Error("Bet amount must be equal to or higher than the current bet");
         }
@@ -286,7 +282,8 @@ class TeenpattiGame {
     }
    
     handlefold(socket, data) {
-        let {player}=data;
+        let {userId} = data;
+        let player = this.findPlayerByUserId(userId);
         console.log(`${player.name} has folded.`);
         
         player.fold = true;
@@ -302,7 +299,8 @@ class TeenpattiGame {
     
     handleSeen(socket, data) {
         
-        let {player}=data;
+        let {userId} = data;
+        let player = this.findPlayerByUserId(userId);
         console.log(`${player.name} has seen.`);
         player.seen =true;
         this.io.to(this.roomName).emit('OnSeen', {
@@ -340,8 +338,7 @@ class TeenpattiGame {
         }
 
 
-
-        this.io.to(this.roomName).emit('OnNextTurn', {
+        let d=  {
             gameType: 'Teenpati',
             room: this.roomName,
             currentPhase: this.currentPhase,
@@ -349,10 +346,11 @@ class TeenpattiGame {
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
             timer: 15
 
-        });
+        }
+        this.io.to(this.roomName).emit('OnNextTurn',d);
 
         if (currentPlayer.type === 'bot') {
-            this.botTurn(currentPlayer);
+            this.botTurn(socket, {userId: d.currentPalyerId , amount: this.currentBet});
             return;
         }
 
@@ -370,16 +368,17 @@ class TeenpattiGame {
     }
     botTurn(socket,data) {
         // Function for bot decision-making
-        // let {player} = data;
-        // const handValue = this.evaluateHand(player.hand);
-        // // Simple logic for bots to decide to bet, call, or fold
-        // if (handValue === 'Trail or Set' || handValue === 'Pair') {
-        //     this.handlePlayerBet(socket,data);
-        // } else if (Math.random() > 0.5) {
-        //     this.handlePlayerBet(socket,data);
-        // } else {
-        //     this.handlefold(socket,data );
-        // }
+         let {userId, amount} = data;
+         let player = this.findPlayerByUserId(userId);
+         const handValue = this.evaluateHand(player.hand);
+        // Simple logic for bots to decide to bet, call, or fold
+        if (handValue === 'Trail or Set' || handValue === 'Pair') {
+            this.handlePlayerBet(socket,data);
+        } else if (Math.random() > 0.5) {
+            this.handlePlayerBet(socket,data);
+        } else {
+            this.handlefold(socket,data );
+        }
         this.nextTurn();
 
 
