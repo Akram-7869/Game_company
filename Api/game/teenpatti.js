@@ -39,9 +39,11 @@ class TeenpattiGame {
         if (this.turnOrder.length < this.maxPlayers && !playerExit) {
 
             player['hand'] = [];
+            player['type'] = 'player';
             player['seen'] = false;
-            player['pack'] = false;
+            player['fold'] = false;
             player['isDealer'] = false;
+            player['playerStatus'] = 'joined',
             player['rank'] = '';
 
             this.turnOrder.push(player);
@@ -57,13 +59,8 @@ class TeenpattiGame {
         socket.on('OnBetPlaced', (data) => this.handlePlayerBet(socket, data));
         socket.on('OnSideShow', (data) => this.handleSideShow(socket, data));
         socket.on('OnFold', (data) => this.handlefold(socket, data));
-
         socket.on('OnSeen', (data) => this.handleSeen(socket, data));
         socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
-
-
-
-
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket, data));
 
     }
@@ -155,7 +152,7 @@ class TeenpattiGame {
                 avtar: pathurl,
                 hand: [],
                 'seen': false,
-                'pack': false,
+                'fold': false,
                 'isDealer': false,
                 'rank':''
             }
@@ -279,7 +276,7 @@ class TeenpattiGame {
     }
     handlefold(socket, player) {
         console.log(`${player.name} has folded.`);
-        player.folded = true;
+        player.fold = true;
         this.activePlayers = this.activePlayers.filter(p => p !== player);
         this.nextTurn();
     }
@@ -348,7 +345,7 @@ class TeenpattiGame {
 
         const handValue = this.evaluateHand(bot.hand);
         // Simple logic for bots to decide to bet, call, or fold
-        if (handValue === 'Three of a Kind' || handValue === 'Pair') {
+        if (handValue === 'Trail or Set' || handValue === 'Pair') {
             return 'bet'; // Bet with good hands
         } else if (Math.random() > 0.5) {
             return 'call'; // Random chance to call
