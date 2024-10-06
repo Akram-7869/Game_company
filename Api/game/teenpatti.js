@@ -25,7 +25,7 @@ class TeenpattiGame {
         // ['Hearts = 1', 'Diamonds = 2', 'Clubs = 3', 'Spades = 4'];
         this.suits = [1, 2, 3, 4];
         // [2, 3, 4, 5, 6, 7, 8, 9, 10,j, k, q, a]];
-        this.ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10,11, 12, 13, 14];
+        this.ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
         this.deck = [];
 
         this.pot = 0;
@@ -45,7 +45,7 @@ class TeenpattiGame {
             player['fold'] = false;
             player['isDealer'] = false;
             player['playerStatus'] = 'joined',
-            player['cardRank'] = '';
+                player['cardRank'] = '';
             this.turnOrder.push(player);
             this.setupPlayerListeners(socket)
         }
@@ -59,7 +59,7 @@ class TeenpattiGame {
         socket.on('OnSeen', (data) => this.handleSeen(socket, data));
         socket.on('OnSideShowResponse', (data) => this.handleSideShowResponse(socket, data));
         socket.on('OnShow', (data) => this.handleShow(socket, data));
-       
+
         socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket, data));
 
@@ -71,7 +71,7 @@ class TeenpattiGame {
             currentPhase: this.currentPhase,
             players: this.turnOrder,
             currentTurnIndex: this.currentTurnIndex,
-            turnTimer: !this.turnTimer ?15 : this.turnTimer.remaining,
+            turnTimer: !this.turnTimer ? 15 : this.turnTimer.remaining,
             currentPalyerId: this.turnOrder[this.currentTurnIndex].userId,
             ante: this.currentBet,
 
@@ -90,12 +90,12 @@ class TeenpattiGame {
             this.io.to(this.roomName).emit('join_tick', { remaining });
             if (remaining === 3) {
                 this.checkAndAddBots();
-                
+
             }
         }, () => {
             this.initializePlayerScores();
             this.startPausePhase();
-            
+
         });
 
         this.roomJoinTimers.startTimer();
@@ -105,11 +105,11 @@ class TeenpattiGame {
     startPausePhase() {
         this.currentPhase = 'initializing';
         console.log(`Pause phase started in room: ${this.roomName}`);
-         
 
-        this.pauseTimer = new Timer(this.pauseTime, (remaining) => {}, () => {
+
+        this.pauseTimer = new Timer(this.pauseTime, (remaining) => { }, () => {
             if (this.isGameReady) {
-              
+
                 this.currentPhase = 'initializing';
                 this.startGame();
             } else {
@@ -127,12 +127,12 @@ class TeenpattiGame {
             if (i == 0) {
                 player['isDealer'] = true;
             }
-            player.hand = this.deck.splice(0, 3); 
+            player.hand = this.deck.splice(0, 3);
             player.cardRank = this.evaluateHand(player.hand);
-    
+
         }
         this.pot = this.currentBet * this.turnOrder.length;
-        
+
     }
 
 
@@ -169,7 +169,7 @@ class TeenpattiGame {
                 'seen': false,
                 'fold': false,
                 'isDealer': false,
-                'cardRank':''
+                'cardRank': ''
             }
 
             this.turnOrder.push(botPlayer);
@@ -210,7 +210,26 @@ class TeenpattiGame {
         this.nextTurn();
 
     }
+    resetGame() {
 
+        this.turnOrder = [];
+        this.currentTurnIndex = 0;
+        this.currentPhase = 'waiting';
+        this.round = 0;
+        this.isGameReady = false;
+        if (this.turnTimer) {
+            this.turnTimer.reset(15);
+        }
+        if (this.roomJoinTimers) {
+            this.roomJoinTimers.reset(15);
+        }
+        if (this.bettingTimer) {
+            this.bettingTimer.reset(3);
+        }
+
+
+
+    }
 
 
     endGame() {
@@ -220,16 +239,14 @@ class TeenpattiGame {
         this.resetGame();
     }
 
-    resetGame() {
-        this.gameState = 'waiting';
-    }
-    handleShow(socket ,data){
-        let {PlayerID, amount} = data;
+    
+    handleShow(socket, data) {
+        let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
 
     }
-    handleSideShowResponse(socket ,data){
-        let {PlayerID, amount} = data;
+    handleSideShowResponse(socket, data) {
+        let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
 
     }
@@ -277,44 +294,44 @@ class TeenpattiGame {
     }
 
 
-    handlePlayerBet(socket ,data) {
-        let {PlayerID, amount} = data;
+    handlePlayerBet(socket, data) {
+        let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
         if (amount < this.currentBet) {
             throw new Error("Bet amount must be equal to or higher than the current bet");
         }
-  
+
         this.pot += amount;
         this.currentBet = amount; // Update the current bet
-        this.io.to(this.roomName).emit('OnBetPlaced', {...data , pot:this.pot});
+        this.io.to(this.roomName).emit('OnBetPlaced', { ...data, pot: this.pot });
         this.nextTurn();
     }
-   
+
     handlefold(socket, data) {
-        let {PlayerID} = data;
+        let { PlayerID } = data;
         let player = this.findPlayerByUserId(PlayerID);
         console.log(`has folded.`);
-        
+
         player.fold = true;
         player.playerStatus = 'fold';
-        
-        
+
+
         this.io.to(this.roomName).emit('OnFold', data);
 
         this.nextTurn();
     }
-    
+
     handleSeen(socket, data) {
-        
-        let {PlayerID} = data;
+
+        let { PlayerID } = data;
         let player = this.findPlayerByUserId(PlayerID);
         console.log(`${player.name} has seen.`);
-        player.seen =true;
+        player.seen = true;
         this.io.to(this.roomName).emit('OnSeen', data);
         // this.nextTurn();
     }
 
-   
+
 
     nextTurn(socket) {
 
@@ -343,7 +360,7 @@ class TeenpattiGame {
         }
 
 
-        let d=  {
+        let d = {
             gameType: 'Teenpati',
             room: this.roomName,
             currentPhase: this.currentPhase,
@@ -352,18 +369,18 @@ class TeenpattiGame {
             timer: 15
 
         }
-        this.io.to(this.roomName).emit('OnNextTurn',d);
+        this.io.to(this.roomName).emit('OnNextTurn', d);
 
         if (currentPlayer.type === 'bot') {
-            this.botTurn(socket, {PlayerID: d.currentPalyerId , amount: this.currentBet});
+            this.botTurn(socket, { PlayerID: d.currentPalyerId, amount: this.currentBet });
             return;
         }
 
         this.turnTimer = new Timer(15, undefined, () => {
 
             if (this.currentPhase === 'playing') {
-                let data={};
-               // this.handlefold(socket, data);
+                let data = {};
+                // this.handlefold(socket, data);
                 this.nextTurn();
             }
 
@@ -371,26 +388,43 @@ class TeenpattiGame {
 
         this.turnTimer.startTimer();
     }
-    botTurn(socket,data) {
+    async botTurn(socket, data) {
         // Function for bot decision-making
-         let {PlayerID, amount} = data;
-         let player = this.findPlayerByUserId(PlayerID);
-         const handValue = this.evaluateHand(player.hand);
-        // Simple logic for bots to decide to bet, call, or fold
-        if (handValue === 'Trail or Set' || handValue === 'Pair') {
-            this.botTimer = setTimeout(() =>  this.handlePlayerBet(socket,data), this.botMoveDelay);
-        } else if (Math.random() > 0.5) {
-            this.botTimer = setTimeout(() =>  this.handlePlayerBet(socket,data), this.botMoveDelay);
-        } else {
-             this.botTimer = setTimeout(() =>  this.handlefold(socket,data ), this.botMoveDelay);
+        let { PlayerID, amount } = data;
+        let player = this.findPlayerByUserId(PlayerID);
+        if (!player.seen) {
+            this.handleSeen(socket, data)
+            await sleep(3000);
         }
-       
-         
+
+        const handValue = this.evaluateHand(player.hand);
+
+        await sleep(5000);
+
+        // Simple logic for bots to decide to bet, call, or fold
+        if (handValue === 'Trail or Set' || handValue === 'Pure Sequence') {
+            this.handlePlayerBet(socket, data);
+        } else if (Math.random() > 0.5) {
+            this.handlePlayerBet(socket, data);
+        } else {
+            this.handlefold(socket, data);
+        }
+
+
 
 
     }
+    countJoinedPlayers() {
+        let joinedCount = 0;
+        for (let i = 0; i < this.turnOrder.length; i++) {
+            if (this.turnOrder[i].playerStatus === 'joined') {
+                joinedCount++;
+            }
+        }
+        return joinedCount;
+    }
     checkGameStatus() {
-        // let players = this.countJoinedPlayers();
+         let players = this.countJoinedPlayers();
         // console.log('checkGameStatus', this.maxPlayers, players);
         // if (this.maxPlayers == 2) {
         //     if (this.winnerPosition == 1) {
@@ -401,27 +435,26 @@ class TeenpattiGame {
         //         return this.endGame('Game completed');
         //     }
         // }
-        // if (players <= 1) {
-        //     this.endGame('All players left');
-        // }
+        if (players <= 1) {
+            this.endGame('All players left');
+        }
 
 
     }
-    handleSideShow(socket,data) {
-        let {currentPlayer, previousPlayer} =data;
+    handleSideShow(socket, data) {
+        let { currentPlayer, previousPlayer } = data;
         let result = this.sideshow(currentPlayer, previousPlayer);
 
-        this.io.to(this.roomName).emit('OnSideShow', {...data });
+        this.io.to(this.roomName).emit('OnSideShow', { ...data, result });
     }
 
     //game function
-    
+
     sideshow(currentPlayer, previousPlayer) {
         if (!currentPlayer || !previousPlayer) {
             throw new Error('Both current and previous players must be defined.');
         }
         const result = this.compareHands(currentPlayer, previousPlayer);
-
         return result;
     }
 
@@ -453,36 +486,36 @@ class TeenpattiGame {
 
     // Evaluate the player's hand
     // gameLogic.js
- evaluateHand(cards) {
-    
+    evaluateHand(cards) {
+
         // Helper functions
         function isTrail(cards) {
-          return cards.every(card => card.rank === cards[0].rank);
+            return cards.every(card => card.rank === cards[0].rank);
         }
-      
+
         function isPureSequence(cards) {
-          return isSequence(cards) && cards.every(card => card.suit === cards[0].suit);
+            return isSequence(cards) && cards.every(card => card.suit === cards[0].suit);
         }
-      
+
         function isSequence(cards) {
-          return cards.sort((a, b) => a.rank - b.rank).every((card, index, arr) => {
-            if (index === 0) return true;
-            return card.rank === arr[index - 1].rank + 1;
-          });
+            return cards.sort((a, b) => a.rank - b.rank).every((card, index, arr) => {
+                if (index === 0) return true;
+                return card.rank === arr[index - 1].rank + 1;
+            });
         }
-      
+
         function isColor(cards) {
-          return cards.every(card => card.suit === cards[0].suit);
+            return cards.every(card => card.suit === cards[0].suit);
         }
-      
+
         function isPair(cards) {
-          return cards.filter(card => card.rank === cards[0].rank).length === 2;
+            return cards.filter(card => card.rank === cards[0].rank).length === 2;
         }
-      
+
         function isHighCard(cards) {
-          return !isTrail(cards) && !isPureSequence(cards) && !isSequence(cards) && !isColor(cards) && !isPair(cards);
+            return !isTrail(cards) && !isPureSequence(cards) && !isSequence(cards) && !isColor(cards) && !isPair(cards);
         }
-      
+
         // Ranking logic
         if (isTrail(cards)) return "Trail or Set";
         if (isPureSequence(cards)) return "Pure Sequence";
@@ -490,8 +523,8 @@ class TeenpattiGame {
         if (isColor(cards)) return "Color";
         if (isPair(cards)) return "Pair";
         if (isHighCard(cards)) return "High Card";
-      
-}
+
+    }
 
     // Compare two hands to determine the better hand
     compareHands(hand1, hand2) {
@@ -503,10 +536,10 @@ class TeenpattiGame {
             'Pair': 2,
             'High Card': 1
         };
-    
+
         const hand1Rank = handRanks[this.evaluateHand(hand1)];
         const hand2Rank = handRanks[this.evaluateHand(hand2)];
-    
+
         if (hand1Rank > hand2Rank) {
             return 1;
         } else if (hand2Rank > hand1Rank) {
