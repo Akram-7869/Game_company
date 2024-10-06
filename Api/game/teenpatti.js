@@ -392,10 +392,10 @@ class TeenpattiGame {
         // Function for bot decision-making
         let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
-        if (player.seen === false) {
-            
-            this.handleSeen(socket, data)
+        if (!player.seen) {
             await sleep(3000);
+            this.handleSeen(socket, data)
+
         }
 
         const handValue = this.evaluateHand(player.hand);
