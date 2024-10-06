@@ -1,4 +1,4 @@
-const { getBotName, publicRoom, sleep } = require("../utils/JoinRoom");
+const { getBotName, publicRoom, sleep, state, userLeave } = require("../utils/JoinRoom");
 const { generateName } = require("../utils/utils");
 const Timer = require("./Timer");
 
@@ -62,7 +62,20 @@ class TeenpattiGame {
 
         socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
         socket.on('onleaveRoom', (data) => this.handlePlayerLeave(socket, data));
+    }
+    removePlayerListeners(socket) {
 
+        socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
+        socket.removeAllListeners('OnFold');
+        socket.removeAllListeners('OnSeen');
+        socket.removeAllListeners('OnShow');
+        socket.removeAllListeners('OnCurrentStatus');
+    
+        socket.removeAllListeners('OnBetPlaced');
+        socket.removeAllListeners('OnSideShow');
+        socket.removeAllListeners('OnSideShowResponse');
+        socket.removeAllListeners('onleaveRoom');
+    
     }
     sendCurrentStatus(socket) {
         let d = {
@@ -222,9 +235,23 @@ class TeenpattiGame {
 
     endGame() {
         this.gameState = 'finished';
-        this.io.to(this.roomName).emit('game_end', { message: 'Game has ended.' });
+      
+        this.handleResult();
         console.log(`Game ended in room: ${this.roomName}`);
         this.resetGame();
+    }
+    handleResult() {
+
+        clearTimeout(this.botTimer);
+        let winner = this.determineWinner(this.turnOrder.filter(p=>p.playerStatus ==='joined'));
+        this.botTimer = setTimeout(() => {
+            let d= { winnerId: winner.userId, name:winner.name };
+            this.io.to(this.roomName).emit('OnResult', d);
+            clearTimeout(this.botTimer);
+            console.log('result declared', d);
+            publicRoom[this.tournament._id]['played'] = true;
+            delete state[this.roomName]
+        }, 3000);
     }
 
     
@@ -232,22 +259,44 @@ class TeenpattiGame {
         let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
 
+        this,this.checkGameStatus();
+
     }
     handleSideShowResponse(socket, data) {
         let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
 
+        this.checkGameStatus();
+
     }
-    handlePlayerLeave(socket) {
+    handlePlayerLeave(socket, data) {
         try {
+
             console.log('OnleaveRoom--teenpatii')
+            let { PlayerID } = data;
+            userLeave({ userId: PlayerID, room: this.roomName })
+            
             socket.leave(this.roomName);
 
-            socket.removeAllListeners('onleaveRoom');
+            this.removePlayerListeners(socket);
             // playerManager.RemovePlayer(socket.id);
             socket.emit('onleaveRoom', {
                 success: `successfully leave ${this.roomName} game.`,
             });
+
+            if (this.currentPhase === 'playing') {
+                this.checkGameStatus();
+    
+            } else if (this.currentPhase === 'createdroom') {
+                this.deletePlayerByUserId(PlayerID);
+                this.emitJoinPlayer();
+                let playerCount = this.countPlayers();
+                if (playerCount <= 1) {
+                    delete state[this.roomName];
+                    publicRoom[this.tournament._id]['played'] = true;
+                }
+            }
+            
         } catch (err) {
             console.log(err);
         }
@@ -306,7 +355,7 @@ class TeenpattiGame {
 
         this.io.to(this.roomName).emit('OnFold', data);
 
-        this.nextTurn();
+       this.checkGameStatus();
     }
 
     handleSeen(socket, data) {
@@ -414,18 +463,10 @@ class TeenpattiGame {
     }
     checkGameStatus() {
          let players = this.countJoinedPlayers();
-        // console.log('checkGameStatus', this.maxPlayers, players);
-        // if (this.maxPlayers == 2) {
-        //     if (this.winnerPosition == 1) {
-        //         return this.endGame('Game completed');
-        //     }
-        // } else if (this.maxPlayers == 4) {
-        //     if (this.winnerPosition == this.tournament.winners) {
-        //         return this.endGame('Game completed');
-        //     }
-        // }
         if (players <= 1) {
-            this.endGame('All players left');
+            this.endGame();
+        }else{
+            this.nextTurn();
         }
 
 
