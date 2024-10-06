@@ -102,12 +102,12 @@ class TeenpattiGame {
         console.log(`Game setup in room: ${this.roomName}`);
 
     }
-    startPausePhase() {
+    async startPausePhase() {
         this.currentPhase = 'initializing';
         console.log(`Pause phase started in room: ${this.roomName}`);
 
 
-        this.pauseTimer = new Timer(this.pauseTime, (remaining) => { }, () => {
+         await sleep(5000);
             if (this.isGameReady) {
 
                 this.currentPhase = 'initializing';
@@ -116,9 +116,7 @@ class TeenpattiGame {
                 console.log("Not enough players to start the game.");
                 this.io.to(this.roomName).emit('game_cancelled', { reason: 'Not enough players' });
             }
-        });
-
-        this.pauseTimer.startTimer();
+        
     }
     initializePlayerScores() {
         this.createDeck();
