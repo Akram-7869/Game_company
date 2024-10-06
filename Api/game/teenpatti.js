@@ -86,39 +86,21 @@ class TeenpattiGame {
 
         this.currentPhase = 'createdroom';
         this.roomJoinTimers = new Timer(10, (remaining) => {
-
             this.io.to(this.roomName).emit('join_tick', { remaining });
             if (remaining === 3) {
                 this.checkAndAddBots();
-
             }
         }, () => {
-            this.initializePlayerScores();
-            this.startPausePhase();
-
+            this.initializeBoard();
         });
 
         this.roomJoinTimers.startTimer();
         console.log(`Game setup in room: ${this.roomName}`);
 
     }
-    async startPausePhase() {
+    async initializeBoard() {
         this.currentPhase = 'initializing';
-        console.log(`Pause phase started in room: ${this.roomName}`);
-
-
-         await sleep(10000);
-            if (this.isGameReady) {
-
-                this.currentPhase = 'initializing';
-                this.startGame();
-            } else {
-                console.log("Not enough players to start the game.");
-                this.io.to(this.roomName).emit('game_cancelled', { reason: 'Not enough players' });
-            }
-        
-    }
-    initializePlayerScores() {
+        console.log(`setupGameBoard phase started in room: ${this.roomName}`);
         this.createDeck();
         for (let i = 0; i < this.turnOrder.length; i++) {
             let player = this.turnOrder[i];
@@ -131,8 +113,16 @@ class TeenpattiGame {
         }
         this.pot = this.currentBet * this.turnOrder.length;
 
-    }
 
+         await sleep(9000);
+            if (this.isGameReady) {
+                 this.startGame();
+            } else {
+                console.log("Not enough players to start the game.");
+                this.io.to(this.roomName).emit('game_cancelled', { reason: 'Not enough players' });
+            }
+        
+    }
 
     checkAndAddBots() {
         if (this.tournament.bot) {
