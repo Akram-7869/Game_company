@@ -107,7 +107,7 @@ class TeenpattiGame {
         console.log(`Pause phase started in room: ${this.roomName}`);
 
 
-         await sleep(5000);
+         await sleep(10000);
             if (this.isGameReady) {
 
                 this.currentPhase = 'initializing';
