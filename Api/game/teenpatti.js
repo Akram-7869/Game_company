@@ -245,7 +245,7 @@ class TeenpattiGame {
         clearTimeout(this.botTimer);
         let winner = this.determineWinner(this.turnOrder.filter(p=>p.playerStatus ==='joined'));
         this.botTimer = setTimeout(() => {
-            let d= { winnerId: winner.userId, name:winner.name };
+            let d= { winnerId: winner.userId, name:winner.name , pot:this.pot};
             this.io.to(this.roomName).emit('OnResult', d);
             clearTimeout(this.botTimer);
             console.log('result declared', d);
@@ -259,7 +259,7 @@ class TeenpattiGame {
         let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
 
-        this.checkGameStatus();
+        this.handleResult();
 
     }
     handleSideShowResponse(socket, data) {
@@ -275,14 +275,23 @@ class TeenpattiGame {
             console.log('OnleaveRoom--teenpatii')
             let { PlayerID } = data;
             userLeave({ userId: PlayerID, room: this.roomName })
-            
-            socket.leave(this.roomName);
-
             this.removePlayerListeners(socket);
+            socket.leave(this.roomName);
             // playerManager.RemovePlayer(socket.id);
             socket.emit('onleaveRoom', {
                 success: `successfully leave ${this.roomName} game.`,
             });
+
+            let player = this.findPlayerByUserId(PlayerID);
+            if (player) {
+                if (this.currentPhase !== 'finished') {
+                    player.playerStatus = 'Left';
+                 }
+                // dont delete after game started 
+                if (!this.isGameReady) {
+                    this.deletePlayerByUserId(PlayerID);
+                }
+            }
 
             if (this.currentPhase === 'playing') {
                 this.checkGameStatus();
