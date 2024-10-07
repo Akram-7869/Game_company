@@ -259,7 +259,7 @@ class TeenpattiGame {
         let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
 
-        this,this.checkGameStatus();
+        this.checkGameStatus();
 
     }
     handleSideShowResponse(socket, data) {
