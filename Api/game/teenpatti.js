@@ -269,7 +269,7 @@ class TeenpattiGame {
      //   console.log('nextPlayer', nextPlayer);
         if (nextPlayer.type === 'player') {
             console.log('player');
-            this.io.to(nextPlayer.socketId).emit('OnSideShow', {...data, prePlayerId:PlayerID});
+            this.io.to(nextPlayer.socketId).emit('OnSideShow', {...data, nextPlayerId:nextPlayer.socketId});
         } else {
             console.log('bot');
             await sleep(1000);
@@ -278,13 +278,14 @@ class TeenpattiGame {
 
     }
     handleSideShowResponse(socket, data) {
-        let { PlayerID, IsAccepted,prePlayerId } = data;
+        let { PlayerID, IsAccepted,nextPlayerId } = data;
         let player = this.findPlayerByUserId(PlayerID);
-console.log('handleSideShowResponse',PlayerID, IsAccepted,prePlayerId);
+console.log('handleSideShowResponse',PlayerID, IsAccepted,nextPlayerId);
         let nextPlayer = this.findNextActivePlayer(PlayerID);
         if(player.type==='player'){
-            let player1 = this.findPlayerByUserId(prePlayerId);
-            
+
+            let player1 = this.findPlayerByUserId(nextPlayerId);
+
             this.io.to(player1.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
             return;
         }
@@ -436,7 +437,6 @@ console.log('handleSideShowResponse',PlayerID, IsAccepted,prePlayerId);
 
     handlePlayerBet(socket, data) {
         let { PlayerID, amount } = data;
-        console.log(PlayerID, amount, this.currentBet);
         let player = this.findPlayerByUserId(PlayerID);
         if (amount < this.currentBet) {
             throw new Error("Bet amount must be equal to or higher than the current bet");
