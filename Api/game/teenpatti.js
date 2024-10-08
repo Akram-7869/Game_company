@@ -269,7 +269,7 @@ class TeenpattiGame {
      //   console.log('nextPlayer', nextPlayer);
         if (nextPlayer.type === 'player') {
             console.log('player');
-            this.io.to(nextPlayer.socketId).emit('OnSideShow', {...data, nextPlayerId:nextPlayer.socketId});
+            this.io.to(nextPlayer.socketId).emit('OnSideShow', {...data});
         } else {
             console.log('bot');
             await sleep(1000);
@@ -278,15 +278,14 @@ class TeenpattiGame {
 
     }
     handleSideShowResponse(socket, data) {
-        let { PlayerID, IsAccepted,nextPlayerId } = data;
+        let { PlayerID, IsAccepted } = data;
         let player = this.findPlayerByUserId(PlayerID);
-console.log('handleSideShowResponse',PlayerID, IsAccepted,nextPlayerId);
+console.log('handleSideShowResponse',PlayerID, IsAccepted);
         let nextPlayer = this.findNextActivePlayer(PlayerID);
         if(player.type==='player'){
 
-            let player1 = this.findPlayerByUserId(nextPlayerId);
 
-            this.io.to(player1.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
+            this.io.to(player.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
             return;
         }
         if (IsAccepted === 'false') {
