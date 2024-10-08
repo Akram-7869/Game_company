@@ -309,7 +309,7 @@ class TeenpattiGame {
         const playerCount = this.turnOrder.length;
     
         // Find the index of the current player
-        
+
         let currentIndex = this.turnOrder.findIndex(player => player.userId === currentPlayerID);
     
         // Start searching for the next active player from the next position
@@ -518,16 +518,17 @@ class TeenpattiGame {
 
         const handValue = this.evaluateHand(player.hand);
 
-        await sleep(5000);
+        await sleep(2000);
+        this.handlePlayerBet(socket, data);
 
         // Simple logic for bots to decide to bet, call, or fold
-        if (handValue === 'Trail or Set' || handValue === 'Pure Sequence') {
-            this.handlePlayerBet(socket, data);
-        } else if (Math.random() > 0.5) {
-            this.handlePlayerBet(socket, data);
-        } else {
-            this.handlefold(socket, data);
-        }
+        // if (handValue === 'Trail or Set' || handValue === 'Pure Sequence') {
+        //     this.handlePlayerBet(socket, data);
+        // } else if (Math.random() > 0.5) {
+        //     this.handlePlayerBet(socket, data);
+        // } else {
+        //     this.handlefold(socket, data);
+        // }
 
 
 
@@ -563,7 +564,8 @@ class TeenpattiGame {
               this.io.to(nextPlayer.socketId).emit('OnSideShow', data );
         }else{
             console.log('bot');
-            await sleep(3000);
+           await sleep(1000);
+           console.log(socket.id);
              this.io.to(socket.id).emit('OnSideShowResponse', { ...data, IsAccepted:'false', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name});
         }
       
