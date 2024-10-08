@@ -284,8 +284,9 @@ console.log('handleSideShowResponse',PlayerID, IsAccepted, nextPlayerId);
         let nextPlayer = this.findNextActivePlayer(PlayerID);
         if(player.type==='player'){
             if (IsAccepted === 'false') {
+                let player1 = this.findPlayerByUserId(nextPlayerId);
 
-            this.io.to(player.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
+            this.io.to(player1.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
             return;
             }else{
                 let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
