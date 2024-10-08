@@ -28,8 +28,7 @@ class TeenpattiGame {
         this.ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
         this.deck = [];
 
-        this.pot = 0;
-        this.currentBet = 5; //tournament.betAmount;
+        //tournament.betAmount;
 
 
 
@@ -113,6 +112,8 @@ class TeenpattiGame {
 
     }
     async initializeBoard() {
+        this.pot = 0;
+        this.currentBet = 5;
         this.currentPhase = 'initializing';
         console.log(`setupGameBoard phase started in room: ${this.roomName}`);
         this.createDeck();
@@ -120,9 +121,14 @@ class TeenpattiGame {
             let player = this.turnOrder[i];
             if (i == 0) {
                 player['isDealer'] = true;
+            }else{
+                player['isDealer'] = false;
             }
             player.hand = this.deck.splice(0, 3);
             player.cardRank = this.evaluateHand(player.hand);
+            player['seen'] = false;
+            player['fold'] = false;
+            player['playerStatus'] = 'joined',
 
         }
         this.pot = this.currentBet * this.turnOrder.length;
