@@ -281,7 +281,9 @@ class TeenpattiGame {
         let { PlayerID, IsAccepted,requestedPlayerId } = data;
         let player = this.findPlayerByUserId(PlayerID);
 console.log('handleSideShowResponse',PlayerID, IsAccepted, requestedPlayerId);
-        let nextPlayer = this.findNextActivePlayer(PlayerID);
+        // let nextPlayer = this.findNextActivePlayer(PlayerID);
+        let nextPlayer = this.findPlayerByUserId(requestedPlayerId);
+
         if(player.type==='player'){
             if (IsAccepted === 'false') {
                 let player1 = this.findPlayerByUserId(requestedPlayerId);
@@ -291,6 +293,9 @@ console.log('handleSideShowResponse',PlayerID, IsAccepted, requestedPlayerId);
             }else{
                 let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
                 let winner = {};
+               
+                this.io.to(player.socketId).to(nextPlayer.socketId).emit('OnSideShowResult', { ...data, IsAccepted: 'true', PlayerID: player.userId, PlayerName: nextPlayer.name, winnerId: winner.userId, name: winner.name });
+                
                 if (winnerIndex === -1) {
                     winner = nextPlayer;
                     this.handlefold({}, { PlayerID: player.userId });
@@ -298,9 +303,6 @@ console.log('handleSideShowResponse',PlayerID, IsAccepted, requestedPlayerId);
                     winner = player;
                     this.handlefold({}, { PlayerID: nextPlayer.userId });
                 }
-                this.io.to(player.socketId).to(nextPlayer.socketId).emit('OnSideShowResult', { ...data, IsAccepted: 'true', PlayerID: player.userId, PlayerName: nextPlayer.name, winnerId: winner.userId, name: winner.name });
-        
-
             }
         }
         if (IsAccepted === 'false') {
