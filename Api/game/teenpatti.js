@@ -267,7 +267,7 @@ class TeenpattiGame {
       
         let nextPlayer = this.findNextActivePlayer(PlayerID)
         if(response === 'false'){
-            this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted:'false', name:nextPlayer.name});
+            this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted:'false', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name});
             return;
         }
         let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
@@ -279,9 +279,32 @@ class TeenpattiGame {
             winner=player;
             this.handlefold({}, {PlayerID : nextPlayer.userId });
         }
-        this.io.to(this.roomName).emit('OnSideShowResponse', { winnerId:nextPlayer.userId, name:nextPlayer.name });
+        this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted:'true', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name, winnerId:nextPlayer.userId, name:nextPlayer.name });
 
     }
+    handleOnSideShowResult(socket, data){
+        let { PlayerID, IsAccepted } = data;
+        let player = this.findPlayerByUserId(PlayerID);
+      
+        let nextPlayer = this.findNextActivePlayer(PlayerID)
+        if(IsAccepted === 'false'){
+            this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted:'false', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name});
+            return;
+        }
+        let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
+        let winner={};
+        if(winnerIndex === -1){
+            winner= nextPlayer;
+            this.handlefold({}, {PlayerID : player.userId});
+        }else{
+            winner=player;
+            this.handlefold({}, {PlayerID : nextPlayer.userId });
+        }
+        this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted:'true', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name, winnerId:nextPlayer.userId, namePlayerName:nextPlayer.name });
+
+    }
+
+
     findNextActivePlayer(currentPlayerID) {
         const playerCount = this.turnOrder.length;
     
