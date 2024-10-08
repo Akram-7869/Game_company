@@ -436,6 +436,7 @@ console.log('handleSideShowResponse',PlayerID, IsAccepted,prePlayerId);
 
     handlePlayerBet(socket, data) {
         let { PlayerID, amount } = data;
+        console.log(PlayerID, amount, this.currentBet);
         let player = this.findPlayerByUserId(PlayerID);
         if (amount < this.currentBet) {
             throw new Error("Bet amount must be equal to or higher than the current bet");
