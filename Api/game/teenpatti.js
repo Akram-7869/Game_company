@@ -261,11 +261,34 @@ class TeenpattiGame {
         this.handleResult();
 
     }
-    handleSideShowResponse(socket, data) {
-        let { PlayerID, IsAccepted } = data;
+    async handleSideShow(socket, data) {
+        let { PlayerID } = data;
         let player = this.findPlayerByUserId(PlayerID);
-
+        console.log(player);
         let nextPlayer = this.findNextActivePlayer(PlayerID)
+     //   console.log('nextPlayer', nextPlayer);
+        if (nextPlayer.type === 'player') {
+            console.log('player');
+            this.io.to(nextPlayer.socketId).emit('OnSideShow', {...data, nextPlayerId:nextPlayer.socketId});
+        } else {
+            console.log('bot');
+            await sleep(1000);
+            this.io.to(socket.id).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
+        }
+
+    }
+    handleSideShowResponse(socket, data) {
+        let { PlayerID, IsAccepted,nextPlayerId } = data;
+        let player = this.findPlayerByUserId(PlayerID);
+console.log(PlayerID, IsAccepted,nextPlayerId);
+        let nextPlayer = this.findNextActivePlayer(PlayerID);
+        if(player.type==='player'){
+
+
+
+            this.io.to(player.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
+   
+        }
         if (IsAccepted === 'false') {
             this.io.to(player.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
             return;
@@ -553,22 +576,7 @@ class TeenpattiGame {
 
 
     }
-    async handleSideShow(socket, data) {
-        let { PlayerID } = data;
-        let player = this.findPlayerByUserId(PlayerID);
-        console.log(player);
-        let nextPlayer = this.findNextActivePlayer(PlayerID)
-        console.log('nextPlayer', nextPlayer);
-        if (nextPlayer.type === 'player') {
-            console.log('player');
-            this.io.to(nextPlayer.socketId).emit('OnSideShow', data);
-        } else {
-            console.log('bot');
-            await sleep(1000);
-            this.io.to(socket.id).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
-        }
 
-    }
 
     //game function
 
