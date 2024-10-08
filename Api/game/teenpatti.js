@@ -309,7 +309,7 @@ class TeenpattiGame {
         const playerCount = this.turnOrder.length;
     
         // Find the index of the current player
-        let currentIndex = this.turnOrder.findIndex(player => player.PlayerID === currentPlayerID);
+        let currentIndex = this.turnOrder.findIndex(player => player.userId === currentPlayerID);
     
         // Start searching for the next active player from the next position
         let nextIndex = (currentIndex + 1) % playerCount; // Use modulo to loop around
