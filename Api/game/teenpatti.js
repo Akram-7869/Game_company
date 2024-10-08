@@ -556,9 +556,12 @@ class TeenpattiGame {
         let player = this.findPlayerByUserId(PlayerID);
       
         let nextPlayer = this.findNextActivePlayer(PlayerID)
+
         if(nextPlayer.type ==='player'){
+            console.log('player');
               this.io.to(nextPlayer.socketId).emit('OnSideShow', data );
         }else{
+            console.log('bot');
             await sleep(3000);
              this.io.to(socket.id).emit('OnSideShowResponse', { ...data, IsAccepted:'false', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name});
         }
