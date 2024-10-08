@@ -251,13 +251,14 @@ class TeenpattiGame {
             console.log('result declared', d);
             publicRoom[this.tournament._id]['played'] = true;
             delete state[this.roomName]
-        }, 3000);
+        }, 2000);
     }
 
     
     handleShow(socket, data) {
         let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
+        this.io.to(this.roomName).emit('OnShow', {} );
 
         this.handleResult();
 
