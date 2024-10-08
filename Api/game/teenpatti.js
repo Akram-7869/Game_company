@@ -262,11 +262,11 @@ class TeenpattiGame {
 
     }
     handleSideShowResponse(socket, data) {
-        let { PlayerID, response } = data;
+        let { PlayerID, IsAccepted } = data;
         let player = this.findPlayerByUserId(PlayerID);
       
         let nextPlayer = this.findNextActivePlayer(PlayerID)
-        if(response === 'false'){
+        if(IsAccepted === 'false'){
             this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted:'false', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name});
             return;
         }
