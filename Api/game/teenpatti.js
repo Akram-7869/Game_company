@@ -263,12 +263,54 @@ class TeenpattiGame {
 
     }
     handleSideShowResponse(socket, data) {
-        let { PlayerID, amount } = data;
+        let { PlayerID, response } = data;
         let player = this.findPlayerByUserId(PlayerID);
+      
+        let nextPlayer = this.findNextActivePlayer(PlayerID)
+        if(response === 'false'){
+            this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, winnerId:'', name:nextPlayer.name});
+            return;
+        }
+        let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
+        let winner={};
+        if(winnerIndex === -1){
+            winner= nextPlayer;
+            this.handlefold({}, {PlayerID : player.userId});
 
-        this.checkGameStatus();
+        }else{
+            winner=player;
+            this.handlefold({}, {PlayerID : nextPlayer.userId });
+
+        }
+        this.io.to(this.roomName).emit('OnSideShowResponse', { winnerId:nextPlayer.userId, name:nextPlayer.name });
 
     }
+    findNextActivePlayer(currentPlayerID) {
+        const playerCount = this.turnOrder.length;
+    
+        // Find the index of the current player
+        let currentIndex = this.turnOrder.findIndex(player => player.PlayerID === currentPlayerID);
+    
+        // Start searching for the next active player from the next position
+        let nextIndex = (currentIndex + 1) % playerCount; // Use modulo to loop around
+    
+        // Loop through the list to find the next active player
+        while (nextIndex !== currentIndex) {
+            const player = this.turnOrder[nextIndex];
+    
+            // Check if the player status is 'joined'
+            if (player.playerStatus === 'joined') {
+                return player; // Return the next active player
+            }
+    
+            // Move to the next player in the order
+            nextIndex = (nextIndex + 1) % playerCount;
+        }
+    
+        // If no other active player is found, return null
+        return null;
+    }
+    
     handlePlayerLeave(socket, data) {
         try {
 

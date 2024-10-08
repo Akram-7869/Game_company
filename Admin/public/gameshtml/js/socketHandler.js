@@ -13,14 +13,14 @@ const SocketHandler = {
     initialize(gameType, data) {
         this.gameType = gameType;
         this.data= data;
-        this.socket = io("wss://daemon.cherrygames.io", {
-            transports: ['websocket'],
-            query: "EIO=3&transport=websocket"
-        });
-        // this.socket = io("ws://localhost:3000", {
+        // this.socket = io("wss://daemon.cherrygames.io", {
         //     transports: ['websocket'],
         //     query: "EIO=3&transport=websocket"
         // });
+        this.socket = io("ws://localhost:3000", {
+            transports: ['websocket'],
+            query: "EIO=3&transport=websocket"
+        });
 
         this.setupEventListeners();
     },
