@@ -128,7 +128,7 @@ class TeenpattiGame {
             player.cardRank = this.evaluateHand(player.hand);
             player['seen'] = false;
             player['fold'] = false;
-            player['playerStatus'] = 'joined',
+            player['playerStatus'] = 'joined';
 
         }
         this.pot = this.currentBet * this.turnOrder.length;
