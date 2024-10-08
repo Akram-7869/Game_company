@@ -278,13 +278,13 @@ class TeenpattiGame {
 
     }
     handleSideShowResponse(socket, data) {
-        let { PlayerID, IsAccepted,nextPlayerId } = data;
+        let { PlayerID, IsAccepted,requestedPlayerId } = data;
         let player = this.findPlayerByUserId(PlayerID);
-console.log('handleSideShowResponse',PlayerID, IsAccepted, nextPlayerId);
+console.log('handleSideShowResponse',PlayerID, IsAccepted, requestedPlayerId);
         let nextPlayer = this.findNextActivePlayer(PlayerID);
         if(player.type==='player'){
             if (IsAccepted === 'false') {
-                let player1 = this.findPlayerByUserId(nextPlayerId);
+                let player1 = this.findPlayerByUserId(requestedPlayerId);
 
             this.io.to(player1.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
             return;
