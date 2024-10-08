@@ -252,7 +252,8 @@ class TeenpattiGame {
         clearTimeout(this.botTimer);
         console.log('result declared', d);
         publicRoom[this.tournament._id]['played'] = true;
-        delete state[this.roomName]
+        delete state[this.roomName];
+        this.resetGame();
     }
 
 
