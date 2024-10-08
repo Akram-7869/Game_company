@@ -218,7 +218,7 @@ class TeenpattiGame {
         this.currentTurnIndex = 0;
         this.currentPhase = 'waiting';
         this.round = 0;
-        this.isGameReady = false;
+        this.isGameReady = true;
         if (this.turnTimer) {
             this.turnTimer.reset(15);
         }
