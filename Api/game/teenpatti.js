@@ -313,7 +313,7 @@ class TeenpattiGame {
     
         // Start searching for the next active player from the next position
         let nextIndex = (currentIndex + 1) % playerCount; // Use modulo to loop around
-    
+    console.log('nextIndex', nextIndex , 'currentIndex',currentIndex);
         // Loop through the list to find the next active player
         while (nextIndex !== currentIndex) {
             const player = this.turnOrder[nextIndex];
@@ -554,9 +554,9 @@ class TeenpattiGame {
    async handleSideShow(socket, data) {
         let { PlayerID } = data;
         let player = this.findPlayerByUserId(PlayerID);
-      
+      console.log(player);
         let nextPlayer = this.findNextActivePlayer(PlayerID)
-
+        console.log('nextPlayer',nextPlayer);
         if(nextPlayer.type ==='player'){
             console.log('player');
               this.io.to(nextPlayer.socketId).emit('OnSideShow', data );
