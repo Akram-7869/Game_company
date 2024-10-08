@@ -584,10 +584,10 @@ class TeenpattiGame {
         }
         return joinedCount;
     }
-    checkGameStatus() {return;
+    checkGameStatus() { 
         let players = this.countJoinedPlayers();
         if (players <= 1) {
-            this.endGame();
+           // this.endGame();
         } else {
             this.nextTurn();
         }
