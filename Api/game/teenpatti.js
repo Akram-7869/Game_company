@@ -41,6 +41,7 @@ class TeenpattiGame {
         if (this.turnOrder.length < this.maxPlayers && !playerExit) {
             player['hand'] = [];
             player['type'] = 'player';
+            player['socketId'] = socket.id;
             player['seen'] = false;
             player['fold'] = false;
             player['isDealer'] = false;
@@ -241,17 +242,14 @@ class TeenpattiGame {
         this.resetGame();
     }
     handleResult() {
-
-        clearTimeout(this.botTimer);
         let winner = this.determineWinner(this.turnOrder.filter(p=>p.playerStatus ==='joined'));
-        this.botTimer = setTimeout(() => {
+      
             let d= { winnerId: winner.userId, name:winner.name , pot:this.pot};
             this.io.to(this.roomName).emit('OnResult', d);
             clearTimeout(this.botTimer);
             console.log('result declared', d);
             publicRoom[this.tournament._id]['played'] = true;
             delete state[this.roomName]
-        }, 2000);
     }
 
     
@@ -269,7 +267,7 @@ class TeenpattiGame {
       
         let nextPlayer = this.findNextActivePlayer(PlayerID)
         if(response === 'false'){
-            this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, winnerId:'', name:nextPlayer.name});
+            this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted:'false', name:nextPlayer.name});
             return;
         }
         let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
@@ -277,11 +275,9 @@ class TeenpattiGame {
         if(winnerIndex === -1){
             winner= nextPlayer;
             this.handlefold({}, {PlayerID : player.userId});
-
         }else{
             winner=player;
             this.handlefold({}, {PlayerID : nextPlayer.userId });
-
         }
         this.io.to(this.roomName).emit('OnSideShowResponse', { winnerId:nextPlayer.userId, name:nextPlayer.name });
 
@@ -532,11 +528,18 @@ class TeenpattiGame {
 
 
     }
-    handleSideShow(socket, data) {
-        let { currentPlayer, previousPlayer } = data;
-        let result = this.sideshow(currentPlayer, previousPlayer);
-
-        this.io.to(this.roomName).emit('OnSideShow', { ...data, result });
+   async handleSideShow(socket, data) {
+        let { PlayerID } = data;
+        let player = this.findPlayerByUserId(PlayerID);
+      
+        let nextPlayer = this.findNextActivePlayer(PlayerID)
+        if(nextPlayer.type ==='player'){
+              this.io.to(nextPlayer.socketId).emit('OnSideShow', data );
+        }else{
+            await sleep(3000);
+             this.io.to(socket.id).emit('OnSideShowResponse', { ...data, IsAccepted:'false', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name});
+        }
+      
     }
 
     //game function
