@@ -278,31 +278,35 @@ class TeenpattiGame {
 
     }
     handleSideShowResponse(socket, data) {
-        let { PlayerID, IsAccepted } = data;
+        let { PlayerID, IsAccepted,nextPlayerId } = data;
         let player = this.findPlayerByUserId(PlayerID);
-console.log('handleSideShowResponse',PlayerID, IsAccepted);
+console.log('handleSideShowResponse',PlayerID, IsAccepted, nextPlayerId);
         let nextPlayer = this.findNextActivePlayer(PlayerID);
         if(player.type==='player'){
-
+            if (IsAccepted === 'false') {
 
             this.io.to(player.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
             return;
+            }else{
+                let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
+                let winner = {};
+                if (winnerIndex === -1) {
+                    winner = nextPlayer;
+                    this.handlefold({}, { PlayerID: player.userId });
+                } else {
+                    winner = player;
+                    this.handlefold({}, { PlayerID: nextPlayer.userId });
+                }
+                this.io.to(player.socketId).to(nextPlayer.socketId).emit('OnSideShowResult', { ...data, IsAccepted: 'true', PlayerID: player.userId, PlayerName: nextPlayer.name, winnerId: winner.userId, name: winner.name });
+        
+
+            }
         }
         if (IsAccepted === 'false') {
             this.io.to(player.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
             return;
         }
-        let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
-        let winner = {};
-        if (winnerIndex === -1) {
-            winner = nextPlayer;
-            this.handlefold({}, { PlayerID: player.userId });
-        } else {
-            winner = player;
-            this.handlefold({}, { PlayerID: nextPlayer.userId });
-        }
-        this.io.to(player.socketId).to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'true', PlayerID: player.userId, PlayerName: nextPlayer.name, winnerId: winner.userId, name: winner.name });
-
+       
     }
     handleOnSideShowResult(socket, data) {
         let { PlayerID, IsAccepted } = data;
