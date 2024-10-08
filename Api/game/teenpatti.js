@@ -214,7 +214,7 @@ class TeenpattiGame {
     }
     async resetGame() {
 
-        this.turnOrder = [];
+        //this.turnOrder = [];
         this.currentTurnIndex = 0;
         this.currentPhase = 'waiting';
         this.round = 0;
