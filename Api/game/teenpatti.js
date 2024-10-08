@@ -212,7 +212,7 @@ class TeenpattiGame {
         this.nextTurn();
 
     }
-    resetGame() {
+    async resetGame() {
 
         this.turnOrder = [];
         this.currentTurnIndex = 0;
@@ -229,6 +229,9 @@ class TeenpattiGame {
             this.bettingTimer.reset(3);
         }
 
+        await sleep(3000);
+
+        this.initializeBoard();
 
 
     }
@@ -307,7 +310,10 @@ class TeenpattiGame {
             }
         }
         if (player.type === 'bot' && IsAccepted === 'false') {
+
             this.io.to(player.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
+            
+            
             return;
         }
 
@@ -547,18 +553,16 @@ class TeenpattiGame {
         }
 
         const handValue = this.evaluateHand(player.hand);
-
         await sleep(2000);
-        this.handlePlayerBet(socket, data);
 
         // Simple logic for bots to decide to bet, call, or fold
-        // if (handValue === 'Trail or Set' || handValue === 'Pure Sequence') {
-        //     this.handlePlayerBet(socket, data);
-        // } else if (Math.random() > 0.5) {
-        //     this.handlePlayerBet(socket, data);
-        // } else {
-        //     this.handlefold(socket, data);
-        // }
+        if (handValue === 'Trail or Set' || handValue === 'Pure Sequence') {
+            this.handlePlayerBet(socket, data);
+        } else if (Math.random() > 0.5) {
+            this.handlePlayerBet(socket, data);
+        } else {
+            this.handlefold(socket, data);
+        }
 
 
 
