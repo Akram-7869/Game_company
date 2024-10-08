@@ -311,6 +311,15 @@ class TeenpattiGame {
         }
 
     }
+    countPlayers() {
+        let joinedCount = 0;
+        for (let i = 0; i < this.turnOrder.length; i++) {
+            if (this.turnOrder[i].playerStatus === 'joined' && this.turnOrder[i].playerStatus === 'player') {
+                joinedCount++;
+            }
+        }
+        return joinedCount;
+    }
     findPlayerByUserId(userId) {
         for (let i = 0; i < this.turnOrder.length; i++) {
             if (this.turnOrder[i].userId === userId) {

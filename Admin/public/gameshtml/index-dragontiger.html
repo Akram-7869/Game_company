@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Tiger Spectator</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/dragonTiger.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="timer">Time: <span id="time-remaining">0</span></div>
+        <div id="cards-container">
+            <div id="dragon-card" class="card"></div>
+            <div id="tiger-card" class="card"></div>
+        </div>
+        <div id="board">
+            <div id="dragon-area" class="bet-area">
+                <img src="assets/dragonTiger/DragonBox.png" alt="Dragon Box">
+                <div class="bet-amount">Bet: <span id="dragon-bet">0</span></div>
+            </div>
+            <div id="tie-area" class="bet-area">
+                <img src="assets/dragonTiger/TieBox.png" alt="Tie Box">
+                <div class="bet-amount">Bet: <span id="tie-bet">0</span></div>
+            </div>
+            <div id="tiger-area" class="bet-area">
+                <img src="assets/dragonTiger/TigerBox.png" alt="Tiger Box">
+                <div class="bet-amount">Bet: <span id="tiger-bet">0</span></div>
+            </div>
+        </div>
+        <div id="history-container"></div>
+    </div>
+
+    <script src="js/socketHandler.js"></script>
+    <script src="js/dragonTiger.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

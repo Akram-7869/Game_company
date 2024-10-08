@@ -1,0 +1,110 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+}
+
+#game-container {
+    width: 800px;
+    height: 600px;
+    margin: 20px auto;
+    position: relative;
+    background-image: url('/public/gameshtml/assets/dragonTiger/DtBg.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#timer {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+#cards-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 60px;
+    margin-bottom: 20px;
+}
+
+#cards-container .card {
+    width: 130px;
+    height: 170px;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+}
+
+.card.generated {
+    background-image: url('/public/gameshtml/assets/dragonTiger/cards/CardBack.png');
+}
+
+#dragon-card, #tiger-card {
+    background-image: url('/public/gameshtml/assets/dragonTiger/cards/CardBack.png');
+}
+
+#board {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    margin-top: auto;
+}
+
+.bet-area {
+    position: relative;
+    text-align: center;
+}
+
+.bet-area img {
+    width: 200px;
+    height: auto;
+}
+
+#history-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.history-item {
+    width: 30px;
+    height: 30px;
+    margin: 0 5px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+}
+
+.history-item.dragon { background-color: red; }
+.history-item.tiger { background-color: blue; }
+.history-item.tie { background-color: green; }
+
+.winner-announcement {
+    position: absolute;
+    top: 45%;  /* Changed from 50% to move it up */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    font-weight: bold;
+    color: gold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    animation: fadeInOut 3s ease-in-out;
+    z-index: 1000;
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
