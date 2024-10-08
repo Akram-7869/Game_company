@@ -287,7 +287,7 @@ class TeenpattiGame {
         if (player.type === 'player') {
             if (IsAccepted === 'false') {
                 console.log('----->>>>',nextPlayer.name);
-                this.io.to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
+                this.io.to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false' });
                 return;
             } else {
                 let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
