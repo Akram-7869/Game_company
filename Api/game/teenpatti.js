@@ -282,7 +282,7 @@ class TeenpattiGame {
         let player = this.findPlayerByUserId(PlayerID);
         // let nextPlayer = this.findNextActivePlayer(PlayerID);
         let nextPlayer = this.findPlayerByUserId(requestedPlayerId);
-        console.log('handleSideShowResponse', player.name, IsAccepted, nextPlayer.name);
+        console.log('handleSideShowResponse',PlayerID, IsAccepted, requestedPlayerId);
 
         if (player.type === 'player') {
             if (IsAccepted === 'false') {
