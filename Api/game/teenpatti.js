@@ -71,12 +71,12 @@ class TeenpattiGame {
         socket.removeAllListeners('OnSeen');
         socket.removeAllListeners('OnShow');
         socket.removeAllListeners('OnCurrentStatus');
-    
+
         socket.removeAllListeners('OnBetPlaced');
         socket.removeAllListeners('OnSideShow');
         socket.removeAllListeners('OnSideShowResponse');
         socket.removeAllListeners('onleaveRoom');
-    
+
     }
     sendCurrentStatus(socket) {
         let d = {
@@ -128,14 +128,14 @@ class TeenpattiGame {
         this.pot = this.currentBet * this.turnOrder.length;
 
 
-         await sleep(9000);
-            if (this.isGameReady) {
-                 this.startGame();
-            } else {
-                console.log("Not enough players to start the game.");
-                this.io.to(this.roomName).emit('game_cancelled', { reason: 'Not enough players' });
-            }
-        
+        await sleep(9000);
+        if (this.isGameReady) {
+            this.startGame();
+        } else {
+            console.log("Not enough players to start the game.");
+            this.io.to(this.roomName).emit('game_cancelled', { reason: 'Not enough players' });
+        }
+
     }
 
     checkAndAddBots() {
@@ -236,27 +236,27 @@ class TeenpattiGame {
 
     endGame() {
         this.gameState = 'finished';
-      
+
         this.handleResult();
         console.log(`Game ended in room: ${this.roomName}`);
         this.resetGame();
     }
     handleResult() {
-        let winner = this.determineWinner(this.turnOrder.filter(p=>p.playerStatus ==='joined'));
-      
-            let d= { winnerId: winner.userId, name:winner.name , pot:this.pot};
-            this.io.to(this.roomName).emit('OnResult', d);
-            clearTimeout(this.botTimer);
-            console.log('result declared', d);
-            publicRoom[this.tournament._id]['played'] = true;
-            delete state[this.roomName]
+        let winner = this.determineWinner(this.turnOrder.filter(p => p.playerStatus === 'joined'));
+
+        let d = { winnerId: winner.userId, name: winner.name, pot: this.pot };
+        this.io.to(this.roomName).emit('OnResult', d);
+        clearTimeout(this.botTimer);
+        console.log('result declared', d);
+        publicRoom[this.tournament._id]['played'] = true;
+        delete state[this.roomName]
     }
 
-    
+
     handleShow(socket, data) {
         let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
-        this.io.to(this.roomName).emit('OnShow', {} );
+        this.io.to(this.roomName).emit('OnShow', {});
 
         this.handleResult();
 
@@ -264,74 +264,74 @@ class TeenpattiGame {
     handleSideShowResponse(socket, data) {
         let { PlayerID, IsAccepted } = data;
         let player = this.findPlayerByUserId(PlayerID);
-      
+
         let nextPlayer = this.findNextActivePlayer(PlayerID)
-        if(IsAccepted === 'false'){
-            this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted:'false', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name});
+        if (IsAccepted === 'false') {
+            this.io.to(player.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
             return;
         }
         let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
-        let winner={};
-        if(winnerIndex === -1){
-            winner= nextPlayer;
-            this.handlefold({}, {PlayerID : player.userId});
-        }else{
-            winner=player;
-            this.handlefold({}, {PlayerID : nextPlayer.userId });
+        let winner = {};
+        if (winnerIndex === -1) {
+            winner = nextPlayer;
+            this.handlefold({}, { PlayerID: player.userId });
+        } else {
+            winner = player;
+            this.handlefold({}, { PlayerID: nextPlayer.userId });
         }
-        this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted:'true', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name, winnerId:nextPlayer.userId, name:nextPlayer.name });
+        this.io.to(player.socketId).to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'true', PlayerID: player.userId, PlayerName: nextPlayer.name, winnerId: winner.userId, name: winner.name });
 
     }
-    handleOnSideShowResult(socket, data){
+    handleOnSideShowResult(socket, data) {
         let { PlayerID, IsAccepted } = data;
         let player = this.findPlayerByUserId(PlayerID);
-      
+
         let nextPlayer = this.findNextActivePlayer(PlayerID)
-        if(IsAccepted === 'false'){
-            this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted:'false', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name});
+        if (IsAccepted === 'false') {
+            this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
             return;
         }
         let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
-        let winner={};
-        if(winnerIndex === -1){
-            winner= nextPlayer;
-            this.handlefold({}, {PlayerID : player.userId});
-        }else{
-            winner=player;
-            this.handlefold({}, {PlayerID : nextPlayer.userId });
+        let winner = {};
+        if (winnerIndex === -1) {
+            winner = nextPlayer;
+            this.handlefold({}, { PlayerID: player.userId });
+        } else {
+            winner = player;
+            this.handlefold({}, { PlayerID: nextPlayer.userId });
         }
-        this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted:'true', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name, winnerId:nextPlayer.userId, namePlayerName:nextPlayer.name });
+        this.io.to(this.roomName).emit('OnSideShowResponse', { ...data, IsAccepted: 'true', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name, winnerId: nextPlayer.userId, namePlayerName: nextPlayer.name });
 
     }
 
 
     findNextActivePlayer(currentPlayerID) {
         const playerCount = this.turnOrder.length;
-    
+
         // Find the index of the current player
 
         let currentIndex = this.turnOrder.findIndex(player => player.userId === currentPlayerID);
-    
+
         // Start searching for the next active player from the next position
         let nextIndex = (currentIndex + 1) % playerCount; // Use modulo to loop around
-    console.log('nextIndex', nextIndex , 'currentIndex',currentIndex);
+        console.log('nextIndex', nextIndex, 'currentIndex', currentIndex);
         // Loop through the list to find the next active player
         while (nextIndex !== currentIndex) {
             const player = this.turnOrder[nextIndex];
-    
+
             // Check if the player status is 'joined'
             if (player.playerStatus === 'joined') {
                 return player; // Return the next active player
             }
-    
+
             // Move to the next player in the order
             nextIndex = (nextIndex + 1) % playerCount;
         }
-    
+
         // If no other active player is found, return null
         return null;
     }
-    
+
     handlePlayerLeave(socket, data) {
         try {
 
@@ -349,7 +349,7 @@ class TeenpattiGame {
             if (player) {
                 if (this.currentPhase !== 'finished') {
                     player.playerStatus = 'Left';
-                 }
+                }
                 // dont delete after game started 
                 if (!this.isGameReady) {
                     this.deletePlayerByUserId(PlayerID);
@@ -358,7 +358,7 @@ class TeenpattiGame {
 
             if (this.currentPhase === 'playing') {
                 this.checkGameStatus();
-    
+
             } else if (this.currentPhase === 'createdroom') {
                 this.deletePlayerByUserId(PlayerID);
                 this.emitJoinPlayer();
@@ -368,7 +368,7 @@ class TeenpattiGame {
                     publicRoom[this.tournament._id]['played'] = true;
                 }
             }
-            
+
         } catch (err) {
             console.log(err);
         }
@@ -436,7 +436,7 @@ class TeenpattiGame {
 
         this.io.to(this.roomName).emit('OnFold', data);
 
-       this.checkGameStatus();
+        this.checkGameStatus();
     }
 
     handleSeen(socket, data) {
@@ -544,31 +544,30 @@ class TeenpattiGame {
         return joinedCount;
     }
     checkGameStatus() {
-         let players = this.countJoinedPlayers();
+        let players = this.countJoinedPlayers();
         if (players <= 1) {
             this.endGame();
-        }else{
+        } else {
             this.nextTurn();
         }
 
 
     }
-   async handleSideShow(socket, data) {
+    async handleSideShow(socket, data) {
         let { PlayerID } = data;
         let player = this.findPlayerByUserId(PlayerID);
-      console.log(player);
+        console.log(player);
         let nextPlayer = this.findNextActivePlayer(PlayerID)
-        console.log('nextPlayer',nextPlayer);
-        if(nextPlayer.type ==='player'){
+        console.log('nextPlayer', nextPlayer);
+        if (nextPlayer.type === 'player') {
             console.log('player');
-              this.io.to(nextPlayer.socketId).emit('OnSideShow', data );
-        }else{
+            this.io.to(nextPlayer.socketId).emit('OnSideShow', data);
+        } else {
             console.log('bot');
-           await sleep(1000);
-           console.log(socket.id);
-             this.io.to(socket.id).emit('OnSideShowResponse', { ...data, IsAccepted:'false', PlayerID: nextPlayer.userId , PlayerName:nextPlayer.name});
+            await sleep(1000);
+            this.io.to(socket.id).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
         }
-      
+
     }
 
     //game function
