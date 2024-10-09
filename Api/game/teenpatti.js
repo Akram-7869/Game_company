@@ -116,6 +116,7 @@ class TeenpattiGame {
         this.currentPhase = 'initializing';
         console.log(`setupGameBoard phase started in room: ${this.roomName}`);
         this.createDeck();
+        this.dealCardsSequentially();
         for (let i = 0; i < this.turnOrder.length; i++) {
             let player = this.turnOrder[i];
             if (i == 0) {
@@ -123,7 +124,6 @@ class TeenpattiGame {
             }else{
                 player['isDealer'] = false;
             }
-            player.hand = this.deck.splice(0, 3);
             player.cardRank = this.evaluateHand(player.hand);
             player['seen'] = false;
             player['fold'] = false;
@@ -606,27 +606,16 @@ class TeenpattiGame {
                 this.deck.push({ suit, rank });
             }
         }
-        this.deck.sort(() => Math.random() - 0.5); // Shuffle the deck
-
-       // this.deck = this.shuffle(this.deck);
+        this.deck = this.shuffle(this.deck);
     }
     // Shuffle the deck (Fisher-Yates algorithm)
     shuffle(deck) {
-        // for (let i = deck.length - 1; i > 0; i--) {
-        //     const j = Math.floor(Math.random() * (i + 1));
-        //     [deck[i], deck[j]] = [deck[j], deck[i]];
-        // }
-        // return deck;
-        const shuffledDeck = [];
-
-        while (deck.length > 0) {
-            const randomIndex = Math.floor(Math.random() * deck.length);
-            const card = deck.splice(randomIndex, 1)[0]; // Remove the card at randomIndex
-            shuffledDeck.push(card); // Push the removed card into the shuffled deck
+        for (let i = deck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [deck[i], deck[j]] = [deck[j], deck[i]];
         }
-
-        return shuffledDeck; // Return the new shuffled deck
-    
+        return deck;
+        
     }
 
 
@@ -636,6 +625,17 @@ class TeenpattiGame {
     //         player.hand = this.deck.splice(0, 3); // Deal 3 cards to each player
     //     });
     // }
+    dealCardsSequentially() {
+        // Ensure the deck is shuffled
+
+        // Loop through each card round (first card, second card, etc.)
+        for (let round = 0; round < 3; round++) {
+            for (const player of this.turnOrder) {
+                const card = this.deck.pop(); // Draw a card from the end of the shuffled deck
+                player.hand.push(card); // Give the card to the player
+            }
+        }
+    }
 
     // Evaluate the player's hand
     // gameLogic.js
