@@ -606,7 +606,9 @@ class TeenpattiGame {
                 this.deck.push({ suit, rank });
             }
         }
-        this.deck = this.shuffle(this.deck);
+        this.deck.sort(() => Math.random() - 0.5); // Shuffle the deck
+
+       // this.deck = this.shuffle(this.deck);
     }
     // Shuffle the deck (Fisher-Yates algorithm)
     shuffle(deck) {
