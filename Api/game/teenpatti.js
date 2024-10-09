@@ -272,11 +272,11 @@ class TeenpattiGame {
     }
 
 
-    handleShow(socket, data) {
+    async handleShow(socket, data) {
         let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
-        this.io.to(this.roomName).emit('OnShow', {});
-
+        this.io.to(this.roomName).emit('OnShow', data);
+        await sleep(2000);
         this.handleResult();
 
     }
