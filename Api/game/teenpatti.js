@@ -247,23 +247,23 @@ class TeenpattiGame {
     handleResult() {
         this.gameState = 'finished';
         let players = this.turnOrder.filter(p => p.playerStatus === 'joined');
-         if(players.length > 2){
-            return ;
-         }
-
-        let winner = this.compareHands(players[0].hand, players[1].hand );
-        let pot = this.pot;
-        let playerList = players.map(p => ({ name: p.name, userId: p.userId }));
-        if(winner === 1){
-            playerList = playerList.filter(p => p.userId === players[0].userId);
-        } else if(winner === -1){
-            playerList = playerList.filter(p => p.userId === players[1].userId);        
-        } else if(winner === 0){
-            pot = pot * 0.5; 
+        if (players.length > 2) {
+            return;
         }
 
-       
-        let d = { winners: playerList, pot  };
+        let winner = this.compareHands(players[0].hand, players[1].hand);
+        let pot = this.pot;
+        let playerList = players.map(p => ({ name: p.name, userId: p.userId }));
+        if (winner === 1) {
+            playerList = playerList.filter(p => p.userId === players[0].userId);
+        } else if (winner === -1) {
+            playerList = playerList.filter(p => p.userId === players[1].userId);
+        } else if (winner === 0) {
+            pot = pot * 0.5;
+        }
+
+
+        let d = { winners: playerList, pot };
         this.io.to(this.roomName).emit('OnResult', d);
         console.log('result declared', d);
         publicRoom[this.tournament._id]['played'] = true;
@@ -300,14 +300,14 @@ class TeenpattiGame {
         let { PlayerID, IsAccepted, requestedPlayerId } = data;
         let player = this.findPlayerByUserId(PlayerID);
         let nextPlayer = this.findPlayerByUserId(requestedPlayerId);
- 
+
         if (player.type === 'player') {
             if (IsAccepted === 'false') {
                 this.io.to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false' });
                 return;
             } else {
                 let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
-                if(winnerIndex === 0 ){
+                if (winnerIndex === 0) {
                     this.io.to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false' });
                     return;
                 }
@@ -560,12 +560,18 @@ class TeenpattiGame {
         // Function for bot decision-making
         let { PlayerID, amount } = data;
         let player = this.findPlayerByUserId(PlayerID);
+
         if (!player.seen) {
             await sleep(3000);
             this.handleSeen(socket, data)
 
         }
+        let players = this.turnOrder.filter(p => p.playerStatus === 'joined');
 
+        if (players.length === 2) {
+            this.handleShow(socket, data);
+            return;
+        }
         const handValue = this.evaluateHand(player.hand);
         await sleep(2000);
 
@@ -577,8 +583,6 @@ class TeenpattiGame {
         } else {
             this.handlefold(socket, data);
         }
-
-
 
 
     }
