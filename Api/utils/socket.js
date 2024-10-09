@@ -213,22 +213,22 @@ let onConnection = (socket) => {
 
   });
   //leave
-  socket.on('leave', (d) => {
-    try {
-      let { room, userId } = d;
-      userLeave(d);
-      socket.leave(room);
-      let data = {
-        room: room, userId,
-        users: getRoomUsers(room)
-      };
-      console.log('leave-', d, data);
-      io.to(room).emit('res', { ev: 'leave', data });
+  // socket.on('leave', (d) => {
+  //   try {
+  //     let { room, userId } = d;
+  //     userLeave(d);
+  //     socket.leave(room);
+  //     let data = {
+  //       room: room, userId,
+  //       users: getRoomUsers(room)
+  //     };
+  //     console.log('leave-', d, data);
+  //     io.to(room).emit('res', { ev: 'leave', data });
 
-    } catch (error) {
+  //   } catch (error) {
 
-    }
-  });
+  //   }
+  // });
   //chat_message
   socket.on('chat_message', (d) => {
     let { room } = d;
