@@ -109,17 +109,18 @@ class TeenpattiGame {
 
     }
     async initializeBoard() {
-        this.turnOrder.sort(() => Math.random() - 0.5); // Shuffle the deck
 
         this.pot = 0;
         this.currentBet = 5;
         this.currentPhase = 'initializing';
         console.log(`setupGameBoard phase started in room: ${this.roomName}`);
         this.createDeck();
+        const randomIndex = Math.floor(Math.random() * this.turnOrder.length);
+
         this.dealCardsSequentially();
         for (let i = 0; i < this.turnOrder.length; i++) {
             let player = this.turnOrder[i];
-            if (i == 0) {
+            if (i == randomIndex) {
                 player['isDealer'] = true;
             }else{
                 player['isDealer'] = false;
@@ -635,7 +636,7 @@ class TeenpattiGame {
         for (let round = 0; round < 3; round++) {
             for (const player of this.turnOrder) {
                 const card = this.deck.pop(); // Draw a card from the end of the shuffled deck
-                player.hand.push(card); // Give the card to the player
+                player.hand[round]=card; // Give the card to the player
             }
         }
     }
