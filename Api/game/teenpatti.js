@@ -247,7 +247,7 @@ class TeenpattiGame {
     handleResult() {
         this.gameState = 'finished';
         let players = this.turnOrder.filter(p => p.playerStatus === 'joined');
-         if(players.length > 1){
+         if(players.length > 2){
             return ;
          }
 
@@ -299,17 +299,18 @@ class TeenpattiGame {
     handleSideShowResponse(socket, data) {
         let { PlayerID, IsAccepted, requestedPlayerId } = data;
         let player = this.findPlayerByUserId(PlayerID);
-        // let nextPlayer = this.findNextActivePlayer(PlayerID);
         let nextPlayer = this.findPlayerByUserId(requestedPlayerId);
-        console.log('handleSideShowResponse', PlayerID, IsAccepted, requestedPlayerId);
-
+ 
         if (player.type === 'player') {
             if (IsAccepted === 'false') {
-                console.log('----->>>>', nextPlayer.name);
                 this.io.to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false' });
                 return;
             } else {
                 let winnerIndex = this.compareHands(player.hand, nextPlayer.hand);
+                if(winnerIndex === 0 ){
+                    this.io.to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false' });
+                    return;
+                }
                 let winner = {};
 
                 this.io.to(player.socketId).to(nextPlayer.socketId).emit('OnSideShowResult', { ...data, IsAccepted: 'true', PlayerID: player.userId, PlayerName: nextPlayer.name, winnerId: winner.userId, name: winner.name });
