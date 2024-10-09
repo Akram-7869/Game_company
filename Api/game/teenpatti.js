@@ -610,11 +610,21 @@ class TeenpattiGame {
     }
     // Shuffle the deck (Fisher-Yates algorithm)
     shuffle(deck) {
-        for (let i = deck.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [deck[i], deck[j]] = [deck[j], deck[i]];
+        // for (let i = deck.length - 1; i > 0; i--) {
+        //     const j = Math.floor(Math.random() * (i + 1));
+        //     [deck[i], deck[j]] = [deck[j], deck[i]];
+        // }
+        // return deck;
+        const shuffledDeck = [];
+
+        while (deck.length > 0) {
+            const randomIndex = Math.floor(Math.random() * deck.length);
+            const card = deck.splice(randomIndex, 1)[0]; // Remove the card at randomIndex
+            shuffledDeck.push(card); // Push the removed card into the shuffled deck
         }
-        return deck;
+
+        return shuffledDeck; // Return the new shuffled deck
+    
     }
 
 
