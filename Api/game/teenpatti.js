@@ -243,14 +243,8 @@ class TeenpattiGame {
     }
 
 
-    endGame() {
-        this.gameState = 'finished';
-
-        this.handleResult();
-        console.log(`Game ended in room: ${this.roomName}`);
-        this.resetGame();
-    }
     handleResult() {
+        this.gameState = 'finished';
         let winner = this.determineWinner(this.turnOrder.filter(p => p.playerStatus === 'joined'));
 
         let d = { winnerId: winner.userId, name: winner.name, pot: this.pot };
@@ -352,7 +346,6 @@ class TeenpattiGame {
         const playerCount = this.turnOrder.length;
 
         // Find the index of the current player
-
         let currentIndex = this.turnOrder.findIndex(player => player.userId === currentPlayerID);
 
         // Start searching for the next active player from the next position
@@ -587,7 +580,7 @@ class TeenpattiGame {
     checkGameStatus() { 
         let players = this.countJoinedPlayers();
         if (players <= 1) {
-           // this.endGame();
+            this.handleResult();
         } else {
             this.nextTurn();
         }
