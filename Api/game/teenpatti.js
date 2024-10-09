@@ -65,7 +65,6 @@ class TeenpattiGame {
     }
     removePlayerListeners(socket) {
 
-        socket.on('OnCurrentStatus', () => this.sendCurrentStatus(socket));
         socket.removeAllListeners('OnFold');
         socket.removeAllListeners('OnSeen');
         socket.removeAllListeners('OnShow');
@@ -373,13 +372,14 @@ class TeenpattiGame {
 
             console.log('OnleaveRoom--teenpatii')
             let { PlayerID } = data;
-            userLeave({ userId: PlayerID, room: this.roomName })
-            this.removePlayerListeners(socket);
-            socket.leave(this.roomName);
+          //  userLeave({ userId: PlayerID, room: this.roomName })
+           // socket.leave(this.roomName);
             // playerManager.RemovePlayer(socket.id);
             socket.emit('onleaveRoom', {
-                success: `successfully leave ${this.roomName} game.`,
+                players: this.turnOrder,
+
             });
+            this.removePlayerListeners(socket);
 
             let player = this.findPlayerByUserId(PlayerID);
             if (player) {
