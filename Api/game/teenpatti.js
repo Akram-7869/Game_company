@@ -247,14 +247,15 @@ class TeenpattiGame {
     handleResult() {
         this.gameState = 'finished';
         let players = this.turnOrder.filter(p => p.playerStatus === 'joined');
-        console.log(JSON.stringify(players, null, 4));
+         if(players.length > 1){
+            return ;
+         }
 
         let winner = this.compareHands(players[0].hand, players[1].hand );
         let pot = this.pot;
         let playerList = players.map(p => ({ name: p.name, userId: p.userId }));
         if(winner === 1){
             playerList = playerList.filter(p => p.userId === players[0].userId);
-
         } else if(winner === -1){
             playerList = playerList.filter(p => p.userId === players[1].userId);        
         } else if(winner === 0){
@@ -325,10 +326,7 @@ class TeenpattiGame {
             }
         }
         if (player.type === 'bot' && IsAccepted === 'false') {
-
             this.io.to(player.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
-
-
             return;
         }
 
@@ -641,8 +639,6 @@ class TeenpattiGame {
     //     });
     // }
     dealCardsSequentially() {
-        // Ensure the deck is shuffled
-
         // Loop through each card round (first card, second card, etc.)
         for (let round = 0; round < 3; round++) {
             for (const player of this.turnOrder) {
@@ -696,7 +692,7 @@ class TeenpattiGame {
 
     // Compare two hands to determine the better hand
     compareHands(hand1, hand2) {
-        const handRankings = ['High Card', 'Pair', 'Color', 'Sequence', 'Pure Sequence', 'Three of a Kind'];
+        const handRankings = ['High Card', 'Pair', 'Color', 'Sequence', 'Pure Sequence', 'Trail or Set'];
 
 
         const hand1Rank = handRankings.indexOf(this.evaluateHand(hand1));
