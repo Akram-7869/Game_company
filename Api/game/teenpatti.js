@@ -111,6 +111,8 @@ class TeenpattiGame {
 
     }
     async initializeBoard() {
+        this.turnOrder.sort(() => Math.random() - 0.5); // Shuffle the deck
+
         this.pot = 0;
         this.currentBet = 5;
         this.currentPhase = 'initializing';
@@ -151,6 +153,7 @@ class TeenpattiGame {
                 const botsToAdd = this.maxPlayers - totalPlayers;
                 this.addBots(botsToAdd);
             }
+            
         }
         if (this.turnOrder.length === this.maxPlayers) {
             this.isGameReady = true;
