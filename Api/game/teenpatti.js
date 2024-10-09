@@ -116,7 +116,7 @@ class TeenpattiGame {
         console.log(`setupGameBoard phase started in room: ${this.roomName}`);
         this.createDeck();
         const randomIndex = Math.floor(Math.random() * this.turnOrder.length);
-
+        this.currentTurnIndex = randomIndex;
         this.dealCardsSequentially();
         for (let i = 0; i < this.turnOrder.length; i++) {
             let player = this.turnOrder[i];
