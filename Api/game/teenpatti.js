@@ -122,7 +122,7 @@ class TeenpattiGame {
             let player = this.turnOrder[i];
             if (i == randomIndex) {
                 player['isDealer'] = true;
-            }else{
+            } else {
                 player['isDealer'] = false;
             }
             player.cardRank = this.evaluateHand(player.hand);
@@ -152,7 +152,7 @@ class TeenpattiGame {
                 const botsToAdd = this.maxPlayers - totalPlayers;
                 this.addBots(botsToAdd);
             }
-            
+
         }
         if (this.turnOrder.length === this.maxPlayers) {
             this.isGameReady = true;
@@ -246,14 +246,25 @@ class TeenpattiGame {
 
     handleResult() {
         this.gameState = 'finished';
-        let players=this.turnOrder.filter(p => p.playerStatus === 'joined');
+        let players = this.turnOrder.filter(p => p.playerStatus === 'joined');
         console.log(JSON.stringify(players, null, 4));
-        
-        let winner = this.determineWinner(players);
 
-        let d = { winnerId: winner.userId, name: winner.name, pot: this.pot };
+        let winner = this.compareHands(players[0].hand, players[1].hand );
+        let pot = this.pot;
+        let playerList = players.map(p => ({ name: p.name, userId: p.userId }));
+        if(winner === 1){
+            playerList = playerList.filter(p => p.userId === players[0].userId);
+
+        } else if(winner === -1){
+            playerList = playerList.filter(p => p.userId === players[1].userId);        
+        } else if(winner === 0){
+            pot = pot * 0.5; 
+        }
+
+       
+        let d = { winners: playerList, pot  };
         this.io.to(this.roomName).emit('OnResult', d);
-         console.log('result declared', d);
+        console.log('result declared', d);
         publicRoom[this.tournament._id]['played'] = true;
         delete state[this.roomName];
         this.resetGame();
@@ -289,11 +300,11 @@ class TeenpattiGame {
         let player = this.findPlayerByUserId(PlayerID);
         // let nextPlayer = this.findNextActivePlayer(PlayerID);
         let nextPlayer = this.findPlayerByUserId(requestedPlayerId);
-        console.log('handleSideShowResponse',PlayerID, IsAccepted, requestedPlayerId);
+        console.log('handleSideShowResponse', PlayerID, IsAccepted, requestedPlayerId);
 
         if (player.type === 'player') {
             if (IsAccepted === 'false') {
-                console.log('----->>>>',nextPlayer.name);
+                console.log('----->>>>', nextPlayer.name);
                 this.io.to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false' });
                 return;
             } else {
@@ -316,8 +327,8 @@ class TeenpattiGame {
         if (player.type === 'bot' && IsAccepted === 'false') {
 
             this.io.to(player.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'false', PlayerID: nextPlayer.userId, PlayerName: nextPlayer.name });
-            
-            
+
+
             return;
         }
 
@@ -376,8 +387,8 @@ class TeenpattiGame {
 
             console.log('OnleaveRoom--teenpatii')
             let { PlayerID } = data;
-          //  userLeave({ userId: PlayerID, room: this.roomName })
-           // socket.leave(this.roomName);
+            //  userLeave({ userId: PlayerID, room: this.roomName })
+            // socket.leave(this.roomName);
             // playerManager.RemovePlayer(socket.id);
             socket.emit('onleaveRoom', {
                 players: this.turnOrder,
@@ -581,7 +592,7 @@ class TeenpattiGame {
         }
         return joinedCount;
     }
-    checkGameStatus() { 
+    checkGameStatus() {
         let players = this.countJoinedPlayers();
         if (players <= 1) {
             this.handleResult();
@@ -619,7 +630,7 @@ class TeenpattiGame {
             [deck[i], deck[j]] = [deck[j], deck[i]];
         }
         return deck;
-        
+
     }
 
 
@@ -636,7 +647,7 @@ class TeenpattiGame {
         for (let round = 0; round < 3; round++) {
             for (const player of this.turnOrder) {
                 const card = this.deck.pop(); // Draw a card from the end of the shuffled deck
-                player.hand[round]=card; // Give the card to the player
+                player.hand[round] = card; // Give the card to the player
             }
         }
     }
@@ -685,25 +696,31 @@ class TeenpattiGame {
 
     // Compare two hands to determine the better hand
     compareHands(hand1, hand2) {
-        const handRanks = {
-            'Trail or Set': 6,
-            'Pure Sequence': 5,
-            'Sequence': 4,
-            'Color': 3,
-            'Pair': 2,
-            'High Card': 1
-        };
+        const handRankings = ['High Card', 'Pair', 'Color', 'Sequence', 'Pure Sequence', 'Three of a Kind'];
 
-        const hand1Rank = handRanks[this.evaluateHand(hand1)];
-        const hand2Rank = handRanks[this.evaluateHand(hand2)];
 
-        if (hand1Rank > hand2Rank) {
-            return 1;
-        } else if (hand2Rank > hand1Rank) {
-            return -1;
-        } else {
-            return 0;
+        const hand1Rank = handRankings.indexOf(this.evaluateHand(hand1));
+        const hand2Rank = handRankings.indexOf(this.evaluateHand(hand2));
+        console.log('h1,h2', hand1Rank, hand2Rank);
+
+        if (hand1Rank > hand2Rank) return 1;
+        if (hand1Rank < hand2Rank) return -1;
+
+        // If hand types are the same, compare by highest card
+        const sortedHand1 = hand1.sort((a, b) => this.ranks.indexOf(b.rank) - this.ranks.indexOf(a.rank));
+        const sortedHand2 = hand2.sort((a, b) => this.ranks.indexOf(b.rank) - this.ranks.indexOf(a.rank));
+        console.log('sorted: ', sortedHand1, sortedHand2);
+
+        for (let i = 0; i < 3; i++) {
+            if (this.ranks.indexOf(sortedHand1[i].rank) > this.ranks.indexOf(sortedHand2[i].rank)) {
+                return 1;
+            } else if (this.ranks.indexOf(sortedHand1[i].rank) < this.ranks.indexOf(sortedHand2[i].rank)) {
+                return -1;
+            }
         }
+
+        // If all cards are equal, it's a draw
+        return 0;
     }
 
     // Determine the winner from a list of players
