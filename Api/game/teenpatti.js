@@ -16,12 +16,10 @@ class TeenpattiGame {
         this.round = 0;
         this.bettingTime = 20; // 20 seconds
         this.pauseTime = 5; // 5 seconds
-        this.botMoveDelay = 5000;
         this.botDifficulty = 'medium'; // 'easy', 'medium', or 'hard'
         this.isGameReady = false;
 
 
-        this.botTimer = undefined;
         // ['Hearts = 1', 'Diamonds = 2', 'Clubs = 3', 'Spades = 4'];
         this.suits = [1, 2, 3, 4];
         // [2, 3, 4, 5, 6, 7, 8, 9, 10,j, k, q, a]];
@@ -247,12 +245,14 @@ class TeenpattiGame {
 
     handleResult() {
         this.gameState = 'finished';
-        let winner = this.determineWinner(this.turnOrder.filter(p => p.playerStatus === 'joined'));
+        let players=this.turnOrder.filter(p => p.playerStatus === 'joined');
+        console.log(JSON.stringify(players, null, 4));
+        
+        let winner = this.determineWinner(players);
 
         let d = { winnerId: winner.userId, name: winner.name, pot: this.pot };
         this.io.to(this.roomName).emit('OnResult', d);
-        clearTimeout(this.botTimer);
-        console.log('result declared', d);
+         console.log('result declared', d);
         publicRoom[this.tournament._id]['played'] = true;
         delete state[this.roomName];
         this.resetGame();
