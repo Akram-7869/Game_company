@@ -642,3 +642,35 @@ exports.uploadeImage = asyncHandler(async (req, res, next) => {
     data: row
   });
 });
+
+exports.geTopList = asyncHandler(async (req, res, next) => {
+ 
+  const influencers = await Influencer.aggregate([
+    {
+      $match: {
+        astatus: 'active' // Filter only active users
+      }
+    },
+    {
+      $sort: {
+        followCount: -1 // Sort by followCount in descending order
+      }
+    },
+    {
+      $limit: 10 // Limit the results to 10
+    },
+    {
+      $project: {
+        _id: 1,
+        firstName: 1,
+        displayName: 1,
+        followCount:1,
+        isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] },
+        profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
+      }
+    }
+  ]);
+
+  
+  res.json({ data: influencers }); // Return the list of following influencers
+});

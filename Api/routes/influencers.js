@@ -7,6 +7,7 @@ const router = express.Router({ mergeParams: true });
 
 const { protect, authorize } = require('../middleware/auth');
 router.route('/:id/upload').post(userCtrl.uploadeImage);
+router.route('/top-list').get(userCtrl.geTopList);
 
 router.use(protect);
  router.route('/withdraw').post(userCtrl.withDrawRequest);
