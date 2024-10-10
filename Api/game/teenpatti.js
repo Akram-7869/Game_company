@@ -314,7 +314,7 @@ class TeenpattiGame {
                     return;
                 }
                 let winner = {};
-                this.io.to(nextPlayer.socketId).to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'true' });
+                this.io.to(player.socketId).to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'true' });
                 await sleep(1000);
                 this.io.to(player.socketId).to(nextPlayer.socketId).emit('OnSideShowResult', { ...data, IsAccepted: 'true', PlayerID: player.userId, PlayerName: nextPlayer.name, winnerId: winner.userId, name: winner.name });
 
