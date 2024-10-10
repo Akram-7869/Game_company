@@ -41,7 +41,8 @@ if(req.role == 'influencer'){
 // @route     GET /api/v1/auth/Posts
 // @access    Private/Admin
 exports.getPostFeed = asyncHandler(async (req, res, next) => {
-
+  const page = parseInt(req.query.page) || 1; // Current page (1-indexed)
+  const limit = parseInt(req.query.limit) || 10; // Number of influencers per page
   // const posts  = await Post.find(
   //   { status: 'active' },
   //   { 
@@ -64,9 +65,9 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
     {
       $sort: { _id: -1 }, // Sort by _id in descending order
     },
-    {
-      $limit: 10 // Limit the results to 10
-    },
+   
+    { $skip: (page - 1) * limit }, // Skip for pagination
+    { $limit: limit }, // Limit for pagination
     {
       $project: {
         // Project all existing fields using "$$ROOT"
@@ -238,6 +239,20 @@ exports.deletePost = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.deleteMyPost = asyncHandler(async (req, res, next) => {
+  const row = await Post.find({_id: req.params.id, owner:req.user._id});
+  if(!row){
+    return next(new ErrorResponse(`Post not found`));
+  }
+  await Post.findByIdAndDelete(req.params.id);
+  let filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
+  deletDiskFile(filePath);
+
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
 exports.likePost = asyncHandler(async (req, res, next) => {
   const row = await Post.findById(req.params.id);
   if (!row) {

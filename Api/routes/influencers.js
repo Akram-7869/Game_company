@@ -12,6 +12,7 @@ router.route('/top-list').get(userCtrl.geTopList);
 router.use(protect);
  router.route('/withdraw').post(userCtrl.withDrawRequest);
 
+
 router.route('/follow').post(userCtrl.followInfulencer);
 router.route('/unfollow').post(userCtrl.unfollowInfulencer);
 router.route('/list').get(userCtrl.getUserList);
