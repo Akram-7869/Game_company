@@ -60,6 +60,13 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
     //     postImageUrl: { $concat: [process.env.IMAGE_URL, '$imageId'] }, // Add postImageUrl by concatenating imageId
     //   },
     // },
+    
+    {
+      $sort: { _id: -1 }, // Sort by _id in descending order
+    },
+    {
+      $limit: 10 // Limit the results to 10
+    },
     {
       $project: {
         // Project all existing fields using "$$ROOT"
@@ -87,7 +94,7 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
           },
         },
       },
-    },
+    }
   ]);
 
   //.populate('likes', 'firstName').populate('player', 'firstName').populate('comments.player', 'firstName');
