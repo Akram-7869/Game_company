@@ -249,19 +249,21 @@ class TeenpattiGame {
         let players = this.turnOrder.filter(p => p.playerStatus === 'joined');
         if (players.length > 2) {
             return;
-        }
-
-        let winner = this.compareHands(players[0].hand, players[1].hand);
+        } 
         let pot = this.pot;
         let playerList = players.map(p => ({ name: p.name, userId: p.userId }));
-        if (winner === 1) {
-            playerList = playerList.filter(p => p.userId === players[0].userId);
-        } else if (winner === -1) {
-            playerList = playerList.filter(p => p.userId === players[1].userId);
-        } else if (winner === 0) {
-            pot = pot * 0.5;
-        }
-
+        if (players.length === 2) {
+            let winner = this.compareHands(players[0].hand, players[1].hand);
+           
+            
+            if (winner === 1) {
+                playerList = playerList.filter(p => p.userId === players[0].userId);
+            } else if (winner === -1) {
+                playerList = playerList.filter(p => p.userId === players[1].userId);
+            } else if (winner === 0) {
+                pot = pot * 0.5;
+            }
+        }  
 
         let d = { winners: playerList, pot };
         this.io.to(this.roomName).emit('OnResult', d);
@@ -296,7 +298,7 @@ class TeenpattiGame {
         }
 
     }
-    handleSideShowResponse(socket, data) {
+    async handleSideShowResponse(socket, data) {
         let { PlayerID, IsAccepted, requestedPlayerId } = data;
         let player = this.findPlayerByUserId(PlayerID);
         let nextPlayer = this.findPlayerByUserId(requestedPlayerId);
@@ -312,7 +314,8 @@ class TeenpattiGame {
                     return;
                 }
                 let winner = {};
-
+                this.io.to(nextPlayer.socketId).emit('OnSideShowResponse', { ...data, IsAccepted: 'true' });
+                await sleep(1000);
                 this.io.to(player.socketId).to(nextPlayer.socketId).emit('OnSideShowResult', { ...data, IsAccepted: 'true', PlayerID: player.userId, PlayerName: nextPlayer.name, winnerId: winner.userId, name: winner.name });
 
                 if (winnerIndex === -1) {

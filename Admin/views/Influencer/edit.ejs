@@ -105,10 +105,26 @@
                                                 Upload
                                             </button>
                                         </div>
-
+                                        <% if(role==='influencer') {%>
                                         <div class="mb-3">
                                             <label class="form-label">Status : <%=row.status%></label>
                                         </div>
+                                        <%} if(role==='admin'){%>
+                                        <div class="mb-3">
+                                            <label class="form-label">Status</label>
+                                            <div class="col-md-10">
+                                                <select class="form-select" name="status" required>
+                                                    <option value="">Change Status</option>
+                                                    <option value="active" <%=row.status==='active' ?'selected':'' %>>active
+                                                    </option>
+                                                    <option value="notverified" <%=row.status==='notverified' ?'selected':'' %>
+                                                        >notverified</option>
+                                                    <option value="inactive" <%=row.status==='inactive' ?'selected':'' %>
+                                                        >inactive</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <% } %>
 
                                         <div>
                                             <div>
@@ -199,49 +215,7 @@
 
                                 <div class="tab-pane" id="withdraw" role="tabpanel">
 
-                                    <form class="custom-validation"
-                                        action="<%=process.env.ADMIN_URL%>/influencer/withdraw"
-                                        onsubmit="handleSubmit(this)" method="POST" name="player"
-                                        enctype="application/x-www-form-urlencoded">
-                                        <div class="mb-3">
-                                            <label class="form-label">WithDrawTO</label>
-                                            <div class="col-md-10">
-
-                                                <select class="form-select" name="withdrawTo" required>
-                                                    <option value="">select...</option>
-                                                    <option value="notverified" <%=row.withdrawTo==='usdt'
-                                                        ?'selected':'' %>
-                                                        >USDT</option>
-                                                    <option value="inactive" <%=row.withdrawTo==='upi' ?'selected':'' %>
-                                                        >upi</option>
-                                                    <option value="inactive" <%=row.withdrawTo==='bank' ?'selected':''
-                                                        %>
-                                                        >bank</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Balance:<%= row.totalBalance%> </label>
-
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Amount</label>
-                                            <input type="number" name="amount" value="" class="form-control"
-                                                placeholder="Amount Withdraw" max="<%= row.totalBalance%> " />
-                                        </div>
-
-                                        <div>
-                                            <div>
-                                                <button id="submit-all" type="submit"
-                                                    class="btn btn-primary waves-effect waves-light me-1">
-                                                    Submit
-                                                </button>
-                                                <button type="reset" class="btn btn-secondary waves-effect">
-                                                    Cancel
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                  
                                 </div>
 
                             </div>

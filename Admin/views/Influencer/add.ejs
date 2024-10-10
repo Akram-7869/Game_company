@@ -66,11 +66,10 @@
                                     <div class="col-md-10">
                                         <select class="form-select" name="status" required>
                                             <option value="">Change Status</option>
-                                            <option value="notverified" <%=row.status==='notverified' ?'selected':'' %>
-                                                >notverified</option>
-
                                             <option value="active" <%=row.status==='active' ?'selected':'' %>>active
                                             </option>
+                                            <option value="notverified" <%=row.status==='notverified' ?'selected':'' %>
+                                                >notverified</option>
                                             <option value="inactive" <%=row.status==='inactive' ?'selected':'' %>
                                                 >inactive</option>
                                         </select>

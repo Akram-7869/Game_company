@@ -5,6 +5,8 @@ const PlayerInfluencer = require('../models/PlayerInfluencer');
 
 const axios = require('axios');
 const Influencer = require('../models/Influencer');
+const Transaction = require('../models/Transaction');
+
 const admin = require('../utils/fiebase');
 const { deletDiskFile, uploadFile } = require('../utils/utils');
 const path = require('path');
