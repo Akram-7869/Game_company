@@ -665,7 +665,7 @@ exports.geTopList = asyncHandler(async (req, res, next) => {
         firstName: 1,
         displayName: 1,
         followCount:1,
-        isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] },
+     
         profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
       }
     }
