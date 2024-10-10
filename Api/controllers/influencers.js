@@ -648,7 +648,7 @@ exports.geTopList = asyncHandler(async (req, res, next) => {
   const influencers = await Influencer.aggregate([
     {
       $match: {
-        astatus: 'active' // Filter only active users
+        status: 'active' // Filter only active users
       }
     },
     {
