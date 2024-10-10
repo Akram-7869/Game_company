@@ -43,20 +43,8 @@ exports.profile = asyncHandler(async (req, res, next) => {
 
 exports.updateInfluencer = asyncHandler(async (req, res, next) => {
       let { description, imageId } = req.body;
-      const file = req.files.file;
-
-      let filename;
-      let filePath;
-      if (file) {
-            filename = '/img/inf/' + file.name;
-            if (imageId) {
-                  filePath = path.resolve(__dirname, '../../assets/' + imageId);
-                  deletDiskFile(filePath);
-            }
-            uploadFile(req, filename, res);
-      }
       res.locals = { title: 'Datatables' };
-      callApi(req).put(apiUrl + req.userId, { ...req.body, filename })
+      callApi(req).put(apiUrl + req.userId, { ...req.body })
             .then(r => {
                   if (r.data.success) {
                         // Assign value in session

@@ -595,3 +595,48 @@ exports.getFollowingList = asyncHandler(async (req, res, next) => {
 
   res.json({ data: influencers }); // Return the list of following influencers
 });
+exports.uploadeImage = asyncHandler(async (req, res, next) => {
+   //console.log('fileiii->>>>', req.body, req.files);
+  let row = await Influencer.findById(req.params.id);
+
+  if (!row) {
+    return next(
+      new ErrorResponse(`game  not found`)
+    );
+  }
+  if (!req.files) {
+    return next(
+      new ErrorResponse(`File  not uploaded`)
+    );
+  }
+  let fieldsToUpdate;
+
+  let filename;
+  let filePath;
+
+  if (req.files) {
+    
+    filename = '/img/inf/' +  req.files.file.name;
+    uploadFile(req, filename, res);
+    
+      if (row.imageId) {
+        filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
+        deletDiskFile(filePath);
+      }
+      fieldsToUpdate = { 'imageId': filename };
+
+    
+  }
+  if (fieldsToUpdate) {
+    row = await Influencer.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+  }
+
+
+  res.status(200).json({
+    success: true,
+    data: row
+  });
+});

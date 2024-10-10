@@ -65,7 +65,7 @@
 
                                 <div class="tab-pane active" id="sitename" role="tabpanel">
                                     <form id="myForm" action="" method="POST" enctype="multipart/form-data">
-                                        <input id="imageId" type="text" name="imageId"
+                                        <input id="imageId" type="hidden" name="imageId"
                                             value="<%=row.imageId?row.imageId:'' %>" />
                                         <div class="mb-3">
                                             <label class="form-label">FirstName</label>
@@ -97,11 +97,13 @@
                                                 class="form-control" required placeholder="Email" disabled />
                                         </div>
                                         <img cals="" width=100 src="<%= process.env.IMAGE_URL + row.imageId %>">
-
+                                        
 
                                         <div class="mb-3">
                                             <label for="photo">Change Pic</label>
-                                            <input class="input" id="photo" name="file" type="file" />
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                                                Upload
+                                            </button>
                                         </div>
 
                                         <div class="mb-3">
@@ -171,26 +173,27 @@
                                             <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
                                                 Submit
                                             </button>
-                                            
+
                                         </div>
 
                                     </form>
                                     <div class="mt-3">
-                                    <form id="upi" action="<%=process.env.ADMIN_URL%>/influencer/usdt"
-                                        onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
-                                        <div class="mb-3">
-                                            <label class="form-label">USDT(trc20)</label>
-                                            <input type="text" name="usdt" value="<%=row.usdt?row.usdt:'' %>"
-                                                class="form-control" required placeholder="usdt(trc20)" />
-                                        </div>
-                                        <div>
-                                            <button type="submit" class="btn btn-primary waves-effect waves-light me-1">
-                                                Submits
-                                            </button>
-                                            
-                                        </div>
+                                        <form id="upi" action="<%=process.env.ADMIN_URL%>/influencer/usdt"
+                                            onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
+                                            <div class="mb-3">
+                                                <label class="form-label">USDT(trc20)</label>
+                                                <input type="text" name="usdt" value="<%=row.usdt?row.usdt:'' %>"
+                                                    class="form-control" required placeholder="usdt(trc20)" />
+                                            </div>
+                                            <div>
+                                                <button type="submit"
+                                                    class="btn btn-primary waves-effect waves-light me-1">
+                                                    Submits
+                                                </button>
 
-                                    </form>
+                                            </div>
+
+                                        </form>
                                     </div>
                                 </div>
 
@@ -202,18 +205,20 @@
                                         enctype="application/x-www-form-urlencoded">
                                         <div class="mb-3">
                                             <label class="form-label">WithDrawTO</label>
-                                        <div class="col-md-10">
-                                            
-                                            <select class="form-select" name="withdrawTo" required>
-                                                <option value="">select...</option>
-                                                <option value="notverified" <%=row.withdrawTo==='usdt' ?'selected':'' %>
-                                                    >USDT</option>
-                                                <option value="inactive" <%=row.withdrawTo==='upi' ?'selected':'' %>
-                                                    >upi</option>
-                                                <option value="inactive" <%=row.withdrawTo==='bank' ?'selected':'' %>
-                                                    >bank</option>
-                                            </select>
-                                        </div>
+                                            <div class="col-md-10">
+
+                                                <select class="form-select" name="withdrawTo" required>
+                                                    <option value="">select...</option>
+                                                    <option value="notverified" <%=row.withdrawTo==='usdt'
+                                                        ?'selected':'' %>
+                                                        >USDT</option>
+                                                    <option value="inactive" <%=row.withdrawTo==='upi' ?'selected':'' %>
+                                                        >upi</option>
+                                                    <option value="inactive" <%=row.withdrawTo==='bank' ?'selected':''
+                                                        %>
+                                                        >bank</option>
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Balance:<%= row.totalBalance%> </label>
@@ -248,10 +253,30 @@
                     </div>
                 </div>
             </div> <!-- end col -->
+            <!-- Button to Open the Modal -->
 
 
             </div> <!-- end row -->
+            
 
+            <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="uploadModalLabel">Upload Files</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="dropzone" id="myDropzone"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="uploadFilesButton">Upload Files</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <%- contentFor('FooterJs') %>
                 <script src="/public/assets/libs/dropzone/min/dropzone.min.js"></script>
 
@@ -263,6 +288,44 @@
                 <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
                 <!-- Sweet alert init js -->
                 <script>
+                    let url = '<%= apiUrl  +row._id %>/upload';
+                    Dropzone.autoDiscover = false;
+
+                    const myDropzone = new Dropzone("#myDropzone", {
+                        url: url, // Replace with your upload endpoint
+                        maxFilesize: 2, // Set maximum file size in MB
+                        acceptedFiles: "image/*", // Accept only image files
+                        autoProcessQueue: false, // Prevent automatic processing
+                        maxQuality:0.6,
+                        maxSize:300,
+                        init: function () {
+                            this.on("sending", function (file) {
+                                // Clear the dropzone before uploading
+                                this.removeAllFiles();
+                            });
+                        },
+                        success: function (file, response) {
+                            // Handle successful upload
+                            $("#uploadStatus").html("File uploaded successfully!");
+                            // Close the modal after a delay (adjust as needed)
+                            setTimeout(function () {
+                                $("#uploadModal").modal("hide");
+                            }, 1000);
+                        },
+                        error: function (file, response) {
+                            // Handle upload errors
+                            $("#uploadStatus").html("An error occurred during upload.");
+                        },
+                    });
+
+                    $("#uploadFilesButton").click(function () {
+                        if (myDropzone.files.length > 0) {
+                            myDropzone.processQueue();
+                        } else {
+                            alert("Please select at least one file to upload.");
+                        }
+                    });
+
                     function handleSubmit(params) {
                         if (params.checkValidity()) {
 
@@ -277,6 +340,7 @@
                             //   }
                             // });
                         }
+                    }
 
                 </script>
                 <%- contentFor('BottomJs') %>
