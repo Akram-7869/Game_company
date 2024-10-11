@@ -138,6 +138,53 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
     data: user
   });
 });
+
+exports.updateUpi = asyncHandler(async (req, res, next) => {
+  const user = await Influencer.findById(req.user.id);
+   if (!user) {
+    return next(
+      new ErrorResponse(`User  not found`)
+    );
+  }
+  //  Make sure user is provider owner
+  if (req.role === 'admin') {
+     
+      return next(
+        new ErrorResponse(
+          `User  is not authorized to update`)
+      );
+    
+  }
+  user.upi = req.body.upi;
+  await user.save();
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});
+exports.updateUsdt = asyncHandler(async (req, res, next) => {
+  const user = await Influencer.findById(req.user.id);
+   if (!user) {
+    return next(
+      new ErrorResponse(`User  not found`)
+    );
+  }
+  //  Make sure user is provider owner
+  if (req.role === 'admin') {
+     
+      return next(
+        new ErrorResponse(
+          `User  is not authorized to update`)
+      );
+    
+  }
+  user.usdt = req.body.usdt;
+  await user.save();
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});
 // @desc      Delete user
 // @route     DELETE /api/v1/auth/users/:id
 // @access    Private/Admin

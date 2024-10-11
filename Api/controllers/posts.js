@@ -241,7 +241,7 @@ exports.deletePost = asyncHandler(async (req, res, next) => {
 });
 
 exports.deleteMyPost = asyncHandler(async (req, res, next) => {
-  const row = await Post.find({_id: req.params.id, owner:req.user._id});
+  const row = await Post.find({id: req.params.id, owner:req.body.owner});
   if(!row){
     return next(new ErrorResponse(`Post not found`));
   }

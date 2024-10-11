@@ -30,6 +30,7 @@ router.route('/withdraw').post(influenecrCtl.postwithdraw);
 router.route('/bank').post(influenecrCtl.addBank);
 
 router.route('/upi').post(influenecrCtl.addUpi);
+router.route('/usdt').post(influenecrCtl.addUsdt);
 
 
 router.route('/restpassword').get(influenecrCtl.resetPassword);

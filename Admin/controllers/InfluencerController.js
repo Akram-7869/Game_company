@@ -252,6 +252,24 @@ exports.addUpi = asyncHandler(async (req, res, next) => {
 
             })
 });
+
+exports.addUsdt = asyncHandler(async (req, res, next) => {
+
+      callApi(req).post(apiUrl + 'usdt', req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'Influencer' };
+                  req.flash('message', 'With draw request success');
+                  res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
+
+            })
+            .catch(error => {
+
+
+                  req.flash('error', 'Data not updated');
+
+            })
+});
 exports.gameList = asyncHandler(async (req, res, next) => {
       res.locals = { title: 'Game List' };
       res.render('Influencer/leaderboard')
