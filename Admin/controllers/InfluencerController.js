@@ -44,7 +44,7 @@ exports.profile = asyncHandler(async (req, res, next) => {
 exports.updateInfluencer = asyncHandler(async (req, res, next) => {
       let { description, imageId } = req.body;
       res.locals = { title: 'Datatables' };
-      callApi(req).put(apiUrl + req.userId, { ...req.body })
+      callApi(req).put(apiUrl + req.params.id, { ...req.body })
             .then(r => {
                   if (r.data.success) {
                         // Assign value in session
@@ -63,7 +63,26 @@ exports.updateInfluencer = asyncHandler(async (req, res, next) => {
             })
 });
 
-
+exports.updateProfile = asyncHandler(async (req, res, next) => {
+      callApi(req).post(apiUrl +'profile', { ...req.body })
+            .then(r => {
+                  if (r.data.success) {
+                        // Assign value in session
+                        req.flash('message', 'Data save');
+                  } else {
+                        req.flash('error', r.data.error);
+                  }
+                  if (req.role === 'admin') {
+                        res.redirect(process.env.ADMIN_URL + '/admin/influencer');
+                  } else {
+                        res.redirect(process.env.ADMIN_URL + '/influencer/profile');
+                  }
+            })
+            .catch(error => {
+                  req.flash('error', 'Data not updated');
+            })
+      
+});
 exports.deleteInfluencer = asyncHandler(async (req, res, next) => {
       callApi(req).delete(apiUrl + req.params.id)
             .then(r => {

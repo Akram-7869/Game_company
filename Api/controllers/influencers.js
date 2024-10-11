@@ -18,10 +18,10 @@ const fs = require('fs');
 // @route     GET /api/v1/auth/users
 // @access    Private/Admin
 exports.getUsers = asyncHandler(async (req, res, next) => {
-  User.dataTables({
+  Influencer.dataTables({
     limit: req.body.length,
     skip: req.body.start,
-    select: { 'firstName': 1, 'phone': 1, 'email': 1, 'status': 1, 'createdAt': 1, 'role': 1,totalBalance:1 },
+    select: { 'firstName': 1, 'phone': 1, 'email': 1, 'status': 1, 'createdAt': 1, 'role': 1, totalBalance: 1 },
     search: {
       value: req.body.search ? req.body.search.value : '',
       fields: ['email']
@@ -38,7 +38,7 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/users/:id
 // @access    Private/Admin
 exports.getUser = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const user = await Influencer.findById(req.params.id);
 
   res.status(200).json({
     success: true,
@@ -56,7 +56,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
         `User ${req.user.id} is not authorized to update provider ${provider._id}`)
     );
   }
-  const user = await User.create(req.body);
+  const user = await Influencer.create(req.body);
 
   res.status(201).json({
     success: true,
@@ -68,33 +68,32 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/users/:id
 // @access    Private/Admin
 exports.updateUser = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
-  let {filename} =req.body;
+  const user = await Influencer.findById(req.params.id);
+  console.log(user, req.params.id)
+  let { filename } = req.body;
   if (!user) {
     return next(
       new ErrorResponse(`User  not found`)
     );
   }
   //  Make sure user is provider owner
-  if (req.role === 'admin') {
-
-    return next(
-      new ErrorResponse(
-        `User  is not authorized to update`)
-    );
-  } else if (user.id !== req.user.id) {
-    return next(
-      new ErrorResponse(
-        `User  is not authorized to update`)
-    );
+  if (req.role !== 'admin') {
+    if (user.id !== req.user.id) {
+      return next(
+        new ErrorResponse(
+          `User  is not authorized to update`)
+      );
+    }
+  } else {
+    user.status = req.body.status;
   }
-    
+
   user.firstName = req.body.firstName;
   user.lastName = req.body.lastName;
   user.phone = req.body.phone;
   user.displayName = req.body.displayName;
-  if(filename){
-     user.imageId = filename;
+  if (filename) {
+    user.imageId = filename;
   }
 
   //user.isNew = false;
@@ -105,20 +104,54 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   });
 });
 
+
+exports.updateProfile = asyncHandler(async (req, res, next) => {
+  const user = await Influencer.findById(req.user.id);
+  let { filename } = req.body;
+  if (!user) {
+    return next(
+      new ErrorResponse(`User  not found`)
+    );
+  }
+  //  Make sure user is provider owner
+  if (req.role === 'admin') {
+     
+      return next(
+        new ErrorResponse(
+          `User  is not authorized to update`)
+      );
+    
+  }
+
+  user.firstName = req.body.firstName;
+  user.lastName = req.body.lastName;
+  user.phone = req.body.phone;
+  user.displayName = req.body.displayName;
+  if (filename) {
+    user.imageId = filename;
+  }
+
+  //user.isNew = false;
+  await user.save();
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});
 // @desc      Delete user
 // @route     DELETE /api/v1/auth/users/:id
 // @access    Private/Admin
 exports.deleteUser = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const user = await Influencer.findById(req.params.id);
 
   // Make sure user is provider owner
-  if (user.role === 'superadmin') {
+  if (user.role !== 'amdin') {
     return next(
       new ErrorResponse(
         `User is not authorized`)
     );
   }
-  await User.findByIdAndDelete(req.params.id);
+  await Influencer.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
     success: true,
@@ -138,7 +171,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   }
 
   // Check for user
-  user = await User.findById(user._id).select('+password');
+  user = await Influencer.findById(user._id).select('+password');
 
   if (!user) {
     return next(new ErrorResponse('User not found'));
@@ -193,7 +226,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   //     new ErrorResponse(`Please Verify Phone`)
   //   );
   // }
-  let user = await User.findById(req.user._id).select('+bank +upi');
+  let user = await Influencer.findById(req.user._id).select('+bank +upi');
 
   let tranData = {
     'userId': req.user._id,
@@ -243,7 +276,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   tranData['tds'] = tds;
   // console.log(user.totalWithdraw, amount, user.totalDeposit, user.totalTaxableAmount, user.openingBalance, tranData);
   let tran = await Transaction.create(tranData);
-  user = await User.findByIdAndUpdate(req.user._id, { $inc: incFiled }, {
+  user = await Influencer.findByIdAndUpdate(req.user._id, { $inc: incFiled }, {
     new: true,
     runValidators: true
   });
@@ -266,7 +299,7 @@ exports.addBank = asyncHandler(async (req, res, next) => {
     );
   }
   if (req.staff) {
-    user = await User.findById(req.params.id);
+    user = await Influencer.findById(req.params.id);
     // fieldsToUpdate['kycStatus'] = kycStatus;
   } else if (req.user) {
 
@@ -280,13 +313,13 @@ exports.addBank = asyncHandler(async (req, res, next) => {
   }
 
 
-  user = await User.findByIdAndUpdate(user.id, { bank: fieldsToUpdate }, {
+  user = await Influencer.findByIdAndUpdate(user.id, { bank: fieldsToUpdate }, {
     new: true,
     runValidators: true
   });
 
-  //User.isNew = false;
-  // await User.save();
+  //Influencer.isNew = false;
+  // await Influencer.save();
   res.status(200).json({
     success: true,
     data: user
@@ -302,7 +335,7 @@ exports.addWallet = asyncHandler(async (req, res, next) => {
     );
   }
   if (req.staff) {
-    user = await User.findById(req.params.id);
+    user = await Influencer.findById(req.params.id);
     //fieldsToUpdate['kycStatus'] = kycStatus;
   } else if (req.user) {
     user = req.user;
@@ -312,7 +345,7 @@ exports.addWallet = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`User  not found`)
     );
   }
-  user = await User.findByIdAndUpdate(user.id, { wallet: fieldsToUpdate }, {
+  user = await Influencer.findByIdAndUpdate(user.id, { wallet: fieldsToUpdate }, {
     new: true,
     runValidators: true
   });
@@ -344,7 +377,7 @@ exports.addUpi = asyncHandler(async (req, res, next) => {
   //   );
   // }
 
-  user = await User.findByIdAndUpdate(user.id, { upi: fieldsToUpdate }, {
+  user = await Influencer.findByIdAndUpdate(user.id, { upi: fieldsToUpdate }, {
     new: true,
     runValidators: true
   });
@@ -365,8 +398,8 @@ const sendOnlineNotification = async (influencerId) => {
     topic: influencerId.toString()
   };
 
-console.log('test');
-    await admin.messaging().send(message)
+  console.log('test');
+  await admin.messaging().send(message)
     .then((response) => {
       // Response is a message ID string.
       console.log('Successfully sent message:', response);
@@ -378,23 +411,25 @@ console.log('test');
 };
 const ONE_SINAL_APPID = process.env.ONE_SINAL_APPID;
 exports.onlineNotifcation = asyncHandler(async (req, res, next) => {
-//   let { influencerId } = req.body;
- 
-//  let result =  await sendOnlineNotification(influencerId);
-//  res.status(200).json({
-//   success: true,
-//   data: {}
-// }); return ;
- 
- 
+  //   let { influencerId } = req.body;
+
+  //  let result =  await sendOnlineNotification(influencerId);
+  //  res.status(200).json({
+  //   success: true,
+  //   data: {}
+  // }); return ;
+
+
   const data = {
     "app_id": process.env.ONE_SINAL_APPID,
     "contents": { "en": "English Message" },
     "headings": { "en": "English " },
     "target_channel": "push",
-    "include_aliases":{"external_id": [
-      '66619f8f980bf75b5ec9ac0d','664f4345447e35c8799cfe53'
-    ]}
+    "include_aliases": {
+      "external_id": [
+        '66619f8f980bf75b5ec9ac0d', '664f4345447e35c8799cfe53'
+      ]
+    }
 
   };
 
@@ -434,7 +469,7 @@ exports.unfollowInfulencer = asyncHandler(async (req, res, next) => {
     { _id: influencerId },
     { $set: { followCount: followerCount } }
   );
- // await admin.messaging().unsubscribeFromTopic(player.deviceToken, influencerId.toString());
+  // await admin.messaging().unsubscribeFromTopic(player.deviceToken, influencerId.toString());
 
 
   res.status(200).json({
@@ -459,12 +494,12 @@ exports.followInfulencer = asyncHandler(async (req, res, next) => {
     { $setOnInsert: { influencerId, playerId } }, // Only set these fields if inserting a new document
     { upsert: true } // Perform an upsert
   );
-    const followerCount = await PlayerInfluencer.countDocuments({ influencerId: influencerId });
+  const followerCount = await PlayerInfluencer.countDocuments({ influencerId: influencerId });
   await Influencer.findOneAndUpdate(
     { _id: influencerId },
     { $set: { followCount: followerCount } }
   );
- // await admin.messaging().subscribeToTopic(player.deviceToken, influencerId.toString());
+  // await admin.messaging().subscribeToTopic(player.deviceToken, influencerId.toString());
 
   res.status(200).json({
     success: true,
@@ -505,20 +540,20 @@ exports.getUserList = asyncHandler(async (req, res, next) => {
         as: "isFollowing"
       }
     },
-    
-    {
-    $project: {
-      _id: 1,
-      firstName: 1,
-      displayName: 1,
-      followCount:1,
-      isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] },
-      profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
 
-    }
-  }, 
-  { $skip: (page - 1) * limit }, 
-  { $limit: limit }
+    {
+      $project: {
+        _id: 1,
+        firstName: 1,
+        displayName: 1,
+        followCount: 1,
+        isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] },
+        profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
+
+      }
+    },
+    { $skip: (page - 1) * limit },
+    { $limit: limit }
 
 
   ];
@@ -535,7 +570,7 @@ exports.getUserList = asyncHandler(async (req, res, next) => {
     });
   }
 
-  
+
 
   // Run the aggregation pipeline
   let rows = await Influencer.aggregate(pipeline);
@@ -573,7 +608,7 @@ exports.getFollowingList = asyncHandler(async (req, res, next) => {
         displayName: "$influencerInfo.displayName",
         followCount: "$influencerInfo.followCount",
         profilePic: { $concat: [process.env.IMAGE_URL, '$influencerInfo.imageId'] },
-        isFollowing:true
+        isFollowing: true
       }
     },
     { $skip: (page - 1) * limit }, // Skip for pagination
@@ -598,7 +633,7 @@ exports.getFollowingList = asyncHandler(async (req, res, next) => {
   res.json({ data: influencers }); // Return the list of following influencers
 });
 exports.uploadeImage = asyncHandler(async (req, res, next) => {
-   //console.log('fileiii->>>>', req.body, req.files);
+  //console.log('fileiii->>>>', req.body, req.files);
   let row = await Influencer.findById(req.params.id);
 
   if (!row) {
@@ -617,17 +652,17 @@ exports.uploadeImage = asyncHandler(async (req, res, next) => {
   let filePath;
 
   if (req.files) {
-    
-    filename = '/img/inf/' +  req.files.file.name;
-    uploadFile(req, filename, res);
-    
-      if (row.imageId) {
-        filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
-        deletDiskFile(filePath);
-      }
-      fieldsToUpdate = { 'imageId': filename };
 
-    
+    filename = '/img/inf/' + req.files.file.name;
+    uploadFile(req, filename, res);
+
+    if (row.imageId) {
+      filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
+      deletDiskFile(filePath);
+    }
+    fieldsToUpdate = { 'imageId': filename };
+
+
   }
   if (fieldsToUpdate) {
     row = await Influencer.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
@@ -644,7 +679,7 @@ exports.uploadeImage = asyncHandler(async (req, res, next) => {
 });
 
 exports.geTopList = asyncHandler(async (req, res, next) => {
- 
+
   const influencers = await Influencer.aggregate([
     {
       $match: {
@@ -664,13 +699,13 @@ exports.geTopList = asyncHandler(async (req, res, next) => {
         _id: 1,
         firstName: 1,
         displayName: 1,
-        followCount:1,
-     
+        followCount: 1,
+
         profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
       }
     }
   ]);
 
-  
+
   res.json({ data: influencers }); // Return the list of following influencers
 });

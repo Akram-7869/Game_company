@@ -7,7 +7,7 @@ const { protect} = require('../middleware/auth');
 router.use(protect);
 
 router.route('/postfeed').get(ctrlPost.getPostFeed);
-router.get('/deletemy/:id', ctrlPost.deleteMyPost);
+router.post('/deletemy/:id', ctrlPost.deleteMyPost);
 
 router.route('/add').post(ctrlPost.createPost);
 router.route('/').post(ctrlPost.getPosts);

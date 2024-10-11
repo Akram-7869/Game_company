@@ -23,7 +23,7 @@ const {authorize} = require('../middleware/auth');
 router.use(protect,authorize('influencer'));
 
 // Route for login page
-router.route('/profile').get(influenecrCtl.profile).post(influencerCtl.updateInfluencer);
+router.route('/profile').get(influenecrCtl.profile).post(influencerCtl.updateProfile);
 router.route('/withdraw').get(influenecrCtl.withdraw);
 
 router.route('/withdraw').post(influenecrCtl.postwithdraw);
