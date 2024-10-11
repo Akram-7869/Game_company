@@ -102,7 +102,8 @@ exports.getPostFeed = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: posts
+    data: posts,
+    list:{page,limit}
   });
 });
 exports.getPostLikes = asyncHandler(async (req, res, next) => {
