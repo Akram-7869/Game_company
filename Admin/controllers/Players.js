@@ -294,6 +294,25 @@ exports.creditPlayer = asyncHandler(async (req, res, next) => {
 
             })
 });
+
+exports.playerGiftAmount = asyncHandler(async (req, res, next) => {
+      //console.log(req.body);
+      res.locals = { title: 'Player' };
+      callApi(req).post(apiUrl + 'gift-amount/' + req.params.id, req.body)
+            .then(r => {
+                  // Assign value in session
+                  res.locals = { title: 'Player-edit' };
+                  req.flash('message', 'Data save');
+                  res.render('Players/edit', { row: r.data.data });
+
+            })
+            .catch(error => {
+
+
+                  req.flash('error', 'Data not updated');
+
+            })
+});
 // @desc      Delete Player
 // @route     DELETE /api/v1/auth/Players/:id
 // @access    Private/Admin

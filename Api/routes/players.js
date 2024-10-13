@@ -16,6 +16,7 @@ router.get('/versionlist', playerCtl.getVersion);
 
 router.get('/my-gift', protect, playerCtl.getGift);
 router.post('/claim-gift', protect, playerCtl.calimedGift);
+router.post('/gift-amount/:id', protect, playerCtl.playerGift);
 
 router.get('/myrefrer', protect, playerCtl.getReferList);
  

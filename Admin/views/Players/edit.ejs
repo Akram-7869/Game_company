@@ -57,6 +57,12 @@
                                         <span class="d-none d-sm-block">Transactions</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#gift" role="tab">
+                                        <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                                        <span class="d-none d-sm-block">Gift</span>
+                                    </a>
+                                </li>
                             </ul>
 
                             <!-- Tab panes -->
@@ -391,9 +397,9 @@
 
                                         <div class="mb-3">
                                             <label class="form-label">Gift Amount</label>
-                                            <input type="text" name="aadharNumber"
+                                            <input type="text" name="giftAmount"
                                                 value="<%=row.giftAmount?row.giftAmount:'' %>" class="form-control"
-                                                required placeholder="Enter Adhar Number" />
+                                                required placeholder="Gift Amount" />
                                         </div>
 
                                         
@@ -401,7 +407,7 @@
                                             <div>
                                                 <button type="submit"
                                                     class="btn btn-primary waves-effect waves-light me-1">
-                                                    Change Status
+                                                    Submit
                                                 </button>
 
                                             </div>

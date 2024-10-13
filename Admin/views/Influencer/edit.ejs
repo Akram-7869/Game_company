@@ -39,12 +39,12 @@
                                         <span class="d-none d-sm-block">Profile</span>
                                     </a>
                                 </li>
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="tab" href="#bank" role="tab">
                                         <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
                                         <span class="d-none d-sm-block">Bank</span>
                                     </a>
-                                </li>
+                                </li> -->
                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="tab" href="#upi" role="tab">
                                         <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
@@ -52,12 +52,12 @@
                                     </a>
                                 </li>
 
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="tab" href="#withdraw" role="tab">
                                         <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
                                         <span class="d-none d-sm-block">Withdraw</span>
                                     </a>
-                                </li>
+                                </li> -->
 
 
                             </ul>
@@ -149,19 +149,19 @@
                                         <div class="mb-3">
                                             <label class="form-label">Bank Account Holder Name</label>
                                             <input type="text" name="bankAccountHolder"
-                                                value="<%=row.bankAccountHolder?row.bankAccountHolder:'' %>"
+                                                value="<%=row.bank?row.bank.bankAccountHolder:'' %>"
                                                 class="form-control" required placeholder="Account Holder Name" />
                                         </div>
                                         <div class="mb-3">
 
                                             <label class="form-label">Bank Account Number</label>
                                             <input type="text" name="bankAccount"
-                                                value="<%=row.bankAccount?row.bankAccount:'' %>" class="form-control"
+                                                value="<%=row.bank?row.bank.bankAccount:'' %>" class="form-control"
                                                 required placeholder="First name" />
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Bank IFC Code</label>
-                                            <input type="text" name="bankIfc" value="<%=row.bankIfc?row.bankIfc:'' %>"
+                                            <input type="text" name="bankIfc" value="<%=row.bank?row.bank.bankIfc:'' %>"
                                                 class="form-control" required placeholder="First name" />
                                         </div>
 
@@ -182,7 +182,7 @@
                                         onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
                                         <div class="mb-3">
                                             <label class="form-label">UPI ID</label>
-                                            <input type="text" name="upiId" value="<%=row.upiId?row.upiId:'' %>"
+                                            <input type="text" name="upiId" value="<%=row.upi?row.upi.upiId:'' %>"
                                                 class="form-control" required placeholder="UPI ID" />
                                         </div>
                                         <div>
@@ -198,13 +198,13 @@
                                             onsubmit="handleSubmit(this)" enctype="multipart/form-data" method="POST">
                                             <div class="mb-3">
                                                 <label class="form-label">USDT(trc20)</label>
-                                                <input type="text" name="usdt" value="<%=row.usdt?row.usdt:'' %>"
+                                                <input type="text" name="usdtId" value="<%=row.usdt?row.usdt.usdtId:'' %>"
                                                     class="form-control" required placeholder="usdt(trc20)" />
                                             </div>
                                             <div>
                                                 <button type="submit"
                                                     class="btn btn-primary waves-effect waves-light me-1">
-                                                    Submits
+                                                    Submit
                                                 </button>
 
                                             </div>

@@ -18,9 +18,77 @@ const fs = require('fs');
 var path = require('path');
 const { makeid, setkey, getKey, generateName } = require('../utils/utils');
 const { OAuth2Client } = require('google-auth-library');
+const admin = require('firebase-admin');
 
 exports.test = asyncHandler(async (req, res, next) => {
 
+});
+
+exports.verifyToken =  asyncHandler(async (req, res, next) => {
+  let {countryCode, deviceToken} = req.body;
+  const idToken = req.body.idToken;
+
+  try {
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const uid = decodedToken.uid;  // User's unique ID
+      const phone = decodedToken.phone_number;  // User's unique ID
+
+      
+  if (!phone) {
+    return next(
+      new ErrorResponse(`select phone`)
+    );
+  }
+
+  let player = await Player.findOne({ 'phone': phone }).select('+deviceToken');
+ 
+  if (player) {
+    // if (player.email !== email) {
+    //   return next(
+    //     new ErrorResponse(`phone  number changed use the number registered first time`)
+    //   );
+    // } else if (player.deviceToken !== deviceToken) {
+    //   return next(
+    //     new ErrorResponse(`Device changed use the device registered first time`)
+    //   );
+    // } else {
+    let fieldsToUpdate = {
+    
+      'firebaseToken': idToken,
+    }
+    player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+    // }
+
+
+  } else {
+    // create new player
+    let data = {
+      'email': `${phone}@cherry.com`,
+      'firstName': generateName(),
+      'phone': phone,
+      'deviceToken': deviceToken,
+      'firebaseToken': idToken,
+      'registeredWith':'phone',
+      'status': 'notverified',
+      'countryCode': countryCode,
+      'refer_code': makeid(6),
+    };
+    // Create user
+    player = await Player.create(data);
+  }
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+
+      res.status(200).send({ uid });
+  } catch (error) {
+      console.error('Error verifying ID token:', error);
+      res.status(401).send('Unauthorized');
+  }
 });
 
 // @desc      Register user

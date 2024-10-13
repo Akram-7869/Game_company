@@ -38,7 +38,7 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/users/:id
 // @access    Private/Admin
 exports.getUser = asyncHandler(async (req, res, next) => {
-  const user = await Influencer.findById(req.params.id);
+  const user = await Influencer.findById(req.params.id).select('+upi +usdt +bank');
 
   res.status(200).json({
     success: true,
@@ -140,7 +140,10 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateUpi = asyncHandler(async (req, res, next) => {
-  const user = await Influencer.findById(req.user.id);
+  let {upiId}=req.body;
+  let user = await Influencer.findById(req.user.id);
+  let fieldsToUpdate = { upiId };
+
    if (!user) {
     return next(
       new ErrorResponse(`User  not found`)
@@ -155,15 +158,20 @@ exports.updateUpi = asyncHandler(async (req, res, next) => {
       );
     
   }
-  user.upi = req.body.upi;
-  await user.save();
+  console.log('sduoiii',req.body);
+
+  user = await Influencer.findByIdAndUpdate(user.id, { upi: fieldsToUpdate }, {
+    new: true,
+    runValidators: true
+  });   await user.save();
   res.status(200).json({
     success: true,
     data: user
   });
 });
 exports.updateUsdt = asyncHandler(async (req, res, next) => {
-  const user = await Influencer.findById(req.user.id);
+  let {usdtId} = req.body;
+  let user = await Influencer.findById(req.user.id);
    if (!user) {
     return next(
       new ErrorResponse(`User  not found`)
@@ -178,8 +186,11 @@ exports.updateUsdt = asyncHandler(async (req, res, next) => {
       );
     
   }
-  user.usdt = req.body.usdt;
-  await user.save();
+  let fieldsToUpdate ={usdtId};
+  user = await Influencer.findByIdAndUpdate(user.id, { usdt: fieldsToUpdate }, {
+    new: true,
+    runValidators: true
+  });   
   res.status(200).json({
     success: true,
     data: user
@@ -242,7 +253,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 });
 
 exports.withDrawRequest = asyncHandler(async (req, res, next) => {
-  let { amount, note, gameId, to, upiId } = req.body;
+  let { amount, note='With Draw Reqest', gameId, to, upiId } = req.body;
 
   if (!req.user) {
     return next(
@@ -280,7 +291,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     'amount': amount,
     'transactionType': "debit",
     'note': note,
-    'prevBalance': req.user.balance,
+    'prevBalance': req.user.totalBalance,
     'status': 'log',
     'logType': 'withdraw',
     'withdrawTo': req.body.to,
@@ -303,12 +314,12 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   let taxableAmount = (user.totalWithdraw + parseFloat(amount)) - user.totalDeposit - user.totalTaxableAmount - user.openingBalance;
   let tds = 0;
   let totalAmount = 0;
-  let incFiled = { balance: -amount, winings: -amount, 'totalWithdraw': amount };
+  let incFiled = { totalBalance: -amount };
 
   if (taxableAmount > 0) {
-    tds = taxableAmount * (parseFloat(row.tds * 0.01));
-    incFiled['totalTaxableAmount'] = taxableAmount;
-    incFiled['totalTds'] = tds;
+    // tds = taxableAmount * (parseFloat(row.tds * 0.01));
+    // incFiled['totalTaxableAmount'] = taxableAmount;
+    // incFiled['totalTds'] = tds;
   }
   else {
     taxableAmount = 0;

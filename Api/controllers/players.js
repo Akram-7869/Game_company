@@ -461,13 +461,13 @@ exports.getPlayer = asyncHandler(async (req, res, next) => {
   let player;
   //set
   if (req.staff) {
-    player = await Player.findById(req.params.id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken');
+    player = await Player.findById(req.params.id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken +usdt');
   } else {
     //player = req.player;
     if (req.player.status === 'active') {
-      player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken +refer_code');
+      player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken +refer_code +usdt');
     } else {
-      player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken ');
+      player = await Player.findById(req.player._id).select('+panNumber +aadharNumber +bank +wallet +upi +firebaseToken +usdt');
     }
 
   }
@@ -2254,6 +2254,30 @@ exports.calimedGift = asyncHandler(async (req, res, next) => {
     }
     let tran = await Transaction.create(tranData);
   }
+  
+ 
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
+
+
+exports.playerGift = asyncHandler(async (req, res, next) => {
+  let {giftAmount}=req.body;
+  let playerId =req.params.id;
+  
+  if (req.role !== 'admin' ) {
+    return next(
+      new ErrorResponse(`Not allowed `)
+    );
+  }
+ 
+  const player = await Player.findByIdAndUpdate(playerId, {giftAmount:giftAmount, isCalimed:false},  {
+    new: true,
+    runValidators: true
+  });
+   
   
  
   res.status(200).json({

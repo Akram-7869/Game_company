@@ -225,7 +225,7 @@ exports.addBank = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'Influencer' };
                   req.flash('message', 'With draw request success');
-                  res.redirect(process.env.ADMIN_URL + '/influencer/dashboard');
+                  res.redirect(process.env.ADMIN_URL + '/influencer/profile');
 
             })
             .catch(error => {
@@ -254,7 +254,6 @@ exports.addUpi = asyncHandler(async (req, res, next) => {
 });
 
 exports.addUsdt = asyncHandler(async (req, res, next) => {
-
       callApi(req).post(apiUrl + 'usdt', req.body)
             .then(r => {
                   // Assign value in session

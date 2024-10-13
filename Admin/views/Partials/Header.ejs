@@ -281,35 +281,47 @@
                             class="align-middle">
                             <%=translation.Settings%>
                            </span> <span class="badge bg-soft-success rounded-pill mt-1 ms-2">03</span></a>-->
-                          
-                          
-                       
-                        <% if(role==='admin') { %>
-                    <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/admin/manager/restpassword"><i
-                            class="uil uil-lock-alt font-size-18 align-middle me-1 text-muted"></i> <span
-                            class="align-middle">
-                            Reset Password
-                        </span></a>
-                        <% } else {%>
-                            <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/influencer/profile"><i
-                                class="uil uil-lock-alt font-size-18 align-middle me-1 text-muted"></i> <span
-                                class="align-middle">
-                                profile 
-                            </span></a>
-                            <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/influencer/restpassword"><i
+
+
+
+                    <% if(role==='admin' ) { %>
+                        <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/admin/manager/restpassword"><i
                                 class="uil uil-lock-alt font-size-18 align-middle me-1 text-muted"></i> <span
                                 class="align-middle">
                                 Reset Password
                             </span></a>
-                            <% } %>
+                        <% } else if(role==='influencer' ) {%>
+                            <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/influencer/profile"><i
+                                    class="uil uil-lock-alt font-size-18 align-middle me-1 text-muted"></i> <span
+                                    class="align-middle">
+                                    profile
+                                </span></a>
+                            <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/influencer/restpassword"><i
+                                    class="uil uil-lock-alt font-size-18 align-middle me-1 text-muted"></i> <span
+                                    class="align-middle">
+                                    Reset Password
+                                </span></a>
+                            <% } else if(role==='franchise' ) {%>
+                                <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/franchise/profile"><i
+                                        class="uil uil-lock-alt font-size-18 align-middle me-1 text-muted"></i> <span
+                                        class="align-middle">
+                                        profile
+                                    </span></a>
+                                <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/franchise/restpassword"><i
+                                        class="uil uil-lock-alt font-size-18 align-middle me-1 text-muted"></i> <span
+                                        class="align-middle">
+                                        Reset Password
+                                    </span></a>
+
+                                <% } %>
 
 
 
-                    <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/logout"><i
-                            class="uil uil-sign-out-alt font-size-18 align-middle me-1 text-muted"></i> <span
-                            class="align-middle">
-                            <%=translation.Sign_out%>
-                        </span></a>
+                                    <a class="dropdown-item" href="<%=process.env.ADMIN_URL%>/logout"><i
+                                            class="uil uil-sign-out-alt font-size-18 align-middle me-1 text-muted"></i>
+                                        <span class="align-middle">
+                                            <%=translation.Sign_out%>
+                                        </span></a>
                 </div>
             </div>
 

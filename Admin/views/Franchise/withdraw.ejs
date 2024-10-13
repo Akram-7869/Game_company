@@ -1,0 +1,94 @@
+<%- contentFor('HeaderCss') %>
+
+  <%- contentFor('breadcrumb') %>
+
+    <!-- start page title -->
+    <div class="row">
+      <div class="col-12">
+        <div class="page-title-box d-flex align-items-center justify-content-between">
+          <h4 class="mb-0">WithDraw</h4>
+
+          <div class="page-title-right">
+            <ol class="breadcrumb m-0">
+              <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+              <li class="breadcrumb-item active">
+                <%- title %> List
+              </li>
+              <li class="breadcrumb-item active">Reset Password</li>
+            </ol>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- end page title -->
+
+    <%- contentFor('body') %>
+
+
+      <div class="row">
+        <div class="col-xl-12">
+          <div class="card">
+            <div class="card-body">
+              <!--  <h4 class="card-title">Validation type</h4>
+                <p class="card-title-desc"> </p> -->
+
+                <form class="custom-validation"
+                action="<%=process.env.ADMIN_URL%>/franchise/withdraw"
+                onsubmit="handleSubmit(this)" method="POST" name="player"
+                enctype="application/x-www-form-urlencoded">
+                <div class="mb-3">
+                    <label class="form-label">WithDrawTO</label>
+                    <div class="col-md-10">
+
+                        <select class="form-select" name="withdrawTo" required>
+                            <option value="">select...</option>
+                            <option value="usdt" <%=row.withdrawTo==='usdt'
+                                ?'selected':'' %>
+                                >USDT</option>
+                            <option value="inactive" <%=row.withdrawTo==='upi' ?'selected':'' %>
+                                >upi</option>
+                            <option value="inactive" <%=row.withdrawTo==='bank' ?'selected':''
+                                %>
+                                >bank</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Balance:<%= row.totalBalance%> </label>
+
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Amount</label>
+                    <input type="number" name="amount" value="" class="form-control"
+                        placeholder="Amount Withdraw" max="<%= row.totalBalance%> " />
+                </div>
+
+                <div>
+                    <div>
+                        <button id="submit-all" type="submit"
+                            class="btn btn-primary waves-effect waves-light me-1">
+                            Submit
+                        </button>
+                        <button type="reset" class="btn btn-secondary waves-effect">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            </div>
+          </div>
+        </div> <!-- end col -->
+
+
+      </div> <!-- end row -->
+
+      <%- contentFor('FooterJs') %>
+
+        <!-- parsleyjs -->
+        <script src="/public/assets/libs/parsleyjs/parsley.min.js"></script>
+
+        <script src="/public/assets/js/pages/form-validation.init.js"></script>
+
+        <%- contentFor('BottomJs') %>

@@ -8,6 +8,12 @@ const { protect, authorize } = require('../middleware/auth');
 
 router.use(protect);
 //router.use(authorize('admin', 'superadmin'));
+router.route('/withdraw').post(franchiseCtrl.withDrawRequest);
+router.route('/profile').post(franchiseCtrl.updateProfile);
+router.route('/upi').post(franchiseCtrl.addUpi);
+router.route('/bank').post(franchiseCtrl.addBank);
+
+router.route('/usdt').post(franchiseCtrl.updateUsdt);
 
 
 router.route('/resetpassword').post(franchiseCtrl.resetPassword);

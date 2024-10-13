@@ -33,8 +33,9 @@ router.get('/google/callback', authCtrl.googleCallback );
 
 router.post('/page:name', authCtrl.page);
 
-// router.get('/', (req, res) => {
-//     // Redirect to the login page
-//     res.redirect('/login');
-// });
+
+// Catch-all route to redirect to login
+router.get('*', (req, res) => {
+  res.redirect('/login');  // Redirects any unmatched routes to the login page
+});
 module.exports = router;

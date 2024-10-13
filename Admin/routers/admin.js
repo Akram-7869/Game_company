@@ -203,7 +203,7 @@ router.route('/player/profile/:id').get(palyerCtrl.getProfile).post(palyerCtrl.u
 router.route('/player/status/:id').post(palyerCtrl.updatePlayerStatus);
 router.route('/player/view/:id').get(palyerCtrl.showPlayerView);
 router.route('/player/credit/:id').post(palyerCtrl.creditPlayer);
-
+router.route('/player/gift-amount/:id').post(palyerCtrl.playerGiftAmount);
 
 
 router.route('/player/add').get(palyerCtrl.getAddForm).post(palyerCtrl.createPlayers);

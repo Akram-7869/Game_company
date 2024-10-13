@@ -80,6 +80,10 @@ const FranchiseSchema = new mongoose.Schema({
     select: false,
     type: Map,
   },
+  usdt: {
+    select: false,
+    type: Map,
+  },
   createdAt: {
     type: Date,
     default: Date.now
