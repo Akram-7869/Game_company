@@ -104,7 +104,7 @@ exports.createfranchises = asyncHandler(async (req, res, next) => {
                   // Assign value in session
                   res.locals = { title: 'franchise-edit' };
                   req.flash('message', 'Data save');
-                  res.redirect(process.env.ADMIN_URL + '/admin/frechise');
+                  res.redirect(process.env.ADMIN_URL + '/admin/franchise');
 
             })
             .catch(error => {
