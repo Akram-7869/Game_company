@@ -54,4 +54,4 @@ Admin/package-lock.json
 Api/package-lock.json
 .vscode/
 .vs/
-assets/
+/assets/
