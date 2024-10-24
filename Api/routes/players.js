@@ -13,6 +13,10 @@ router.get('/tournaments', playerCtl.getTournaments);
 
 router.get('/versionlist', playerCtl.getVersion);
 
+router.route('/list').get(playerCtl.getPlayerList);
+router.route('/follow/:id').post(playerCtl.followPlayer);
+router.route('/unfollow/:id').post(playerCtl.unfollowPlayer);
+
 
 router.get('/my-gift', protect, playerCtl.getGift);
 router.post('/claim-gift', protect, playerCtl.calimedGift);

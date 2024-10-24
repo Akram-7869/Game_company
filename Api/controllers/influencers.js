@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/Influencer');
+const Post = require('../models/Post');
 const PlayerInfluencer = require('../models/PlayerInfluencer');
 
 const axios = require('axios');
@@ -138,6 +139,17 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
     data: user
   });
 });
+
+exports.getProfile = asyncHandler(async (req, res, next) => {
+  const user = await Influencer.findById(req.user.id);
+  const post = await Post.find({owner:req.user.id})
+  
+  res.status(200).json({
+    success: true,
+    data: {user, post}
+  });
+});
+
 
 exports.updateUpi = asyncHandler(async (req, res, next) => {
   let {upiId}=req.body;

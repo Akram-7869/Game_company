@@ -2278,10 +2278,149 @@ exports.playerGift = asyncHandler(async (req, res, next) => {
     runValidators: true
   });
    
+
   
  
   res.status(200).json({
     success: true,
     data: {}
   });
+});
+
+
+exports.unfollowPlayer = asyncHandler(async (req, res, next) => {
+  let { otherPlayerId } = req.body;
+
+  let playerId = req.player.id;
+
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  
+  await PlayerInfluencer.deleteMany({ playerId, otherPlayerId });
+  const followerCount = await PlayerInfluencer.countDocuments({
+    playerId: playerId,
+    influencerId: null
+  });
+ 
+  await Influencer.findOneAndUpdate(
+    { _id: influencerId },
+    { $set: { followCount: followerCount } }
+  );
+
+
+  // await admin.messaging().unsubscribeFromTopic(player.deviceToken, influencerId.toString());
+
+
+  res.status(200).json({
+    success: true,
+    data: req.player
+  });
+
+});
+
+exports.followPlayer = asyncHandler(async (req, res, next) => {
+  let { playerFollow } = req.body;
+  let playerId = req.player.id;
+
+  if (!req.player) {
+    return next(
+      new ErrorResponse(`Player  not found`)
+    );
+  }
+  
+
+  await PlayerInfluencer.updateOne(
+    { playerFollow, playerId }, // Filter to check if the follow relationship exists
+    { $setOnInsert: { playerFollow, playerId } }, // Only set these fields if inserting a new document
+    { upsert: true } // Perform an upsert
+  );
+
+  // const followerCount = await PlayerInfluencer.countDocuments({ playerId: playerId, playerFollow:playerId });
+  const followerCount = await PlayerInfluencer.countDocuments({
+    playerId: playerId,
+    influencerId: null
+  });
+  
+  await Player.findOneAndUpdate(
+    { _id: playerId },
+    { $set: { followCount: followerCount } }
+  );
+  // await admin.messaging().subscribeToTopic(player.deviceToken, influencerId.toString());
+
+  res.status(200).json({
+    success: true,
+    data: req.player
+  });
+
+
+});
+
+
+exports.getPlayerList = asyncHandler(async (req, res, next) => {
+
+  const playerId = req.player._id; // Replace with the current player's ID
+
+  const page = 1; // The current page (1-indexed)
+  const limit = 10; // The number of influencers per page
+  const searchTerm = ""; // Replace with the search term (empty if no search)
+
+  const pipeline = [
+    {
+      $lookup: {
+        from: "playerinfluencers",
+        let: { playerId: "$_id" }, // Use the player's _id from the Players collection
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$playerId", otherPlayerId] },   // Check if otherPlayerId is the one doing the following
+                  { $eq: ["$otherPlayerId", "$$playerId"] } // Check if this player is being followed
+                ]
+              }
+            }
+          },
+          { $limit: 1 } // We just need to know if there's one match
+        ],
+        as: "isFollowing"
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        firstName: 1,
+        displayName: 1,
+        profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
+        isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] } // true if the other player is following
+      }
+    },
+    { $skip: (page - 1) * limit }, // Pagination logic
+    { $limit: limit } // Limit to control page size
+  ];
+  
+  
+
+  // Conditionally add the $match stage only if a search term is provided
+  if (searchTerm) {
+    pipeline.unshift({
+      $match: {
+        $or: [
+          { firstname: { $regex: searchTerm, $options: "i" } },  // Case-insensitive search on firstname
+          { displayname: { $regex: searchTerm, $options: "i" } } // Case-insensitive search on displayname
+        ]
+      }
+    });
+  }
+
+
+
+  // Run the aggregation pipeline
+  let rows = await Player.aggregate(pipeline);
+
+
+  res.json({ data: rows }); // table.total, table.dat
+
 });

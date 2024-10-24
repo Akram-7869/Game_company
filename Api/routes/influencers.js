@@ -12,12 +12,12 @@ router.route('/top-list').get(userCtrl.geTopList);
 router.use(protect);
  router.route('/withdraw').post(userCtrl.withDrawRequest);
  router.route('/profile').post(userCtrl.updateProfile);
+ router.route('/profile').get(userCtrl.getProfile);
  router.route('/upi').post(userCtrl.addUpi);
  router.route('/bank').post(userCtrl.addBank);
 
  router.route('/usdt').post(userCtrl.updateUsdt);
 
- 
  
 
 
