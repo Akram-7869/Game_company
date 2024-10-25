@@ -26,6 +26,7 @@ let onConnection = (socket) => {
     // Store the mapping in the userSocketMap
     userSocketMap[userId]['socket_id'] = socket.id;
   });
+
   socket.on('join', async (d) => {
     try {
 
@@ -215,23 +216,25 @@ let onConnection = (socket) => {
     io.in(room).emit('res', { ev: 'setGameId', data });
 
   });
+  
   //leave
-  // socket.on('leave', (d) => {
-  //   try {
-  //     let { room, userId } = d;
-  //     userLeave(d);
-  //     socket.leave(room);
-  //     let data = {
-  //       room: room, userId,
-  //       users: getRoomUsers(room)
-  //     };
-  //     console.log('leave-', d, data);
-  //     io.to(room).emit('res', { ev: 'leave', data });
+  socket.on('leave', (d) => {
+    try {
+      let { room, userId } = d;
+      userLeave(d);
+      socket.leave(room);
+      let data = {
+        room: room, userId,
+        users: getRoomUsers(room)
+      };
+      console.log('leave-', d, data);
+      io.to(room).emit('res', { ev: 'leave', data });
 
-  //   } catch (error) {
+    } catch (error) {
 
-  //   }
-  // });
+    }
+  });
+
   //chat_message
   socket.on('chat_message', (d) => {
     let { room } = d;
