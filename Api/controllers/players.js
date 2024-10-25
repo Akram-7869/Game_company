@@ -2361,7 +2361,7 @@ exports.followPlayer = asyncHandler(async (req, res, next) => {
 
 exports.getPlayerList = asyncHandler(async (req, res, next) => {
 
-  const playerId = req.player._id; // Replace with the current player's ID
+  // const playerId = req.player._id; // Replace with the current player's ID
 
   const page = 1; // The current page (1-indexed)
   const limit = 10; // The number of influencers per page
