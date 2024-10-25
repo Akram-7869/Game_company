@@ -36,6 +36,7 @@ const SocketHandler = {
         this.socket.on('onBetPlaced', this.onBetPlaced.bind(this));
         this.socket.on('OnWinNo', this.onGameResult.bind(this));
         this.socket.on('OnReset', this.onGameRestart.bind(this));
+        this.socket.on('roomCount', this.onRoomCount.bind(this));
 
         // Crash-specific events
         this.socket.on('OnFlightBlast', this.onFlightBlast.bind(this));
@@ -87,6 +88,13 @@ const SocketHandler = {
        var channel = document.getElementById('channel');
        var userCount = document.getElementById('userCount');
         channel.value =  this.room;
+        userCount.textContent = msg.numberOfClients;
+        
+    },
+
+    onRoomCount(msg) {
+       
+       var userCount = document.getElementById('userCount');
         userCount.textContent = msg.numberOfClients;
         
     },
