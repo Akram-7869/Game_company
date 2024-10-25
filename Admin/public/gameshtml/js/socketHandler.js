@@ -85,7 +85,10 @@ const SocketHandler = {
         console.log('Joined room:', this.room);
         //this.requestCurrentStatus();
        var channel = document.getElementById('channel');
+       var userCount = document.getElementById('userCount');
         channel.value =  this.room;
+        userCount.value =  msg.numberOfClients;
+        
         
 
     },
