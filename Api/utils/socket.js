@@ -96,8 +96,9 @@ let onConnection = (socket) => {
         io.emit('influencer_matches', { influencers });
       }
 
-
+      io.to(roomName).emit('roomCount', { numberOfClients });
       switch (lobby.mode) {
+
         case gameName.ludo:
           if (!state[roomName]['codeObj']) {
             state[roomName]['codeObj'] = new LudoGame(io, roomName, maxp, lobby);
@@ -156,7 +157,7 @@ let onConnection = (socket) => {
           break;
       }
 
-      io.to(room).emit('roomCount', { numberOfClients });
+     
 
     } catch (error) {
       console.log('error-join', error)
