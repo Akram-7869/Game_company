@@ -2464,10 +2464,17 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
         _id: 1,
         firstName: 1,
         displayName: 1,
-        profilePic: { $concat: [process.env.IMAGE_URL || "", "$imageId"] },
+        profilePic: {
+          $cond: {
+            if: { $and: [{ $ifNull: ["$imageId", false] }, { $ne: ["$imageId", ""] }] },
+            then: { $concat: [process.env.IMAGE_URL || "", "$imageId"] },
+            else: `${process.env.IMAGE_URL || ""}default.jpg` // fallback to default image if imageId is missing
+          }
+        },
         isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] } // true if the other player is following
       }
-    },
+    }
+    ,
     { $skip: (page - 1) * limit }, // Skip for pagination
     { $limit: limit } // Limit for page size
   ];
