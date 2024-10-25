@@ -9,6 +9,7 @@ const SocketHandler = {
         lobbyId: '',
         maxp: 99999
     },
+    
 
     initialize(gameType, data) {
         this.gameType = gameType;
@@ -93,7 +94,7 @@ const SocketHandler = {
     },
 
     onRoomCount(msg) {
-        console.log('room count:', msg.numberOfClients);
+        console.log('-------------->room count:', msg.numberOfClients);
        var userCount = document.getElementById('userCount');
         userCount.textContent = msg.numberOfClients;
         
