@@ -156,6 +156,8 @@ let onConnection = (socket) => {
           break;
       }
 
+      io.to(room).emit('roomCount', { numberOfClients });
+
     } catch (error) {
       console.log('error-join', error)
 
