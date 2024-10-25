@@ -2426,64 +2426,75 @@ exports.followPlayer = asyncHandler(async (req, res, next) => {
 // });  
 
 
+
+
 exports.getPlayerList = asyncHandler(async (req, res, next) => {
-  try {
-    const playerId = req.player?._id;
-    const otherPlayerId = req.params.otherPlayerId;
+  const playerId = req.player ? req.player._id : null; // Ensure playerId is defined
+  const otherPlayerId = req.query.otherPlayerId || null; // Define otherPlayerId, if passed in query params
 
-    if (!playerId) throw new Error("Player ID is missing");
+  // Get pagination and search term from query parameters
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const searchTerm = req.query.search || "";
 
-    const page = 1;
-    const limit = 10;
-    const searchTerm = ""; 
-
-    const pipeline = [
-      {
-        $lookup: {
-          from: "playerinfluencers",
-          let: { playerId: "$_id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$playerId", otherPlayerId] },
-                    { $eq: ["$otherPlayerId", "$$playerId"] }
-                  ]
-                }
+  // Define aggregation pipeline
+  const pipeline = [
+    {
+      $lookup: {
+        from: "playerinfluencers",
+        let: { playerId: "$_id" }, // ID of the player in the Players collection
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$playerId", otherPlayerId] },   // Check if otherPlayerId is following
+                  { $eq: ["$otherPlayerId", "$$playerId"] } // Check if this player is being followed
+                ]
               }
-            },
-            { $limit: 1 }
-          ],
-          as: "isFollowing"
-        }
-      },
-      {
-        $project: {
-          _id: 1,
-          firstName: 1,
-          displayName: 1,
-          profilePic: { $concat: [process.env.IMAGE_URL || '', '$imageId'] },
-          isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] }
-        }
-      },
-      { $skip: (page - 1) * limit },
-      { $limit: limit }
-    ];
+            }
+          },
+          { $limit: 1 } // We only need one match to confirm "isFollowing" status
+        ],
+        as: "isFollowing"
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        firstName: 1,
+        displayName: 1,
+        profilePic: { $concat: [process.env.IMAGE_URL || "", "$imageId"] },
+        isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] } // true if the other player is following
+      }
+    },
+    { $skip: (page - 1) * limit }, // Skip for pagination
+    { $limit: limit } // Limit for page size
+  ];
 
-    if (searchTerm) {
-      pipeline.unshift({
-        $match: {
-          $or: [
-            { firstName: { $regex: searchTerm, $options: "i" } },
-            { displayName: { $regex: searchTerm, $options: "i" } }
-          ]
-        }
-      });
-    }
+  // Conditionally add the $match stage if a search term is provided
+  if (searchTerm) {
+    pipeline.unshift({
+      $match: {
+        $or: [
+          { firstName: { $regex: searchTerm, $options: "i" } },  // Case-insensitive search on firstName
+          { displayName: { $regex: searchTerm, $options: "i" } } // Case-insensitive search on displayName
+        ]
+      }
+    });
+  }
 
-    let rows = await Player.aggregate(pipeline);
-    res.json({ data: rows });
+  try {
+    // Run the aggregation pipeline
+    const rows = await Player.aggregate(pipeline);
+
+    // Send the response
+    res.json({
+      page,
+      limit,
+      total: rows.length,
+      data: rows
+    });
   } catch (error) {
     console.error("Error fetching player list:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
