@@ -87,8 +87,8 @@ const SocketHandler = {
        var channel = document.getElementById('channel');
        var userCount = document.getElementById('userCount');
         channel.value =  this.room;
-        userCount.value =  msg.numberOfClients;
-        
+       
+        userCount.textContent = msg.numberOfClients;
         
 
     },
