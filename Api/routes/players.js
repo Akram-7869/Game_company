@@ -15,8 +15,8 @@ router.get('/versionlist', playerCtl.getVersion);
 
 router.route('/list').get(playerCtl.getPlayerList);
 
-router.route('/follow/:id').post(playerCtl.followPlayer);
-router.route('/unfollow/:id').post(playerCtl.unfollowPlayer);
+router.route('/follow').post(playerCtl.followPlayer);
+router.route('/unfollow').post(playerCtl.unfollowPlayer);
 
 
 router.get('/my-gift', protect, playerCtl.getGift);
