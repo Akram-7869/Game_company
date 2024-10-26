@@ -2557,6 +2557,7 @@ const updateFollowCount = async(playerId) => {
 
     // Step 1: Calculate the counts using aggregation
     const counts = await PlayerInfluencer.aggregate([
+
       {
         $facet: {
           followersCount: [
@@ -2581,6 +2582,7 @@ const updateFollowCount = async(playerId) => {
       },
     ]);
 
+    console.log("count", counts);
     // Step 2: Update the counts in the Players collection
     if (counts && counts.length > 0) {
       await Player.updateOne((
