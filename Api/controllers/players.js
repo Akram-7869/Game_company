@@ -2561,11 +2561,11 @@ const updateFollowCount = async(playerId) => {
       {
         $facet: {
           followersCount: [
-            { $match: { otherPlayerId: playerId } },
+            { $match: { otherPlayerId:  ObjectId(playerId)  } },
             { $count: "count" },
           ],
           followingCount: [
-            { $match: { playerId: playerId } },
+            { $match: { playerId:  ObjectId(playerId) } },
             { $count: "count" },
           ],
         },
