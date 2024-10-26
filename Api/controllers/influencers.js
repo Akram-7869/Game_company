@@ -755,7 +755,6 @@ exports.uploadeImage = asyncHandler(async (req, res, next) => {
 });
 
 exports.geTopList = asyncHandler(async (req, res, next) => {
-
   const influencers = await Influencer.aggregate([
     {
       $match: {
@@ -776,12 +775,21 @@ exports.geTopList = asyncHandler(async (req, res, next) => {
         firstName: 1,
         displayName: 1,
         followCount: 1,
-
-        profilePic: { $concat: [process.env.IMAGE_URL, '$profilePic'] },
+        profilePic: {
+          $cond: {
+            if: {
+              $and: [
+                { $ifNull: ["$profilePic", false] },
+                { $ne: ["$profilePic", ""] }
+              ]
+            },
+            then: { $concat: [process.env.IMAGE_URL || "", "/", "$profilePic"] },
+            else: `${process.env.IMAGE_URL || ""}/img/player/default_pic/Default_1.png`
+          }
+        }
       }
     }
   ]);
-
 
   res.json({ data: influencers }); // Return the list of following influencers
 });
