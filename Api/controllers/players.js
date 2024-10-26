@@ -2483,7 +2483,7 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
        
         let: {
           playerId: ObjectId(playerId), // ID of the player in the Players collection
-          otherPlayerId: "$_id" // otherPlayerId we want to match
+          targetOtherPlayerId: "$_id" // otherPlayerId we want to match
         },
         pipeline: [
           {
