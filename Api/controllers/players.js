@@ -2473,11 +2473,18 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
   const searchTerm = req.query.search || "";
 
   // Define aggregation pipeline
+
+
   const pipeline = [
+    
     {
       $lookup: {
         from: "playerinfluencers",
-        let: { playerId: "$_id" }, // ID of the player in the Players collection
+       
+        let: {
+          playerId: ObjectId(playerId), // ID of the player in the Players collection
+          targetOtherPlayerId: "$_id" // otherPlayerId we want to match
+        },
         pipeline: [
           {
             $match: {
