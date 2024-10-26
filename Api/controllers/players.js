@@ -2378,7 +2378,7 @@ exports.unfollowPlayer = asyncHandler(async (req, res, next) => {
 });
 
 exports.followPlayer = asyncHandler(async (req, res, next) => {
-  let { playerFollow } = req.body;
+  let { otherPlayerId } = req.body;
   
   let playerId = req.player.id;
 
@@ -2387,8 +2387,8 @@ exports.followPlayer = asyncHandler(async (req, res, next) => {
   }
 
   await PlayerInfluencer.updateOne(
-    { playerFollow, playerId }, // Filter to check if the follow relationship exists
-    { $setOnInsert: { playerFollow, playerId } }, // Only set these fields if inserting a new document
+    {otherPlayerId: otherPlayerId, playerId: playerId }, // Filter to check if the follow relationship exists
+    { $setOnInsert: { otherPlayerId: otherPlayerId, playerId: playerId } }, // Only set these fields if inserting a new document
     { upsert: true } // Perform an upsert
   );
 

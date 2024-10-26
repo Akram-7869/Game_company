@@ -19,6 +19,7 @@ const PlayerInfluencerSchema = new mongoose.Schema({
     required:true
   },
   
+  
  
 });
 
