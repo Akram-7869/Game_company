@@ -244,9 +244,11 @@ const PlayerSchema = new mongoose.Schema({
   },
   membership_amount: {
     type: Number
-
-
   },
+
+
+  
+
   membership_expire: {
     type: Date,
   },
@@ -318,7 +320,18 @@ const PlayerSchema = new mongoose.Schema({
     required: true,
 
     default: 0
-  }
+  },
+
+  followingCount: {
+    type: Number,
+    default: 0,
+  },
+  
+  followersCount: {
+    type: Number,
+    default: 0,
+    },
+
 });
 
 // Encrypt password usinsg bcrypt

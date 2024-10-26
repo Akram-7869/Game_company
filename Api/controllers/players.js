@@ -35,6 +35,7 @@ const { state, gameName } = require("../utils/JoinRoom");
 let axios = require("axios");
 const FormData = require("form-data");
 const Commission = require("../models/Commission");
+const PlayerInfluencer = require("../models/PlayerInfluencer");
 
 const checkOrderStatus = async (trxId) => {
   const row = await Setting.findOne({ type: "PAYMENT", name: "CASHFREE" });
@@ -2366,18 +2367,10 @@ exports.unfollowPlayer = asyncHandler(async (req, res, next) => {
   }
 
   await PlayerInfluencer.deleteMany({ playerId, otherPlayerId });
-  const followerCount = await PlayerInfluencer.countDocuments({
-    playerId: playerId,
-    influencerId: null,
-  });
+ 
 
-  await Influencer.findOneAndUpdate(
-    { _id: influencerId },
-    { $set: { followCount: followerCount } }
-  );
-
-  // await admin.messaging().unsubscribeFromTopic(player.deviceToken, influencerId.toString());
-
+  await updateFollowCount(playerId);
+  
   res.status(200).json({
     success: true,
     data: req.player,
@@ -2398,16 +2391,8 @@ exports.followPlayer = asyncHandler(async (req, res, next) => {
     { upsert: true } // Perform an upsert
   );
 
-  // const followerCount = await PlayerInfluencer.countDocuments({ playerId: playerId, playerFollow:playerId });
-  const followerCount = await PlayerInfluencer.countDocuments({
-    playerId: playerId,
-    influencerId: null,
-  });
-
-  await Player.findOneAndUpdate(
-    { _id: playerId },
-    { $set: { followCount: followerCount } }
-  );
+  await updateFollowCount(playerId);
+  
   // await admin.messaging().subscribeToTopic(player.deviceToken, influencerId.toString());
 
   res.status(200).json({
@@ -2521,7 +2506,9 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
                 { $ne: ["$profilePic", ""] },
               ],
             },
-            then: { $concat: [process.env.IMAGE_URL || "", "/", "$imageId"] },
+            then: {
+              $concat: [process.env.IMAGE_URL || "", "/", "$profilePic"],
+            },
             else: `${
               process.env.IMAGE_URL || ""
             }/img/player/default_pic/Default_1.png`, // fallback to default image if imageId is missing
@@ -2564,3 +2551,49 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
       .json({ message: "Internal server error", error: error.message });
   }
 });
+
+const updateFollowCount = async(playerId) => {
+
+  async function updatePlayerCounts(playerId) {
+    
+
+    // Step 1: Calculate the counts using aggregation
+    const counts = await PlayerInfluencer.aggregate([
+      {
+        $facet: {
+          followersCount: [
+            { $match: { otherPlayerId: playerId } },
+            { $count: "count" },
+          ],
+          followingCount: [
+            { $match: { playerId: playerId } },
+            { $count: "count" },
+          ],
+        },
+      },
+      {
+        $project: {
+          followersCount: {
+            $ifNull: [{ $arrayElemAt: ["$followersCount.count", 0] }, 0],
+          },
+          followingCount: {
+            $ifNull: [{ $arrayElemAt: ["$followingCount.count", 0] }, 0],
+          },
+        },
+      },
+    ]);
+
+    // Step 2: Update the counts in the Players collection
+    if (counts && counts.length > 0) {
+      await Player.updateOne((
+        { _id:playerId },
+        {
+          $set: {
+            followersCount: counts[0].followersCount,
+            followingCount: counts[0].followingCount,
+          },
+        })
+      );
+    }
+  }
+};
