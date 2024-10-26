@@ -529,7 +529,7 @@ exports.updatePlayer = asyncHandler(async (req, res, next) => {
   if (req.staff) {
     player = await Player.findById(req.params.id);
     fieldsToUpdate["kycStatus"] = kycStatus;
-  } else if (req.player) {
+  } else if (!req.player) {
     return next(new ErrorResponse(`Player  not found`));
   }
 
