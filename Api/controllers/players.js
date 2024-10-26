@@ -2587,7 +2587,7 @@ const updateFollowCount = async(playerId) => {
     if (counts && counts.length > 0) {
      
       await Player.findByIdAndUpdate(
-        req.player._id,
+       playerId,
         {
           followersCount: counts[0].followersCount,
           followingCount: counts[0].followingCount,
