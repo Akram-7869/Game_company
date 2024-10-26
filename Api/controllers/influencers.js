@@ -108,6 +108,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 
 exports.updateProfile = asyncHandler(async (req, res, next) => {
   const user = await Influencer.findById(req.user.id);
+  console.log("------>",req.user)
   let { filename } = req.body;
   if (!user) {
     return next(
@@ -181,6 +182,8 @@ exports.updateUpi = asyncHandler(async (req, res, next) => {
     data: user
   });
 });
+
+
 exports.updateUsdt = asyncHandler(async (req, res, next) => {
   let {usdtId} = req.body;
   let user = await Influencer.findById(req.user.id);
