@@ -2555,9 +2555,6 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
 
 const updateFollowCount = async(playerId) => {
 
-  async function updatePlayerCounts(playerId) {
-    
-
     // Step 1: Calculate the counts using aggregation
     const counts = await PlayerInfluencer.aggregate([
       {
@@ -2596,5 +2593,5 @@ const updateFollowCount = async(playerId) => {
         })
       );
     }
-  }
+  
 };
