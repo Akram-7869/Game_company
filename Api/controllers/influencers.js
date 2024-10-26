@@ -134,8 +134,8 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
 
  // Construct the profile picture URL
  const profilePicUrl = user.imageId
-   ? `${process.env.IMAGE_URL}/${user.imageId}`
-   : `${process.env.IMAGE_URL}/img/player/default_pic/Default_1.png`;
+   ? `${process.env.IMAGE_URL}${user.imageId}`
+   : `${process.env.IMAGE_URL}img/player/default_pic/Default_1.png`;
 
  // Attach the profilePic to the user object for the response
  const userData = {
