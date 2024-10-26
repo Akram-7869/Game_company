@@ -107,8 +107,10 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 
 
 exports.updateProfile = asyncHandler(async (req, res, next) => {
+  console.log("------>",req)
+  console.log("------>",req.body)
   console.log("------>",req.user)
-  const user = await Influencer.findById(req.user.id);
+  const user = await Influencer.findById(req.body.id);
 
   
   let { filename } = req.body;
