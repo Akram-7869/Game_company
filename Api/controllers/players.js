@@ -2591,11 +2591,8 @@ const updateFollowCount = async(playerId) => {
         {
           followersCount: counts[0].followersCount,
           followingCount: counts[0].followingCount,
-        },
-        {
-          new: true,
-          runValidators: true,
         }
+        
       );
     }
   
