@@ -2379,6 +2379,7 @@ exports.unfollowPlayer = asyncHandler(async (req, res, next) => {
 
 exports.followPlayer = asyncHandler(async (req, res, next) => {
   let { playerFollow } = req.body;
+  
   let playerId = req.player.id;
 
   if (!req.player) {
