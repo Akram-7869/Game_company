@@ -2482,10 +2482,11 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
           {
             $match: {
               $expr: {
+              
                 $and: [
-                  { $eq: ["$playerId", otherPlayerId] }, // Check if otherPlayerId is following
-                  { $eq: ["$otherPlayerId", "$$playerId"] }, // Check if this player is being followed
-                ],
+                  { $eq: ["$playerId", "$$playerId"] }, // Check if the current player is following
+                  { $eq: ["$otherPlayerId", otherPlayerId] } // Check if otherPlayerId is being followed
+                ]
               },
             },
           },
