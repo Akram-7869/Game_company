@@ -108,39 +108,46 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 
 exports.updateProfile = asyncHandler(async (req, res, next) => {
 
-  const user = await Influencer.findById(req.body.id);
+ // Find the user by ID
+ const user = await Influencer.findById(req.body.id);
 
-  
-  let { filename } = req.body;
-  if (!user) {
-    return next(
-      new ErrorResponse(`User  not found`)
-    );
-  }
-  //  Make sure user is provider owner
-  if (req.role === 'admin') {
-     
-      return next(
-        new ErrorResponse(
-          `User  is not authorized to update`)
-      );
-    
-  }
+ if (!user) {
+   return next(new ErrorResponse(`User not found`));
+ }
 
-  user.firstName = req.body.firstName;
-  user.lastName = req.body.lastName;
-  user.phone = req.body.phone;
-  user.displayName = req.body.displayName;
-  if (filename) {
-    user.imageId = filename;
-  }
+ // Check if user is authorized
+ if (req.role !== 'admin') {
+   return next(new ErrorResponse(`User is not authorized to update`));
+ }
 
-  //user.isNew = false;
-  await user.save();
-  res.status(200).json({
-    success: true,
-    data: user
-  });
+ // Update fields if provided
+ user.firstName = req.body.firstName || user.firstName;
+ user.lastName = req.body.lastName || user.lastName;
+ user.phone = req.body.phone || user.phone;
+ user.displayName = req.body.displayName || user.displayName;
+ 
+ if (req.body.filename) {
+   user.imageId = req.body.filename;
+ }
+
+ await user.save();
+
+ // Construct the profile picture URL
+ const profilePicUrl = user.imageId
+   ? `${process.env.IMAGE_URL}/${user.imageId}`
+   : `${process.env.IMAGE_URL}/img/player/default_pic/Default_1.png`;
+
+ // Attach the profilePic to the user object for the response
+ const userData = {
+   ...user._doc,
+   profilePic: profilePicUrl
+ };
+
+ // Send the complete user data in the response
+ res.status(200).json({
+   success: true,
+   data: userData
+ });
 });
 
 
