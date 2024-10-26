@@ -2585,14 +2585,17 @@ const updateFollowCount = async(playerId) => {
     console.log("count", counts);
     // Step 2: Update the counts in the Players collection
     if (counts && counts.length > 0) {
-      await Player.updateOne((
-        { _id:playerId },
+     
+      await Player.findByIdAndUpdate(
+        req.player._id,
         {
-          $set: {
-            followersCount: counts[0].followersCount,
-            followingCount: counts[0].followingCount,
-          },
-        })
+          followersCount: counts[0].followersCount,
+          followingCount: counts[0].followingCount,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
       );
     }
   
