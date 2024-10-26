@@ -107,9 +107,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 
 
 exports.updateProfile = asyncHandler(async (req, res, next) => {
-  console.log("------>",req)
-  console.log("------>",req.body)
-  console.log("------>",req.user)
+
   const user = await Influencer.findById(req.body.id);
 
   
@@ -779,7 +777,7 @@ exports.geTopList = asyncHandler(async (req, res, next) => {
         displayName: 1,
         followCount: 1,
 
-        profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
+        profilePic: { $concat: [process.env.IMAGE_URL, '$profilePic'] },
       }
     }
   ]);
