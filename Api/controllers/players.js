@@ -2483,7 +2483,7 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
        
         let: {
           playerId: ObjectId(playerId), // ID of the player in the Players collection
-          targetOtherPlayerId: "$_id" // otherPlayerId we want to match
+          otherPlayerId: "$_id" // otherPlayerId we want to match
         },
         pipeline: [
           {
@@ -2492,7 +2492,7 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
               
                 $and: [
                   { $eq: ["$playerId", "$$playerId"] }, // Check if the current player is following
-                  { $eq: ["$otherPlayerId", otherPlayerId] } // Check if otherPlayerId is being followed
+                  { $eq: ["$otherPlayerId", "$$targetOtherPlayerId"] } // Check if otherPlayerId is being followed
                 ]
               },
             },
