@@ -791,7 +791,7 @@ exports.geTopList = asyncHandler(async (req, res, next) => {
               ]
             },
             then: { $concat: [process.env.IMAGE_URL || "", "/", "$profilePic"] },
-            else: `${process.env.IMAGE_URL || ""}/img/player/default_pic/Default_1.png`
+            // else: `${process.env.IMAGE_URL || ""}/img/logo/profile_default.png`
           }
         }
       }
