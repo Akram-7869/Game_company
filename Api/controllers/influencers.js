@@ -631,7 +631,9 @@ exports.getUserList = asyncHandler(async (req, res, next) => {
         displayName: 1,
         followCount: 1,
         isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] },
-        profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
+        profilePic: { 
+          $concat: [process.env.IMAGE_URL, { $ifNull: ["$imageId", "default.jpg"] }] // Provide a default value if imageId is null
+        }
 
       }
     },
