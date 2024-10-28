@@ -2507,7 +2507,7 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
         _id: 1,
         firstName: 1,
         displayName: 1,
-        profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
+        profilePic: { $concat: [process.env.IMAGE_URL, '$profilePic'] },
         // profilePic: {
         //   $cond: {
         //     if: {
