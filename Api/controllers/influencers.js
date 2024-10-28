@@ -782,18 +782,19 @@ exports.geTopList = asyncHandler(async (req, res, next) => {
         firstName: 1,
         displayName: 1,
         followCount: 1,
-        profilePic: {
-          $cond: {
-            if: {
-              $and: [
-                { $ifNull: ["$profilePic", false] },
-                { $ne: ["$profilePic", ""] }
-              ]
-            },
-            then: { $concat: [process.env.IMAGE_URL || "", "/", "$profilePic"] },
-            // else: `${process.env.IMAGE_URL || ""}/img/logo/profile_default.png`
-          }
-        }
+        profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
+        // profilePic: {
+        //   $cond: {
+        //     if: {
+        //       $and: [
+        //         { $ifNull: ["$profilePic", false] },
+        //         { $ne: ["$profilePic", ""] }
+        //       ]
+        //     },
+        //     then: { $concat: [process.env.IMAGE_URL || "", "/", "$profilePic"] },
+        //     else: `${process.env.IMAGE_URL || ""}/img/logo/profile_default.png`
+        //   }
+        // }
       }
     }
   ]);
