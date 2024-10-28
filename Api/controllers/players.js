@@ -2507,22 +2507,23 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
         _id: 1,
         firstName: 1,
         displayName: 1,
-        profilePic: {
-          $cond: {
-            if: {
-              $and: [
-                { $ifNull: ["$profilePic", false] },
-                { $ne: ["$profilePic", ""] },
-              ],
-            },
-            then: {
-              $concat: [process.env.IMAGE_URL || "", "/", "$profilePic"],
-            },
-            else: `${
-              process.env.IMAGE_URL || ""
-            }/img/logo/profile_default.png`, // fallback to default image if imageId is missing
-          },
-        },
+        profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
+        // profilePic: {
+        //   $cond: {
+        //     if: {
+        //       $and: [
+        //         { $ifNull: ["$profilePic", false] },
+        //         { $ne: ["$profilePic", ""] },
+        //       ],
+        //     },
+        //     then: {
+        //       $concat: [process.env.IMAGE_URL || "", "/", "$profilePic"],
+        //     },
+        //     else: `${
+        //       process.env.IMAGE_URL || ""
+        //     }/img/logo/profile_default.png`, // fallback to default image if imageId is missing
+        //   },
+        // },
         isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] }, // true if the other player is following
       },
     },
