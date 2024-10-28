@@ -2476,11 +2476,9 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
 
 
   const pipeline = [
-    
     {
       $lookup: {
         from: "playerinfluencers",
-       
         let: {
           playerId: ObjectId(playerId), // ID of the player in the Players collection
           targetOtherPlayerId: "$_id" // otherPlayerId we want to match
@@ -2489,47 +2487,33 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
           {
             $match: {
               $expr: {
-              
                 $and: [
                   { $eq: ["$playerId", "$$playerId"] }, // Check if the current player is following
                   { $eq: ["$otherPlayerId", "$$targetOtherPlayerId"] } // Check if otherPlayerId is being followed
                 ]
-              },
-            },
+              }
+            }
           },
-          { $limit: 1 }, // We only need one match to confirm "isFollowing" status
+          { $limit: 1 } // We only need one match to confirm "isFollowing" status
         ],
-        as: "isFollowing",
-      },
+        as: "isFollowing"
+      }
     },
     {
       $project: {
         _id: 1,
         firstName: 1,
         displayName: 1,
-        profilePic: { $concat: [process.env.IMAGE_URL, '$profilePic'] },
-        // profilePic: {
-        //   $cond: {
-        //     if: {
-        //       $and: [
-        //         { $ifNull: ["$profilePic", false] },
-        //         { $ne: ["$profilePic", ""] },
-        //       ],
-        //     },
-        //     then: {
-        //       $concat: [process.env.IMAGE_URL || "", "/", "$profilePic"],
-        //     },
-        //     else: `${
-        //       process.env.IMAGE_URL || ""
-        //     }/img/logo/profile_default.png`, // fallback to default image if imageId is missing
-        //   },
-        // },
-        isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] }, // true if the other player is following
-      },
+        profilePic: {
+          $concat: [`${process.env.IMAGE_URL}`, "$profilePic"] // Pass process.env.IMAGE_URL as a string
+        },
+        isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] } // true if the other player is following
+      }
     },
     { $skip: (page - 1) * limit }, // Skip for pagination
-    { $limit: limit }, // Limit for page size
+    { $limit: limit } // Limit for page size
   ];
+  
 
   // Conditionally add the $match stage if a search term is provided
   if (searchTerm) {
