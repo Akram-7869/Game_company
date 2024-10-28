@@ -2505,7 +2505,7 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
         firstName: 1,
         displayName: 1,
         profilePic: {
-          $concat: [`${process.env.IMAGE_URL}`, "$picture"] // Pass process.env.IMAGE_URL as a string
+          $concat: [`${process.env.IMAGE_URL}`, "$profilePic"] // Pass process.env.IMAGE_URL as a string
         },
         isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] } // true if the other player is following
       }
