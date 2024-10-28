@@ -2520,7 +2520,7 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
             },
             else: `${
               process.env.IMAGE_URL || ""
-            }/img/player/default_pic/Default_1.png`, // fallback to default image if imageId is missing
+            }/img/logo/profile_default.png`, // fallback to default image if imageId is missing
           },
         },
         isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] }, // true if the other player is following
