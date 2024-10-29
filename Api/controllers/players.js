@@ -642,6 +642,7 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
   if (dob) {
     fieldsToUpdate["dob"] = dob;
   }
+  if (playerProfileUrl) { fieldsToUpdate['playerProfileUrl'] = playerProfileUrl; }
   //if (state) { fieldsToUpdate['state'] = state; }
   // if (!player.email) {
   //   if (email) { fieldsToUpdate['email'] = email; }

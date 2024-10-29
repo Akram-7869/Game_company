@@ -21,6 +21,10 @@ const PlayerSchema = new mongoose.Schema({
   profilePic: {
     type: mongoose.Schema.ObjectId,
   },
+  playerProfileUrl:{
+    type: String,
+
+  },
   picture: {
     type: String,
   },
