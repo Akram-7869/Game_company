@@ -2504,9 +2504,18 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
         _id: 1,
         firstName: 1,
         displayName: 1,
+        // profilePic: {
+        //   $concat: [`${process.env.IMAGE_URL}`, "$picture"] // Pass process.env.IMAGE_URL as a string
+        // },
+
         profilePic: {
-          $concat: [`${process.env.IMAGE_URL}`, "$picture"] // Pass process.env.IMAGE_URL as a string
+          $cond: {
+            if: { $and: [ { $ne: [ "$picture", null ] }, { $ne: [ process.env.IMAGE_URL, null ] } ] },
+            then: { $concat: [ `${process.env.IMAGE_URL}`, "$picture" ] },
+            else: "img/logo/profile_default.png" // Replace with your default picture URL
+          }
         },
+        
         isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] } // true if the other player is following
       }
     },

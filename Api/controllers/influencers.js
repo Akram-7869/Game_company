@@ -160,6 +160,7 @@ exports.getProfile = asyncHandler(async (req, res, next) => {
     success: true,
     data: {user, post}
   });
+  
 });
 
 
