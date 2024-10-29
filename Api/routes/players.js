@@ -38,6 +38,9 @@ router.get('/page', protect, playerCtl.getPage);
 
 
 router.route('/profile').get(protect, playerCtl.getPlayer).post(protect, playerCtl.updateProfile);
+
+router.post('/profile/image', playerCtl.updatePlayerImage);
+
 router.route('/sendotp').post(protect, playerCtl.sendotp);
 router.post('/checkupi', protect, playerCtl.checkUpi);
 router.post('/savefbtoken', protect, playerCtl.savefbtoken);
