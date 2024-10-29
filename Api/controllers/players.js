@@ -1637,6 +1637,9 @@ exports.getPage = asyncHandler(async (req, res, next) => {
 
 exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
   // Ensure req.player is populated
+  console.log(req.user , 'req.user')
+  console.log(req.player , 'req.player')
+  console.log(req.body , 'req.body')
   let player = req.player;
   if (!player) {
     return next(new ErrorResponse('Player not found', 404));
