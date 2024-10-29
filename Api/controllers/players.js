@@ -1635,46 +1635,6 @@ exports.getPage = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
-  console.log("Request body:", req.body);
-  console.log("Request body ID:", req.body.id, "File:", req.files);
-
-  // Retrieve the player by ID
-  let player = await Player.findById(req.body.id);
-  if (!player) {
-    return next(new ErrorResponse(`Player not found`, 404));
-  }
-
-  // Check if files are uploaded
-  if (!req.files || !req.files.file) {
-    return next(new ErrorResponse(`Please upload a file`, 400));
-  }
-
-  // Construct filename and remove old profile picture if it exists
-  const file = req.files.file;
-  const filename = `/img/player/${req.body.id}/${file.name}`;
-
-  if (player.profilePic) {
-    const filePath = path.resolve(__dirname, '../../assets/' + player.profilePic);
-    deletDiskFile(filePath); // Ensure `deletDiskFile` is defined to handle file deletion
-  }
-
-  // Upload the new file
-  uploadFile(req, filename, res); // Ensure this function uploads the file as expected
-
-  // Update player's profile picture in the database
-  const fieldsToUpdate = { profilePic: filename };
-  player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
-    new: true,
-    runValidators: true,
-  });
-
-  res.status(200).json({
-    success: true,
-    data: player,
-  });
-});
-
 
 
 let buildProfileUrl = (player) => {
