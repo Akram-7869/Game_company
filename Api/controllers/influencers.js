@@ -152,6 +152,7 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
 
 
 exports.getProfile = asyncHandler(async (req, res, next) => {
+  console.log(res.user, req.user.id)
   const user = await Influencer.findById(req.user.id);
   const post = await Post.find({owner:req.user.id})
   
