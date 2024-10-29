@@ -1636,46 +1636,45 @@ exports.getPage = asyncHandler(async (req, res, next) => {
 });
 
 exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
-  // const user = await User.findById(req.user.id);
-  let player = req.body;
-  let newfile;
-  let fieldsToUpdate;
-  //  console.log(req.file, req.files, req.body, req.query);
+  console.log("Request body:", req.body);
+  console.log("Request body ID:", req.body.id, "File:", req.files);
 
-  let dataSave = {
-    // createdBy: req.user.id,
-    data: req.files.file.data,
-    contentType: req.files.file.mimetype,
-    size: req.files.file.size,
-  };
-  // ${process.env.MAX_FILE_UPLOAD}
-  // Check filesize
-  if (dataSave.size > process.env.MAX_FILE_UPLOAD) {
-    return next(new ErrorResponse(Please upload an image less than 256k));
+  // Retrieve the player by ID
+  let player = await Player.findById(req.body.id);
+  if (!player) {
+    return next(new ErrorResponse(`Player not found`, 404));
   }
+
+  // Check if files are uploaded
+  if (!req.files || !req.files.file) {
+    return next(new ErrorResponse(`Please upload a file`, 400));
+  }
+
+  // Construct filename and remove old profile picture if it exists
+  const file = req.files.file;
+  const filename = `/img/player/${req.body.id}/${file.name}`;
 
   if (player.profilePic) {
-    newFile = await File.findByIdAndUpdate(player.profilePic, dataSave, {
-      new: true,
-      runValidators: true,
-    });
-  } else {
-    newfile = await File.create(dataSave);
-    fieldsToUpdate = { profilePic: newfile._id };
-    player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
-      new: true,
-      runValidators: true,
-    });
+    const filePath = path.resolve(__dirname, '../../assets/' + player.profilePic);
+    deletDiskFile(filePath); // Ensure `deletDiskFile` is defined to handle file deletion
   }
+
+  // Upload the new file
+  uploadFile(req, filename, res); // Ensure this function uploads the file as expected
+
+  // Update player's profile picture in the database
+  const fieldsToUpdate = { profilePic: filename };
+  player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true,
+  });
 
   res.status(200).json({
     success: true,
-    data: { _id: player.profilePic, profileUrl: buildProfileUrl(player) },
+    data: player,
   });
-
-  // 'terms': process.env.API_URI + '/page/term',
-  // 'policy': process.env.API_URI + '/page/policy'
 });
+
 
 
 let buildProfileUrl = (player) => {
