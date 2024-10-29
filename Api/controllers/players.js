@@ -600,6 +600,7 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
     kycStatus,
     state,
     phone = "",
+    playerProfileUrl,
   } = req.body;
   let fieldsToUpdate = {};
 
