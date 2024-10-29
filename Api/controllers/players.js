@@ -1636,42 +1636,32 @@ exports.getPage = asyncHandler(async (req, res, next) => {
 });
 
 exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
-  // Ensure req.player is populated
- 
-  console.log(req.body , 'req.body')
+  // const user = await User.findById(req.user.id);
   let player = req.body;
-  if (!player) {
-    return next(new ErrorResponse('Player not found', 404));
-  }
-
-  let newFile;
+  let newfile;
   let fieldsToUpdate;
-
-  // Check if file exists
-  if (!req.files || !req.files.file) {
-    return next(new ErrorResponse('No file uploaded', 400));
-  }
+  //  console.log(req.file, req.files, req.body, req.query);
 
   let dataSave = {
+    // createdBy: req.user.id,
     data: req.files.file.data,
     contentType: req.files.file.mimetype,
     size: req.files.file.size,
   };
-
-  // Check file size
+  // ${process.env.MAX_FILE_UPLOAD}
+  // Check filesize
   if (dataSave.size > process.env.MAX_FILE_UPLOAD) {
-    return next(new ErrorResponse(`Please upload an image less than ${process.env.MAX_FILE_UPLOAD} bytes`, 400));
+    return next(new ErrorResponse(Please upload an image less than 256k));
   }
 
-  // Update or create new file record
   if (player.profilePic) {
     newFile = await File.findByIdAndUpdate(player.profilePic, dataSave, {
       new: true,
       runValidators: true,
     });
   } else {
-    newFile = await File.create(dataSave);
-    fieldsToUpdate = { profilePic: newFile._id };
+    newfile = await File.create(dataSave);
+    fieldsToUpdate = { profilePic: newfile._id };
     player = await Player.findByIdAndUpdate(player.id, fieldsToUpdate, {
       new: true,
       runValidators: true,
@@ -1682,6 +1672,9 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
     success: true,
     data: { _id: player.profilePic, profileUrl: buildProfileUrl(player) },
   });
+
+  // 'terms': process.env.API_URI + '/page/term',
+  // 'policy': process.env.API_URI + '/page/policy'
 });
 
 
