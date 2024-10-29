@@ -662,6 +662,7 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
 
 
 
+
 exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
   console.log("Request body:", req.body);
   console.log("Request body ID:", req.body.id, "File:", req.files);
