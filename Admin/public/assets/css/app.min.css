@@ -4904,10 +4904,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before {
   color: #343a40 !important;
 }
 
-.btn-secondary{
-  border-radius: 1.25rem;
-    border: none;
-}
+
 
 .btn-primary {
   color: #fff;
