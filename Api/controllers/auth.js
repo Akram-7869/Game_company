@@ -625,7 +625,7 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
   }
   if (!default_profile) {
     default_profile = [];
-    let filename = '/img/player/profile_pic';
+    let filename = '/img/player/profile_pic/';
     let filePath = path.resolve(__dirname, '../../assets/' + filename);
     let pathurl = process.env.IMAGE_URL + filename;
     //console.log(filePath);
