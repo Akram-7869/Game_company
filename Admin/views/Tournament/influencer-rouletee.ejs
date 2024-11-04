@@ -30,7 +30,8 @@
 
       
 
-    <%- include ('../Partials/Roomcontrole') %>
+    <%- include ('../Partials/Roomcontrole') %>   
+
 
 
       <div class="row">
@@ -47,7 +48,16 @@
               </div>
             </div>
           </div>
+
+
+          <div class="w-100 user-chat mt-4 mt-sm-0 ms-lg-1">
+            <%- include ('../Partials/Chat') %>
+  
+          </div>
+
+          
         </div>
+        
         <div class="col-12 col-md-8">
           <div class="">
             <div id="game-container">
@@ -113,10 +123,7 @@
         </div>
         <!-- end chat-leftsidebar -->
 
-        <div class="w-100 user-chat mt-4 mt-sm-0 ms-lg-1">
-          <%- include ('../Partials/Chat') %>
-
-        </div>
+       
       </div>
       </div>
       <%- contentFor('FooterJs') %>
