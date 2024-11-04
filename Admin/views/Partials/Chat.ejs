@@ -11,8 +11,12 @@
     pointer-events: none;
     transition: all 2s ease-out;
   }
+
+  .card{
+    height: 268px;
+  }
 </style>
-<div class="card">
+<!-- <div class="card">
   <div class="p-3 px-4">
     <div class="d-flex align-items-start">
       <div>
@@ -22,13 +26,13 @@
   </div>
   <div class="px-lg-2">
     <div class="chat-conversation p-3 " data-simplebar style="max-height: 455px;">
-      <ul id="messageList" class="list-unstyled mb-0">
+      <ul id="messageList" class="list-unstyled mb-0"> -->
         <!-- <li class="chat-day-title">
             <div class="title">Today</div>
           </li> -->
 
 
-        <li class="right">
+        <!-- <li class="right">
           <div class="conversation-list">
             <div class="ctext-wrap">
 
@@ -57,7 +61,45 @@
       </div>
     </div>
   </form>
+</div> -->
+
+
+<div class="card" style="height: 600px; max-height: 600px;">
+  <div class="p-3 px-4">
+    <div class="d-flex align-items-start">
+      <div>
+        <h5 class="font-size-16 mb-3"><i class="uil uil-users-alt me-1"></i>(<span id="userCount">0</span>) Online </h5>
+      </div>
+    </div>
+  </div>
+  <div class="px-lg-2">
+    <div class="chat-conversation p-3" data-simplebar style="height: 455px; overflow-y: auto;">
+      <ul id="messageList" class="list-unstyled mb-0">
+        <!-- Messages will be appended here dynamically -->
+      </ul>
+    </div>
+  </div>
+  <form id="chatform" action="">
+    <div class="p-3 chat-input-section">
+      <div class="row">
+        <div class="col">
+          <div class="position-relative">
+            <input id="input" type="text" class="form-control chat-input rounded" placeholder="Enter Message...">
+          </div>
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-primary chat-send w-md waves-effect waves-light">
+            <span class="d-none d-sm-inline-block me-2">Send</span>
+            <i class="mdi mdi-send float-end"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
+
+
+
 <script>
   const form = document.getElementById('chatform');
   const input = document.getElementById('input');
