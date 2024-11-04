@@ -67,15 +67,13 @@ let onConnection = (socket) => {
       // console.log('room', roomName);
       joinRoom(socket, userId, roomName, dataParsed);
       socket.join(roomName);
-      // let numberOfClients = 0;
+      let numberOfClients = 0;
      let a = await io.in(roomName).clients((error, clients) => {
         if (!error) {
           numberOfClients = clients.length;
         }
       });
-      // Use a Promise to get the client count correctly
-    // const clients = await io.in(roomName).fetchSockets(); // Fetch connected sockets in the room
-    // const numberOfClients = clients.length; // Get the current number of clients
+     
       let data = {
         roomName, users: getRoomLobbyUsers(roomName, lobbyId),
         userId: userId,
