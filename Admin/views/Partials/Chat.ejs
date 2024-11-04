@@ -79,24 +79,6 @@
   });
 
 
-  function scrollToBottom() {
-    const chatConversation = document.querySelector('.chat-conversation');
-    chatConversation.scrollTop = chatConversation.scrollHeight;
-}
-
-// Observe `#messageList` for new messages
-const messageList = document.getElementById('messageList');
-const observer = new MutationObserver(() => {
-    // Scroll to the bottom each time a new message is added
-    scrollToBottom();
-});
-
-// Start observing `#messageList` for child list items being added
-observer.observe(messageList, { childList: true });
-
-
- 
-    
  
 
 
