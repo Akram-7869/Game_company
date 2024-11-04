@@ -58,7 +58,7 @@
   }
   
   .player {
-    width: auto;
+    width: auto !important;
     height: 320px;
   }
   
