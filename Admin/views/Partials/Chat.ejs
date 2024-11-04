@@ -76,8 +76,10 @@
       input.value = '';
 
     }
+  });
 
-    function scrollToBottom() {
+
+  function scrollToBottom() {
     const chatConversation = document.querySelector('.chat-conversation');
     chatConversation.scrollTop = chatConversation.scrollHeight;
 }
@@ -92,8 +94,6 @@ const observer = new MutationObserver(() => {
 // Start observing `#messageList` for child list items being added
 observer.observe(messageList, { childList: true });
 
-    
-  });
 
  
     
