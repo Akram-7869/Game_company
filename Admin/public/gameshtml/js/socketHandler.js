@@ -94,10 +94,10 @@ const SocketHandler = {
     },
 
     onRoomCount(msg) {
-        console.log('-------------->room count:', msg.numberOfClients);
-       var userCount = document.getElementById('userCount');
+        console.log('Room count event received:', msg);
+        console.log('Number of clients:', msg.numberOfClients);
+        var userCount = document.getElementById('userCount');
         userCount.textContent = msg.numberOfClients;
-        
     },
 
     requestCurrentStatus(r) {
