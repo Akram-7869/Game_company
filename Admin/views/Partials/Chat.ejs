@@ -26,7 +26,7 @@
   </div>
   <div class="px-lg-2">
     <div class="chat-conversation p-3 " data-simplebar style="max-height: 193px;
-    overflow: scroll;">
+    overflow-y: auto;">
       <ul id="messageList" class="list-unstyled mb-0">
     
 
@@ -61,6 +61,12 @@
   </form>
 </div>
 <script>
+   function scrollToLatestMessage() {
+    const chatConversation = document.querySelector('.chat-conversation');
+    chatConversation.scrollTop = chatConversation.scrollHeight;
+}
+
+
   const form = document.getElementById('chatform');
   const input = document.getElementById('input');
 
@@ -69,6 +75,9 @@
     if (input.value) {
       SocketHandler.emit_chat_message(input.value, data);
       input.value = '';
+      scrollToLatestMessage();
     }
   });
+
+ 
 </script>
