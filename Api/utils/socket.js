@@ -67,7 +67,7 @@ let onConnection = (socket) => {
       // console.log('room', roomName);
       joinRoom(socket, userId, roomName, dataParsed);
       socket.join(roomName);
-      let numberOfClients = 0;
+      // let numberOfClients = 0;
      let a = await io.in(roomName).clients((error, clients) => {
         if (!error) {
           numberOfClients = clients.length;
