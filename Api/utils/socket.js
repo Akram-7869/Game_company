@@ -69,12 +69,20 @@ let onConnection = (socket) => {
       socket.join(roomName);
       
       let numberOfClients = 0;
+      // io.in(roomName).clients((error, clients) => {
+      //   if (!error) {
+      //     numberOfClients = clients.length;
+      //     console.log('---------->numberOfClients', numberOfClients);
+      //   }
+      // });
+
       io.in(roomName).clients((error, clients) => {
         if (!error) {
-          numberOfClients = clients.length;
-          console.log('---------->numberOfClients', numberOfClients);
+            numberOfClients = clients.length;
+            console.log('---------->numberOfClients', numberOfClients);
+            io.to(roomName).emit('roomCount', { numberOfClients });  // Moved inside the callback
         }
-      });
+    });
      
       let data = {
         roomName, users: getRoomLobbyUsers(roomName, lobbyId),
@@ -100,7 +108,7 @@ let onConnection = (socket) => {
         io.emit('influencer_matches', { influencers });
       }
 
-      io.to(roomName).emit('roomCount', { numberOfClients });
+      // io.to(roomName).emit('roomCount', { numberOfClients });
       switch (lobby.mode) {
 
         case gameName.ludo:
