@@ -93,25 +93,14 @@ const SocketHandler = {
         
     },
 
-    // onRoomCount(msg) {
-    //     console.log('Room count event received:', msg);
-    //     console.log('Number of clients:', msg.numberOfClients);
-    //     var userCount = document.getElementById('userCount');
-    //     userCount.textContent = msg.numberOfClients;
-    // },
-
     onRoomCount(msg) {
-        console.log('Room count event received:', msg); // Check full message
+        console.log('Room count event received:', msg);
         console.log('Number of clients:', msg.numberOfClients);
-    
-        // Find the userCount element and update only if it exists
-        const userCount = document.getElementById('userCount');
-        if (userCount && typeof msg.numberOfClients === 'number') {
-            userCount.textContent = msg.numberOfClients;
-        } else {
-            console.warn('userCount element not found or invalid numberOfClients data:', msg);
-        }
+        var userCount = document.getElementById('userCount');
+        userCount.textContent = msg.numberOfClients;
     },
+
+   
 
     requestCurrentStatus(r) {
         this.socket.emit('OnCurrentStatus', { room: this.room });
