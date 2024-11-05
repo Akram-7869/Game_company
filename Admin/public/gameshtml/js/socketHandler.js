@@ -39,6 +39,8 @@ const SocketHandler = {
         this.socket.on('OnReset', this.onGameRestart.bind(this));
         this.socket.on('roomCount', this.onRoomCount.bind(this));
 
+        this.socket.on('roomCount', this.onDisconnect.bind(this));
+
         // Crash-specific events
         this.socket.on('OnFlightBlast', this.onFlightBlast.bind(this));
         this.socket.on('OnCashOuts', this.onCashOuts.bind(this));
@@ -98,6 +100,15 @@ const SocketHandler = {
         console.log('Number of clients:', msg.numberOfClients);
         var userCount = document.getElementById('userCount');
         userCount.textContent = msg.numberOfClients;
+    },
+
+    onDisconnect() {
+        console.log('Disconnected from server');
+        // You can leave the count as-is if expecting a reconnect, or show a message if desired
+        const userCount = document.getElementById('userCount');
+        if (userCount) {
+            userCount.textContent = msg.numberOfClients;
+        }
     },
 
    

@@ -83,7 +83,8 @@ let onConnection = (socket) => {
             io.to(roomName).emit('roomCount', { numberOfClients });  // Moved inside the callback
         }
     });
-     
+
+
       let data = {
         roomName, users: getRoomLobbyUsers(roomName, lobbyId),
         userId: userId,
@@ -108,7 +109,7 @@ let onConnection = (socket) => {
         io.emit('influencer_matches', { influencers });
       }
 
-      // io.to(roomName).emit('roomCount', { numberOfClients });
+
       switch (lobby.mode) {
 
         case gameName.ludo:
