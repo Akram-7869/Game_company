@@ -105,10 +105,7 @@ let onConnection = (socket) => {
       // Emit the count immediately upon joining
       updateRoomCount();
 
-      // Track client disconnections
-      socket.on("disconnect", () => {
-        updateRoomCount();
-      });
+     
 
       // Send initial data to client
       let data = {
