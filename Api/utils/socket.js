@@ -27,260 +27,168 @@ let onConnection = (socket) => {
     userSocketMap[userId]['socket_id'] = socket.id;
   });
 
-  // socket.on('join', async (d) => {
-  //   try {
-
-
-  //     console.log('join', d);
-  //     let dataParsed = d;// JSON.parse(d);
-  //     let { userId, lobbyId, maxp = 4, role = 'player' } = dataParsed;
-  //     let lobby = await Tournament.findById(lobbyId).lean();
-  //     if (!lobby) {
-  //       console.log('looby-not-found');
-  //       return;
-  //     }
-
-  //     let roomName = '';
-
-  //     if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
-  //       roomName = publicRoom[lobbyId]['roomName'];
-  //       console.log('join-exisitng', roomName);
-  //     } else {
-  //       roomName = makeid(5);
-  //       publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
-  //       state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [], status: 'open', codeObj: null, messages: [] };
-  //       console.log('create-room-', roomName);
-  //     }
-
-  //     if (userSocketMap[userId]) {
-  //       const playerRoom = userSocketMap[userId].room;
-  //       console.log(playerRoom, roomName, userSocketMap);
-  //       if (playerRoom === roomName) {
-  //         console.log('not registering');
-  //         return;
-  //       } else {
-  //         socket.leave(playerRoom);
-  //         userLeave({ userId, room: playerRoom })
-  //       }
-  //     }
-
-  //     console.log('---------->room', roomName);
-  //     joinRoom(socket, userId, roomName, dataParsed);
-  //     socket.join(roomName);
-      
-  //     let numberOfClients = 0;
-     
-
-  //     io.in(roomName).clients((error, clients) => {
-  //       if (!error) {
-  //           numberOfClients = clients.length;
-  //           console.log('---------->numberOfClients', numberOfClients);
-  //           io.to(roomName).emit('roomCount', { numberOfClients });  // Moved inside the callback
-  //       }
-  //   });
-
-
-  //     let data = {
-  //       roomName, users: getRoomLobbyUsers(roomName, lobbyId),
-  //       userId: userId,
-  //     }
-  //     if (state[roomName]) {
-  //       publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
-  //       // if (data.users.length == maxp || data.users.length == 0) {
-  //       //   delete publicRoom[lobbyId];
-  //       // }
-  //     } else {
-  //       // delete publicRoom[lobbyId];
-  //     }
-  //     if (d.role === 'influencer') {
-  //       // io.emit('influencer_matches', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
-  //       const validIds = Object.entries(userSocketMap)
-  //         .filter(([playerId, user]) => user.role === 'influencer')
-  //         .map(([userId, user]) => user.lobbyId);
-
-  //       let influencers = await Tournament.find({ _id: { $in: validIds }, tournamentType: 'influencer' }).populate('influencerId', 'displayName');
-
-  //       setkey('influencer_matches', influencers);
-  //       io.emit('influencer_matches', { influencers });
-  //     }
-
-
-  //     switch (lobby.mode) {
-
-  //       case gameName.ludo:
-  //         if (!state[roomName]['codeObj']) {
-  //           state[roomName]['codeObj'] = new LudoGame(io, roomName, maxp, lobby);
-  //           state[roomName]['codeObj'].setupGame();
-  //         }
-
-  //         state[roomName]['codeObj'].syncPlayer(socket, d);
-  //         socket.emit('join', { ...d, gameType: gameName.ludo, room: roomName, status: 'success', numberOfClients });
-  //         state[roomName]['codeObj'].emitJoinPlayer();
-  //         break;
-  //       case gameName.tambola:
-  //         if (!state[roomName]['codeObj']) {
-  //           state[roomName]['codeObj'] = new TambolaGame(io, roomName, maxp, lobby);
-  //           //state[roomName]['codeObj'].setupGame();
-  //         }
-
-  //         state[roomName]['codeObj'].syncPlayer(socket, d);
-  //         socket.emit('join', { ...d, gameType: gameName.tambola, room: roomName, status: 'success', numberOfClients });
-  //         break;
-  //       case gameName.dragon_tiger:
-  //         if (!state[roomName]['codeObj']) {
-  //           state[roomName]['codeObj'] = new DragonTigerGame(io, roomName, maxp, lobby);
-
-  //         }
-
-  //         state[roomName]['codeObj'].syncPlayer(socket, d);
-  //         socket.emit('join', { ...d, gameType: gameName.dragon_tiger, room: roomName, status: 'success', numberOfClients });
-  //         break;
-  //       case gameName.crash:
-  //         if (!state[roomName]['codeObj']) {
-  //           state[roomName]['codeObj'] = new AviatorGame(io, roomName, maxp, lobby);
-  //         }
-  //         state[roomName]['codeObj'].syncPlayer(socket, d);
-  //         socket.emit('join', { ...d, gameType: gameName.crash, room: roomName, status: 'success', numberOfClients });
-  //         break;
-  //       case gameName.rouletee:
-  //         if (!state[roomName]['codeObj']) {
-  //           state[roomName]['codeObj'] = new RolletGame(io, roomName, maxp, lobby);
-
-  //         }
-  //         state[roomName]['codeObj'].syncPlayer(socket, d);
-  //         socket.emit('join', { ...d, gameType: gameName.rouletee, room: roomName, status: 'success', numberOfClients });
-  //         break;
-  //       case gameName.teen_patti:
-  //         io.to(roomName).emit('res', { ev: 'join', data });
-  //         if (!state[roomName]['codeObj']) {
-  //           state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobby);
-  //           state[roomName]['codeObj'].setupGame();
-  //         }
-           
-  //         state[roomName]['codeObj'].syncPlayer(socket, d);
-  //         socket.emit('join', { ...d, gameType: gameName.ludo, room: roomName, status: 'success', numberOfClients });
-  //         state[roomName]['codeObj'].emitJoinPlayer();
-         
-         
-  //         break;
-  //     }
-
-     
-
-  //   } catch (error) {
-  //     console.log('error-join', error)
-
-  //   }
-
-  // });
-
-
   socket.on('join', async (d) => {
     try {
-        console.log('join', d);
-        const dataParsed = d;  // Assuming `d` is already parsed JSON
-        const { userId, lobbyId, maxp = 4, role = 'player' } = dataParsed;
 
-        let lobby = await Tournament.findById(lobbyId).lean();
-        if (!lobby) {
-            console.log('lobby-not-found');
-            return;
-        }
 
-        let roomName = '';
-        
-        // Check if the room exists with space for players; otherwise, create a new room
-        if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
-            roomName = publicRoom[lobbyId]['roomName'];
-            console.log('join-existing', roomName);
+      console.log('join', d);
+      let dataParsed = d;// JSON.parse(d);
+      let { userId, lobbyId, maxp = 4, role = 'player' } = dataParsed;
+      let lobby = await Tournament.findById(lobbyId).lean();
+      if (!lobby) {
+        console.log('looby-not-found');
+        return;
+      }
+
+      let roomName = '';
+// Check if the room exists with space for players; otherwise, create a new room
+      if (publicRoom[lobbyId] && publicRoom[lobbyId]['playerCount'] < maxp && !publicRoom[lobbyId]['played']) {
+        roomName = publicRoom[lobbyId]['roomName'];
+        console.log('join-exisitng', roomName);
+      } else {
+        roomName = makeid(5);
+        publicRoom[lobbyId] = { roomName, playerCount: 0, played: false }
+        state[roomName] = { 'created': Date.now() + 600000, players: [], betList: [], status: 'open', codeObj: null, messages: [] };
+        console.log('create-room-', roomName);
+      }
+
+      // Check if the user is already in a room and remove them from it
+      if (userSocketMap[userId]) {
+        const playerRoom = userSocketMap[userId].room;
+        console.log(playerRoom, roomName, userSocketMap);
+        if (playerRoom === roomName) {
+          console.log('not registering');
+          return;
         } else {
-            roomName = makeid(5);
-            publicRoom[lobbyId] = { roomName, playerCount: 0, played: false };
-            state[roomName] = { created: Date.now() + 600000, players: [], betList: [], status: 'open', codeObj: null, messages: [] };
-            console.log('create-room-', roomName);
+          socket.leave(playerRoom);
+          userLeave({ userId, room: playerRoom })
         }
+      }
 
-        // Check if the user is already in a room and remove them from it
-        if (userSocketMap[userId]) {
-            const playerRoom = userSocketMap[userId].room;
-            if (playerRoom === roomName) {
-                console.log('not registering');
-                return;
-            } else {
-                socket.leave(playerRoom);
-                userLeave({ userId, room: playerRoom });
-            }
-        }
+      console.log('---------->room', roomName);
+       // Join the room
+      joinRoom(socket, userId, roomName, dataParsed);
+      socket.join(roomName);
+      
+      let numberOfClients = 0;
+     
+// Function to update and emit the number of clients in the room
+const updateRoomCount = () => {
+      io.in(roomName).clients((error, clients) => {
+        if (!error) {
+            numberOfClients = clients.length;
+            console.log('---------->numberOfClients', numberOfClients);
+            io.to(roomName).emit('roomCount', { numberOfClients });  // Moved inside the callback
+            publicRoom[lobbyId]['playerCount'] = numberOfClients;  // Update player count
+          }
+      });
+  };
 
-        // Join the room
-        joinRoom(socket, userId, roomName, dataParsed);
-        socket.join(roomName);
-        
-        // Function to update and emit the number of clients in the room
-        const updateRoomCount = () => {
-            io.in(roomName).clients((error, clients) => {
-                if (!error) {
-                    const numberOfClients = clients.length;
-                    console.log('---------->numberOfClients', numberOfClients);
-                    io.to(roomName).emit('roomCount', { numberOfClients });
-                    publicRoom[lobbyId]['playerCount'] = numberOfClients;  // Update player count
-                }
-            });
-        };
+  // Emit the count immediately upon joining
+  updateRoomCount();
 
-        // Emit the count immediately upon joining
-        updateRoomCount();
+   // Track client disconnections
+   socket.on('disconnect', () => {
+    updateRoomCount();
+});
 
-        // Track client disconnections
-        socket.on('disconnect', () => {
-            updateRoomCount();
-        });
+ // Send initial data to client
+      let data = {
+        roomName, users: getRoomLobbyUsers(roomName, lobbyId),
+        userId: userId,
+      }
+      if (state[roomName]) {
+        publicRoom[lobbyId]['playerCount'] = state[roomName].players.length;
+        // if (data.users.length == maxp || data.users.length == 0) {
+        //   delete publicRoom[lobbyId];
+        // }
+      } else {
+        // delete publicRoom[lobbyId];
+      }
+      if (d.role === 'influencer') {
+        // io.emit('influencer_matches', { ev: 'lobbyStat', lobbyId, 'total': publicRoom[lobbyId]['total'], 'count': publicRoom[lobbyId]['count'] });
+        const validIds = Object.entries(userSocketMap)
+          .filter(([playerId, user]) => user.role === 'influencer')
+          .map(([userId, user]) => user.lobbyId);
 
-        // Send initial data to client
-        let data = {
-            roomName,
-            users: getRoomLobbyUsers(roomName, lobbyId),
-            userId: userId,
-        };
+        let influencers = await Tournament.find({ _id: { $in: validIds }, tournamentType: 'influencer' }).populate('influencerId', 'displayName');
 
-        if (d.role === 'influencer') {
-            const validIds = Object.entries(userSocketMap)
-                .filter(([playerId, user]) => user.role === 'influencer')
-                .map(([userId, user]) => user.lobbyId);
+        setkey('influencer_matches', influencers);
+        io.emit('influencer_matches', { influencers });
+      }
 
-            let influencers = await Tournament.find({ _id: { $in: validIds }, tournamentType: 'influencer' }).populate('influencerId', 'displayName');
 
-            setkey('influencer_matches', influencers);
-            io.emit('influencer_matches', { influencers });
-        }
+      switch (lobby.mode) {
 
-        // Handle game logic based on lobby mode
-        switch (lobby.mode) {
-            case gameName.ludo:
-                if (!state[roomName]['codeObj']) {
-                    state[roomName]['codeObj'] = new LudoGame(io, roomName, maxp, lobby);
-                    state[roomName]['codeObj'].setupGame();
-                }
-                state[roomName]['codeObj'].syncPlayer(socket, d);
-                socket.emit('join', { ...d, gameType: gameName.ludo, room: roomName, status: 'success' });
-                state[roomName]['codeObj'].emitJoinPlayer();
-                break;
-            case gameName.tambola:
-                if (!state[roomName]['codeObj']) {
-                    state[roomName]['codeObj'] = new TambolaGame(io, roomName, maxp, lobby);
-                }
-                state[roomName]['codeObj'].syncPlayer(socket, d);
-                socket.emit('join', { ...d, gameType: gameName.tambola, room: roomName, status: 'success' });
-                break;
-            // Add cases for other games here as needed
-            default:
-                console.log('Invalid game type.');
-        }
+        case gameName.ludo:
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new LudoGame(io, roomName, maxp, lobby);
+            state[roomName]['codeObj'].setupGame();
+          }
+
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          socket.emit('join', { ...d, gameType: gameName.ludo, room: roomName, status: 'success', numberOfClients });
+          state[roomName]['codeObj'].emitJoinPlayer();
+          break;
+        case gameName.tambola:
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new TambolaGame(io, roomName, maxp, lobby);
+            //state[roomName]['codeObj'].setupGame();
+          }
+
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          socket.emit('join', { ...d, gameType: gameName.tambola, room: roomName, status: 'success', numberOfClients });
+          break;
+        case gameName.dragon_tiger:
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new DragonTigerGame(io, roomName, maxp, lobby);
+
+          }
+
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          socket.emit('join', { ...d, gameType: gameName.dragon_tiger, room: roomName, status: 'success', numberOfClients });
+          break;
+        case gameName.crash:
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new AviatorGame(io, roomName, maxp, lobby);
+          }
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          socket.emit('join', { ...d, gameType: gameName.crash, room: roomName, status: 'success', numberOfClients });
+          break;
+        case gameName.rouletee:
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new RolletGame(io, roomName, maxp, lobby);
+
+          }
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          socket.emit('join', { ...d, gameType: gameName.rouletee, room: roomName, status: 'success', numberOfClients });
+          break;
+        case gameName.teen_patti:
+          io.to(roomName).emit('res', { ev: 'join', data });
+          if (!state[roomName]['codeObj']) {
+            state[roomName]['codeObj'] = new TeenpattiGame(io, roomName, maxp, lobby);
+            state[roomName]['codeObj'].setupGame();
+          }
+           
+          state[roomName]['codeObj'].syncPlayer(socket, d);
+          socket.emit('join', { ...d, gameType: gameName.ludo, room: roomName, status: 'success', numberOfClients });
+          state[roomName]['codeObj'].emitJoinPlayer();
+         
+         
+          break;
+      }
+
+     
 
     } catch (error) {
-        console.log('error-join', error);
+      console.log('error-join', error)
+
     }
-});
+
+  });
+
+
+
 
 
 
