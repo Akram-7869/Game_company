@@ -36,6 +36,18 @@ let onConnection = (socket) => {
     userSocketMap[userId]["socket_id"] = socket.id;
   });
 
+  // Function to update and emit the number of clients in the room
+  const updateRoomCount = () => {
+    io.in(roomName).clients((error, clients) => {
+      if (!error) {
+        numberOfClients = clients.length;
+        console.log("---------->numberOfClients", numberOfClients);
+        io.to(roomName).emit("roomCount", { numberOfClients }); // Moved inside the callback
+        publicRoom[lobbyId]["playerCount"] = numberOfClients; // Update player count
+      }
+    });
+  };
+
   socket.on("join", async (d) => {
     try {
       console.log("join", d);
@@ -89,8 +101,6 @@ let onConnection = (socket) => {
       socket.join(roomName);
 
       let numberOfClients = 0;
-
-      
 
       // Emit the count immediately upon joining
       updateRoomCount();
@@ -254,18 +264,6 @@ let onConnection = (socket) => {
       console.log("error-join", error);
     }
   });
-
-  // Function to update and emit the number of clients in the room
-  const updateRoomCount = () => {
-    io.in(roomName).clients((error, clients) => {
-      if (!error) {
-        numberOfClients = clients.length;
-        console.log("---------->numberOfClients", numberOfClients);
-        io.to(roomName).emit("roomCount", { numberOfClients }); // Moved inside the callback
-        publicRoom[lobbyId]["playerCount"] = numberOfClients; // Update player count
-      }
-    });
-  };
 
   socket.on("lobbyStat", (d) => {
     let { userId, lobbyId } = d; //JSON.parse(d);
