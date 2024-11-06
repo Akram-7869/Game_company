@@ -363,42 +363,42 @@ let onConnection = (socket) => {
     io.in(socket.id).emit("list_message", { messages: state[room].messages });
   });
 
-  // Track client disconnections
   socket.on("disconnect", () => {
     console.log("disconnect-event");
-
+  
     try {
       let { room, userId, lobbyId } = socket;
-
+  
       // Remove the user from userSocketMap
       delete userSocketMap[userId];
-
+  
       // Perform necessary actions when the user leaves
       userLeave(socket);
-
+  
       // Prepare data for broadcasting to the room
       const data = {
         room,
         users: getRoomUsers(room),
         userId,
       };
-
+  
       console.log("disconnect-", room, userId, lobbyId);
-
-      // Handle any game-specific leave actions
-      if (state[room] && userId) {
-        state[room].codeObj.handlePlayerLeave(socket, { PlayerID: userId });
+  
+      // Check if state[room] and state[room]["codeObj"] exist before accessing handlePlayerLeave
+      if (state[room] && state[room]["codeObj"] && userId) {
+        state[room]["codeObj"].handlePlayerLeave(socket, { PlayerID: userId });
       }
-
+  
       // Broadcast the disconnect event to the room
       io.to(room).emit("res", { ev: "disconnect", data });
-
+  
       // Update and emit the room count after the user leaves
       updateRoomCount();
     } catch (error) {
       console.log("error-disconnect", error);
     }
   });
+  
 
   socket.on("error", (err) => {
     console.error("---> Socket error:", err);
