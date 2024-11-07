@@ -5,14 +5,14 @@ let apiUrl = api_url + '/wallPost/';
 
 exports.wallPostList = asyncHandler(async (req, res, next) => {
   res.locals = { title: 'wallPost', apiUrl };
-  res.render('wallPost/list')
+  res.render('WallPost/list')
 });
 exports.getwallPost = asyncHandler(async (req, res, next) => {
   res.locals = { title: 'wallPost', apiUrl };
   axios.get(apiUrl + req.params.id)
     .then(r => {
       res.locals = { title: 'wallPost' };
-      res.render('wallPost/edit', { row: r.data.data });
+      res.render('WallPost/edit', { row: r.data.data });
     })
     .catch(error => {
 
@@ -38,7 +38,7 @@ exports.editwallPost = asyncHandler(async (req, res, next) => {
 
       req.flash('message', 'Data save');
 
-      res.render('wallPost/edit', { row: r.data.data });
+      res.render('WallPost/edit', { row: r.data.data });
     })
     .catch(error => {
 
@@ -87,7 +87,7 @@ exports.getwallPosts = asyncHandler(async (req, res, next) => {
 exports.wallPostAdd = asyncHandler(async (req, res, next) => {
   res.locals = { title: 'wallPost', 'apiUrl': apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/wallPost' };
 
-  res.render('wallPost/add', { row: {} });
+  res.render('WallPost/add', { row: {} });
 });
 
 
@@ -110,7 +110,7 @@ exports.createwallPosts = asyncHandler(async (req, res, next) => {
       req.flash('error', 'Data not updated');
 
     })
-  res.render('wallPost/list', { row: {} });
+  res.render('WallPost/list', { row: {} });
 });
 
 // exports.showPlayerView = asyncHandler(async (req, res, next) => {
@@ -119,7 +119,7 @@ exports.createwallPosts = asyncHandler(async (req, res, next) => {
 //                   // Assign value in session
 //
 //                   res.locals = { title: 'wallPost' };
-//                   res.render('wallPost/view',{row:r.data.data});
+//                   res.render('WallPost/view',{row:r.data.data});
 //
 
 //             })
