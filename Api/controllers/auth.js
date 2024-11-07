@@ -651,7 +651,7 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: { bot_profile,default_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games }
+    data: { bot_profile,default_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games, rupees_value:setting.rupees_value,dollor_value:setting.dollor_value }
   });
 });
 exports.smsOtp = async (mobile, otp, template_id, authkey) => {
