@@ -605,59 +605,112 @@ exports.logout = asyncHandler(async (req, res, next) => {
 
 
 
+// exports.maintanance = asyncHandler(async (req, res, next) => {
+//   let bot_profile = getKey('bot_profile');
+//   let default_profile = getKey('default_profile');
+//   let setting = getKey('site_setting');
+//   let games = getKey('games');
+//   if (!bot_profile) {
+//     bot_profile = [];
+//     let filename = '/img/profile-picture/';
+//     let filePath = path.resolve(__dirname, '../../assets/' + filename);
+//     let pathurl = process.env.IMAGE_URL + filename;
+//     //console.log(filePath);
+//     fs.readdirSync(filePath).forEach(file => {
+//       bot_profile.push(pathurl + file);
+//     });
+//     setkey('bot_profile', bot_profile);
+//   }
+//   if (!default_profile) {
+//     default_profile = [];
+//     let filename = '/img/player/profile_pic/';
+//     let filePath = path.resolve(__dirname, '../../assets/' + filename);
+//     let pathurl = process.env.IMAGE_URL + filename;
+//     //console.log(filePath);
+//     fs.readdirSync(filePath).forEach(file => {
+//       default_profile.push(pathurl + file);
+//     });
+//     setkey('default_profile', default_profile);
+//   }
+//   if (!setting) {
+//     setting = await Setting.findOne({
+//       type: 'SITE',
+//     });
+//     setkey('site_setting', setting)
+//   }
 
+//   if (!games) {
+//     games = await Game.find({
+//       status: 'active',
+//     });
+//     setkey('games', games)
+
+//   }
+
+
+
+//   res.status(200).json({
+//     success: true,
+//     data: { bot_profile,default_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games , dollor_value, rupees_value, }
+//   });
+// });
 
 exports.maintanance = asyncHandler(async (req, res, next) => {
   let bot_profile = getKey('bot_profile');
   let default_profile = getKey('default_profile');
   let setting = getKey('site_setting');
   let games = getKey('games');
+
   if (!bot_profile) {
     bot_profile = [];
     let filename = '/img/profile-picture/';
     let filePath = path.resolve(__dirname, '../../assets/' + filename);
     let pathurl = process.env.IMAGE_URL + filename;
-    //console.log(filePath);
     fs.readdirSync(filePath).forEach(file => {
       bot_profile.push(pathurl + file);
     });
     setkey('bot_profile', bot_profile);
   }
+
   if (!default_profile) {
     default_profile = [];
     let filename = '/img/player/profile_pic/';
     let filePath = path.resolve(__dirname, '../../assets/' + filename);
     let pathurl = process.env.IMAGE_URL + filename;
-    //console.log(filePath);
     fs.readdirSync(filePath).forEach(file => {
       default_profile.push(pathurl + file);
     });
     setkey('default_profile', default_profile);
   }
+
   if (!setting) {
     setting = await Setting.findOne({
       type: 'SITE',
-    });
-    setkey('site_setting', setting)
+    }).select('dollor_value rupees_value commission mindeposit'); // Selecting only the needed fields
+    setkey('site_setting', setting);
   }
 
   if (!games) {
     games = await Game.find({
       status: 'active',
     });
-    setkey('games', games)
-
+    setkey('games', games);
   }
-
-  // Ensure the setting contains the desired fields
-  const dollor_value = setting ? setting.dollor_value : null;
-  const rupees_value = setting ? setting.rupees_value : null;
 
   res.status(200).json({
     success: true,
-    data: { bot_profile,default_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games , dollor_value, rupees_value, }
+    data: {
+      bot_profile,
+      default_profile,
+      adminCommision: setting.commission,
+      mindeposit: setting.mindeposit,
+      games,
+      dollor_value: setting.dollor_value,
+      rupees_value: setting.rupees_value,
+    },
   });
 });
+
 
 exports.smsOtp = async (mobile, otp, template_id, authkey) => {
 
