@@ -55,14 +55,12 @@
                                     class="mdi mdi-plus me-1"></i>Add New</a>
 
                             <!-- Dropdown for filtering by tournament type -->
-                            <div class="mb-3">
-                                <label for="tournamentTypeFilter">Filter by Tournament Type:</label>
-                                <select id="tournamentTypeFilter" class="form-select">
-                                    <option value="">All</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="influencer">Influencer</option>
-                                </select>
-                            </div>
+                            <select id="tournamentTypeFilter" class="form-select">
+                                <option value="">All</option>
+                                <option value="admin">Admin</option>
+                                <option value="influencer">Influencer</option>
+                            </select>
+
 
                             <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap"
                                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
@@ -163,9 +161,19 @@
                                 ]
                             });
 
+                            $('#tournamentTypeFilter').on('change', function () {
+                                const selectedType = $(this).val();
+                                console.log('Selected tournamentType:', selectedType); // This should show the selected value in the console
+                            });
+
+
                             // Event listener for the dropdown to redraw the table on change
                             $('#tournamentTypeFilter').on('change', function () {
-                                table.ajax.reload();
+                                $('#listsetting').DataTable().ajax.reload();
                             });
+
+
+                            
+
                         });
                     </script>
