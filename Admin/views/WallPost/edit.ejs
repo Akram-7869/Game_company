@@ -15,7 +15,7 @@
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="<%=process.env.ADMIN_URL%>/admin/banner">
+                            <li class="breadcrumb-item active"><a href="<%=process.env.ADMIN_URL%>/admin/poll">
                                     <%- title %> List
                                 </a></li>
                             <li class="breadcrumb-item active">Add</li>
@@ -35,15 +35,35 @@
                     <div class="card">
                         <div class="card-body">
 
-                            <form id="banner" action="" enctype="multipart/form-data" method="POST">
+                            <form id="poll" action="" enctype="multipart/form-data" method="POST">
 
                                 <div class="mb-3">
-                                    <label class="form-label">Description</label>
-                                    <input type="text" id="desc" name="description" value="<%=row.description?row.description:'' %>"
-                                        class="form-control" required placeholder="description" />
+                                    <label class="form-label">Title</label>
+                                    <input id="url" type="text" name="url" value="<%=row.url?row.url:'' %>"
+                                        class="form-control" required placeholder="Url " />
                                 </div>
-                                 
-                                 
+                                <!-- <div class="mb-3">
+                                    <label class="form-label">Location</label>
+                                    <div class="col-md-10">
+                                        <select id="location" class="form-select" name="location" required>
+                                            <option value="HOME" <%=row.location==='HOME' ?'selected':'' %>>Home
+                                            </option>
+                                            <option value="GAME" <%=row.location==='GAME' ?'selected':'' %>>Game
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div> -->
+                                <!-- <div class="mb-3">
+                                    <label class="form-label">Type</label>
+                                    <div class="col-md-10">
+                                        <select id="pollType" class="form-select" name="pollType" required>
+                                            <option value="poll" <%=row.pollType==='poll' ?'selected':'' %>>Poll
+                                            </option>
+                                            <!-- <option value="poll" <%=row.pollType==='poll' ?'selected':'' %>>Poll
+                                            </option> -->
+                                        </select>
+                                    </div>
+                                </div> -->
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
                                     <div class="col-md-10">
@@ -90,7 +110,7 @@
                 <!-- Sweet alert init js
 <script src="public/assets/js/pages/sweet-alerts.init.js"></script>-->
                 <script>
-                    let url = '<%= originalUrl %>'
+                    let url = '<%= apiUrl  +row._id %>'
                     Dropzone.options.myDropzone = {
                         url: url,
                         autoProcessQueue: false,
@@ -116,10 +136,10 @@
                                 if (dzClosure.getQueuedFiles().length > 0) {
                                     dzClosure.processQueue();
                                 } else {
-                                    alert(JSON.stringify($("#banner").serialize()))
+                                    alert(JSON.stringify($("#poll").serialize()))
 
-                                    $.post(url, $("#banner").serialize()).then(r => {
-                                        window.location = '<%= indexUrl  %>';
+                                    $.post(url, $("#poll").serialize()).then(r => {
+                                        location.reload();
                                     });
                                 }
 
@@ -128,22 +148,23 @@
                             //send all the form data along with the files:
                             this.on("sending", function (data, xhr, formData) {
                                 formData.append("url", $("#url").val());
-                                 formData.append("description", $("#desc").val());
+                                // formData.append("pollType", $("#pollType").val());
+                                // formData.append("location", $("#location").val());
                                 formData.append("status", $("#statustxt").val());
 
                             });
                         }
                     }
 
-                    // function handleSubmit(params) {
-                    //     if(params.checkValidity()){
-                    //         params.preventDefault();
-                    //         myDropzone.processQueue();
+// function handleSubmit(params) {
+//     if(params.checkValidity()){  
+//         params.preventDefault();
+//         myDropzone.processQueue();
 
-                    //         //Swal.showLoading();
+//         //Swal.showLoading();
 
-                    //     }
+//     }
 
-                    // }
+// }
                 </script>
                 <%- contentFor('BottomJs') %>

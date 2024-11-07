@@ -4,14 +4,14 @@ const { callApi, api_url } = require('../helper/common');
 let apiUrl = api_url + '/wallPost/';
 
 exports.wallPostList = asyncHandler(async (req, res, next) => {
-  res.locals = { title: 'wallPost', apiUrl };
-  res.render('WallPost/list', { originalUrl: req.originalUrl })
+  res.locals = { title: 'WallPost', apiUrl };
+  res.render('WallPost/list')
 });
 exports.getwallPost = asyncHandler(async (req, res, next) => {
-  res.locals = { title: 'wallPost', apiUrl };
+  res.locals = { title: 'WallPost', apiUrl };
   axios.get(apiUrl + req.params.id)
     .then(r => {
-      res.locals = { title: 'wallPost' };
+      res.locals = { title: 'WallPost' };
       res.render('WallPost/edit', { row: r.data.data });
     })
     .catch(error => {
@@ -21,7 +21,7 @@ exports.getwallPost = asyncHandler(async (req, res, next) => {
 
 
 exports.updatewallPost = asyncHandler(async (req, res, next) => {
-  res.locals = { title: 'wallPost' };
+  res.locals = { title: 'WallPost' };
   axios.post(apiUrl + req.params.id, req.body)
     .then(r => {
       // Assign value in session
@@ -31,7 +31,7 @@ exports.updatewallPost = asyncHandler(async (req, res, next) => {
     .catch(error => { req.flash('error', 'Data not updated'); })
 });
 exports.editwallPost = asyncHandler(async (req, res, next) => {
-  res.locals = { title: 'wallPost', apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/wallPost' };
+  res.locals = { title: 'WallPost', apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/wallPost' };
   axios.get(apiUrl + req.params.id, req.body)
     .then(r => {
       // Assign value in session
@@ -65,7 +65,7 @@ exports.deletewallPost = asyncHandler(async (req, res, next) => {
 
 
 
-exports.getwallPosts = asyncHandler(async (req, res, next) => {
+exports.getPolls = asyncHandler(async (req, res, next) => {
 
   axios.post(apiUrl, { ...req.body })
     .then(r => {
@@ -85,20 +85,20 @@ exports.getwallPosts = asyncHandler(async (req, res, next) => {
 
 
 exports.wallPostAdd = asyncHandler(async (req, res, next) => {
-  res.locals = { title: 'wallPost', 'apiUrl': apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/wallPost' };
+  res.locals = { title: 'WallPost', 'apiUrl': apiUrl, indexUrl: process.env.ADMIN_URL + '/admin/wallPost' };
 
   res.render('WallPost/add', { row: {} });
 });
 
 
 exports.createwallPosts = asyncHandler(async (req, res, next) => {
-  res.locals = { title: 'wallPost' };
+  res.locals = { title: 'WallPost' };
   //console.log('creating-image', req.files);
 
   axios.post(apiUrl, { body: req.body, file: req.files })
     .then(r => {
       // Assign value in session
-      res.locals = { title: 'wallPost' };
+      res.locals = { title: 'WallPost' };
       req.flash('message', 'Data save');
       res.redirect(process.env.ADMIN_URL + '/admin/wallPost');
 
@@ -118,7 +118,7 @@ exports.createwallPosts = asyncHandler(async (req, res, next) => {
 //             .then(r => {
 //                   // Assign value in session
 //
-//                   res.locals = { title: 'wallPost' };
+//                   res.locals = { title: 'WallPost' };
 //                   res.render('WallPost/view',{row:r.data.data});
 //
 

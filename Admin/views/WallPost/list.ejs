@@ -48,16 +48,17 @@
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
-                            <a type="button" href="<%=originalUrl%>/add"
+                            <a type="button" href="<%=process.env.ADMIN_URL%>/admin/poll/add"
                                 class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i>
-                                Add New Post</a>
+                                Add New Poll</a>
 
                             <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap"
                                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
                                     <tr>
                                         <th>Srno</th>
-                                        <th>title</th>
+                                        <th>location</th>
+                                        <th>poll</th>
 
                                         <th>Status</th>
 
@@ -119,7 +120,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '<%=originalUrl%>/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/poll/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -144,25 +145,26 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "<%=process.env.ADMIN_URL%>/admin/posts/data", type: "post"
+                                url: "<%=process.env.ADMIN_URL%>/admin/poll/data", type: "post"
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return i = i + 1; } },
-                                { data: 'description', "defaultContent": "" },
+                                { data: 'location', "defaultContent": "" },
+                                { data: 'poll', "defaultContent": "" },
                                 { data: 'status', "defaultContent": "" },
 
                                 {
                                     data: null,
                                     "render": function (data, type, JsonResultRow, meta) {
 
-                                        let imgUrl = "<%= image_url %>" + JsonResultRow.imageId
+                                        let imgUrl = "<%= process.env.IMAGE_URL %>" + JsonResultRow.imageId
                                         return '<img width="50" src="' + imgUrl + '">';
                                     }
                                 },
 
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-2 text-primary" href="<%=originalUrl%>/'
+                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/poll/'
                                             + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\''
                                             + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
 
