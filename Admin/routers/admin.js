@@ -78,7 +78,7 @@ router.route('/poll').get(pollCtrl.pollList);
 router.route('/poll/:id').get(pollCtrl.editPoll).post(pollCtrl.updatePoll).delete(pollCtrl.deletePoll);
 
 router.route('/wallPost/add').get(wallPostCtrl.wallPostAdd)
-      .post(wallPostCtrl.createwallPost);
+      .post(wallPostCtrl.createwallPosts);
 router.route('/wallPost/data').post(wallPostCtrl.getwallPost);
 router.route('/wallPost').get(wallPostCtrl.wallPostList);
 router.route('/wallPost/:id').get(wallPostCtrl.editwallPost).post(wallPostCtrl.updatewallPost).delete(wallPostCtrl.deletewallPost);
