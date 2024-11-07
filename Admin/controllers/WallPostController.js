@@ -5,7 +5,7 @@ let apiUrl = api_url + '/wallPost/';
 
 exports.wallPostList = asyncHandler(async (req, res, next) => {
   res.locals = { title: 'wallPost', apiUrl };
-  res.render('WallPost/list')
+  res.render('WallPost/list', { originalUrl: req.originalUrl })
 });
 exports.getwallPost = asyncHandler(async (req, res, next) => {
   res.locals = { title: 'wallPost', apiUrl };
