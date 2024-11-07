@@ -131,7 +131,7 @@
                                     url: "<%=process.env.ADMIN_URL%>/admin/tournament/data",
                                     type: "POST",
                                     data: function (d) {
-                                        d.tournamentType = $('#tournamentTypeFilter').val(); // Ensure this is the ID of the filter dropdown
+                                        d.tournamentType = $('#tournamentTypeFilter').val(); // The filter dropdown or input
                                     }
                                 },
                                 "columns": [

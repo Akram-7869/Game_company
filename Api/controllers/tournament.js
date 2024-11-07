@@ -27,12 +27,15 @@ const { makeid } = require('../utils/utils');
 // });
 
 exports.getTournaments = asyncHandler(async (req, res, next) => {
+    // Create filter object for the query
     const filter = {};
 
-    // Check if tournamentType is provided in the request and add it to the filter
+    // Add tournamentType to the filter if present in the request body
     if (req.body.tournamentType && req.body.tournamentType !== '') {
         filter.tournamentType = req.body.tournamentType;
     }
+
+    console.log('Applied filter:', filter); // Debugging line to check the filter
 
     Tournament.dataTables({
         limit: req.body.length,
@@ -44,8 +47,7 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
         sort: {
             _id: -1
         },
-        // Apply the filter to the query
-        query: filter
+        query: filter // Apply filter here
     }).then(function (table) {
         res.json({ 
             data: table.data, 
