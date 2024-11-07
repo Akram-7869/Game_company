@@ -652,13 +652,16 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
   }
 
 
-  const values = await Setting.findOne({ type: 'SITE' }).select('dollor_value rupees_value');
+  const values = await Setting.findOne({ type: 'SITE' }).select('one');
+const dollor_value = values?.one?.dollor_value || null;
+const rupees_value = values?.one?.rupees_value || null;
+
   console.log('Fetched values:', values);
 
   res.status(200).json({
     success: true,
-    data: { bot_profile,default_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games ,  dollor_value: values ? values.dollor_value : null,
-      rupees_value: values ? values.rupees_value : null }
+    data: { bot_profile,default_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games ,  dollor_value,
+      rupees_value }
   });
 });
 
