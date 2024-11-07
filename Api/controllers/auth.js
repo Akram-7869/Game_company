@@ -649,11 +649,16 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
 
   }
 
+  // Ensure the setting contains the desired fields
+  const dollor_value = setting ? setting.dollor_value : null;
+  const rupees_value = setting ? setting.rupees_value : null;
+
   res.status(200).json({
     success: true,
-    data: { bot_profile,default_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games, rupees_value:setting.rupees_value,dollor_value:setting.dollor_value }
+    data: { bot_profile,default_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games , dollor_value, rupees_value, }
   });
 });
+
 exports.smsOtp = async (mobile, otp, template_id, authkey) => {
 
   var params = {
