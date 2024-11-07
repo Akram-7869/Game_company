@@ -684,6 +684,7 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
   }
 
   if (!setting) {
+    
     setting = await Setting.findOne({
       type: 'SITE',
     }).select('dollor_value rupees_value commission mindeposit'); // Selecting only the needed fields
@@ -696,15 +697,16 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
     });
     setkey('games', games);
   }
-
+  console.log(setting)
   res.status(200).json({
+    
     success: true,
     data: {
       bot_profile,
       default_profile,
       adminCommision: setting.commission,
       mindeposit: setting.mindeposit,
-      games,
+      games,setting,
       dollor_value: setting.dollor_value,
       rupees_value: setting.rupees_value,
     },
