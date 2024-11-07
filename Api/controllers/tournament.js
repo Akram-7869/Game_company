@@ -6,25 +6,60 @@ const { makeid } = require('../utils/utils');
 // @desc      Get all Tournaments
 // @route     GET /api/v1/auth/Tournaments
 // @access    Private/Admin
-exports.getTournaments = asyncHandler(async (req, res, next) => {
+// exports.getTournaments = asyncHandler(async (req, res, next) => {
     
+//     Tournament.dataTables({
+//         limit: req.body.length,
+//         skip: req.body.start,
+//         // select: { 'TournamentControle': 1, 'appLink': 1, 'createdAt': 1 },
+//         search: {
+//             value: req.body.search ? req.body.search.value : '',
+//             fields: ['name']
+
+//         },
+//         sort: {
+//             _id: -1
+//         }
+//     }).then(function (table) {
+//         res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
+//     })
+//     //res.status(200).json(res.advancedResults);
+// });
+
+exports.getTournaments = asyncHandler(async (req, res, next) => {
+    const filter = {};
+
+    // Check if tournamentType is provided in the request and add it to the filter
+    if (req.body.tournamentType && req.body.tournamentType !== '') {
+        filter.tournamentType = req.body.tournamentType;
+    }
+
     Tournament.dataTables({
         limit: req.body.length,
         skip: req.body.start,
-        // select: { 'TournamentControle': 1, 'appLink': 1, 'createdAt': 1 },
         search: {
             value: req.body.search ? req.body.search.value : '',
             fields: ['name']
-
         },
         sort: {
             _id: -1
-        }
+        },
+        // Apply the filter to the query
+        query: filter
     }).then(function (table) {
-        res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
-    })
-    //res.status(200).json(res.advancedResults);
+        res.json({ 
+            data: table.data, 
+            recordsTotal: table.total, 
+            recordsFiltered: table.total, 
+            draw: req.body.draw 
+        });
+    }).catch(err => {
+        console.error('Error fetching tournament data:', err);
+        res.status(500).send('Server error');
+    });
 });
+
+
 exports.getInfluencerTournaments = asyncHandler(async (req, res, next) => {
     
     Tournament.dataTables({
