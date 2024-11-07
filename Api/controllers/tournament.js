@@ -27,41 +27,33 @@ const { makeid } = require('../utils/utils');
 // });
 
 exports.getTournaments = asyncHandler(async (req, res, next) => {
-    // Create filter object for the query
     const filter = {};
 
-    // Add tournamentType to the filter if present in the request body
     if (req.body.tournamentType && req.body.tournamentType !== '') {
         filter.tournamentType = req.body.tournamentType;
     }
 
-    console.log('Applied filter:', filter); // Confirm the filter
+    console.log('Applied filter:', filter);
 
-    // Ensure that the filter is passed as the query in dataTables()
-    Tournament.dataTables({
-        limit: req.body.length,
-        skip: req.body.start,
-        search: {
-            value: req.body.search ? req.body.search.value : '',
-            fields: ['name']
-        },
-        sort: {
-            _id: -1
-        },
-        query: filter // This should be applied in the dataTables method
-    })
-    .then(function (table) {
+    // Use a direct Mongoose query with the filter applied
+    try {
+        const data = await Tournament.find(filter)
+            .skip(req.body.start)
+            .limit(req.body.length)
+            .sort({ _id: -1 });
+
+        const total = await Tournament.countDocuments(filter);
+
         res.json({ 
-            data: table.data, 
-            recordsTotal: table.total, 
-            recordsFiltered: table.total, 
+            data: data, 
+            recordsTotal: total, 
+            recordsFiltered: total, 
             draw: req.body.draw 
         });
-    })
-    .catch(err => {
+    } catch (err) {
         console.error('Error fetching tournament data:', err);
         res.status(500).send('Server error');
-    });
+    }
 });
 
 
