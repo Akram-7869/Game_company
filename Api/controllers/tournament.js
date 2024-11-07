@@ -35,8 +35,9 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
         filter.tournamentType = req.body.tournamentType;
     }
 
-    console.log('Applied filter:', filter); // Debugging line to check the filter
+    console.log('Applied filter:', filter); // Confirm the filter
 
+    // Ensure that the filter is passed as the query in dataTables()
     Tournament.dataTables({
         limit: req.body.length,
         skip: req.body.start,
@@ -47,19 +48,22 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
         sort: {
             _id: -1
         },
-        query: filter // Apply filter here
-    }).then(function (table) {
+        query: filter // This should be applied in the dataTables method
+    })
+    .then(function (table) {
         res.json({ 
             data: table.data, 
             recordsTotal: table.total, 
             recordsFiltered: table.total, 
             draw: req.body.draw 
         });
-    }).catch(err => {
+    })
+    .catch(err => {
         console.error('Error fetching tournament data:', err);
         res.status(500).send('Server error');
     });
 });
+
 
 
 exports.getInfluencerTournaments = asyncHandler(async (req, res, next) => {
