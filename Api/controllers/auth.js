@@ -651,8 +651,9 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
 
   }
 
-  const values = await Setting.findOne().select('dollor_value rupees_value');
 
+  const values = await Setting.findOne({ type: 'SITE' }).select('dollor_value rupees_value');
+  console.log('Fetched values:', values);
 
   res.status(200).json({
     success: true,
