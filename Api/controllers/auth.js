@@ -651,11 +651,13 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
 
   }
 
-  const values = await Setting.find().select('dollor_value rupees_value');
+  const values = await Setting.findOne().select('dollor_value rupees_value');
+
 
   res.status(200).json({
     success: true,
-    data: { bot_profile,default_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games , dollor_value:values.dollor_value, rupees_value:values.rupees_value}
+    data: { bot_profile,default_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games ,  dollor_value: values ? values.dollor_value : null,
+      rupees_value: values ? values.rupees_value : null }
   });
 });
 
