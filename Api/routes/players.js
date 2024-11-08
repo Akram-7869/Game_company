@@ -48,7 +48,9 @@ router.route('/sendotp').post(protect, playerCtl.sendotp);
 router.route('/verify-phone').post(protect, playerCtl.verifyPhoneCode);
 
 router.post('/poll', protect, playerCtl.poll);
+
 router.get('/pollList', protect, playerCtl.pollList);
+router.get('/wallPostList', protect, playerCtl.wallPostList);
 
 router.post('/withdraw/request', protect, playerCtl.withDrawRequest);
 router.post('/debit', header_chk, protect, playerCtl.debiteAmount);

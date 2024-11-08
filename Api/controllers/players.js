@@ -36,6 +36,7 @@ let axios = require("axios");
 const FormData = require("form-data");
 const Commission = require("../models/Commission");
 const PlayerInfluencer = require("../models/PlayerInfluencer");
+const WallPost = require("../models/WallPost");
 
 const checkOrderStatus = async (trxId) => {
   const row = await Setting.findOne({ type: "PAYMENT", name: "CASHFREE" });
@@ -1792,6 +1793,19 @@ exports.poll = asyncHandler(async (req, res, next) => {
 // @access    Private
 exports.pollList = asyncHandler(async (req, res, next) => {
   const list = await Poll.find({ status: "active" }).lean();
+  let x = list.map((d) => {
+    d["imageUrl"] = process.env.IMAGE_URL + d.imageId;
+
+    return d;
+  });
+  res.status(200).json({
+    success: true,
+    data: x,
+  });
+});
+
+exports.wallPostList = asyncHandler(async (req, res, next) => {
+  const list = await WallPost.find({ status: "active" }).lean();
   let x = list.map((d) => {
     d["imageUrl"] = process.env.IMAGE_URL + d.imageId;
 
