@@ -12,24 +12,24 @@ const WallPost = require('../models/WallPost');
 // @desc      Get all WallPost
 // @route     GET /api/v1/auth/WallPost
 // @access    Private/Admin
-exports.getWallpost = asyncHandler(async (req, res, next) => {
+// exports.getWallpost = asyncHandler(async (req, res, next) => {
     
-    WallPost.dataTables({
-        limit: req.body.length,
-        skip: req.body.start,
-        //   select:{'PollUrl':1, 'createdAt':1},
-        search: {
-            value: req.body.search ? req.body.search.value : '',
-            fields: ['status', 'location']
-        },
-        sort: {
-            _id: -1
-        }
-    }).then(function (table) {
-        res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
-    })
-    //res.status(200).json(res.advancedResults);
-});
+//     WallPost.dataTables({
+//         limit: req.body.length,
+//         skip: req.body.start,
+//         //   select:{'PollUrl':1, 'createdAt':1},
+//         search: {
+//             value: req.body.search ? req.body.search.value : '',
+//             fields: ['status', 'location']
+//         },
+//         sort: {
+//             _id: -1
+//         }
+//     }).then(function (table) {
+//         res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
+//     })
+//     //res.status(200).json(res.advancedResults);
+// });
 
 // @desc      Get single WallPost
 // @route     GET /api/v1/auth/WallPost/:id
