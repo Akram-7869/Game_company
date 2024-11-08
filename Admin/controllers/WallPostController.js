@@ -65,7 +65,7 @@ exports.deletewallPost = asyncHandler(async (req, res, next) => {
 
 
 
-exports.getPolls = asyncHandler(async (req, res, next) => {
+exports.getwallPost = asyncHandler(async (req, res, next) => {
 
   axios.post(apiUrl, { ...req.body })
     .then(r => {
