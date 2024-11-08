@@ -38,7 +38,7 @@
                             <form id="wallPost" action="" enctype="multipart/form-data" method="POST">
 
                                 <div class="mb-3">
-                                    <label class="form-label">Title</label>
+                                    <label class="form-label">Url</label>
                                     <input id="url" type="text" name="url" value="<%=row.url?row.url:'' %>"
                                         class="form-control" required placeholder="Url " />
                                 </div>
@@ -76,7 +76,7 @@
                                     </div>
                                 </div>
 
-                                <img width=100 src="<%=process.env.IMAGE_URL + row.imageId%>">
+                                <img width=300 src="<%=process.env.IMAGE_URL + row.imageId%>">
 
 
                                 <div class="dropzone" id="myDropzone"></div>
