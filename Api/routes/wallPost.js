@@ -9,7 +9,7 @@ const router = express.Router({ mergeParams: true });
 router.route('/image/:id').get(wallPostCtrl.getFile);
 router.route('/uploadfile').post(wallPostCtrl.uploadFile);
 router.route('/add').post(wallPostCtrl.createWallpost);
-router.route('/').post(wallPostCtrl.getWallpost);
+router.route('/').post(wallPostCtrl.getWallposts);
 
 router
     .route('/:id')
