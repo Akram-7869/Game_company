@@ -124,12 +124,7 @@
                                     alert('Error While Deleting');
                                 }
                             });
-                            //         $.ajax({
-                            //     url: '<%=process.env.ADMIN_URL%>/admin/player/'+id,
-                            //     type: 'DELETE',
-                            //     success: ()=>{alert('done');location.reload()},
-                            //     error: ()=>alert('failed')
-                            // });
+                          
                         }
                         function view(id) {
                             alert(id);
@@ -164,8 +159,11 @@
 
                                     }
                                 },
-                            ]
-                        });
+                            ], 
+                             "searching": false, // Disable search bar
+                             "paging": false,    // Disable pagination
+                             "info": false       // Optionally, disable the info display (e.g., "Showing 1 to 10 of 50 entries")
+});
                     </script>
 
 
