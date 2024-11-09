@@ -6,25 +6,54 @@ const { makeid } = require('../utils/utils');
 // @desc      Get all Tournaments
 // @route     GET /api/v1/auth/Tournaments
 // @access    Private/Admin
-exports.getTournaments = asyncHandler(async (req, res, next) => {
+// exports.getTournaments = asyncHandler(async (req, res, next) => {
     
-    Tournament.dataTables({
-        limit: req.body.length,
-        skip: req.body.start,
-        // select: { 'TournamentControle': 1, 'appLink': 1, 'createdAt': 1 },
-        search: {
-            value: req.body.search ? req.body.search.value : '',
-            fields: ['name']
+//     Tournament.dataTables({
+//         limit: req.body.length,
+//         skip: req.body.start,
+//         // select: { 'TournamentControle': 1, 'appLink': 1, 'createdAt': 1 },
+//         search: {
+//             value: req.body.search ? req.body.search.value : '',
+//             fields: ['name']
 
-        },
-        sort: {
-            _id: -1
-        }
-    }).then(function (table) {
-        res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
-    })
-    //res.status(200).json(res.advancedResults);
-});
+//         },
+//         sort: {
+//             _id: -1
+//         }
+//     }).then(function (table) {
+//         res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
+//     })
+//     //res.status(200).json(res.advancedResults);
+// });
+
+
+
+exports.getTournaments = asyncHandler(async (req, res, next) => {
+    let empty = { "data": [], "recordsTotal": 0, "recordsFiltered": 0, "draw": req.body.draw };
+    let filter = {
+      limit: req.body.length,
+      skip: req.body.start,
+      find: req.query,
+      select: { 'stateCode': 1, 'logType': 1, 'taxableAmount': 1, 'tds': 1, 'totalAmount': 1, 'withdrawTo': 1, 'playerId': 1, 'amount': 1, 'transactionType': 1, 'note': 1, 'createdAt': 1, paymentStatus: 1 },
+      populate: {
+        path: 'playerId',
+        select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1, email: 1 },
+        options: { sort: { 'membership': -1 } }
+      },
+      sort: {
+        _id: -1
+      }
+    };
+  
+    if (req.body.tournamentType) {
+      filter['find']['tournamentType'] = req.body.tournamentType;
+    }
+  
+    Tournament.dataTables(filter).then(function (table) {
+      res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw });
+    });
+  });
+  
 
 
 
