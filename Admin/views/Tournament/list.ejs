@@ -118,8 +118,11 @@
 <script src="/public/assets/js/pages/datatables.init.js"></script> -->
                 <!-- Sweet Alerts js -->
                 <script src="/public/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+             
                 <%- contentFor('BottomJs') %>
-                    <script>
+
+                    <!-- <script>
+
                         function delRec(id) {
                             let r = confirm('Want to delete?');
 
@@ -173,4 +176,46 @@
                                 },
                             ]
                         });
+                    </script> -->
+
+
+
+
+
+                    <script>
+                        $(document).ready(function () {
+                            var table = $('#listsetting').DataTable({
+                                "processing": true,
+                                "serverSide": true,
+                                "ajax": {
+                                    url: "<%=process.env.ADMIN_URL%>/admin/tournament/data",
+                                    type: "post",
+                                    data: function (d) {
+                                        // Append the selected tournament type to the request
+                                        d.tournamentType = $('#tournamentTypeFilter').val();
+                                    }
+                                },
+                                "columns": [
+                                    { data: null, "render": function (data, type, full, meta) { return meta.row + 1; } },
+                                    { data: 'name', "defaultContent": "" },
+                                    { data: 'betAmount', "defaultContent": "" },
+                                    { data: 'players', "defaultContent": "" },
+                                    { data: 'tournamentType', "defaultContent": "" },
+                                    { data: 'time', "defaultContent": "" },
+                                    { data: 'active', "defaultContent": "" },
+                                    {
+                                        data: null, "render": function (data, type, full, meta) {
+                                            return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/tournament/' + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\'' + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i>';
+                                        }
+                                    },
+                                ]
+                            });
+                    
+                            // Listen for changes on the tournament type filter and reload the table
+                            $('#tournamentTypeFilter').on('change', function () {
+                                table.ajax.reload();
+                            });
+                        });
                     </script>
+                    
+
