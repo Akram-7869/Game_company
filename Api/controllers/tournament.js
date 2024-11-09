@@ -50,7 +50,8 @@ exports.getTournaments = asyncHandler(async (req, res, next) => {
     }
   
     Tournament.dataTables(filter).then(function (table) {
-      res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw });
+      res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
+      //     })
     });
   });
   
