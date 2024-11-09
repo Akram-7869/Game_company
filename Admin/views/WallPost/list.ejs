@@ -42,7 +42,7 @@
                     <div class="card">
                         <div class="card-body">
 
-                          
+
                             <!-- <a type="button" href="<%=process.env.ADMIN_URL%>/admin/wallPost/add"
                                 class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i>
                                 Add New wallPost</a> -->
@@ -53,7 +53,7 @@
                                     <tr>
                                         <th>Srno</th>
                                         <th>Url</th>
-                                       
+
 
                                         <th>Status</th>
 
@@ -145,7 +145,7 @@
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return i = i + 1; } },
                                 { data: 'url', "defaultContent": "" },
-                              
+
                                 { data: 'status', "defaultContent": "" },
 
                                 {
@@ -160,11 +160,14 @@
                                 {
                                     data: null, "render": function (data, type, full, meta) {
                                         return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/wallPost/'
-                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\''
-                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
+    + full._id + '"><i class="uil uil-pen font-size-18"></i></a>';
 
                                     }
                                 },
                             ]
                         });
                     </script>
+
+
+                    
+  
