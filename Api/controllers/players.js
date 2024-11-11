@@ -84,6 +84,8 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     "+bank +wallet +upi"
   );
 
+  console.log(req.player)
+
   let tranData = {
     playerId: req.player._id,
     amount: amount,
@@ -95,9 +97,9 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     withdrawTo: req.body.to,
     stateCode: req.player.stateCode,
     paymentStatus: "REQUESTED",
-    coins:req.player.coin,
-value:req.player.value,
-type: req.body.type
+    coins: req.player.coin,
+    value: req.player.value,
+    type: req.body.type,
   };
   if (req.body.to === "bank") {
     tranData["withdraw"] = player.bank;
@@ -647,7 +649,9 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
   if (dob) {
     fieldsToUpdate["dob"] = dob;
   }
-  if (playerProfileUrl) { fieldsToUpdate['playerProfileUrl'] = playerProfileUrl; }
+  if (playerProfileUrl) {
+    fieldsToUpdate["playerProfileUrl"] = playerProfileUrl;
+  }
   //if (state) { fieldsToUpdate['state'] = state; }
   // if (!player.email) {
   //   if (email) { fieldsToUpdate['email'] = email; }
@@ -663,9 +667,6 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
     data: player,
   });
 });
-
-
-
 
 exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
   console.log("Request body:", req.body);
@@ -687,7 +688,10 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
   const filename = `/img/player/${req.body.id}/${file.name}`;
 
   if (player.profilePic) {
-    const filePath = path.resolve(__dirname, '../../assets/' + player.profilePic);
+    const filePath = path.resolve(
+      __dirname,
+      "../../assets/" + player.profilePic
+    );
     deletDiskFile(filePath); // Ensure `deletDiskFile` is defined to handle file deletion
   }
 
@@ -706,11 +710,6 @@ exports.updatePlayerImage = asyncHandler(async (req, res, next) => {
     data: player,
   });
 });
-
-
-
-
-
 
 // @desc      Delete Player
 // @route     DELETE /api/v1/auth/Players/:id
@@ -1640,8 +1639,6 @@ exports.getPage = asyncHandler(async (req, res, next) => {
   });
 });
 
-
-
 let buildProfileUrl = (player) => {
   if (player.profilePic) {
     // console.log('image'.green);
@@ -2208,8 +2205,8 @@ exports.getReferList = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.paymentAdd = asyncHandler(async (req, res, next) => {
-  console.log('req------>',  req.body)
-  
+  console.log("req------>", req.body);
+
   let filename;
   let updateFiled = {};
   let { id, paymentId } = req.body;
@@ -2221,16 +2218,12 @@ exports.paymentAdd = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`Transaction not found`));
   }
   if (!req.files) {
-    return next(
-      new ErrorResponse(`File not found`)
-    );
+    return next(new ErrorResponse(`File not found`));
   }
   if (req.files) {
-
-    filename = '/img/payment/' + req.player._id + '/' + req.files.file.name;
+    filename = "/img/payment/" + req.player._id + "/" + req.files.file.name;
     uploadFile(req, filename, res);
-    updateFiled = { 'imageUrl': filename, paymentStatus: 'REQUESTED', paymentId }
-
+    updateFiled = { imageUrl: filename, paymentStatus: "REQUESTED", paymentId };
   }
   // updateFiled = { paymentId, paymentStatus: "REQUESTED" };
   const row = await Transaction.findByIdAndUpdate(id, updateFiled);
@@ -2244,7 +2237,6 @@ exports.paymentAdd = asyncHandler(async (req, res, next) => {
 // @desc      Log user out / clear cookie
 // @route     GET /api/v1/auth/logout
 // @access    Private
-
 
 exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   let { phone, code } = req.body;
@@ -2367,10 +2359,9 @@ exports.unfollowPlayer = asyncHandler(async (req, res, next) => {
   }
 
   await PlayerInfluencer.deleteMany({ playerId, otherPlayerId });
- 
 
   await updateFollowCount(playerId);
-  
+
   res.status(200).json({
     success: true,
     data: req.player,
@@ -2379,7 +2370,7 @@ exports.unfollowPlayer = asyncHandler(async (req, res, next) => {
 
 exports.followPlayer = asyncHandler(async (req, res, next) => {
   let { otherPlayerId } = req.body;
-  
+
   let playerId = req.player.id;
 
   if (!req.player) {
@@ -2387,13 +2378,13 @@ exports.followPlayer = asyncHandler(async (req, res, next) => {
   }
 
   await PlayerInfluencer.updateOne(
-    {otherPlayerId: otherPlayerId, playerId: playerId }, // Filter to check if the follow relationship exists
+    { otherPlayerId: otherPlayerId, playerId: playerId }, // Filter to check if the follow relationship exists
     { $setOnInsert: { otherPlayerId: otherPlayerId, playerId: playerId } }, // Only set these fields if inserting a new document
     { upsert: true } // Perform an upsert
   );
 
   await updateFollowCount(playerId);
-  
+
   // await admin.messaging().subscribeToTopic(player.deviceToken, influencerId.toString());
 
   res.status(200).json({
@@ -2474,14 +2465,13 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
 
   // Define aggregation pipeline
 
-
   const pipeline = [
     {
       $lookup: {
         from: "playerinfluencers",
         let: {
           playerId: ObjectId(playerId), // ID of the player in the Players collection
-          targetOtherPlayerId: "$_id" // otherPlayerId we want to match
+          targetOtherPlayerId: "$_id", // otherPlayerId we want to match
         },
         pipeline: [
           {
@@ -2489,15 +2479,15 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
               $expr: {
                 $and: [
                   { $eq: ["$playerId", "$$playerId"] }, // Check if the current player is following
-                  { $eq: ["$otherPlayerId", "$$targetOtherPlayerId"] } // Check if otherPlayerId is being followed
-                ]
-              }
-            }
+                  { $eq: ["$otherPlayerId", "$$targetOtherPlayerId"] }, // Check if otherPlayerId is being followed
+                ],
+              },
+            },
           },
-          { $limit: 1 } // We only need one match to confirm "isFollowing" status
+          { $limit: 1 }, // We only need one match to confirm "isFollowing" status
         ],
-        as: "isFollowing"
-      }
+        as: "isFollowing",
+      },
     },
     {
       $project: {
@@ -2510,19 +2500,23 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
 
         profilePic: {
           $cond: {
-            if: { $and: [ { $ne: [ "$picture", null ] }, { $ne: [ process.env.IMAGE_URL, null ] } ] },
-            then: { $concat: [ `${process.env.IMAGE_URL}`, "$picture" ] },
-            else: "img/logo/profile_default.png" // Replace with your default picture URL
-          }
+            if: {
+              $and: [
+                { $ne: ["$picture", null] },
+                { $ne: [process.env.IMAGE_URL, null] },
+              ],
+            },
+            then: { $concat: [`${process.env.IMAGE_URL}`, "$picture"] },
+            else: "img/logo/profile_default.png", // Replace with your default picture URL
+          },
         },
-        
-        isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] } // true if the other player is following
-      }
+
+        isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] }, // true if the other player is following
+      },
     },
     { $skip: (page - 1) * limit }, // Skip for pagination
-    { $limit: limit } // Limit for page size
+    { $limit: limit }, // Limit for page size
   ];
-  
 
   // Conditionally add the $match stage if a search term is provided
   if (searchTerm) {
@@ -2555,47 +2549,39 @@ exports.getPlayerList = asyncHandler(async (req, res, next) => {
   }
 });
 
-const updateFollowCount = async(playerId) => {
-
-    // Step 1: Calculate the counts using aggregation
-    const counts = await PlayerInfluencer.aggregate([
-
-      {
-        $facet: {
-          followersCount: [
-            { $match: { otherPlayerId:  ObjectId(playerId)  } },
-            { $count: "count" },
-          ],
-          followingCount: [
-            { $match: { playerId:  ObjectId(playerId) } },
-            { $count: "count" },
-          ],
+const updateFollowCount = async (playerId) => {
+  // Step 1: Calculate the counts using aggregation
+  const counts = await PlayerInfluencer.aggregate([
+    {
+      $facet: {
+        followersCount: [
+          { $match: { otherPlayerId: ObjectId(playerId) } },
+          { $count: "count" },
+        ],
+        followingCount: [
+          { $match: { playerId: ObjectId(playerId) } },
+          { $count: "count" },
+        ],
+      },
+    },
+    {
+      $project: {
+        followersCount: {
+          $ifNull: [{ $arrayElemAt: ["$followersCount.count", 0] }, 0],
+        },
+        followingCount: {
+          $ifNull: [{ $arrayElemAt: ["$followingCount.count", 0] }, 0],
         },
       },
-      {
-        $project: {
-          followersCount: {
-            $ifNull: [{ $arrayElemAt: ["$followersCount.count", 0] }, 0],
-          },
-          followingCount: {
-            $ifNull: [{ $arrayElemAt: ["$followingCount.count", 0] }, 0],
-          },
-        },
-      },
-    ]);
+    },
+  ]);
 
-    console.log("count", counts);
-    // Step 2: Update the counts in the Players collection
-    if (counts && counts.length > 0) {
-     
-      await Player.findByIdAndUpdate(
-       playerId,
-        {
-          followersCount: counts[0].followersCount,
-          followingCount: counts[0].followingCount,
-        }
-        
-      );
-    }
-  
+  console.log("count", counts);
+  // Step 2: Update the counts in the Players collection
+  if (counts && counts.length > 0) {
+    await Player.findByIdAndUpdate(playerId, {
+      followersCount: counts[0].followersCount,
+      followingCount: counts[0].followingCount,
+    });
+  }
 };
