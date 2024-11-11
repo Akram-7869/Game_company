@@ -268,23 +268,23 @@ const updateRoomCount = () => {
   });
   
   //leave
-  socket.on('leave', (d) => {
-    try {
-      let { room, userId } = d;
-      userLeave(d);
-      socket.leave(room);
-      let data = {
-        room: room, userId,
-        users: getRoomUsers(room)
-      };
-      console.log('leave-', d, data);
-      io.to(room).emit('res', { ev: 'leave', data });
-      // updateRoomCount();
+  // socket.on('leave', (d) => {
+  //   try {
+  //     let { room, userId } = d;
+  //     userLeave(d);
+  //     socket.leave(room);
+  //     let data = {
+  //       room: room, userId,
+  //       users: getRoomUsers(room)
+  //     };
+  //     console.log('leave-', d, data);
+  //     io.to(room).emit('res', { ev: 'leave', data });
+  //     // updateRoomCount();
 
-    } catch (error) {
+  //   } catch (error) {
 
-    }
-  });
+  //   }
+  // });
 
   //chat_message
   socket.on('chat_message', (d) => {
@@ -344,6 +344,7 @@ const updateRoomCount = () => {
       if (state[room] && userId) {
         state[room].codeObj.handlePlayerLeave(socket, { PlayerID: userId });
       }
+
 
       io.to(socket.room).emit('res', { ev: 'disconnect', data });
     } catch (error) {
