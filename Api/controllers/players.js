@@ -2205,6 +2205,7 @@ exports.getReferList = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.paymentAdd = asyncHandler(async (req, res, next) => {
+  console.log('req------>',req  ,  req.body)
   let filename;
   let updateFiled = {};
   let { id, paymentId } = req.body;
