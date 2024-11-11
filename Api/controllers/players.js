@@ -2205,7 +2205,7 @@ exports.getReferList = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.paymentAdd = asyncHandler(async (req, res, next) => {
-  console.log('req .body------>',  req.body)
+  console.log('req------>',  req.body)
   console.log('req------>',  req)
   let filename;
   let updateFiled = {};
@@ -2217,12 +2217,12 @@ exports.paymentAdd = asyncHandler(async (req, res, next) => {
   if (!tran) {
     return next(new ErrorResponse(`Transaction not found`));
   }
-  if (req.body.files) {
+  if (!req.files) {
     return next(
       new ErrorResponse(`File not found`)
     );
   }
-  if (req.body.files) {
+  if (req.files) {
 
     filename = '/img/payment/' + req.player._id + '/' + req.files.file.name;
     uploadFile(req, filename, res);
