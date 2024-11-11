@@ -2239,37 +2239,7 @@ exports.paymentAdd = asyncHandler(async (req, res, next) => {
 // @desc      Log user out / clear cookie
 // @route     GET /api/v1/auth/logout
 // @access    Private
-exports.paymentAdd = asyncHandler(async (req, res, next) => {
-  let filename;
-  let updateFiled = {};
-  let { id, paymentId } = req.body;
-  if (!paymentId) {
-    return next(new ErrorResponse(`TransactionId  is required`));
-  }
-  let tran = await Transaction.find({ _id: id, playerId: req.player._id });
-  if (!tran) {
-    return next(new ErrorResponse(`Transaction not found`));
-  }
-  // if (req.files) {
-  //   return next(
-  //     new ErrorResponse(`File not found`)
-  //   );
-  // }
-  // if (req.files) {
 
-  //   filename = '/img/payment/' + req.player._id + '/' + req.files.file.name;
-  //   uploadFile(req, filename, res);
-  //   updateFiled = { 'imageUrl': filename, paymentStatus: 'REQUESTED' }
-
-  // }
-  updateFiled = { paymentId, paymentStatus: "REQUESTED" };
-  const row = await Transaction.findByIdAndUpdate(id, updateFiled);
-
-  res.status(200).json({
-    success: true,
-    data: row,
-  });
-});
 
 exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   let { phone, code } = req.body;
