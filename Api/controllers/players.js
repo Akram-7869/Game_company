@@ -2226,10 +2226,10 @@ exports.paymentAdd = asyncHandler(async (req, res, next) => {
 
     filename = '/img/payment/' + req.player._id + '/' + req.files.file.name;
     uploadFile(req, filename, res);
-    updateFiled = { 'imageUrl': filename, paymentStatus: 'REQUESTED' }
+    updateFiled = { 'imageUrl': filename, paymentStatus: 'REQUESTED', paymentId }
 
   }
-  updateFiled = { paymentId, paymentStatus: "REQUESTED" };
+  // updateFiled = { paymentId, paymentStatus: "REQUESTED" };
   const row = await Transaction.findByIdAndUpdate(id, updateFiled);
 
   res.status(200).json({
