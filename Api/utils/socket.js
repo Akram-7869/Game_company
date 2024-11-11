@@ -258,7 +258,7 @@ const updateRoomCount = () => {
       };
       console.log('leave-', d, data);
       io.to(room).emit('res', { ev: 'leave', data });
-      updateRoomCount();
+      // updateRoomCount();
 
     } catch (error) {
 
