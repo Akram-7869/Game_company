@@ -102,7 +102,6 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     coins: req.body.coin,
     value: req.body.value,
     type: req.body.type,
-    UPI_ID: req.body.UPI_ID,
     walletAddress:req.body.walletAddress 
 
 

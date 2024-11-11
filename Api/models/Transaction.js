@@ -126,10 +126,6 @@ const TransactionsSchema = new mongoose.Schema({
         type: String,
     },
 
-    UPI_Id:{
-        type: String,
-    },
-
 }, {
     timestamps: true,
 });
