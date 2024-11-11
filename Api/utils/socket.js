@@ -28,17 +28,7 @@ let onConnection = (socket) => {
   });
 
 
-  // Function to update and emit the number of clients in the room
-const updateRoomCount = () => {
-  io.in(roomName).clients((error, clients) => {
-    if (!error) {
-        numberOfClients = clients.length;
-        console.log('---------->numberOfClients', numberOfClients);
-        io.to(roomName).emit('roomCount', { numberOfClients });  // Moved inside the callback
-        publicRoom[lobbyId]['playerCount'] = numberOfClients;  // Update player count
-      }
-  });
-};
+ 
 
 
   socket.on('join', async (d) => {
@@ -86,6 +76,17 @@ const updateRoomCount = () => {
       
       let numberOfClients = 0;
      
+       // Function to update and emit the number of clients in the room
+const updateRoomCount = () => {
+  io.in(roomName).clients((error, clients) => {
+    if (!error) {
+        numberOfClients = clients.length;
+        console.log('---------->numberOfClients', numberOfClients);
+        io.to(roomName).emit('roomCount', { numberOfClients });  // Moved inside the callback
+        publicRoom[lobbyId]['playerCount'] = numberOfClients;  // Update player count
+      }
+  });
+};
 
 
   // Emit the count immediately upon joining
@@ -94,6 +95,26 @@ const updateRoomCount = () => {
    // Track client disconnections
    socket.on('disconnect', () => {
     updateRoomCount();
+
+      //leave
+  socket.on('leave', (d) => {
+    try {
+      let { room, userId } = d;
+      userLeave(d);
+      socket.leave(room);
+      let data = {
+        room: room, userId,
+        users: getRoomUsers(room)
+      };
+      console.log('leave-', d, data);
+      io.to(room).emit('res', { ev: 'leave', data });
+      updateRoomCount();
+
+    } catch (error) {
+
+    }
+  });
+
 });
 
  // Send initial data to client
