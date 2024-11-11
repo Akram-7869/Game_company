@@ -40,6 +40,91 @@ const paymentConfig = async (amount, trxId) => {
 
 }
 
+// exports.getToken = asyncHandler(async (req, res, next) => {
+//     let { amount, membership_id = "", coupon_id = "" } = req.body;
+//     if (amount <= 0) {
+//         return next(
+//             new ErrorResponse(`Amount required`)
+//         );
+//     }
+//     const setting = await Setting.findOne({ type: 'SITE', name: 'ADMIN' });
+//     amount = parseFloat(amount);
+//     //create a transaction ;
+//     if (!req.player) {
+//         return next(
+//             new ErrorResponse(`Player not found`)
+//         );
+//     }
+//     if (coupon_id.length === 24) {
+//         let couponRec = await Coupon.findOne({ minAmount:  amount , active: true, _id: coupon_id });
+//         if (!couponRec) {
+//             return next(
+//                 new ErrorResponse(`Invalid Coupon`)
+//             );
+//         }
+//         if (couponRec.expiryDate) {
+//             let today = new Date();
+//             if (couponRec.expiryDate < today) {
+//                 await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
+//                 return next(
+//                     new ErrorResponse(`Code Expired`)
+//                 );
+
+//             }
+//         }
+//         if (couponRec.useOnlyOnce === true) {
+//             let used = await Transaction.findOne({ 'playerId': req.player._id, 'couponId': couponRec._id, 'status': 'complete' });
+//             if (used) {
+//                 return next(new ErrorResponse(`Code Used`));
+//             }
+//         }
+//         if (couponRec.usageLimit > 1) {
+//             let useCount = await Transaction.find({ 'couponId': couponRec._id });
+//             if (useCount > couponRec.usageLimit) {
+//                 await Coupon.findByIdAndUpdate(couponRec._id, { active: false });
+//                 return next(new ErrorResponse(`Code Limit reached`));
+
+//             }
+//         }
+
+//     }
+
+//     let gst = amount * parseFloat(setting.gst * 0.01);
+
+//     let tranData = {
+//         'playerId': req.player._id,
+//         'amount': amount,
+//         'couponId': coupon_id,
+//         'membershipId': membership_id,
+//         'transactionType': "credit",
+//         'note': req.body.note,
+//         'paymentGateway': 'Upi manual',
+//         'logType': 'deposit',
+//         'gst': gst,
+//         'prevBalance': 0,
+//         'stateCode': req.player.stateCode
+
+
+//     }
+//     let tran = await Transaction.create(tranData);
+//     if (!tran._id) {
+//         return next(
+//             new ErrorResponse(`Provide all required fields`)
+//         );
+//     }
+//     let totalAmount = amount + gst;
+//     //const upi_qr = `upi://pay?pa=${upi_id}&pn=${business_name}&am=${amount}&tn=${payment_id}&cu=${cu}`;
+
+//     let url = `upi://pay?pa=${setting.upi.va}&pn=${setting.upi.name}&am=${totalAmount}&tn=${tran._id}&cu=INR`;
+//     //  console.log(response.data);
+//     res.status(200).json({
+//         success: true,
+//         data: { url, id: tran._id }
+//     });
+
+// });
+
+
 exports.getToken = asyncHandler(async (req, res, next) => {
     let { amount, membership_id = "", coupon_id = "" } = req.body;
     if (amount <= 0) {
@@ -56,7 +141,7 @@ exports.getToken = asyncHandler(async (req, res, next) => {
         );
     }
     if (coupon_id.length === 24) {
-        let couponRec = await Coupon.findOne({ minAmount:  amount , active: true, _id: coupon_id });
+        let couponRec = await Coupon.findOne({ minAmount: { $lte: amount }, maxAmount: { $gte: amount }, active: true, _id: coupon_id });
         if (!couponRec) {
             return next(
                 new ErrorResponse(`Invalid Coupon`)
@@ -113,9 +198,8 @@ exports.getToken = asyncHandler(async (req, res, next) => {
         );
     }
     let totalAmount = amount + gst;
-    //const upi_qr = `upi://pay?pa=${upi_id}&pn=${business_name}&am=${amount}&tn=${payment_id}&cu=${cu}`;
-
-    let url = `upi://pay?pa=${setting.upi.va}&pn=${setting.upi.name}&am=${totalAmount}&tn=${tran._id}&cu=INR`;
+    let note = 'top up'
+    let url = `upi://pay?pa=${setting.upi.va}&pn=${setting.upi.name}&am=${totalAmount}&cu=INR&mc=0000&tn=${note}&tr=${tran._id}`;
     //  console.log(response.data);
     res.status(200).json({
         success: true,
