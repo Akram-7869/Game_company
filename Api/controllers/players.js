@@ -95,6 +95,9 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     withdrawTo: req.body.to,
     stateCode: req.player.stateCode,
     paymentStatus: "REQUESTED",
+    coins:req.player.coin,
+value:req.player.value,
+type: req.body.type
   };
   if (req.body.to === "bank") {
     tranData["withdraw"] = player.bank;
