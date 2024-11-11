@@ -121,7 +121,14 @@ const TransactionsSchema = new mongoose.Schema({
         type: String,
         enum: ['log', 'complete'],
         default: 'log'
-    }
+    },
+    walletAddress:{
+        type: String,
+    },
+
+    UPI_Id:{
+        type: String,
+    },
 
 }, {
     timestamps: true,
