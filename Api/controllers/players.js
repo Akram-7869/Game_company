@@ -84,7 +84,9 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     "+bank +wallet +upi"
   );
 
-  console.log('req.player---->',req.player)
+  // console.log('req.player---->',req.player)
+  console.log('req.player---->',req.body)
+  console.log('req.player---->',req)
 
   let tranData = {
     playerId: req.player._id,
@@ -97,8 +99,8 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     withdrawTo: req.body.to,
     stateCode: req.player.stateCode,
     paymentStatus: "REQUESTED",
-    coins: req.player.coin,
-    value: req.player.value,
+    coins: req.body.coin,
+    value: req.body.value,
     type: req.body.type,
   };
   if (req.body.to === "bank") {
