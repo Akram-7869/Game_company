@@ -2215,19 +2215,19 @@ exports.paymentAdd = asyncHandler(async (req, res, next) => {
   if (!tran) {
     return next(new ErrorResponse(`Transaction not found`));
   }
-  // if (req.files) {
-  //   return next(
-  //     new ErrorResponse(`File not found`)
-  //   );
-  // }
-  // if (req.files) {
+  if (req.files) {
+    return next(
+      new ErrorResponse(`File not found`)
+    );
+  }
+  if (req.files) {
 
-  //   filename = '/img/payment/' + req.player._id + '/' + req.files.file.name;
-  //   uploadFile(req, filename, res);
-  //   updateFiled = { 'imageUrl': filename, paymentStatus: 'REQUESTED' }
+    filename = '/img/payment/' + req.player._id + '/' + req.files.file.name;
+    uploadFile(req, filename, res);
+    updateFiled = { 'imageUrl': filename, paymentStatus: 'REQUESTED' }
 
-  // }
-  updateFiled = { paymentId, paymentStatus: "REQUESTED" };
+  }
+  // updateFiled = { paymentId, paymentStatus: "REQUESTED" };
   const row = await Transaction.findByIdAndUpdate(id, updateFiled);
 
   res.status(200).json({
