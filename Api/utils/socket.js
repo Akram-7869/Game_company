@@ -254,6 +254,8 @@ const updateRoomCount = () => {
       };
       console.log('leave-', d, data);
       io.to(room).emit('res', { ev: 'leave', data });
+      io.to(roomName).emit('roomCount', { numberOfClients });  // Moved inside the callback
+      publicRoom[lobbyId]['playerCount'] = numberOfClients;  // Update player count
 
     } catch (error) {
 
