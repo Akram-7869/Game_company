@@ -33,6 +33,10 @@ const TransactionsSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    coinValue: {
+        type: Number,
+        required: true
+    },
     currency: {
         type: String,
         default: 'INR'
