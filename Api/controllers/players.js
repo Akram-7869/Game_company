@@ -86,7 +86,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
 
   // console.log('req.player---->',req.player)
   console.log('req.player---->',req.body)
-  console.log('req.player---->',req)
+  
 
   let tranData = {
     playerId: req.player._id,
@@ -102,6 +102,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     coins: req.body.coin,
     value: req.body.value,
     type: req.body.type,
+    
   };
   if (req.body.to === "bank") {
     tranData["withdraw"] = player.bank;
