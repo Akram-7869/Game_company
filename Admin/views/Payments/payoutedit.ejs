@@ -217,15 +217,39 @@
 
 
                                         <div class="mb-3">
-                                            <label class="form-label">Amount</label>
+                                            <label class="form-label">Payout Amount</label>
                                             <input readonly type="text" name="amount" value="<%= row.amount %>"
                                                 class="form-control" required placeholder="Amount Requested" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Coins</label>
+                                            <input readonly type="text" name="coins" value="<%= row.coins %>"
+                                                class="form-control" required placeholder="coins" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Value</label>
+                                            <input readonly type="text" name="value" value="<%= row.value %>"
+                                                class="form-control" required placeholder="value" />
                                         </div>
 
                                         <div class="mb-3">
                                             <label class="form-label">Cherry Coins</label>
                                             <input readonly type="text" name="coinValue" value="<%= row.coinValue %>"
                                                 class="form-control" required placeholder="coinValue" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">
+                                                <% if (row.type === 'UPI') { %>
+                                                    UPI ID   
+                                                <% } else { %>
+                                                    Wallet Address
+                                                <% } %>
+                                            </label>
+                                            <input readonly type="text" name="walletAddress" value="<%= row.walletAddress %>"
+                                                class="form-control" required placeholder="walletAddress" />
                                         </div>
 
                                         <div class="mb-3">
@@ -253,7 +277,7 @@
                                             <% } %>
                                                 <div class="mb-3">
                                                     <label class="form-label">Note </label>
-                                                    <textarea name="note" value="" class="form-control" required
+                                                    <textarea readonly name="note" value="" class="form-control" required
                                                         placeholder="Transaction id  ..."><%=row.note%></textarea>
                                                 </div>
                                                 <div class="mb-3">
