@@ -27,6 +27,20 @@ let onConnection = (socket) => {
     userSocketMap[userId]['socket_id'] = socket.id;
   });
 
+
+  // Function to update and emit the number of clients in the room
+const updateRoomCount = () => {
+  io.in(roomName).clients((error, clients) => {
+    if (!error) {
+        numberOfClients = clients.length;
+        console.log('---------->numberOfClients', numberOfClients);
+        io.to(roomName).emit('roomCount', { numberOfClients });  // Moved inside the callback
+        publicRoom[lobbyId]['playerCount'] = numberOfClients;  // Update player count
+      }
+  });
+};
+
+
   socket.on('join', async (d) => {
     try {
 
@@ -72,17 +86,7 @@ let onConnection = (socket) => {
       
       let numberOfClients = 0;
      
-// Function to update and emit the number of clients in the room
-const updateRoomCount = () => {
-      io.in(roomName).clients((error, clients) => {
-        if (!error) {
-            numberOfClients = clients.length;
-            console.log('---------->numberOfClients', numberOfClients);
-            io.to(roomName).emit('roomCount', { numberOfClients });  // Moved inside the callback
-            publicRoom[lobbyId]['playerCount'] = numberOfClients;  // Update player count
-          }
-      });
-  };
+
 
   // Emit the count immediately upon joining
   updateRoomCount();
@@ -254,8 +258,7 @@ const updateRoomCount = () => {
       };
       console.log('leave-', d, data);
       io.to(room).emit('res', { ev: 'leave', data });
-      io.to(roomName).emit('roomCount', { numberOfClients });  // Moved inside the callback
-      publicRoom[lobbyId]['playerCount'] = numberOfClients;  // Update player count
+      updateRoomCount();
 
     } catch (error) {
 
