@@ -84,7 +84,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     "+bank +wallet +upi"
   );
 
-  console.log(req.player)
+  console.log('req.player---->',req.player)
 
   let tranData = {
     playerId: req.player._id,

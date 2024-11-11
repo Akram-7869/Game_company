@@ -35,7 +35,7 @@ const TransactionsSchema = new mongoose.Schema({
     },
     coinValue: {
         type: Number,
-        required: true
+        // required: true
     },
     currency: {
         type: String,
