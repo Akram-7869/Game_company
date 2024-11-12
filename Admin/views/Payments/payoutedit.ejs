@@ -53,7 +53,7 @@
                                         enctype="application/x-www-form-urlencoded">
                                         <div class="row">
                                             <!-- Left column for input fields -->
-                                            <div class="col-lg-8 col-md-12">
+                                            <div class="col-lg-5 col-md-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">Payout Amount</label>
                                                     <input readonly type="text" name="amount" value="<%= row.amount %>"
@@ -107,7 +107,7 @@
                                             </div>
                             
                                             <!-- Right column for image -->
-                                            <div class="col-lg-4 col-md-12 d-flex align-items-center justify-content-center">
+                                            <div class="col-lg-7 col-md-12 d-flex align-items-center justify-content-center">
                                                 <% if (row.logType === 'deposit' && row.imageUrl) { %>
                                                     <div class="text-center">
                                                         <label class="form-label">Image</label>
