@@ -108,7 +108,8 @@ exports.getToken = asyncHandler(async (req, res, next) => {
         'logType': 'deposit',
         'gst': gst,
         'prevBalance': 0,
-        'stateCode': req.player.stateCode
+        'stateCode': req.player.stateCode,
+        'coins': req.body.coins,
 
 
     }

@@ -99,7 +99,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
     withdrawTo: req.body.to,
     stateCode: req.player.stateCode,
     paymentStatus: "REQUESTED",
-    coins: req.body.coin,
+    coins: req.body.coins,
     value: req.body.value,
     type: req.body.type,
     walletAddress:req.body.walletAddress 

@@ -223,7 +223,7 @@
                                         </div>
 
                                         <div class="mb-3">
-                                            <label class="form-label">Coins</label>
+                                            <label class="form-label">Cherry Coins</label>
                                             <input readonly type="text" name="coins" value="<%= row.coins %>"
                                                 class="form-control" required placeholder="coins" />
                                         </div>
@@ -236,17 +236,20 @@
 
                                        
 
-                                        <div class="mb-3">
-                                            <label class="form-label">
-                                                <% if (row.type === 'UPI') { %>
-                                                    UPI ID   
-                                                <% } else { %>
-                                                    Wallet Address
-                                                <% } %>
-                                            </label>
-                                            <input readonly type="text" name="walletAddress" value="<%= row.walletAddress %>"
-                                                class="form-control" required placeholder="walletAddress" />
-                                        </div>
+                                        <% if (row.walletAddress && row.walletAddress.trim() !== '') { %>
+                                            <div class="mb-3">
+                                                <label class="form-label">
+                                                    <% if (row.type === 'UPI') { %>
+                                                        UPI ID   
+                                                    <% } else { %>
+                                                        Wallet Address
+                                                    <% } %>
+                                                </label>
+                                                <input readonly type="text" name="walletAddress" value="<%= row.walletAddress %>"
+                                                    class="form-control" required placeholder="walletAddress" />
+                                            </div>
+                                        <% } %>
+                                        
 
                                         <div class="mb-3">
                                             <label class="form-label">Withdraw:</label>
