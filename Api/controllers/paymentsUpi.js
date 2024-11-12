@@ -94,10 +94,12 @@ exports.getToken = asyncHandler(async (req, res, next) => {
 
     let gst = amount * parseFloat(setting.gst * 0.01);
 
+    console.log("req.body------->", req.body)
+
     let tranData = {
         'playerId': req.player._id,
         'amount': amount,
-        'coinValue':req.body.coinValue , 
+        'value':req.body.value , 
         'couponId': coupon_id,
         'membershipId': membership_id,
         'transactionType': "credit",

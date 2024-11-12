@@ -85,7 +85,7 @@ exports.withDrawRequest = asyncHandler(async (req, res, next) => {
   );
 
   // console.log('req.player---->',req.player)
-  console.log('req.player---->',req.body)
+  console.log('req.body---->',req.body)
   
 
   let tranData = {

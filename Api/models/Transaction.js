@@ -33,8 +33,12 @@ const TransactionsSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    coinValue: {
+    value: {
         type: Number,
+        // required: true
+    },
+    type: {
+        type: String,
         // required: true
     },
     currency: {
@@ -79,6 +83,10 @@ const TransactionsSchema = new mongoose.Schema({
     note: {
         type: String,
         required: true
+    },
+    coins: {
+        type: String,
+       
     },
     prevBalance: {
         type: Number,
