@@ -15,7 +15,7 @@
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="<%=process.env.ADMIN_URL%>/admin/wallPost">
+                            <li class="breadcrumb-item active"><a href="<%=process.env.ADMIN_URL%>/admin/poll">
                                     <%- title %> List
                                 </a></li>
                             <li class="breadcrumb-item active">Add</li>
@@ -59,8 +59,8 @@
                                 <!-- <div class="mb-3">
                                     <label class="form-label">Type</label>
                                     <div class="col-md-10">
-                                        <select id="wallPostType" class="form-select" name="wallPostType" required>
-                                            <option value="wallPost" <%=row.wallPostType==='wallPost' ?'selected':'' %>>Poll
+                                        <select id="pollType" class="form-select" name="poll" required>
+                                            <option value="poll" <%=row.pollType==='poll' ?'selected':'' %>>Poll
                                             </option>
                                             
                                         </select>
@@ -143,7 +143,7 @@
                             //send all the form data along with the files:
                             this.on("sending", function (data, xhr, formData) {
                                 formData.append("url", $("#url").val());
-                                // formData.append("wallPostType", $("#wallPostType").val());
+                                // formData.append("pollType", $("#poll").val());
                                 // formData.append("location", $("#location").val());
                                 formData.append("status", $("#statustxt").val());
 

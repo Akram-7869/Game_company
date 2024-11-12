@@ -15,7 +15,7 @@
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="<%=process.env.ADMIN_URL%>/admin/wallPost">
+                            <li class="breadcrumb-item active"><a href="<%=process.env.ADMIN_URL%>/admin/poll">
                                     <%- title %> List
                                 </a></li>
                             <li class="breadcrumb-item active">Add</li>
@@ -35,7 +35,7 @@
                     <div class="card">
                         <div class="card-body">
 
-                            <form id="wallPost" action="" enctype="multipart/form-data" method="POST">
+                            <form id="poll" action="" enctype="multipart/form-data" method="POST">
 
                                 <div class="mb-3">
                                     <label class="form-label">Title</label>
@@ -56,11 +56,11 @@
                                 <!-- <div class="mb-3">
                                     <label class="form-label">Type</label>
                                     <div class="col-md-10">
-                                        <select id="wallPostType" class="form-select" name="wallPostType" required>
-                                            <option value="wallPost" <%=row.wallPostType==='wallPost' ?'selected':'' %>>Poll
+                                        <select id="pollType" class="form-select" name="pollType" required>
+                                            <option value="poll" <%=row.pollType==='poll' ?'selected':'' %>>Poll
                                             </option>
-                                            <!-- <option value="wallPost" <%=row.wallPostType==='wallPost' ?'selected':'' %>>Poll
-                                            </option> -->
+                                            <!-- <option value="poll" <%=row.pollType==='poll' ?'selected':'' %>>Poll
+                                            </option> 
                                         </select>
                                     </div>
                                 </div> -->
@@ -136,9 +136,9 @@
                                 if (dzClosure.getQueuedFiles().length > 0) {
                                     dzClosure.processQueue();
                                 } else {
-                                    alert(JSON.stringify($("#wallPost").serialize()))
+                                    alert(JSON.stringify($("#poll").serialize()))
 
-                                    $.post(url, $("#wallPost").serialize()).then(r => {
+                                    $.post(url, $("#poll").serialize()).then(r => {
                                         location.reload();
                                     });
                                 }
@@ -148,7 +148,7 @@
                             //send all the form data along with the files:
                             this.on("sending", function (data, xhr, formData) {
                                 formData.append("url", $("#url").val());
-                                // formData.append("wallPostType", $("#wallPostType").val());
+                                // formData.append("pollType", $("#pollType").val());
                                 // formData.append("location", $("#location").val());
                                 formData.append("status", $("#statustxt").val());
 

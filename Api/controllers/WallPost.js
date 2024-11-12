@@ -2,7 +2,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 
 const File = require('../models/File');
-// const PlayerPoll = require('../models/PlayerPoll');
+
 var path = require('path');
 const fs = require('fs');
 const { uploadFile, deletDiskFile } = require('../utils/utils');
@@ -17,7 +17,7 @@ exports.getWallposts = asyncHandler(async (req, res, next) => {
     WallPost.dataTables({
         limit: req.body.length,
         skip: req.body.start,
-        //   select:{'PollUrl':1, 'createdAt':1},
+       
         search: {
             value: req.body.search ? req.body.search.value : '',
             fields: ['status', 'location']
@@ -57,10 +57,7 @@ exports.createWallpost = asyncHandler(async (req, res, next) => {
         uploadFile(req, filename, res);
     }
 
-
-
     let wallPostRow = {
-        location: req.body.location,
         status: 'active',
         imageId: filename,
         url: req.body.url,
@@ -118,7 +115,7 @@ exports.deleteWallpost = asyncHandler(async (req, res, next) => {
     //await File.findByIdAndDelete(row.imageId);
     let filePath = path.resolve(__dirname, '../../assets/' + row.imageId);
     deletDiskFile(filePath);
-    // await PlayerPoll.deleteMany({ PollId: req.params.id });
+  
 
     res.status(200).json({
         success: true,

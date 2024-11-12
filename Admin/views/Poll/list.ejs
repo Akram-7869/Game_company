@@ -48,7 +48,7 @@
                     buttons on a page that will interact with a DataTable. The core library
                     provides the based framework upon which plug-ins can built.
                 </p> -->
-                            <a type="button" href="<%=process.env.ADMIN_URL%>/admin/wallPost/add"
+                            <a type="button" href="<%=process.env.ADMIN_URL%>/admin/poll/add"
                                 class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i>
                                 Add New Poll</a>
 
@@ -58,7 +58,7 @@
                                     <tr>
                                         <th>Srno</th>
                                         <th>location</th>
-                                        <th>wallPost</th>
+                                        <th>poll</th>
 
                                         <th>Status</th>
 
@@ -120,7 +120,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '<%=process.env.ADMIN_URL%>/admin/wallPost/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/poll/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -145,12 +145,12 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "<%=process.env.ADMIN_URL%>/admin/wallPost/data", type: "post"
+                                url: "<%=process.env.ADMIN_URL%>/admin/poll/data", type: "post"
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return i = i + 1; } },
                                 { data: 'location', "defaultContent": "" },
-                                { data: 'wallPost', "defaultContent": "" },
+                                { data: 'poll', "defaultContent": "" },
                                 { data: 'status', "defaultContent": "" },
 
                                 {
@@ -164,7 +164,7 @@
 
                                 {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/wallPost/'
+                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/poll/'
                                             + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\''
                                             + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
 

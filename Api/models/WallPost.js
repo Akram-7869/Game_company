@@ -2,9 +2,7 @@ const mongoose = require('mongoose');
 var dataTables = require('mongoose-datatables')
 
 const WallPostSchema = new mongoose.Schema({
-    location: {
-        type: String
-    },
+    
     url: {
         type: String
     },
