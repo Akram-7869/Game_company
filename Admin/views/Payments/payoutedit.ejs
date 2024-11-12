@@ -66,6 +66,7 @@
                             </ul>
 
                             <!-- Tab panes -->
+                             <%=row%>
                             <div class="tab-content p-3 text-muted">
                                 <div class="tab-pane " id="home1" role="tabpanel">
                                     <p class="mb-0">
@@ -251,7 +252,7 @@
                                         <% } %>
                                         
 
-                                        <div class="mb-3">
+                                        <!-- <div class="mb-3">
                                             <label class="form-label">Withdraw:</label>
                                             <% for (const key in row.withdraw) { %>
                                                 <ul>
@@ -260,7 +261,8 @@
                                                     </li>
                                                 </ul>
                                                 <% }%>
-                                        </div>
+                                        </div> -->
+
                                         <% if(row.logType==='deposit' ) {%>
 
                                             <div class="mb-3">

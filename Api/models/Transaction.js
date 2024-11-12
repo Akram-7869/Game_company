@@ -86,7 +86,6 @@ const TransactionsSchema = new mongoose.Schema({
     },
     coins: {
         type: String,
-       
     },
     prevBalance: {
         type: Number,
