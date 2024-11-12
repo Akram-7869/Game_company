@@ -28,6 +28,7 @@ const influencers = require('./influencers');
 const commission = require('./commission');
 
 const { state} = require('../utils/JoinRoom');
+const wallPost = require('./wallPost');
 
 
 
@@ -48,6 +49,7 @@ router.use('/api/v1/dashboards', dashboards);
 router.use('/api/v1/tournaments', tournaments);
 router.use('/api/v1/coupon', coupon);
 router.use('/api/v1/polls', polls);
+router.use('/api/v1/wallPost', wallPost);
 router.use('/api/v1/gamemanager', gamemanager);
 router.use('/api/v1/bannertext', bannertext);
 router.use('/api/v1/posts', posts);

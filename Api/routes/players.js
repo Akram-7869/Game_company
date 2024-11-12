@@ -13,6 +13,11 @@ router.get('/tournaments', playerCtl.getTournaments);
 
 router.get('/versionlist', playerCtl.getVersion);
 
+router.route('/list').get(protect,playerCtl.getPlayerList);
+
+router.route('/follow').post(protect,playerCtl.followPlayer);
+router.route('/unfollow').post(protect, playerCtl.unfollowPlayer);
+
 
 router.get('/my-gift', protect, playerCtl.getGift);
 router.post('/claim-gift', protect, playerCtl.calimedGift);
@@ -33,6 +38,9 @@ router.get('/page', protect, playerCtl.getPage);
 
 
 router.route('/profile').get(protect, playerCtl.getPlayer).post(protect, playerCtl.updateProfile);
+
+router.post('/profile/image', playerCtl.updatePlayerImage);
+
 router.route('/sendotp').post(protect, playerCtl.sendotp);
 router.post('/checkupi', protect, playerCtl.checkUpi);
 router.post('/savefbtoken', protect, playerCtl.savefbtoken);
@@ -40,7 +48,9 @@ router.route('/sendotp').post(protect, playerCtl.sendotp);
 router.route('/verify-phone').post(protect, playerCtl.verifyPhoneCode);
 
 router.post('/poll', protect, playerCtl.poll);
+
 router.get('/pollList', protect, playerCtl.pollList);
+router.get('/wallPostList', protect, playerCtl.wallPostList);
 
 router.post('/withdraw/request', protect, playerCtl.withDrawRequest);
 router.post('/debit', header_chk, protect, playerCtl.debiteAmount);

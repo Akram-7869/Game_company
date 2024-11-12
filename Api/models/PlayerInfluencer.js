@@ -13,6 +13,12 @@ const PlayerInfluencerSchema = new mongoose.Schema({
     ref: 'Influencer',
     required:true
   },
+   otherPlayerId: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Player',
+    required:true
+  },
+  
   
  
 });

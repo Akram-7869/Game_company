@@ -25,6 +25,7 @@ const commissionCtrl = require('../controllers/CommissionController');
 
 
 const pollCtrl = require('../controllers/PollController');
+const wallPostCtrl = require('../controllers/WallPostController');
 const gameMangCtrl = require('../controllers/GameManagerController');
 
 const {authorize} = require('../middleware/auth');
@@ -75,6 +76,12 @@ router.route('/poll/add').get(pollCtrl.pollAdd)
 router.route('/poll/data').post(pollCtrl.getPolls);
 router.route('/poll').get(pollCtrl.pollList);
 router.route('/poll/:id').get(pollCtrl.editPoll).post(pollCtrl.updatePoll).delete(pollCtrl.deletePoll);
+
+router.route('/wallPost/add').get(wallPostCtrl.wallPostAdd)
+      .post(wallPostCtrl.createwallPosts);
+router.route('/wallPost/data').post(wallPostCtrl.getwallPost);
+router.route('/wallPost').get(wallPostCtrl.wallPostList);
+router.route('/wallPost/:id').get(wallPostCtrl.editwallPost).post(wallPostCtrl.updatewallPost).delete(wallPostCtrl.deletewallPost);
 
 //setting
 router.route('/setting/logo').get(settingCtrl.getSitelogo).post(settingCtrl.updateSitelogo);

@@ -602,8 +602,14 @@ exports.logout = asyncHandler(async (req, res, next) => {
 // @desc      Log user out / clear cookie
 // @route     GET /api/v1/auth/logout
 // @access    Private
+
+
+
+
+
 exports.maintanance = asyncHandler(async (req, res, next) => {
   let bot_profile = getKey('bot_profile');
+  let default_profile = getKey('default_profile');
   let setting = getKey('site_setting');
   let games = getKey('games');
   if (!bot_profile) {
@@ -617,12 +623,25 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
     });
     setkey('bot_profile', bot_profile);
   }
+  if (!default_profile) {
+    default_profile = [];
+    let filename = '/img/player/profile_pic/';
+    let filePath = path.resolve(__dirname, '../../assets/' + filename);
+    let pathurl = process.env.IMAGE_URL + filename;
+    //console.log(filePath);
+    fs.readdirSync(filePath).forEach(file => {
+      default_profile.push(pathurl + file);
+    });
+    setkey('default_profile', default_profile);
+  }
   if (!setting) {
     setting = await Setting.findOne({
       type: 'SITE',
     });
     setkey('site_setting', setting)
   }
+
+
 
   if (!games) {
     games = await Game.find({
@@ -632,11 +651,21 @@ exports.maintanance = asyncHandler(async (req, res, next) => {
 
   }
 
+
+  const values = await Setting.findOne({ type: 'SITE' }).select('one');
+const dollor_value = values?.one?.dollor_value || null;
+const rupees_value = values?.one?.rupees_value || null;
+
+  console.log('Fetched values:', values);
+
   res.status(200).json({
     success: true,
-    data: { bot_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games }
+    data: { bot_profile,default_profile, adminCommision: setting.commission, mindeposit: setting.mindeposit, games ,  dollor_value,
+      rupees_value }
   });
 });
+
+
 exports.smsOtp = async (mobile, otp, template_id, authkey) => {
 
   var params = {

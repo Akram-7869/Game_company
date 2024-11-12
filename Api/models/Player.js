@@ -1,25 +1,26 @@
-const crypto = require('crypto');
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-var dataTables = require('mongoose-datatables')
+const crypto = require("crypto");
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+var dataTables = require("mongoose-datatables");
 
 const PlayerSchema = new mongoose.Schema({
-
   firstName: {
     type: String,
-   // minLength: [3, 'try again'],
-
+    // minLength: [3, 'try again'],
   },
   lastName: {
     type: String,
   },
   gender: {
     type: String,
-
   },
   profilePic: {
-    type: mongoose.Schema.ObjectId,
+    type: String,
+  },
+
+  playerProfileUrl: {
+    type: String,
   },
   picture: {
     type: String,
@@ -30,48 +31,42 @@ const PlayerSchema = new mongoose.Schema({
   },
   country: {
     type: String,
-
   },
   registeredWith: {
     type: String,
-    default: 'email'
+    default: "email",
   },
   phone: {
     type: String,
     minLength: 8,
     trim: true,
-
   },
   email: {
     type: String,
     trim: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'try again'
-    ],
-
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "try again"],
   },
   role: {
     type: String,
-    enum: ['player'],
-    default: 'player'
+    enum: ["player"],
+    default: "player",
   },
   deviceType: {
-    type: String
+    type: String,
   },
   deviceId: {
-    type: String
+    type: String,
   },
   deviceToken: {
     type: String,
     select: false,
     trim: true,
-   // minLength: [32, 'try again'],
+    // minLength: [32, 'try again'],
   },
   firebaseToken: {
     type: String,
     select: false,
-   // minLength: [800, 'try again'],
+    // minLength: [800, 'try again'],
 
     trim: true,
   },
@@ -79,33 +74,32 @@ const PlayerSchema = new mongoose.Schema({
     type: String,
     select: false,
     trim: true,
-
   },
   gamecode: {
-    type: String
+    type: String,
   },
   password: {
     type: String,
     minlength: 4,
-    select: false
+    select: false,
   },
   status: {
     type: String,
-    enum: ['notverified', 'active', 'inactive', 'deleted', 'banned'],
+    enum: ["notverified", "active", "inactive", "deleted", "banned"],
   },
   resetPasswordToken: {
     type: String,
     minlength: 6,
-    select: false
+    select: false,
   },
   resetPasswordExpire: {
     type: Date,
-    select: false
+    select: false,
   },
   verifyPhone: {
     type: String,
     minlength: 4,
-    select: false
+    select: false,
   },
   verifyPhoneExpire: {
     type: Date,
@@ -113,68 +107,73 @@ const PlayerSchema = new mongoose.Schema({
   },
   balance: {
     type: Number,
-    default: 0
+    default: 0,
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   notificationRead: {
     type: Date,
-    default: ''
+    default: "",
   },
 
   aadharNumber: {
     type: String,
-    select: false
-
+    select: false,
   },
   panNumber: {
     type: String,
-    select: false
-
+    select: false,
   },
   pan: {
     type: Map,
-    select: false
-
+    select: false,
   },
   dob: {
-    type: String
+    type: String,
   },
   stateCode: {
-    type: String
+    type: String,
   },
   stateName: {
-    type: String
+    type: String,
   },
   latitude: {
-    type: Number
+    type: Number,
   },
   longitude: {
-    type: Number
+    type: Number,
   },
   kycStatus: {
     type: String,
-    enum: ['verified', 'notverified'],
-    default: 'notverified'
+    enum: ["verified", "notverified"],
+    default: "notverified",
   },
   phoneStatus: {
     type: String,
-    enum: ['verified', 'notverified'],
-    default: 'notverified'
+    enum: ["verified", "notverified"],
+    default: "notverified",
   },
   panStatus: {
     type: String,
-    enum: ['verified', 'notverified'],
-    default: 'notverified'
+    enum: ["verified", "notverified"],
+    default: "notverified",
   },
 
+  coins: {
+    type: String,
+  },
+  value: {
+    type: String,
+  },
+  type: {
+    type: String,
+  },
 
   wallet: {
     select: false,
     type: Map,
-
   },
   bank: {
     select: false,
@@ -186,102 +185,94 @@ const PlayerSchema = new mongoose.Schema({
   },
   wonCount: {
     type: Number,
-    default: 0
-
+    default: 0,
   },
   joinCount: {
     type: Number,
-    default: 0
-
+    default: 0,
   },
   giftAmount: {
     type: Number,
-    default: 0
+    default: 0,
   },
   isCalimed: {
     type: Boolean,
     default: false,
     required: true,
-
   },
-
 
   refrer_player_id: {
     type: mongoose.Schema.ObjectId,
   },
   refer_code: {
     type: String,
-    select: false
+    select: false,
   },
   level_1: {
-    type: String
+    type: String,
   },
   level_2: {
-    type: String
+    type: String,
   },
   deposit: {
     type: Number,
     default: 0,
-    min: 0
-
+    min: 0,
   },
   winings: {
     type: Number,
     default: 0,
-    min: 0
-
+    min: 0,
   },
   bonus: {
     type: Number,
     default: 0,
-    min: 0
-
+    min: 0,
   },
   membership: {
     type: String,
-    default: 'free'
-
+    default: "free",
   },
   membership_amount: {
-    type: Number
-
-
+    type: Number,
   },
+
   membership_expire: {
     type: Date,
   },
   state: {
-    type: String, default: ''
+    type: String,
+    default: "",
   },
   refer_count: {
     type: Number,
     default: 0,
-    min: 0
+    min: 0,
   },
   refer_lvl1_count: {
     type: Number,
     default: 0,
-    min: 0
+    min: 0,
   },
   refer_lvl2_count: {
     type: Number,
     default: 0,
-    min: 0
+    min: 0,
   },
   refer_lvl1_total: {
     type: Number,
     default: 0,
-    min: 0
+    min: 0,
   },
   refer_lvl2_total: {
     type: Number,
     default: 0,
-    min: 0
+    min: 0,
   },
   refrer_level: {
     type: Number,
     default: 0,
-    min: 0
+    min: 0,
   },
   refrer_amount_total: { type: Number, default: 0, min: 0 },
   refer_deposit_count: { type: Number, default: 0, min: 0 },
@@ -289,41 +280,51 @@ const PlayerSchema = new mongoose.Schema({
   totalWithdraw: {
     type: Number,
     required: true,
-    default: 0
+    default: 0,
   },
   totalDeposit: {
     type: Number,
     required: true,
-    default: 0
+    default: 0,
   },
   totalTaxableAmount: {
     type: Number,
     required: true,
-    default: 0
+    default: 0,
   },
   totalTds: {
     type: Number,
     required: true,
 
-    default: 0
+    default: 0,
   },
   openingBalance: {
     type: Number,
     required: true,
 
-    default: 0
+    default: 0,
   },
   closingBalance: {
     type: Number,
     required: true,
 
-    default: 0
-  }
+    default: 0,
+  },
+
+  followingCount: {
+    type: Number,
+    default: 0,
+  },
+
+  followersCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 // Encrypt password usinsg bcrypt
-PlayerSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+PlayerSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     next();
   }
 
@@ -333,9 +334,13 @@ PlayerSchema.pre('save', async function (next) {
 
 // Sign JWT and return
 PlayerSchema.methods.getSignedJwtToken = function () {
-  return jwt.sign({ id: this._id, role: this.role, deviceToken: this.deviceToken }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
-  });
+  return jwt.sign(
+    { id: this._id, role: this.role, deviceToken: this.deviceToken },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRE,
+    }
+  );
 };
 
 // Match user entered password to hashed password in database
@@ -346,13 +351,13 @@ PlayerSchema.methods.matchPassword = async function (enteredPassword) {
 // Generate and hash password token
 PlayerSchema.methods.getResetPasswordToken = function () {
   // Generate token
-  const resetToken = crypto.randomBytes(20).toString('hex');
+  const resetToken = crypto.randomBytes(20).toString("hex");
 
   // Hash token and set to resetPasswordToken field
   this.resetPasswordToken = crypto
-    .createHash('sha256')
+    .createHash("sha256")
     .update(resetToken)
-    .digest('hex');
+    .digest("hex");
 
   // Set expire
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
@@ -364,5 +369,5 @@ PlayerSchema.methods.getPhoneExpire = function () {
   this.verifyPhoneExpire = Date.now() + 10 * 60 * 1000;
   return verifyPhone;
 };
-PlayerSchema.plugin(dataTables)
-module.exports = mongoose.model('Players', PlayerSchema);
+PlayerSchema.plugin(dataTables);
+module.exports = mongoose.model("Players", PlayerSchema);

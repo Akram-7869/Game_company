@@ -25,13 +25,14 @@ router.route('/zeropg/token').post(protect, zeroCtrl.getToken);
 router.route('/zeropg/notify').post(zeroCtrl.handleNotify);
 
 
-router.route('/upiman/getlink').post(protect, upiCtrl.getToken);
+router.route('/upiman/getlink').post(protect, upiCtrl.getToken);   // for deposite 
+
 router.route('/cashfree/panverify').post(protect, paymentCashfreeCtrl.panValidate);
 
 router.route('/add').post(protect, createSetting);
 router.route('/').post(protect, getSettings);
 
-router.route('/upiman/getlink').post(protect, upiCtrl.getToken);
+
 
 router.route('/cashfree/token').post(protect, paymentCashfreeCtrl.getToken);
 router.route('/cashfree/token').post(protect, paymentCashfreeCtrl.getToken);

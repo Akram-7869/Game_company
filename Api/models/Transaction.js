@@ -33,6 +33,14 @@ const TransactionsSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    value: {
+        type: String
+        // required: true
+    },
+    type: {
+        type: String,
+        // required: true
+    },
     currency: {
         type: String,
         default: 'INR'
@@ -76,6 +84,9 @@ const TransactionsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    coins: {
+        type: String,
+    },
     prevBalance: {
         type: Number,
         required: true
@@ -117,7 +128,10 @@ const TransactionsSchema = new mongoose.Schema({
         type: String,
         enum: ['log', 'complete'],
         default: 'log'
-    }
+    },
+    walletAddress:{
+        type: String,
+    },
 
 }, {
     timestamps: true,

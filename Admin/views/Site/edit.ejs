@@ -113,6 +113,28 @@
                                             <input type="text" class="form-control" required name="one[currency_symbol]"
                                                 value="<%= row ? row.one['currency_symbol']:''%>" placeholder="" />
                                         </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Cherry Coin Value</label>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">In Rupees</label>
+                                                    <input type="number" class="form-control" required
+                                                        name="one[rupees_value]"
+                                                        value="<%= row ? row.one['rupees_value']:''%>"
+                                                        placeholder="Enter rupees value" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">In Dollar</label>
+                                                    <input type="number" class="form-control" required
+                                                        name="one[dollor_value]"
+                                                        value="<%= row ? row.one['dollor_value']:''%>"
+                                                        placeholder="Enter dollar value" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
                                         <div class="mb-3">
                                             <label class="form-label">Maintenance</label>
                                             <div class="col-md-10">
@@ -269,17 +291,17 @@
                                 <div class="tab-pane" id="bank" role="tabpanel">
                                     <p class="mb-0">
 
-                                        <ul>
-                                            <% row.games.forEach(item=> { %>
-                                                <li>
-                                                    <%=item.name%>
+                                    <ul>
+                                        <% row.games.forEach(item=> { %>
+                                            <li>
+                                                <%=item.name%>
 
                                                     <button onclick="editGame(item)">edit</button>
                                                     <button onclick="delGame(item)">del</button>
 
-                                                </li>
-                                                <% })%>
-                                        </ul>
+                                            </li>
+                                            <% })%>
+                                    </ul>
                                     </p>
                                 </div>
                                 <!-- <div class="tab-pane" id="step" role="tabpanel">

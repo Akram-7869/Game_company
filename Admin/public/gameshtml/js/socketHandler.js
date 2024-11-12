@@ -9,6 +9,7 @@ const SocketHandler = {
         lobbyId: '',
         maxp: 99999
     },
+    
 
     initialize(gameType, data) {
         this.gameType = gameType;
@@ -36,6 +37,9 @@ const SocketHandler = {
         this.socket.on('onBetPlaced', this.onBetPlaced.bind(this));
         this.socket.on('OnWinNo', this.onGameResult.bind(this));
         this.socket.on('OnReset', this.onGameRestart.bind(this));
+        this.socket.on('roomCount', this.onRoomCount.bind(this));
+
+        this.socket.on('roomCount', this.onDisconnect.bind(this));
 
         // Crash-specific events
         this.socket.on('OnFlightBlast', this.onFlightBlast.bind(this));
@@ -83,12 +87,31 @@ const SocketHandler = {
     onJoin(msg) {
         this.room = msg.room;
         console.log('Joined room:', this.room);
-        //this.requestCurrentStatus();
+        // this.requestCurrentStatus();
        var channel = document.getElementById('channel');
+       var userCount = document.getElementById('userCount');
         channel.value =  this.room;
+        userCount.textContent = msg.numberOfClients;
         
-
     },
+
+    onRoomCount(msg) {
+        console.log('Room count event received:', msg);
+        console.log('Number of clients:', msg.numberOfClients);
+        var userCount = document.getElementById('userCount');
+        userCount.textContent = msg.numberOfClients;
+    },
+
+    onDisconnect() {
+        console.log('Disconnected from server');
+        // You can leave the count as-is if expecting a reconnect, or show a message if desired
+        const userCount = document.getElementById('userCount');
+        if (userCount) {
+            userCount.textContent = msg.numberOfClients;
+        }
+    },
+
+   
 
     requestCurrentStatus(r) {
         this.socket.emit('OnCurrentStatus', { room: this.room });

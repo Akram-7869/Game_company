@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/Influencer');
+const Post = require('../models/Post');
 const PlayerInfluencer = require('../models/PlayerInfluencer');
 
 const axios = require('axios');
@@ -106,38 +107,62 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 
 
 exports.updateProfile = asyncHandler(async (req, res, next) => {
-  const user = await Influencer.findById(req.user.id);
-  let { filename } = req.body;
-  if (!user) {
-    return next(
-      new ErrorResponse(`User  not found`)
-    );
-  }
-  //  Make sure user is provider owner
-  if (req.role === 'admin') {
-     
-      return next(
-        new ErrorResponse(
-          `User  is not authorized to update`)
-      );
-    
-  }
 
-  user.firstName = req.body.firstName;
-  user.lastName = req.body.lastName;
-  user.phone = req.body.phone;
-  user.displayName = req.body.displayName;
-  if (filename) {
-    user.imageId = filename;
-  }
+ // Find the user by ID
+ const user = await Influencer.findById(req.body.id);
 
-  //user.isNew = false;
-  await user.save();
+ if (!user) {
+   return next(new ErrorResponse(`User not found`));
+ }
+
+ // Check if user is authorized
+ if (req.role !== 'admin') {
+   return next(new ErrorResponse(`User is not authorized to update`));
+ }
+
+ // Update fields if provided
+ user.firstName = req.body.firstName || user.firstName;
+ user.lastName = req.body.lastName || user.lastName;
+ user.phone = req.body.phone || user.phone;
+ user.displayName = req.body.displayName || user.displayName;
+ 
+ if (req.body.filename) {
+   user.imageId = req.body.filename;
+ }
+
+ await user.save();
+
+ // Construct the profile picture URL
+ const profilePicUrl = user.imageId
+   ? `${process.env.IMAGE_URL}${user.imageId}`
+   : `${process.env.IMAGE_URL}img/player/default_pic/Default_1.png`;
+
+ // Attach the profilePic to the user object for the response
+ const userData = {
+   ...user._doc,
+   profilePic: profilePicUrl
+ };
+
+ // Send the complete user data in the response
+ res.status(200).json({
+   success: true,
+   data: userData
+ });
+});
+
+
+exports.getProfile = asyncHandler(async (req, res, next) => {
+  
+  const user = await Influencer.findById(req.params.id);
+  const post = await Post.find({owner:req.params.id})
+  
   res.status(200).json({
     success: true,
-    data: user
+    data: {user, post}
   });
+  
 });
+
 
 exports.updateUpi = asyncHandler(async (req, res, next) => {
   let {upiId}=req.body;
@@ -169,6 +194,8 @@ exports.updateUpi = asyncHandler(async (req, res, next) => {
     data: user
   });
 });
+
+
 exports.updateUsdt = asyncHandler(async (req, res, next) => {
   let {usdtId} = req.body;
   let user = await Influencer.findById(req.user.id);
@@ -606,7 +633,9 @@ exports.getUserList = asyncHandler(async (req, res, next) => {
         displayName: 1,
         followCount: 1,
         isFollowing: { $gt: [{ $size: "$isFollowing" }, 0] },
-        profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
+        profilePic: { 
+          $concat: [process.env.IMAGE_URL, { $ifNull: ["$imageId", "default.jpg"] }] // Provide a default value if imageId is null
+        }
 
       }
     },
@@ -737,7 +766,6 @@ exports.uploadeImage = asyncHandler(async (req, res, next) => {
 });
 
 exports.geTopList = asyncHandler(async (req, res, next) => {
-
   const influencers = await Influencer.aggregate([
     {
       $match: {
@@ -758,12 +786,22 @@ exports.geTopList = asyncHandler(async (req, res, next) => {
         firstName: 1,
         displayName: 1,
         followCount: 1,
-
         profilePic: { $concat: [process.env.IMAGE_URL, '$imageId'] },
+        // profilePic: {
+        //   $cond: {
+        //     if: {
+        //       $and: [
+        //         { $ifNull: ["$profilePic", false] },
+        //         { $ne: ["$profilePic", ""] }
+        //       ]
+        //     },
+        //     then: { $concat: [process.env.IMAGE_URL || "", "/", "$profilePic"] },
+        //     else: `${process.env.IMAGE_URL || ""}/img/logo/profile_default.png`
+        //   }
+        // }
       }
     }
   ]);
-
 
   res.json({ data: influencers }); // Return the list of following influencers
 });

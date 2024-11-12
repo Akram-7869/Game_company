@@ -42,24 +42,23 @@
                     <div class="card">
                         <div class="card-body">
 
-                            <!--  <h4 class="card-title">Buttons example</h4>
-                <p class="card-title-desc">The Buttons extension for DataTables
-                    provides a common set of options, API methods and styling to display
-                    buttons on a page that will interact with a DataTable. The core library
-                    provides the based framework upon which plug-ins can built.
-                </p> -->
-                            <a type="button" href="<%=process.env.ADMIN_URL%>/admin/faq/add"
+
+                            <!-- <a type="button" href="<%=process.env.ADMIN_URL%>/admin/wallPost/add"
                                 class="btn btn-success waves-effect waves-light mb-3"><i class="mdi mdi-plus me-1"></i>
-                                Add New Faq</a>
+                                Add New wallPost</a> -->
 
                             <table id="listsetting" class="table table-striped table-bordered dt-responsive nowrap"
                                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
                                     <tr>
                                         <th>Srno</th>
-                                        <th>option</th>
-                                        <th>Question</th>
+                                        <th>Url</th>
+
+
                                         <th>Status</th>
+
+                                        <th>Image</th>
+
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -116,7 +115,7 @@
                         function handleDel(id) {
                             return $.ajax({
                                 type: 'DELETE',
-                                url: '<%=process.env.ADMIN_URL%>/admin/faq/' + id,
+                                url: '<%=process.env.ADMIN_URL%>/admin/wallPost/' + id,
                                 success: (results) => {
                                     alert('Record Delete');
                                     location.reload();
@@ -125,12 +124,7 @@
                                     alert('Error While Deleting');
                                 }
                             });
-                            //         $.ajax({
-                            //     url: '<%=process.env.ADMIN_URL%>/admin/player/'+id,
-                            //     type: 'DELETE',
-                            //     success: ()=>{alert('done');location.reload()},
-                            //     error: ()=>alert('failed')
-                            // });
+                          
                         }
                         function view(id) {
                             alert(id);
@@ -141,23 +135,37 @@
                             "processing": true,
                             "serverSide": true,
                             "ajax": {
-                                url: "<%=process.env.ADMIN_URL%>/admin/faq/data", type: "post"
+                                url: "<%=process.env.ADMIN_URL%>/admin/wallPost/data", type: "post"
                             },
                             "columns": [
                                 { data: null, "render": function (data, type, full, meta) { return i = i + 1; } },
-                                { data: 'options', "defaultContent": "" },
-                                { data: 'topic', "defaultContent": "" },
-                                
+                                { data: 'url', "defaultContent": "" },
+
                                 { data: 'status', "defaultContent": "" },
 
                                 {
+                                    data: null,
+                                    "render": function (data, type, JsonResultRow, meta) {
+
+                                        let imgUrl = "<%= process.env.IMAGE_URL %>" + JsonResultRow.imageId
+                                        return '<img width="50" src="' + imgUrl + '">';
+                                    }
+                                },
+
+                                {
                                     data: null, "render": function (data, type, full, meta) {
-                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/faq/'
-                                            + full._id + '"><i class="uil uil-pen font-size-18"></i></a><a href="javascript:void(0);" class="px-2 text-danger" onclick="delRec(\''
-                                            + full._id + '\')"><i class="uil uil-trash-alt font-size-18"></i></a>';
+                                        return '<a class="px-2 text-primary" href="<%=process.env.ADMIN_URL%>/admin/wallPost/'
+    + full._id + '"><i class="uil uil-pen font-size-18"></i></a>';
 
                                     }
                                 },
-                            ]
-                        });
+                            ], 
+                             "searching": false, // Disable search bar
+                             "paging": false,    // Disable pagination
+                             "info": false       // Optionally, disable the info display (e.g., "Showing 1 to 10 of 50 entries")
+});
                     </script>
+
+
+                    
+  

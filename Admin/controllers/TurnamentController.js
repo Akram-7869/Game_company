@@ -7,6 +7,7 @@ exports.listTournament = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Tournament' };
     res.render('Tournament/list', { 'message': req.flash('message'), 'error': req.flash('error') });
 });
+
 exports.listInfluencerTournament = asyncHandler(async (req, res, next) => {
     res.locals = { title: 'Tournament' };
     res.render('Tournament/influencer-list', { 'message': req.flash('message'), 'error': req.flash('error') });
@@ -97,17 +98,22 @@ exports.deleteTournament = asyncHandler(async (req, res, next) => {
 
 
 
+
+
 exports.getTournaments = asyncHandler(async (req, res, next) => {
+    console.log('Received tournamentType:', req.body.tournamentType); // Log for debugging
 
     callApi(req).post(apiUrl, { ...req.body })
         .then(r => {
-            // Assign value in session
-            res.status(200).json(r.data);
+            res.status(200).json(r.data); // Ensure API response format matches DataTables
         })
         .catch(error => {
-            //   req.flash('error', 'Incorrect email or password!');
-        })
+            console.error('Error fetching tournaments:', error); // Log errors for troubleshooting
+            res.status(500).send('Server error');
+        });
 });
+
+
 exports.getInfluencerTournaments = asyncHandler(async (req, res, next) => {
 
     callApi(req).post(apiUrl + 'influencer-list', { ...req.body })

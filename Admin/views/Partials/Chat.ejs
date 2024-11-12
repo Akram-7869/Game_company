@@ -11,6 +11,10 @@
     pointer-events: none;
     transition: all 2s ease-out;
   }
+
+  .card {
+    height: 329px;
+  }
 </style>
 <div class="card">
   <div class="p-3 px-4">
@@ -21,11 +25,9 @@
     </div>
   </div>
   <div class="px-lg-2">
-    <div class="chat-conversation p-3 " data-simplebar style="max-height: 455px;">
+    <div class="chat-conversation p-3 " data-simplebar style="height: 193px;
+    overflow-y: auto;">
       <ul id="messageList" class="list-unstyled mb-0">
-        <!-- <li class="chat-day-title">
-            <div class="title">Today</div>
-          </li> -->
 
 
         <li class="right">
@@ -59,6 +61,11 @@
   </form>
 </div>
 <script>
+  function scrollToBottom() {
+    const chatConversation = document.querySelector('.chat-conversation');
+    chatConversation.scrollTop = chatConversation.scrollHeight;
+  }
+
   const form = document.getElementById('chatform');
   const input = document.getElementById('input');
 
@@ -67,6 +74,12 @@
     if (input.value) {
       SocketHandler.emit_chat_message(input.value, data);
       input.value = '';
+
     }
   });
+
+
+ 
+
+
 </script>

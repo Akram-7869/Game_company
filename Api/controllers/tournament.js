@@ -6,25 +6,38 @@ const { makeid } = require('../utils/utils');
 // @desc      Get all Tournaments
 // @route     GET /api/v1/auth/Tournaments
 // @access    Private/Admin
+
 exports.getTournaments = asyncHandler(async (req, res, next) => {
-    
-    Tournament.dataTables({
+   
+    let filter = {
         limit: req.body.length,
         skip: req.body.start,
-        // select: { 'TournamentControle': 1, 'appLink': 1, 'createdAt': 1 },
-        search: {
-            value: req.body.search ? req.body.search.value : '',
-            fields: ['name']
-
+        find: req.query,
+        populate: {
+          path: 'playerId',
+          select: { firstName: 1, lastName: 1, phone: 1, rank: 1, profilePic: 1, email: 1 },
+          options: { sort: { 'membership': -1 } }
         },
         sort: {
-            _id: -1
+          _id: -1
         }
-    }).then(function (table) {
-        res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
-    })
-    //res.status(200).json(res.advancedResults);
-});
+      };
+      
+  
+    if (req.body.tournamentType) {
+      filter['find']['tournamentType'] = req.body.tournamentType;
+    }
+  
+    Tournament.dataTables(filter).then(function (table) {
+      res.json({ data: table.data, recordsTotal: table.total, recordsFiltered: table.total, draw: req.body.draw }); // table.total, table.data
+      //     })
+    });
+  });
+  
+
+
+
+
 exports.getInfluencerTournaments = asyncHandler(async (req, res, next) => {
     
     Tournament.dataTables({

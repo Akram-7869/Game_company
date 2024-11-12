@@ -58,8 +58,8 @@
   }
   
   .player {
-    width: 480px;
-    height: 320px;
+    width: auto;
+    height: 230px;
   }
   
   .player-name {

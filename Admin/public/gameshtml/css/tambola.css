@@ -1,6 +1,6 @@
 
 #game-container {
-    width: 800px;
+    max-width: 800px;
     height: 600px;
     position: relative;
     background-color: #000;
