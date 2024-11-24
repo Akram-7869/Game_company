@@ -98,6 +98,7 @@ exports.maintenance_chk = (req, res, next) => {
   }
   next();
 };
+
 // Grant header to maintenance 
 exports.header_chk = (req, res, next) => {
   let { "x-app-name": appName } = req.headers;

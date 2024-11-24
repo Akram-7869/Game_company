@@ -116,6 +116,7 @@ exports.getByPhone = asyncHandler(async (req, res, next) => {
   });
 
 });
+
 exports.getByEmail = asyncHandler(async (req, res, next) => {
   res.status(200).json({});
   console.log('getByEmail');
@@ -336,6 +337,8 @@ exports.playerRegisterEmail = asyncHandler(async (req, res, next) => {
   //subscribeToTopic(firebaseToken);
   sendTokenResponse(player, 200, res);
 });
+
+
 exports.webRegisterEmail = asyncHandler(async (req, res, next) => {
   let { id, email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode = '', stateName = '', latitude = 0, longitude = 0, state } = req.body;
   console.log(req.body);
@@ -394,6 +397,8 @@ exports.webRegisterEmail = asyncHandler(async (req, res, next) => {
     sendTokenResponse(user, 200, res);
   }
 });
+
+
 exports.registerInfluencer = asyncHandler(async (req, res, next) => {
   let { password, email, phone, deviceToken, countryCode, firebaseToken = '', picture = '', firstName = "", stateCode = '', stateName = '', latitude = 0, longitude = 0, state } = req.body;
   console.log(req.body);
@@ -436,6 +441,7 @@ exports.registerInfluencer = asyncHandler(async (req, res, next) => {
     sendTokenResponse(user, 200, res);
   }
 });
+
 // @desc      Verify phone
 // @route     POST /api/v1/auth/register
 // @access    Public
@@ -493,6 +499,7 @@ exports.verifyPhoneCode = asyncHandler(async (req, res, next) => {
   // });
 
 });
+
 exports.playerLogin = asyncHandler(async (req, res, next) => {
   const { password, email } = req.body;
 

@@ -84,7 +84,7 @@ const SettingSchema = new mongoose.Schema(
     dollor_value: {
       type: String,
     },
-
+    
     minwithdraw: {
       type: Number,
       default: 0,

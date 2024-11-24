@@ -99,7 +99,6 @@ const TransactionsSchema = new mongoose.Schema({
         type: String,
 
     },
-
     paymentStatus: {
         type: String,
         default: 'PROCESSING'
