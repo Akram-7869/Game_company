@@ -639,6 +639,7 @@ exports.calculateDailyCommissions = asyncHandler(async (req, res, next) => {
   });
   console.log("Daily commissions calculated and updated successfully.");
 });
+
 async function calculateAdminIncome(today) {
   try {
     // Ensure today is a valid date
